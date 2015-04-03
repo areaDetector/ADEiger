@@ -16,6 +16,10 @@
 #include <asynOctetSyncIO.h>
 #include <math.h>
 
+#include <hdf5.h>
+#include <hdf5_hl.h>
+#include "DNexusReadHelper.h"
+
 #include <frozen.h> // JSON parser
 
 #include "ADDriver.h"
@@ -198,6 +202,7 @@ protected:
     asynStatus getFile       (const char *remoteFile, char **data, size_t *len);
     asynStatus getMasterFile (int sequenceId, char **data, size_t *len);
     asynStatus getDataFile   (int sequenceId, int nr, char **data, size_t *len);
+    //asynStatus parseHdf	(char* buffer, size_t numBytes);
 
     asynStatus parsePutResponse (struct response response);
 
@@ -576,6 +581,40 @@ asynStatus eigerDetector::getDataFile (int sequenceId, int nr, char **data,
 
     return asynSuccess;
 }
+
+/*asynStatus eigerDetector::parseHdf(char* buffer, size_t numBytes)
+{
+	const char* functionName = "parseHdf";
+	unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
+	std::cout<<"Openning buffer address "<<&buffer<<" size = "<<numbytes<<std::endl;
+	hid_t fid = H5LTopen_file_image(buffer,numbytes,flags);
+
+	if(fid<0)
+	{
+		asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+			"%s::%s, cannot open buffer(%p) failed\n",
+			driverName, functionName, buffer);
+		return asynError;
+	}
+
+	readOneImage(fid, &img, &dim);
+
+	std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
+    for(size_t pix_x = 0; pix_x <dim[0]; pix_x++)
+	{
+	  for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
+	   {
+		  uint16_t pxval = getPixelValue(pix_x, pix_y, img, dim);
+		  if (pix_x < 5 && pix_y < 5)
+			   std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
+	   }
+	  if (pix_x < 5)
+		  std::cout<<std::endl;
+	}
+
+    H5Fclose(fid);
+}
+*/
 
 asynStatus eigerDetector::parsePutResponse(struct response response)
 {
@@ -963,67 +1002,92 @@ void eigerDetector::eigerTask()
         setIntegerParam(EigerArmed, 0);
         setShutter(0);
 
-        /* Download the result */
-        int sequenceId, numImagesPerFile, nrStart, nFiles;
-
-        getIntegerParam(EigerSequenceId, &sequenceId);
-        getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
-        getIntegerParam(EigerFWImageNrStart, &nrStart);
-
-        setIntegerParam(ADStatus, ADStatusReadout);
-        setStringParam(ADStatusMessage, "Downloading master file");
-        callParamCallbacks();
-
-        if((status = getMasterFile(sequenceId, &master, &masterLen)))
-        {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: failed to get master file\n",
-                    driverName, functionName);
-            //return status; //TODO: what?
-        }
-
-        //printf("got master file %lu bytes\n", masterLen);
-        // do something with master file
-        if(master)
-        {
-            free(master);
-            master = NULL;
-        }
-
-        setStringParam(ADStatusMessage, "Downloading data files");
-        callParamCallbacks();
-        nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile));
-
-        for(int i = 0; i < nFiles; ++i)
-        {
-            if((status = getDataFile(sequenceId, i + nrStart, &data, &dataLen)))
-            {
-                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                        "%s:%s: failed to get data file %d\n",
-                        driverName, functionName, i + nrStart);
-                //return status; //TODO: what?
-            }
-            printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
-
-            // do something with data file
-
-            if(data)
-            {
-                free(data);
-                data = NULL;
-            }
-        }
-
-
-
         getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
 
         if (arrayCallbacks)
         {
-            getIntegerParam(NDArrayCounter, &imageCounter);
-            imageCounter++;
-            setIntegerParam(NDArrayCounter, imageCounter);
+        	//array for h5 data
+            std::vector<uint32_t> img;
+            std::vector<hsize_t> dim;
+            dim.resize(2);
+
+            /* Download the result */
+            int sequenceId, numImagesPerFile, nrStart, nFiles;
+
+            getIntegerParam(EigerSequenceId, &sequenceId);
+            getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
+            getIntegerParam(EigerFWImageNrStart, &nrStart);
+
+            setIntegerParam(ADStatus, ADStatusReadout);
+            /*
+            setStringParam(ADStatusMessage, "Downloading master file");
             callParamCallbacks();
+
+            if((status = getMasterFile(sequenceId, &master, &masterLen)))
+            {
+                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                        "%s:%s: failed to get master file\n",
+                        driverName, functionName);
+                //return status; //TODO: what?
+            }
+
+            //printf("got master file %lu bytes\n", masterLen);
+            // do something with master file
+            if(master)
+            {
+                free(master);
+                master = NULL;
+            }
+    		*/
+            setStringParam(ADStatusMessage, "Downloading data files");
+            callParamCallbacks();
+            nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile));
+
+            for(int i = 0; i < nFiles; ++i)
+            {
+                if((status = getDataFile(sequenceId, i + nrStart, &data, &dataLen)))
+                {
+                    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                            "%s:%s: failed to get data file %d\n",
+                            driverName, functionName, i + nrStart);
+                    //return status; //TODO: what?
+                }
+                printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
+
+                // do something with data file
+            	unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
+            	hid_t fid = H5LTopen_file_image(data,dataLen,flags);
+            	if(fid<0)
+            	{
+                    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                            "%s:%s: failed to open hdf (buffer address: %p)\n",
+                            driverName, functionName, data);
+            	}
+
+                DNexusReadHelper::readOneImage(fid, &img, &dim);
+                printf("image dimensions %d %d\n",dim[0],dim[1]);
+            	//std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
+                for(size_t pix_x = 0; pix_x <dim[0]; pix_x++)
+            	{
+            	  for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
+            	   {
+            		  uint16_t pxval = DNexusReadHelper::getPixelValue(pix_x, pix_y, img, dim);
+            		  if (pix_x < 5 && pix_y < 5)
+            			   //std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
+            			  printf("pix[%d][%d] = %d\n",pix_x,pix_y,pxval);
+            	   }
+            	  if (pix_x < 5)
+            		  printf("\n");
+            	}
+
+                H5Fclose(fid);
+
+                if(data)
+                {
+                    free(data);
+                    data = NULL;
+                }
+            }
 
             /* Get an image buffer from the pool */
             int dims0, dims1;
@@ -1043,6 +1107,7 @@ void eigerDetector::eigerTask()
             //status = readImageFile(fullFileName, &startTime,
             //      (numExposures * acquireTime) + readImageFileTimeout,
             //                       pImage);
+
             /* If there was an error jump to bottom of loop */
             if (status) {
                 acquire = 0;
@@ -1067,6 +1132,7 @@ void eigerDetector::eigerTask()
             asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                  "%s:%s: calling NDArray callback\n", driverName, functionName);
             doCallbacksGenericPointer(pImage, NDArrayData, 0);
+            //doCallbacksGenericPointer(&img, NDArrayData, 0);
             this->lock();
             /* Free the image buffer */
             pImage->release();
