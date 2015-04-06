@@ -34,5 +34,9 @@ set_requestfile_path("$(ADEIGER)/eigerApp/Db")
 
 iocInit()
 
+dbpf 13EIG1:image1:EnableCallbacks 1
+dbpf 13EIG1:image1:ArrayCallbacks 1
+dbpf 13EIG1:cam1:ArrayCallbacks 1
+
 # save things every thirty seconds
 # create_monitor_set("auto_settings.req", 30,"P=$(PREFIX)")
