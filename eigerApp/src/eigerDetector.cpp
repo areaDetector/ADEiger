@@ -2,8 +2,8 @@
  *
  * This is a driver for a Eiger pixel array detector.
  *
- * Authors: Bruno Martins
- *          Diego Omitto
+ * Authors: Bruno Martins <bmartins@bnl.gov>
+ *          Diego Omitto <domitto@bnl.gov>
  *          Brookhaven National Laboratory
  *
  * Created: March 30, 2015
@@ -71,6 +71,7 @@ typedef enum
     SSDetConfig,
     SSDetStatus,
     SSFWConfig,
+    SSFWStatus,
     SSCommand,
     SSData,
 
@@ -98,6 +99,7 @@ static const char *eigerSysStr [SSCount] = {
     "/detector/api/"   API_VERSION "/config/",
     "/detector/api/"   API_VERSION "/status/",
     "/filewriter/api/" API_VERSION "/config/",
+    "/filewriter/api/" API_VERSION "/status/",
     "/detector/api/"   API_VERSION "/command/",
     "/data/",
 };
@@ -202,7 +204,7 @@ protected:
     asynStatus getFile       (const char *remoteFile, char **data, size_t *len);
     asynStatus getMasterFile (int sequenceId, char **data, size_t *len);
     asynStatus getDataFile   (int sequenceId, int nr, char **data, size_t *len);
-    //asynStatus parseHdf	(char* buffer, size_t numBytes);
+    //asynStatus parseHdf    (char* buffer, size_t numBytes);
 
     asynStatus parsePutResponse (struct response response);
 
@@ -584,33 +586,33 @@ asynStatus eigerDetector::getDataFile (int sequenceId, int nr, char **data,
 
 /*asynStatus eigerDetector::parseHdf(char* buffer, size_t numBytes)
 {
-	const char* functionName = "parseHdf";
-	unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
-	std::cout<<"Openning buffer address "<<&buffer<<" size = "<<numbytes<<std::endl;
-	hid_t fid = H5LTopen_file_image(buffer,numbytes,flags);
+    const char* functionName = "parseHdf";
+    unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
+    std::cout<<"Openning buffer address "<<&buffer<<" size = "<<numbytes<<std::endl;
+    hid_t fid = H5LTopen_file_image(buffer,numbytes,flags);
 
-	if(fid<0)
-	{
-		asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-			"%s::%s, cannot open buffer(%p) failed\n",
-			driverName, functionName, buffer);
-		return asynError;
-	}
+    if(fid<0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+            "%s::%s, cannot open buffer(%p) failed\n",
+            driverName, functionName, buffer);
+        return asynError;
+    }
 
-	readOneImage(fid, &img, &dim);
+    readOneImage(fid, &img, &dim);
 
-	std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
+    std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
     for(size_t pix_x = 0; pix_x <dim[0]; pix_x++)
-	{
-	  for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
-	   {
-		  uint16_t pxval = getPixelValue(pix_x, pix_y, img, dim);
-		  if (pix_x < 5 && pix_y < 5)
-			   std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
-	   }
-	  if (pix_x < 5)
-		  std::cout<<std::endl;
-	}
+    {
+      for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
+       {
+          uint16_t pxval = getPixelValue(pix_x, pix_y, img, dim);
+          if (pix_x < 5 && pix_y < 5)
+               std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
+       }
+      if (pix_x < 5)
+          std::cout<<std::endl;
+    }
 
     H5Fclose(fid);
 }
@@ -906,7 +908,6 @@ void eigerDetector::eigerTask()
     NDArray *pImage;
     double acquireTime, acquirePeriod;
     epicsTimeStamp startTime;
-    //char statusMessage[MAX_MESSAGE_SIZE];
     size_t dims[2];
     int arrayCallbacks;
     int aborted = 0;
@@ -972,10 +973,11 @@ void eigerDetector::eigerTask()
                     "%s:%s: failed to arm the detector\n",
                     driverName, functionName);
             setIntegerParam(ADAcquire, 0);
-            setIntegerParam(ADStatus, ADStatusIdle);
+            setIntegerParam(ADStatus, ADStatusAborted);
             setStringParam(ADStatusMessage, "Failed to arm the detector");
-            acquire = 0;
-            goto closeShutter;
+            setShutter(0);
+            callParamCallbacks();
+            continue;
         }
 
         /* Set the armed flag */
@@ -990,23 +992,41 @@ void eigerDetector::eigerTask()
                     "%s:%s: failed to trigger the detector\n",
                     driverName, functionName);
             setIntegerParam(ADAcquire, 0);
-            setIntegerParam(ADStatus, ADStatusIdle);
+            setIntegerParam(ADStatus, ADStatusAborted);
             setStringParam(ADStatusMessage, "Failed to trigger the detector");
             status = command("disarm");
-            acquire = 0;
-            goto disarm;
+            setIntegerParam(EigerArmed, 0);
+            setShutter(0);
+            callParamCallbacks();
+            continue;
         }
 
         /* Image(s) acquired. Disarm the detector */
-        status = command("disarm");
+        if((status = command("disarm")))
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                    "%s:%s: failed to disarm the detector\n",
+                    driverName, functionName);
+            continue;
+        }
         setIntegerParam(EigerArmed, 0);
         setShutter(0);
+
+        char buf[MAX_BUF_SIZE];
+        do
+        {
+            getString(SSFWStatus, "state", buf, sizeof(buf));
+            //printf("FileWriter state = %s\n", buf);
+        }while(buf[0] == 'a');
+
+        //epicsThreadSleep(1.0);  // UGH
+        // At this point all files are ready to be downloaded
 
         getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
 
         if (arrayCallbacks)
         {
-        	//array for h5 data
+            //array for h5 data
             std::vector<uint32_t> img;
             std::vector<hsize_t> dim;
             dim.resize(2);
@@ -1038,7 +1058,7 @@ void eigerDetector::eigerTask()
                 free(master);
                 master = NULL;
             }
-    		*/
+             */
             setStringParam(ADStatusMessage, "Downloading data files");
             callParamCallbacks();
             nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile));
@@ -1050,35 +1070,38 @@ void eigerDetector::eigerTask()
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                             "%s:%s: failed to get data file %d\n",
                             driverName, functionName, i + nrStart);
-                    //return status; //TODO: what?
+                    setIntegerParam(ADStatus, ADStatusAborted);
+                    setStringParam(ADStatusMessage, "Failed to trigger the detector");
+                    callParamCallbacks();
+                    break;
                 }
                 printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
 
                 // do something with data file
-            	unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
-            	hid_t fid = H5LTopen_file_image(data,dataLen,flags);
-            	if(fid<0)
-            	{
+                unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
+                hid_t fid = H5LTopen_file_image(data,dataLen,flags);
+                if(fid<0)
+                {
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                             "%s:%s: failed to open hdf (buffer address: %p)\n",
                             driverName, functionName, data);
-            	}
+                }
 
                 DNexusReadHelper::readOneImage(fid, &img, &dim);
                 printf("image dimensions %d %d\n",dim[0],dim[1]);
-            	//std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
+                //std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
                 for(size_t pix_x = 0; pix_x <dim[0]; pix_x++)
-            	{
-            	  for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
-            	   {
-            		  uint16_t pxval = DNexusReadHelper::getPixelValue(pix_x, pix_y, img, dim);
-            		  if (pix_x < 5 && pix_y < 5)
-            			   //std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
-            			  printf("pix[%d][%d] = %d\n",pix_x,pix_y,pxval);
-            	   }
-            	  if (pix_x < 5)
-            		  printf("\n");
-            	}
+                {
+                    for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
+                    {
+                        uint16_t pxval = DNexusReadHelper::getPixelValue(pix_x, pix_y, img, dim);
+                        if (pix_x < 5 && pix_y < 5)
+                            //std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
+                            printf("pix[%d][%d] = %d\n",pix_x,pix_y,pxval);
+                    }
+                    if (pix_x < 5)
+                        printf("\n");
+                }
 
                 H5Fclose(fid);
 
@@ -1089,6 +1112,8 @@ void eigerDetector::eigerTask()
                 }
             }
 
+#if 0
+            {
             /* Get an image buffer from the pool */
             int dims0, dims1;
             getIntegerParam(ADMaxSizeX, &dims0);
@@ -1137,7 +1162,9 @@ void eigerDetector::eigerTask()
             /* Free the image buffer */
             pImage->release();
         }
+#endif
 
+        }
         /* If everything was ok, set the status back to idle */
         getIntegerParam(ADStatus, &statusParam);
         if (!status) {
@@ -1148,13 +1175,6 @@ void eigerDetector::eigerTask()
             }
         }
 
-        /* Call the callbacks to update any changes */
-        callParamCallbacks();
-
-disarm:
-        setIntegerParam(EigerArmed, 0);
-closeShutter:
-        setShutter(0);
         setIntegerParam(ADAcquire, 0);
 
         /* Call the callbacks to update any changes */
@@ -1566,6 +1586,11 @@ eigerDetector::eigerDetector(const char *portName, const char *serverPort,
     status |= setIntegerParam(EigerSequenceId,  0);
 
     callParamCallbacks();
+
+    // We do not support these features yet
+    status |= putBool(SSDetConfig, "flatfield_correction_applied", false);
+    status |= putBool(SSDetConfig, "pixel_mask_applied", false);
+    status |= putBool(SSDetConfig, "auto_summation", true);
 
     if (status)
     {
