@@ -20,6 +20,7 @@
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #include <iostream>
+#include <vector>
 
 #include <frozen.h> // JSON parser
 
@@ -884,12 +885,10 @@ void eigerDetector::eigerTask()
 {
     const char *functionName = "eigerTask";
     int status = asynSuccess;
-    int imageCounter;
     int numImages;
     int acquire;
     double acquireTime, acquirePeriod;
     epicsTimeStamp startTime;
-    size_t dims[2];
     int arrayCallbacks;
     int aborted = 0;
     int statusParam = 0;
@@ -1053,7 +1052,10 @@ void eigerDetector::eigerTask()
                 }
                 printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
 
-                imgCopy(data,dataLen);
+                //copy from memory to NDArray
+                if(imgCopy(data,dataLen))
+                    //TODO: What?
+                    data = NULL;
 
                 if(data)
                 {
@@ -1061,59 +1063,6 @@ void eigerDetector::eigerTask()
                     data = NULL;
                 }
             }
-
-#if 0
-            {
-            /* Get an image buffer from the pool */
-            int dims0, dims1;
-            getIntegerParam(ADMaxSizeX, &dims0);
-            getIntegerParam(ADMaxSizeY, &dims1);
-            dims[0] = dims0;
-            dims[1] = dims1;
-
-            pImage = this->pNDArrayPool->alloc(2, dims, NDInt32, 0, NULL);
-            /*epicsSnprintf(statusMessage, sizeof(statusMessage),
-                    "Reading image file %s", fullFileName);
-            setStringParam(ADStatusMessage, statusMessage);*/
-            callParamCallbacks();
-            /* We release the mutex when calling readImageFile, because this
-             * takes a long time and
-             * we need to allow abort operations to get through */
-            //status = readImageFile(fullFileName, &startTime,
-            //      (numExposures * acquireTime) + readImageFileTimeout,
-            //                       pImage);
-
-            /* If there was an error jump to bottom of loop */
-            if (status) {
-                acquire = 0;
-                aborted = 1;
-                pImage->release();
-                continue;
-            }
-
-            /* Put the frame number and time stamp into the buffer */
-            pImage->uniqueId = imageCounter;
-            pImage->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
-            updateTimeStamp(&pImage->epicsTS);
-
-            /* Get any attributes that have been defined for this driver */
-            this->getAttributes(pImage->pAttributeList);
-
-            /* Call the NDArray callback */
-            /* Must release the lock here, or we can get into a deadlock, b
-             * ecause we can
-             * block on the plugin lock, and the plugin can be calling us */
-            this->unlock();
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                 "%s:%s: calling NDArray callback\n", driverName, functionName);
-            doCallbacksGenericPointer(pImage, NDArrayData, 0);
-            //doCallbacksGenericPointer(&img, NDArrayData, 0);
-            this->lock();
-            /* Free the image buffer */
-            pImage->release();
-        }
-#endif
-
         }
         /* If everything was ok, set the status back to idle */
         getIntegerParam(ADStatus, &statusParam);
@@ -1124,7 +1073,6 @@ void eigerDetector::eigerTask()
                 setIntegerParam(ADStatus, ADStatusError);
             }
         }
-
         setIntegerParam(ADAcquire, 0);
 
         /* Call the callbacks to update any changes */
@@ -1566,13 +1514,13 @@ asynStatus eigerDetector::imgCopy(char *pbuffer, size_t numbytes)
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
     //Open h5 file from memory
-    std::cout<<"Openning "<<numbytes<<" bytes"<<std::endl;
+    //std::cout<<"Openning "<<numbytes<<" bytes"<<std::endl;
     hid_t fid = H5LTopen_file_image(pbuffer,numbytes,flags);
     if(fid<0)
-      return asynError; //erro ao abrir arquivo
+      return asynError;
 
     //Access /entry group inside h5
-    std::cout<<"Oppening /entry group"<<std::endl;
+    //std::cout<<"Oppening /entry group"<<std::endl;
     hid_t gid_entry = H5Gopen2(fid, "/entry", H5P_DEFAULT);
     if(gid_entry<0)
     {
@@ -1591,7 +1539,7 @@ asynStatus eigerDetector::imgCopy(char *pbuffer, size_t numbytes)
     if(status < 0)
         //couldn't read attr image_nr_low
         return asynError;
-    std::cout<<"image_nr_low = "<<image_nr_low<<std::endl;
+    //std::cout<<"image_nr_low = "<<image_nr_low<<std::endl;
     H5Aclose(attr_id);
 
     attrExists = H5Aexists_by_name(gid_entry,  "data" , "image_nr_high", H5P_DEFAULT);
@@ -1605,11 +1553,11 @@ asynStatus eigerDetector::imgCopy(char *pbuffer, size_t numbytes)
     if(status < 0)
         //couldn't read attr image_nr_high
         return asynError;
-    std::cout<<"image_nr_high = "<<image_nr_high<<std::endl;
+    //std::cout<<"image_nr_high = "<<image_nr_high<<std::endl;
     H5Aclose(attr_id);
 
     //Access dataset 'data'
-    std::cout<<"Oppening dataset 'data'"<<std::endl;
+    //std::cout<<"Oppening dataset 'data'"<<std::endl;
     hid_t dataid = H5Dopen2(gid_entry, "data", H5P_DEFAULT);
     if(dataid<0)
     {
@@ -1622,19 +1570,19 @@ asynStatus eigerDetector::imgCopy(char *pbuffer, size_t numbytes)
     hid_t dtype_id = H5Dget_type(dataid);
     if(is_native_uint32(dtype_id))
     {
-        std::cout<<"Data type is UINT32"<<std::endl;
+        //std::cout<<"Data type is UINT32"<<std::endl;
         std::vector<uint32_t> img;
         fillArray(dataid,img,image_nr_low,image_nr_high);
     }
     else if(is_native_uint16(dtype_id))
     {
-        std::cout<<"Data type is UINT16"<<std::endl;
+        //std::cout<<"Data type is UINT16"<<std::endl;
         std::vector<uint16_t> img;
         fillArray(dataid,img,image_nr_low,image_nr_high);
     }
     else
     {
-        std::cout<<"Unsupported data type!"<<std::endl;
+        //std::cout<<"Unsupported data type!"<<std::endl;
         return asynError;
     }
 
@@ -1647,36 +1595,38 @@ asynStatus eigerDetector::imgCopy(char *pbuffer, size_t numbytes)
 template <typename Type>
 asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_nr_low,int img_nr_high)
 {
+    const char *functionName = "fillArray";
+
     NDArray *pImage;
+    int ADdims0, ADdims1, imageCounter;
     size_t ndArray_dims[2];
     epicsTimeStamp startTime;
 
     std::vector<hsize_t> dim;
     dim.resize(2);
-    const char *functionName = "fillArray";
-
+/*
     size_t totSize = 1;   /// total size (in units of T)
     for(uint i=0; i<dim.size();++i)
     {
         totSize *= dim.at(i);
     }
-
+*/
     hid_t dataspace = H5Dget_space(dataid);
     if(dataspace<0)
     {
-        std::cout<<"cannot get dataspace"<<std::endl;
+        //std::cout<<"cannot get dataspace"<<std::endl;
         return asynError;
     }
 
     int rank    =  H5Sget_simple_extent_ndims(dataspace);
     if(rank<0)
     {
-        std::cout<<"cannot get rank"<<std::endl;
+        //std::cout<<"cannot get rank"<<std::endl;
         return asynError;
     }
     if(rank != 3) /// images dataset must be 3D!
     {
-        std::cout<<"image dataset not 3D"<<std::endl;
+        //std::cout<<"image dataset not 3D"<<std::endl;
         return asynError;
     }
 
@@ -1700,17 +1650,15 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
     /// compute the offset of image number:
     hsize_t offset[3];
 
-    //offset[0] = 0; //primeira imagem em z
     offset[1] = 0;
     offset[2] = 0;
-    int imageCounter=0;
     for(offset[0] = 0; offset[0] < (img_nr_high-img_nr_low)+1; offset[0]++){
-        std::cout<<"offset = "<<offset[0]<<std::endl;
+        //std::cout<<"offset = "<<offset[0]<<std::endl;
         /// select the hyperslab ///
         herr_t errstatus = H5Sselect_hyperslab(dataspace, H5S_SELECT_SET, offset, NULL, count, NULL);
         if(errstatus<0)
         {
-            std::cout<<"cannot select hyperslab"<<std::endl;
+            //std::cout<<"cannot select hyperslab"<<std::endl;
             return asynError;
         }
 
@@ -1721,7 +1669,7 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
         herr_t status = H5Dread(dataid, h5FileDataType, memspace_id, dataspace , H5P_DEFAULT, img.data());
         if(status<0)
         {
-            std::cout<<"cannot read data"<<std::endl;
+            //std::cout<<"cannot read data"<<std::endl;
             return asynError;
         }
 
@@ -1729,7 +1677,6 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
         getIntegerParam(NDArrayCounter, &imageCounter);
         imageCounter++;
         setIntegerParam(NDArrayCounter, imageCounter);
-        int ADdims0, ADdims1;
         getIntegerParam(ADMaxSizeX, &ADdims0);
         getIntegerParam(ADMaxSizeY, &ADdims1);
         ndArray_dims[0] = ADdims0;
@@ -1739,18 +1686,12 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
         /*epicsSnprintf(statusMessage, sizeof(statusMessage),
                             "Reading image file %s", fullFileName);
                     setStringParam(ADStatusMessage, statusMessage);*/
-
         memcpy(pImage->pData,&img[0],pImage->dataSize);
         callParamCallbacks();
-        /* We release the mutex when calling readImageFile, because this
-         * takes a long time and
-         * we need to allow abort operations to get through */
-        //status = readImageFile(fullFileName, &startTime,
-        //      (numExposures * acquireTime) + readImageFileTimeout,
-        //                       pImage);
 
         /* If there was an error jump to bottom of loop */
         if (status) {
+            //TODO: what?
             //acquire = 0;
             //aborted = 1;
             pImage->release();
@@ -1758,27 +1699,26 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
         }
 
         /* Put the frame number and time stamp into the buffer */
-        pImage->uniqueId = offset[0];
-        pImage->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
+        pImage->uniqueId = imageCounter;
+        epicsTimeGetCurrent(&startTime);
+        pImage->timeStamp =  startTime.secPastEpoch + startTime.nsec / 1.e9;
         updateTimeStamp(&pImage->epicsTS);
 
         /* Get any attributes that have been defined for this driver */
-        //this->getAttributes(pImage->pAttributeList);
+        this->getAttributes(pImage->pAttributeList);
 
         /* Call the NDArray callback */
-        /* Must release the lock here, or we can get into a deadlock, b
-         * ecause we can
-         * block on the plugin lock, and the plugin can be calling us */
+        /* Must release the lock here, or we can get into a deadlock,
+         * because we can block on the plugin lock, and the plugin
+         * can be calling us */
         this->unlock();
         asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                 "%s:%s: calling NDArray callback\n", driverName, functionName);
-
         doCallbacksGenericPointer(pImage, NDArrayData, 0);
         this->lock();
 
         /* Free the image buffer */
         pImage->release();
-        std::cout<<"print depois do release"<<std::endl;
 
         /* Call the callbacks to update any changes */
         callParamCallbacks();
@@ -1789,7 +1729,8 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
         {
             for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
             {
-                uint16_t pxval = getPixelValue(pix_x, pix_y, img, dim);
+                //uint16_t pxval = getPixelValue(pix_x, pix_y, img, dim);
+                uint32_t pxval = getPixelValue(pix_x, pix_y, img, dim);
                 if (pix_x < 5 && pix_y < 5)
                     std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
             }
@@ -1799,7 +1740,6 @@ asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_n
     }
     H5Sclose( memspace_id);
 
-    std::cout<<"closing memspace"<<std::endl;
     return asynSuccess;
 }
 

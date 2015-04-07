@@ -10,6 +10,9 @@ epicsEnvSet("QSIZE",  "20")
 epicsEnvSet("NCHANS", "2048")
 epicsEnvSet("EIGERIP", "130.199.221.222")
 epicsEnvSet("EPICS_DB_INCLUDE_PATH", "$(ADCORE)/db")
+epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "5000000")
+
+
 
 ###
 # Create the asyn port to talk to the eiger on port 80.
@@ -22,7 +25,7 @@ dbLoadRecords("$(ADEIGER)/db/eiger.template","P=$(PREFIX),R=cam1:,PORT=$(PORT),A
 
 # Create a standard arrays plugin
 NDStdArraysConfigure("Image1", 5, 0, "$(PORT)", 0, 0)
-dbLoadRecords("$(ADCORE)/db/NDStdArrays.template", "P=$(PREFIX),R=image1:,PORT=Image1,ADDR=0,TIMEOUT=1,TYPE=Int32,FTVL=LONG,NELEMENTS=94965, NDARRAY_PORT=$(PORT)")
+dbLoadRecords("$(ADCORE)/db/NDStdArrays.template", "P=$(PREFIX),R=image1:,PORT=Image1,ADDR=0,TIMEOUT=1,TYPE=Int32,FTVL=LONG,NELEMENTS=1096950, NDARRAY_PORT=$(PORT)")
 
 # Load all other plugins using commonPlugins.cmd
 # < $(ADCORE)/iocBoot/commonPlugins.cmd
