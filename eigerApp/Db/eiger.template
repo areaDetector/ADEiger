@@ -108,6 +108,22 @@ record(ai, "$(P)$(R)FWImageNrStart_RBV")
     field(SCAN, "I/O Intr")
 }
 
+# Flatfield correction applied
+record(bo,"$(P)$(R)FlatfieldApplied") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FLATFIELD_APPLIED")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FLATFIELD_APPLIED")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(SCAN, "I/O Intr")
+}
+
 record(ai, "$(P)$(R)SequenceId")
 {
     field(DTYP, "asynInt32")

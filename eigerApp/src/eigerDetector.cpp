@@ -2,8 +2,8 @@
  *
  * This is a driver for a Eiger pixel array detector.
  *
- * Authors: Bruno Martins <bmartins@bnl.gov>
- *          Diego Omitto <domitto@bnl.gov>
+ * Authors: Bruno Martins
+ *          Diego Omitto
  *          Brookhaven National Laboratory
  *
  * Created: March 30, 2015
@@ -20,13 +20,13 @@
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #include <iostream>
-#include <vector>
 
 #include <frozen.h> // JSON parser
 
 #include "ADDriver.h"
 
 /** Messages to/from server */
+#define GET_FILE_RETRIES    10
 #define MAX_MESSAGE_SIZE    65536
 #define MAX_BUF_SIZE        256
 #define MAX_JSON_TOKENS     100
@@ -34,7 +34,7 @@
 #define DEF_TIMEOUT_INIT    30.0
 #define DEF_TIMEOUT_ARM     55.0
 #define DEF_TIMEOUT_CMD     5.0
-#define CHUNK_SIZE          (65536-512)
+#define CHUNK_SIZE          (MAX_MESSAGE_SIZE-512)
 
 #define ID_STR          "$id"
 #define ID_LEN          3
@@ -90,8 +90,8 @@ typedef enum
 
 typedef enum {
     TMInternal,         // INTS: One trigger multiple frames
-    //TMExternal,         // EXTS: One trigger multiple frames
-    //TMExternalMultiple, // EXTE" One trigger per frame, trigger width=exposure
+    TMExternal,         // EXTS: One trigger multiple frames
+    TMExternalMultiple, // EXTE" One trigger per frame, trigger width=exposure
 
     TMCount
 } eigerTriggerMode;
@@ -111,7 +111,7 @@ static const char *eigerFWModeStr [FWModeCount] = {
 };
 
 static const char *eigerTMStr [TMCount] = {
-    "ints",// "exts", "exte"
+    "ints", "exts", "exte"
 };
 
 struct response
@@ -136,6 +136,7 @@ static const char *driverName = "eigerDetector";
 #define EigerBeamXString                "BEAM_X"
 #define EigerBeamYString                "BEAM_Y"
 #define EigerDetDistString              "DET_DIST"
+#define EigerFlatfieldString            "FLATFIELD_APPLIED"
 #define EigerPhotonEnergyString         "PHOTON_ENERGY"
 #define EigerThresholdString            "THRESHOLD"
 #define EigerWavelengthString           "WAVELENGTH"
@@ -147,12 +148,6 @@ static const char *driverName = "eigerDetector";
 /* Other */
 #define EigerArmedString                "ARMED"
 #define EigerSequenceIdString           "SEQ_ID"
-
-
-bool is_native_uint32(hid_t dtype_id){
-    return H5Tequal(dtype_id, H5T_NATIVE_UINT32) > 0;}
-bool is_native_uint16(hid_t dtype_id){
-    return H5Tequal(dtype_id, H5T_NATIVE_UINT16) > 0;}
 
 /** Driver for Dectris Eiger pixel array detectors using their REST server */
 class eigerDetector : public ADDriver
@@ -185,6 +180,7 @@ protected:
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
+    int EigerFlatfield;
     int EigerPhotonEnergy;
     int EigerThreshold;
     int EigerWavelength;
@@ -198,33 +194,33 @@ protected:
     int EigerSequenceId;
     #define LAST_EIGER_PARAM EigerSequenceId
 
- private:
+private:
+    epicsEventId startEventId;
+    epicsEventId stopEventId;
+    char toServer[MAX_MESSAGE_SIZE];
+    char fromServer[MAX_MESSAGE_SIZE];
+    asynUser *pasynUserServer;
+
     /* These are the methods that are new to this class */
+
+    /*
+     * Basic HTTP communication
+     */
     asynStatus doRequest  (size_t requestSize, struct response *response,
             double timeout = DEF_TIMEOUT);
 
+    /*
+     * Get/set parameter value (string form)
+     */
     asynStatus get (eigerSys sys, const char *param, char *value, size_t len,
             double timeout = DEF_TIMEOUT);
     asynStatus put (eigerSys sys, const char *param, const char *value,
             size_t len, double timeout = DEF_TIMEOUT);
-
-    asynStatus getFileSize   (const char *remoteFile, size_t *len);
-    asynStatus getFile       (const char *remoteFile, char **data, size_t *len);
-    asynStatus getMasterFile (int sequenceId, char **data, size_t *len);
-    asynStatus getDataFile   (int sequenceId, int nr, char **data, size_t *len);
-    //asynStatus parseHdf    (char* buffer, size_t numBytes);
-
-    template <typename Type>
-        asynStatus fillArray(hid_t dataid,std::vector<Type> img,int img_nr_low,int img_nr_high);
-
-    asynStatus imgCopy(char *pbuffer, size_t numbytes);
-
-    template <typename Type>
-      Type getPixelValue(size_t pix_x, size_t pix_y, const std::vector<Type> &img,  const std::vector<hsize_t> &dim);
-
-
     asynStatus parsePutResponse (struct response response);
 
+    /*
+     * Nice wrappers to set/get parameters
+     */
     asynStatus getString  (eigerSys sys, const char *param, char *value,
             size_t len);
     asynStatus getInt     (eigerSys sys, const char *param, int *value);
@@ -241,19 +237,511 @@ protected:
     asynStatus putDouble  (eigerSys sys, const char *param, double value);
     asynStatus putBool    (eigerSys sys, const char *param, bool value);
 
-    asynStatus command    (const char *name, double timeout = DEF_TIMEOUT_CMD);
+    /*
+     * Send a command to the detector
+     */
+    asynStatus command (const char *name, double timeout = DEF_TIMEOUT_CMD);
 
+    /*
+     * File getters
+     */
+    asynStatus getFileSize   (const char *remoteFile, size_t *len);
+    asynStatus getFile       (const char *remoteFile, char **data, size_t *len);
+    asynStatus getMasterFile (int sequenceId, char **data, size_t *len);
+    asynStatus getDataFile   (int sequenceId, int nr, char **data, size_t *len);
+
+    /*
+     * Arm, trigger and disarm
+     */
+    asynStatus capture (void);
+
+    /*
+     * Download detector files locally and, at the same time, publish as
+     * NDArrays
+     */
+    asynStatus downloadAndPublish (void);
+
+    /*
+     * HDF5 helpers
+     */
+    asynStatus readH5Attr   (hid_t entry, const char *name, int *value);
+    asynStatus parseH5File  (char *buf, size_t len);
+    asynStatus fillNDArrays (hid_t dId, size_t nimages);
+
+    /*
+     * Read some detector status parameters
+     */
     asynStatus eigerStatus (void);
-
-    /* Our data */
-    epicsEventId startEventId;
-    epicsEventId stopEventId;
-    char toServer[MAX_MESSAGE_SIZE];
-    char fromServer[MAX_MESSAGE_SIZE];
-    asynUser *pasynUserServer;
 };
 
 #define NUM_EIGER_PARAMS ((int)(&LAST_EIGER_PARAM - &FIRST_EIGER_PARAM + 1))
+
+static void eigerTaskC (void *drvPvt)
+{
+    eigerDetector *pPvt = (eigerDetector *)drvPvt;
+    pPvt->eigerTask();
+}
+
+/** Constructor for Eiger driver; most parameters are simply passed to
+  * ADDriver::ADDriver.
+  * After calling the base class constructor this method creates a thread to
+  * collect the detector data, and sets reasonable default values for the
+  * parameters defined in this class, asynNDArrayDriver, and ADDriver.
+  * \param[in] portName The name of the asyn port driver to be created.
+  * \param[in] serverPort The name of the asyn port previously created with
+  *            drvAsynIPPortConfigure to communicate with server.
+  * \param[in] portName The name of the asyn port driver to be created.
+  * \param[in] maxBuffers The maximum number of NDArray buffers that the
+  *            NDArrayPool for this driver is allowed to allocate. Set this to
+  *            -1 to allow an unlimited number of buffers.
+  * \param[in] maxMemory The maximum amount of memory that the NDArrayPool for
+  *            this driver is allowed to allocate. Set this to -1 to allow an
+  *            unlimited amount of memory.
+  * \param[in] priority The thread priority for the asyn port driver thread if
+  *            ASYN_CANBLOCK is set in asynFlags.
+  * \param[in] stackSize The stack size for the asyn port driver thread if
+  *            ASYN_CANBLOCK is set in asynFlags.
+  */
+eigerDetector::eigerDetector (const char *portName, const char *serverPort,
+        int maxBuffers, size_t maxMemory, int priority,
+        int stackSize)
+
+    : ADDriver(portName, 1, NUM_EIGER_PARAMS, maxBuffers, maxMemory,
+               0, 0,             /* No interfaces beyond ADDriver.cpp */
+               ASYN_CANBLOCK,    /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
+               1,                /* autoConnect=1 */
+               priority, stackSize)
+{
+    int status = asynSuccess;
+    const char *functionName = "eigerDetector";
+
+    /* Connect to REST server */
+    status = pasynOctetSyncIO->connect(serverPort, 0, &pasynUserServer, NULL);
+
+    /* Create the epicsEvents for signaling to the eiger task when acquisition
+     * starts and stops */
+    startEventId = epicsEventCreate(epicsEventEmpty);
+    if (!startEventId)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s epicsEventCreate failure for start event\n",
+                driverName, functionName);
+        return;
+    }
+
+    stopEventId = epicsEventCreate(epicsEventEmpty);
+    if (!stopEventId)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s epicsEventCreate failure for stop event\n",
+                driverName, functionName);
+        return;
+    }
+
+    createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
+    createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
+    createParam(EigerFWImageNrStartString,asynParamInt32, &EigerFWImageNrStart);
+    createParam(EigerFWModeString,        asynParamInt32, &EigerFWMode);
+    createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
+    createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
+
+    createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
+    createParam(EigerBeamYString,         asynParamFloat64, &EigerBeamY);
+    createParam(EigerDetDistString,       asynParamFloat64, &EigerDetDist);
+    createParam(EigerFlatfieldString,     asynParamInt32,   &EigerFlatfield);
+    createParam(EigerPhotonEnergyString,  asynParamFloat64, &EigerPhotonEnergy);
+    createParam(EigerThresholdString,     asynParamFloat64, &EigerThreshold);
+    createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
+
+    /* Detector Status Parameters */
+    createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
+    createParam(EigerThHumid0String,      asynParamFloat64, &EigerThHumid0);
+
+    /* Other parameters */
+    createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
+    createParam(EigerSequenceIdString,    asynParamInt32,   &EigerSequenceId);
+
+    status = asynSuccess;
+
+    /* Set some default values for parameters */
+    char desc[MAX_BUF_SIZE] = "";
+    char *manufacturer, *space, *model;
+
+    if(getString(SSDetConfig, "description", desc, sizeof(desc)))
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_WARNING,
+                "%s:%s Eiger seems to be uninitialized\n"
+                "Initializing... (may take a while)\n",
+                driverName, functionName);
+
+        if(command("initialize", DEF_TIMEOUT_INIT))
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s Eiger FAILED TO INITIALIZE\n",
+                    driverName, functionName);
+            return;
+        }
+
+        asynPrint(pasynUserSelf, ASYN_TRACE_WARNING,
+                    "%s:%s Eiger initialized\n",
+                    driverName, functionName);
+    }
+
+    status = getString(SSDetConfig, "description", desc, sizeof(desc));
+
+    // Assume 'description' is of the form 'Dectris Eiger 1M'
+    space = strchr(desc, ' ');
+    *space = '\0';
+    manufacturer = desc;
+    model = space + 1;
+
+    status |= setStringParam (ADManufacturer, manufacturer);
+    status |= setStringParam (ADModel, model);
+
+    int maxSizeX, maxSizeY;
+    status |= getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
+    status |= getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
+
+    status |= setIntegerParam(ADMaxSizeX, maxSizeX);
+    status |= setIntegerParam(ADMaxSizeY, maxSizeY);
+    status |= setIntegerParam(ADSizeX, maxSizeX);
+    status |= setIntegerParam(ADSizeY, maxSizeY);
+    status |= setIntegerParam(NDArraySizeX, maxSizeX);
+    status |= setIntegerParam(NDArraySizeY, maxSizeY);
+
+    // Only internal trigger is supported at this time
+    status |= setIntegerParam(ADTriggerMode, TMInternal);
+    status |= putString(SSDetConfig, "trigger_mode", eigerTMStr[TMInternal]);
+
+    char fwMode[MAX_BUF_SIZE];
+    status |= getString(SSFWConfig, "mode", fwMode, sizeof(fwMode));
+    status |= setIntegerParam(EigerFWMode, (int)(fwMode[0] == 'e'));
+
+    status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
+    status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
+    status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
+    status |= getDoubleP(SSDetConfig, "photon_energy",    EigerPhotonEnergy);
+    status |= getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
+
+    status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
+    status |= getIntP   (SSFWConfig, "image_nr_start",     EigerFWImageNrStart);
+    status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
+    status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
+
+    status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
+    status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
+    status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+    status |= getBoolP  (SSDetConfig, "flatfield_correction_applied", EigerFlatfield);
+    status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
+    status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
+
+    status |= getDoubleP(SSDetStatus, "board_000/th0_temp",     EigerThTemp0);
+    status |= getDoubleP(SSDetStatus, "board_000/th0_humidity", EigerThHumid0);
+
+    status |= setIntegerParam(NDArraySize, 0);
+    status |= setIntegerParam(NDDataType,  NDUInt32);
+    status |= setIntegerParam(ADImageMode, ADImageMultiple);
+    status |= setIntegerParam(EigerArmed,  0);
+    status |= setIntegerParam(EigerSequenceId,  0);
+
+    callParamCallbacks();
+
+    // Auto Summation should always be true (Eiger API Reference v1.1pre)
+    status |= putBool(SSDetConfig, "auto_summation", true);
+
+    if (status)
+    {
+        printf("%s: unable to set camera parameters\n", functionName);
+        return;
+    }
+
+    /* Create the thread that updates the images */
+    status = (epicsThreadCreate("eigerDetTask", epicsThreadPriorityMedium,
+            epicsThreadGetStackSize(epicsThreadStackMedium),
+            (EPICSTHREADFUNC)eigerTaskC, this) == NULL);
+
+    if (status)
+    {
+        printf("%s:%s epicsThreadCreate failure for image task\n",
+            driverName, functionName);
+        return;
+    }
+}
+
+/** Called when asyn clients call pasynInt32->write().
+  * This function performs actions for some parameters, including ADAcquire,
+  * ADTriggerMode, etc.
+  * For all parameters it sets the value in the parameter library and calls any
+  * registered callbacks..
+  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+  * \param[in] value Value to write. */
+asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
+{
+    int function = pasynUser->reason;
+    asynStatus status = asynSuccess;
+    const char *functionName = "writeInt32";
+    int adstatus;
+
+    if (function == EigerFWClear)
+        status = putInt(SSFWConfig, "clear", 1);
+    else if (function == EigerFWCompression)
+        status = putBool(SSFWConfig, "compression_enabled", (bool)value);
+    else if (function == EigerFWImageNrStart)
+        status = putInt(SSFWConfig, "image_nr_start", value);
+    else if (function == EigerFWMode)
+        status = putString(SSFWConfig, "mode", eigerFWModeStr[value]);
+    else if (function == EigerFWNImgsPerFile)
+        status = putInt(SSFWConfig, "nimages_per_file", value);
+    else if (function == EigerFlatfield)
+        status = putBool(SSDetConfig, "flatfield_correction_applied", (bool)value);
+    else if (function == ADTriggerMode)
+    {
+        value = TMInternal; // only supported trigger mode
+        //status = putString(SSDetConfig, "trigger_mode", eigerTMStr[value]);
+    }
+    else if (function == ADNumImages)
+        status = putInt(SSDetConfig, "nimages", value);
+    else if (function == ADReadStatus)
+        status = eigerStatus();
+    else if (function == ADAcquire)
+    {
+        getIntegerParam(ADStatus, &adstatus);
+
+        if (value && (adstatus == ADStatusIdle || adstatus == ADStatusError ||
+                adstatus == ADStatusAborted))
+        {
+            setStringParam(ADStatusMessage, "Acquiring data");
+            setIntegerParam(ADStatus, ADStatusAcquire);
+        }
+
+        if (!value && adstatus == ADStatusAcquire)
+        {
+            setStringParam(ADStatusMessage, "Acquisition aborted");
+            setIntegerParam(ADStatus, ADStatusAborted);
+        }
+    }
+    else if(function < FIRST_EIGER_PARAM)
+        status = ADDriver::writeInt32(pasynUser, value);
+
+    if(status)
+    {
+        asynPrint(pasynUser, ASYN_TRACE_ERROR,
+              "%s:%s: error, status=%d function=%d, value=%d\n",
+              driverName, functionName, status, function, value);
+        return status;
+    }
+
+    status = setIntegerParam(function, value);
+    callParamCallbacks();
+
+    // Effectively start/stop acquisition if that's the case
+    if (function == ADAcquire)
+    {
+        if (value && (adstatus == ADStatusIdle || adstatus == ADStatusError ||
+                adstatus == ADStatusAborted))
+        {
+            epicsEventSignal(this->startEventId);
+        }
+        else if (!value && (adstatus == ADStatusAcquire))
+        {
+            epicsEventSignal(this->stopEventId);
+        }
+    }
+
+    if (status)
+        asynPrint(pasynUser, ASYN_TRACE_ERROR,
+              "%s:%s: error, status=%d function=%d, value=%d\n",
+              driverName, functionName, status, function, value);
+    else
+        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+              "%s:%s: function=%d, value=%d\n",
+              driverName, functionName, function, value);
+
+    return status;
+}
+
+/** Called when asyn clients call pasynFloat64->write().
+  * This function performs actions for some parameters, including ADAcquireTime,
+  * ADGain, etc.
+  * For all parameters it sets the value in the parameter library and calls any
+  * registered callbacks..
+  * \param[in] pasynUser pasynUser structure that encodes the reason and
+  *            address.
+  * \param[in] value Value to write. */
+asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
+{
+    int function = pasynUser->reason;
+    asynStatus status = asynSuccess;
+    const char *functionName = "writeFloat64";
+
+    if (function == EigerBeamX)
+        status = putDouble(SSDetConfig, "beam_center_x", value);
+    else if (function == EigerBeamY)
+        status = putDouble(SSDetConfig, "beam_center_y", value);
+    else if (function == EigerDetDist)
+        status = putDouble(SSDetConfig, "detector_distance", value);
+    else if (function == EigerPhotonEnergy)
+        status = putDouble(SSDetConfig, "photon_energy", value);
+    else if (function == EigerThreshold)
+        status = putDouble(SSDetConfig, "threshold_energy", value);
+    else if (function == EigerWavelength)
+        status = putDouble(SSDetConfig, "wavelength", value);
+    else if (function == ADAcquireTime)
+        status = putDouble(SSDetConfig, "count_time", value);
+    else if (function == ADAcquirePeriod)
+        status = putDouble(SSDetConfig, "frame_time", value);
+    else if (function < FIRST_EIGER_PARAM)
+        status = ADDriver::writeFloat64(pasynUser, value);
+
+    if (status)
+    {
+        asynPrint(pasynUser, ASYN_TRACE_ERROR,
+              "%s:%s error, status=%d function=%d, value=%f\n",
+              driverName, functionName, status, function, value);
+    }
+    else
+    {
+        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+              "%s:%s: function=%d, value=%f\n",
+              driverName, functionName, function, value);
+
+        /* Do callbacks so higher layers see any changes */
+        setDoubleParam(function, value);
+        callParamCallbacks();
+    }
+    return status;
+}
+
+/** Called when asyn clients call pasynOctet->write().
+  * This function performs actions for some parameters, including eigerBadPixelFile, ADFilePath, etc.
+  * For all parameters it sets the value in the parameter library and calls any registered callbacks..
+  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+  * \param[in] value Address of the string to write.
+  * \param[in] nChars Number of characters to write.
+  * \param[out] nActual Number of characters actually written. */
+asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
+                                    size_t nChars, size_t *nActual)
+{
+    int function = pasynUser->reason;
+    asynStatus status = asynSuccess;
+    const char *functionName = "writeOctet";
+
+    if (function == EigerFWNamePattern)
+        putString(SSFWConfig, "name_pattern", value);
+    else if (function < FIRST_EIGER_PARAM)
+        status = ADDriver::writeOctet(pasynUser, value, nChars, nActual);
+
+    status = setStringParam(function, value);
+    callParamCallbacks();
+
+    if (status)
+        asynPrint(pasynUser, ASYN_TRACE_ERROR,
+                  "%s:%s: status=%d, function=%d, value=%s",
+                  driverName, functionName, status, function, value);
+    else
+        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+              "%s:%s: function=%d, value=%s\n",
+              driverName, functionName, function, value);
+
+    *nActual = nChars;
+    return status;
+}
+
+/** Report status of the driver.
+  * Prints details about the driver if details>0.
+  * It then calls the ADDriver::report() method.
+  * \param[in] fp File pointed passed by caller where the output is written to.
+  * \param[in] details If >0 then driver details are printed.
+  */
+void eigerDetector::report (FILE *fp, int details)
+{
+    fprintf(fp, "Eiger detector %s\n", this->portName);
+    if (details > 0) {
+        int nx, ny, dataType;
+        getIntegerParam(ADSizeX, &nx);
+        getIntegerParam(ADSizeY, &ny);
+        getIntegerParam(NDDataType, &dataType);
+        fprintf(fp, "  NX, NY:            %d  %d\n", nx, ny);
+        fprintf(fp, "  Data type:         %d\n", dataType);
+    }
+    /* Invoke the base class method */
+    ADDriver::report(fp, details);
+}
+
+/** This thread controls acquisition, reads image files to get the image data,
+  * and does the callbacks to send it to higher layers */
+void eigerDetector::eigerTask (void)
+{
+    const char *functionName = "eigerTask";
+    int status = asynSuccess;
+
+    this->lock();
+
+    for(;;)
+    {
+        int acquire;
+        getIntegerParam(ADAcquire, &acquire);
+
+        if (!acquire)
+        {
+            if (!status)
+                setStringParam(ADStatusMessage, "Waiting for acquire command");
+
+            callParamCallbacks();
+
+            this->unlock(); // Wait for semaphore unlocked
+
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                    "%s:%s: waiting for acquire to start\n",
+                    driverName, functionName);
+
+            status = epicsEventWait(this->startEventId);   // Wait for semaphore
+            this->lock();
+
+            acquire = 1;
+        }
+
+        /*
+         * Acquire
+         */
+        if((status = capture()))
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: underlying capture failed\n",
+                    driverName, functionName);
+            acquire = 0;
+            continue;
+        }
+
+        /*
+         * Download and publish
+         */
+
+        int arrayCallbacks;
+        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+        if (arrayCallbacks)
+            if((status = downloadAndPublish()))
+            {
+                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                        "%s:%s: underlying downloadAndPublish failed\n",
+                        driverName, functionName);
+                setIntegerParam(ADStatus, ADStatusAborted);
+                setStringParam(ADStatusMessage, "Download failed\n");
+            }
+
+        /* If everything was ok, set the status back to idle */
+        int statusParam = 0;
+        getIntegerParam(ADStatus, &statusParam);
+
+        if (!status)
+            setIntegerParam(ADStatus, ADStatusIdle);
+        else if (statusParam != ADStatusAborted)
+            setIntegerParam(ADStatus, ADStatusError);
+
+        setIntegerParam(ADAcquire, 0);
+        callParamCallbacks();
+    }
+}
 
 asynStatus eigerDetector::doRequest (size_t requestSize,
         struct response *response, double timeout)
@@ -446,155 +934,6 @@ asynStatus eigerDetector::put (eigerSys sys, const char *param,
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
             "%s::%s(%s), unable to parse response\n",
             driverName, functionName, param);
-        return status;
-    }
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getFileSize (const char *remoteFile, size_t *len)
-{
-    const char *functionName = "getFileSize";
-    const char *reqFmt = REQUEST_HEAD;
-    const char *url = eigerSysStr[SSData];
-    asynStatus status;
-    size_t reqSize;
-    struct response response;
-
-    reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile);
-
-    if((status = doRequest(reqSize, &response)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), HEAD request failed\n",
-                driverName, functionName, remoteFile);
-        return status;
-    }
-
-    if(response.code != 200)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), server returned error code %d\n",
-                driverName, functionName, remoteFile, response.code);
-        return asynError;
-    }
-
-    *len = response.contentLength;
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
-        size_t *len)
-{
-    const char *functionName = "getFile";
-    const char *reqFmt = REQUEST_GET_PARTIAL;
-    const char *url = eigerSysStr[SSData];
-    asynStatus status;
-    size_t reqSize;
-    struct response response;
-    size_t remaining;
-
-    *len = 0;
-
-    if((status = getFileSize(remoteFile, &remaining)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying getFileSize failed\n",
-                driverName, functionName, remoteFile);
-        return asynError;
-    }
-
-    *data = (char*)malloc(remaining);
-    if(!*data)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), malloc(%lu) failed\n",
-                driverName, functionName, remoteFile, remaining);
-        return asynError;
-    }
-
-    printf("Will download %s: %lu bytes\n", remoteFile, remaining);
-
-    char *dataPtr = *data;
-    while(remaining)
-    {
-        reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile,
-                *len, *len + CHUNK_SIZE - 1);
-
-        if((status = doRequest(reqSize, &response)))
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), partial GET request failed\n",
-                    driverName, functionName, remoteFile);
-            return status;
-        }
-
-        if(response.code != 206)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), server returned error code %d\n",
-                    driverName, functionName, remoteFile, response.code);
-            return asynError;
-        }
-
-        memcpy(dataPtr, response.data, response.size);
-
-        dataPtr += response.size;
-        *len += response.size;
-        remaining -= response.size;
-
-        //printf("Got %lu, remaining %lu\n", *len, remaining);
-    }
-
-    //printf("Done\n");
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getMasterFile (int sequenceId, char **data,
-        size_t *len)
-{
-    const char *functionName = "getMasterFile";
-    asynStatus status;
-    char pattern[MAX_BUF_SIZE];
-    getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
-    char *id = strstr(pattern, ID_STR);
-    *id = '\0';
-
-    char fileName[MAX_BUF_SIZE];
-    sprintf(fileName, "%s%d%s_master.h5", pattern, sequenceId,
-            id + ID_LEN);
-
-    if((status = getFile(fileName, data, len)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s::%s, underlying getFile(%s) failed\n",
-            driverName, functionName, fileName);
-        return status;
-    }
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getDataFile (int sequenceId, int nr, char **data,
-        size_t *len)
-{
-    const char *functionName = "getDataFile";
-    asynStatus status;
-    char pattern[MAX_BUF_SIZE];
-    getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
-    char *id = strstr(pattern, ID_STR);
-    *id = '\0';
-
-    char filename[MAX_BUF_SIZE];
-    sprintf(filename, "%s%d%s_data_%06d.h5", pattern, sequenceId,
-            id + ID_LEN, nr);
-
-    if((status = getFile(filename, data, len)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s::%s, underlying getFile(%s) failed\n",
-            driverName, functionName, filename);
         return status;
     }
 
@@ -872,218 +1211,561 @@ asynStatus eigerDetector::command (const char *name, double timeout)
     return status;
 }
 
-static void eigerTaskC(void *drvPvt)
+asynStatus eigerDetector::getFileSize (const char *remoteFile, size_t *len)
 {
-    eigerDetector *pPvt = (eigerDetector *)drvPvt;
+    const char *functionName = "getFileSize";
+    const char *reqFmt = REQUEST_HEAD;
+    const char *url = eigerSysStr[SSData];
+    asynStatus status;
+    size_t reqSize;
+    struct response response;
 
-    pPvt->eigerTask();
+    size_t retries = GET_FILE_RETRIES;
+
+    reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile);
+
+    while(retries > 0)
+    {
+        if((status = doRequest(reqSize, &response)))
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s::%s(%s), HEAD request failed\n",
+                    driverName, functionName, remoteFile);
+            return status;
+        }
+
+        if(response.code == 404)
+        {
+            epicsThreadSleep(.01);
+            retries -= 1;
+            continue;
+        }
+
+        if(response.code != 200)
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s::%s(%s), server returned error code %d\n",
+                    driverName, functionName, remoteFile, response.code);
+            return asynError;
+        }
+        break;
+    }
+
+    if(!retries)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s::%s(%s), server returned error code %d %d times\n",
+                driverName, functionName, remoteFile, response.code,
+                GET_FILE_RETRIES);
+        return asynError;
+    }
+
+    *len = response.contentLength;
+    return asynSuccess;
 }
 
-/** This thread controls acquisition, reads image files to get the image data,
-  * and does the callbacks to send it to higher layers */
-void eigerDetector::eigerTask()
+asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
+        size_t *len)
 {
-    const char *functionName = "eigerTask";
-    int status = asynSuccess;
-    int numImages;
-    int acquire;
-    double acquireTime, acquirePeriod;
-    epicsTimeStamp startTime;
-    int arrayCallbacks;
-    int aborted = 0;
-    int statusParam = 0;
+    const char *functionName = "getFile";
+    const char *reqFmt = REQUEST_GET_PARTIAL;
+    const char *url = eigerSysStr[SSData];
+    asynStatus status;
+    size_t reqSize;
+    struct response response;
+    size_t remaining;
 
-    char *master = NULL, *data = NULL;
-    size_t masterLen, dataLen;
+    *len = 0;
 
-    this->lock();
-
-    // Loop forever
-    for(;;)
+    if((status = getFileSize(remoteFile, &remaining)))
     {
-        // Is acquisition active?
-        getIntegerParam(ADAcquire, &acquire);
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s::%s(%s), underlying getFileSize failed\n",
+                driverName, functionName, remoteFile);
+        return asynError;
+    }
 
-        /* If we are not acquiring then wait for a semaphore that is given when
-         * acquisition is started */
-        if (aborted || !acquire)
+    *data = (char*)malloc(remaining);
+    if(!*data)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s::%s(%s), malloc(%lu) failed\n",
+                driverName, functionName, remoteFile, remaining);
+        return asynError;
+    }
+
+    printf("Will download %s: %lu bytes\n", remoteFile, remaining);
+
+    char *dataPtr = *data;
+    while(remaining)
+    {
+        reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile,
+                *len, *len + CHUNK_SIZE - 1);
+
+        if((status = doRequest(reqSize, &response)))
         {
-            /* Only set the status message if we didn't encounter any errors
-             * last time, so we don't overwrite the  error message */
-            if (!status)
-                setStringParam(ADStatusMessage, "Waiting for acquire command");
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s::%s(%s), partial GET request failed\n",
+                    driverName, functionName, remoteFile);
 
-            callParamCallbacks();
-
-            /* Release the lock while we wait for an event that says acquire has
-             * started, then lock again */
-            this->unlock();
-
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                    "%s:%s: waiting for acquire to start\n",
-                    driverName, functionName);
-
-            status = epicsEventWait(this->startEventId);
-            this->lock();
-
-            aborted = 0;
-            acquire = 1;
+            free(*data);
+            *data = NULL;
+            return status;
         }
 
-        // We are acquiring.
-        // Get the current time
-        epicsTimeGetCurrent(&startTime);
-
-        // Get the acquisition parameters
-        getDoubleParam(ADAcquireTime, &acquireTime);
-        getDoubleParam(ADAcquirePeriod, &acquirePeriod);
-        getIntegerParam(ADNumImages, &numImages);
-
-        setIntegerParam(ADStatus, ADStatusAcquire);
-        setStringParam(ADStatusMessage, "Arming the detector (takes a while)");
-        callParamCallbacks();
-
-        // Open shutter
-        setShutter(1);
-
-        // Arm the detector
-        if((status = command("arm", DEF_TIMEOUT_ARM)))
+        if(response.code != 206)
         {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                    "%s:%s: failed to arm the detector\n",
-                    driverName, functionName);
-            setIntegerParam(ADAcquire, 0);
-            setIntegerParam(ADStatus, ADStatusAborted);
-            setStringParam(ADStatusMessage, "Failed to arm the detector");
-            setShutter(0);
-            callParamCallbacks();
-            continue;
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s::%s(%s), server returned error code %d\n",
+                    driverName, functionName, remoteFile, response.code);
+            return asynError;
         }
 
-        /* Set the armed flag */
-        setIntegerParam(EigerArmed, 1);
-        setStringParam(ADStatusMessage, "Triggering the detector");
-        callParamCallbacks();
+        memcpy(dataPtr, response.data, response.size);
 
-        /* Actually acquire the image(s) */
-        if((status = command("trigger", acquirePeriod*numImages+10.0)))
+        dataPtr += response.size;
+        *len += response.size;
+        remaining -= response.size;
+    }
+
+    return asynSuccess;
+}
+
+asynStatus eigerDetector::getMasterFile (int sequenceId, char **data,
+        size_t *len)
+{
+    const char *functionName = "getMasterFile";
+    asynStatus status;
+    char pattern[MAX_BUF_SIZE];
+    getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
+    char *id = strstr(pattern, ID_STR);
+    *id = '\0';
+
+    char fileName[MAX_BUF_SIZE];
+    sprintf(fileName, "%s%d%s_master.h5", pattern, sequenceId,
+            id + ID_LEN);
+
+    if((status = getFile(fileName, data, len)))
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+            "%s::%s, underlying getFile(%s) failed\n",
+            driverName, functionName, fileName);
+        return status;
+    }
+
+    return asynSuccess;
+}
+
+asynStatus eigerDetector::getDataFile (int sequenceId, int nr, char **data,
+        size_t *len)
+{
+    const char *functionName = "getDataFile";
+    asynStatus status;
+    char pattern[MAX_BUF_SIZE];
+    getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
+    char *id = strstr(pattern, ID_STR);
+    *id = '\0';
+
+    char filename[MAX_BUF_SIZE];
+    sprintf(filename, "%s%d%s_data_%06d.h5", pattern, sequenceId,
+            id + ID_LEN, nr);
+
+    if((status = getFile(filename, data, len)))
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+            "%s::%s, underlying getFile(%s) failed\n",
+            driverName, functionName, filename);
+        return status;
+    }
+
+    return asynSuccess;
+}
+
+asynStatus eigerDetector::capture (void)
+{
+    const char *functionName = "capture";
+    asynStatus status;
+    asynStatus retStatus = asynSuccess;
+
+    double acquirePeriod, triggerTimeout;
+    int numImages;
+
+    getDoubleParam(ADAcquirePeriod, &acquirePeriod);
+    getIntegerParam(ADNumImages, &numImages);
+    triggerTimeout = acquirePeriod*numImages + 10.0;
+
+    // Open shutter
+    setShutter(1);
+
+    setIntegerParam(ADStatus, ADStatusAcquire);
+    setStringParam(ADStatusMessage, "Arming the detector (takes a while)");
+    callParamCallbacks();
+
+    // Arm the detector
+    if((status = command("arm", DEF_TIMEOUT_ARM)))
+    {
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s: failed to arm the detector\n",
+                driverName, functionName);
+
+        retStatus = status;
+        setIntegerParam(ADStatus, ADStatusAborted);
+        setStringParam(ADStatusMessage, "Failed to arm the detector");
+        goto closeShutter;
+    }
+
+    // Set armed flag
+    setIntegerParam(EigerArmed, 1);
+    setStringParam(ADStatusMessage, "Triggering the detector");
+    callParamCallbacks();
+
+    // Actually acquire the image(s)
+    if((status = command("trigger", triggerTimeout)))
+    {
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s: failed to trigger the detector\n",
+                driverName, functionName);
+
+        retStatus = status;
+        setIntegerParam(ADStatus, ADStatusAborted);
+        setStringParam(ADStatusMessage, "Failed to trigger the detector");
+        // continue to disarm
+    }
+
+    // Image(s) acquired or aborted. Disarm the detector
+    if((status = command("disarm")))
+    {
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s: failed to disarm the detector\n",
+                driverName, functionName);
+
+        retStatus = status;
+        setIntegerParam(ADStatus, ADStatusAborted);
+        setStringParam(ADStatusMessage, "Failed to disarm the detector");
+        goto closeShutter;
+    }
+
+    setIntegerParam(EigerArmed, 0);
+
+closeShutter:
+    setIntegerParam(ADAcquire, 0);
+    setShutter(0);
+    callParamCallbacks();
+    return retStatus;
+}
+
+asynStatus eigerDetector::downloadAndPublish (void)
+{
+    const char *functionName = "downloadAndPublish";
+    asynStatus status = asynSuccess;
+
+    int numImages, sequenceId, numImagesPerFile, nrStart, nFiles;
+
+    getIntegerParam(ADNumImages,         &numImages);
+    getIntegerParam(EigerSequenceId,     &sequenceId);
+    getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
+    getIntegerParam(EigerFWImageNrStart, &nrStart);
+
+    setIntegerParam(ADStatus, ADStatusReadout);
+
+    // Wait for file to exist
+    // TODO: Is this the best way?
+    char buf[MAX_BUF_SIZE];
+    do
+    {
+        getString(SSFWStatus, "state", buf, sizeof(buf));
+    }while(buf[0] == 'a');
+
+    /*setStringParam(ADStatusMessage, "Downloading master file");
+    callParamCallbacks();
+
+    char *master;
+    size_t masterLen;
+    if((status = getMasterFile(sequenceId, &master, &masterLen)))
+    {
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s: failed to get master file\n",
+                driverName, functionName);
+
+        return status; //TODO: what?
+    }
+
+    if(master)
+    {
+        free(master);
+        master = NULL;
+    }*/
+
+    setStringParam(ADStatusMessage, "Downloading data files");
+    callParamCallbacks();
+
+    nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile));
+
+    for(int i = 0; i < nFiles; ++i)
+    {
+        char *data;
+        size_t dataLen;
+
+        if((status = getDataFile(sequenceId, i + nrStart, &data, &dataLen)))
         {
             asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: failed to trigger the detector\n",
+                    "%s:%s: failed to get data file %d\n",
+                    driverName, functionName, i + nrStart);
+            break;
+        }
+        printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
+
+        // Copy from memory to NDArrays
+        if((status = parseH5File(data, dataLen)))
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: underlying parseH5File failed\n",
                     driverName, functionName);
-            setIntegerParam(ADAcquire, 0);
-            setIntegerParam(ADStatus, ADStatusAborted);
-            setStringParam(ADStatusMessage, "Failed to trigger the detector");
-            status = command("disarm");
-            setIntegerParam(EigerArmed, 0);
-            setShutter(0);
-            callParamCallbacks();
-            continue;
         }
 
-        /* Image(s) acquired. Disarm the detector */
-        if((status = command("disarm")))
+        if(data)
         {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                    "%s:%s: failed to disarm the detector\n",
+            free(data);
+            data = NULL;
+        }
+
+        if(status)
+            break;
+    }
+
+    return status;
+}
+
+asynStatus eigerDetector::readH5Attr (hid_t entry, const char *name, int *value)
+{
+    const char *functionName = "readH5Attr";
+    asynStatus status = asynSuccess;
+
+    htri_t exists = H5Aexists_by_name(entry, "data", name, H5P_DEFAULT);
+    if(exists <= 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s couldn't find '%s' attribute\n",
+                driverName, functionName, name);
+        return asynError;
+    }
+
+    hid_t id = H5Aopen_by_name  (entry, "data", name, H5P_DEFAULT, H5P_DEFAULT);
+    if(id < 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s couldn't open '%s' attribute\n",
+                driverName, functionName, name);
+        return asynError;
+    }
+
+    hid_t type = H5Aget_type(id);
+    if(H5Aread (id, type, value) < 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s couldn't read '%s' attribute\n",
+                driverName, functionName, name);
+        status = asynError;
+    }
+
+    H5Aclose(id);
+    return status;
+}
+
+asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
+{
+    const char *functionName = "imgCopy";
+    asynStatus status = asynSuccess;
+
+    hid_t fileId, groupId, dataId;
+
+    unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
+
+    // Open h5 file from memory
+    fileId = H5LTopen_file_image(buf, bufLen, flags);
+    if(fileId < 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s unable to open memory as file\n",
+                driverName, functionName);
+        return asynError;
+    }
+
+    //Access /entry group inside h5
+    groupId = H5Gopen2(fileId, "/entry", H5P_DEFAULT);
+    if(groupId < 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s unable to open 'entry' group\n",
+                driverName, functionName);
+        status = asynError;
+        goto closeFile;
+    }
+
+    int image_nr_low;
+    if((status = readH5Attr(groupId, "image_nr_low", &image_nr_low)))
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s underlying readH5Attr failed\n",
+                driverName, functionName);
+        goto closeGroup;
+    }
+
+    int image_nr_high;
+    if((status = readH5Attr(groupId, "image_nr_high", &image_nr_high)))
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s underlying readH5Attr failed\n",
+                driverName, functionName);
+        goto closeGroup;
+    }
+
+    // Access dataset 'data'
+    dataId = H5Dopen2(groupId, "data", H5P_DEFAULT);
+    if(dataId < 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s unable to open 'data' dataset\n",
+                driverName, functionName);
+        status = asynError;
+        goto closeGroup;
+    }
+
+    if((status = fillNDArrays(dataId, (image_nr_high-image_nr_low)+1)))
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s underlying fillNDArrays failed\n",
+                driverName, functionName);
+    }
+
+    H5Dclose(dataId);
+closeGroup:
+    H5Gclose(groupId);
+closeFile:
+    H5Fclose(fileId);
+    return status;
+}
+
+asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
+{
+    const char *functionName = "fillArray";
+    asynStatus status = asynSuccess;
+
+    epicsTimeStamp startTime;
+
+    hid_t dSpace = H5Dget_space(dId);
+    if(dSpace < 0)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s couldn't get dataspace\n",
+                driverName, functionName);
+        return asynError;
+    }
+
+    int rank = H5Sget_simple_extent_ndims(dSpace);
+    if(rank < 0 || rank != 3)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s couldn't get rank or rank invalid (rank=%d)\n",
+                driverName, functionName, rank);
+        return asynError;
+    }
+
+    hsize_t count[3];
+    hsize_t maxdims[3];
+    H5Sget_simple_extent_dims(dSpace, count, maxdims);
+    count[0] = 1;
+
+    hid_t mSpace = H5Screate_simple(3, count, NULL);
+
+    hsize_t offset[3] = {0,0,0};
+    for(offset[0] = 0; offset[0] < nimages; offset[0]++)
+    {
+        size_t dims[2] = {count[1], count[2]};
+        NDDataType_t ndType;
+        NDArray *pImage;
+
+        hid_t dTypeId = H5Dget_type(dId);
+        if(H5Tequal(dTypeId, H5T_NATIVE_UINT32) > 0)
+            ndType = NDUInt32;
+        else if(H5Tequal(dTypeId, H5T_NATIVE_UINT16) > 0)
+            ndType = NDUInt16;
+        else
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s invalid data type\n",
                     driverName, functionName);
-            continue;
+            status = asynError;
+            goto end;
         }
-        setIntegerParam(EigerArmed, 0);
-        setShutter(0);
 
-        char buf[MAX_BUF_SIZE];
-        do
+        pImage = pNDArrayPool->alloc(2, dims, ndType, 0, NULL);
+
+        // Select the hyperslab
+        if(H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL, count,
+                NULL) < 0)
         {
-            getString(SSFWStatus, "state", buf, sizeof(buf));
-            //printf("FileWriter state = %s\n", buf);
-        }while(buf[0] == 'a');
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s couldn't select hyperslab\n",
+                    driverName, functionName);
+            status = asynError;
+            pImage->release();
+            goto end;
+        }
 
-        //epicsThreadSleep(1.0);  // UGH
-        // At this point all files are ready to be downloaded
+        // the saved datatype in the hdf5 file
+        hid_t dType = H5Dget_type(dId);
 
-        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-
-        if (arrayCallbacks)
+        // and finally read the image
+        if(H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData) < 0)
         {
-            /* Download the result */
-            int sequenceId, numImagesPerFile, nrStart, nFiles;
-
-            getIntegerParam(EigerSequenceId, &sequenceId);
-            getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
-            getIntegerParam(EigerFWImageNrStart, &nrStart);
-
-            setIntegerParam(ADStatus, ADStatusReadout);
-            /*
-            setStringParam(ADStatusMessage, "Downloading master file");
-            callParamCallbacks();
-
-            if((status = getMasterFile(sequenceId, &master, &masterLen)))
-            {
-                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                        "%s:%s: failed to get master file\n",
-                        driverName, functionName);
-                //return status; //TODO: what?
-            }
-
-            //printf("got master file %lu bytes\n", masterLen);
-            // do something with master file
-            if(master)
-            {
-                free(master);
-                master = NULL;
-            }
-             */
-            setStringParam(ADStatusMessage, "Downloading data files");
-            callParamCallbacks();
-            nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile));
-
-            for(int i = 0; i < nFiles; ++i)
-            {
-                if((status = getDataFile(sequenceId, i + nrStart, &data, &dataLen)))
-                {
-                    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                            "%s:%s: failed to get data file %d\n",
-                            driverName, functionName, i + nrStart);
-                    setIntegerParam(ADStatus, ADStatusAborted);
-                    setStringParam(ADStatusMessage, "Failed to trigger the detector");
-                    callParamCallbacks();
-                    break;
-                }
-                printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
-
-                //copy from memory to NDArray
-                if(imgCopy(data,dataLen))
-                    //TODO: What?
-                    data = NULL;
-
-                if(data)
-                {
-                    free(data);
-                    data = NULL;
-                }
-            }
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s couldn't read image\n",
+                    driverName, functionName);
+            status = asynError;
+            pImage->release();
+            goto end;
         }
-        /* If everything was ok, set the status back to idle */
-        getIntegerParam(ADStatus, &statusParam);
-        if (!status) {
-            setIntegerParam(ADStatus, ADStatusIdle);
-        } else {
-            if (statusParam != ADStatusAborted) {
-                setIntegerParam(ADStatus, ADStatusError);
-            }
-        }
-        setIntegerParam(ADAcquire, 0);
 
-        /* Call the callbacks to update any changes */
+        int imageCounter;
+        getIntegerParam(NDArrayCounter, &imageCounter);
+        imageCounter++;
+        setIntegerParam(NDArrayCounter, imageCounter);
+        callParamCallbacks();
+
+        // Put the frame number and time stamp into the buffer
+        pImage->uniqueId = imageCounter;
+        epicsTimeGetCurrent(&startTime);
+        pImage->timeStamp =  startTime.secPastEpoch + startTime.nsec / 1.e9;
+        updateTimeStamp(&pImage->epicsTS);
+
+        // Get any attributes that have been defined for this driver
+        this->getAttributes(pImage->pAttributeList);
+
+        // Call the NDArray callback
+        this->unlock();
+
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                "%s:%s: calling NDArray callback\n",
+                driverName, functionName);
+
+        doCallbacksGenericPointer(pImage, NDArrayData, 0);
+        this->lock();
+
+        pImage->release();
+
         callParamCallbacks();
     }
+
+end:
+    H5Sclose(mSpace);
+    return status;
 }
 
 /** This function is called periodically read the detector status (temperature,
   * humidity, etc.). It should not be called if we are acquiring data, to avoid
   * polling server when taking data.*/
-asynStatus eigerDetector::eigerStatus()
+asynStatus eigerDetector::eigerStatus (void)
 {
     int status;
     double temp = 0.0;
@@ -1115,200 +1797,6 @@ asynStatus eigerDetector::eigerStatus()
     return (asynStatus)status;
 }
 
-/** Called when asyn clients call pasynInt32->write().
-  * This function performs actions for some parameters, including ADAcquire,
-  * ADTriggerMode, etc.
-  * For all parameters it sets the value in the parameter library and calls any
-  * registered callbacks..
-  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
-  * \param[in] value Value to write. */
-asynStatus eigerDetector::writeInt32(asynUser *pasynUser, epicsInt32 value)
-{
-    int function = pasynUser->reason;
-    asynStatus status = asynSuccess;
-    const char *functionName = "writeInt32";
-    int adstatus;
-
-    if (function == EigerFWClear)
-        status = putInt(SSFWConfig, "clear", 1);
-    else if (function == EigerFWCompression)
-        status = putBool(SSFWConfig, "compression_enabled", (bool)value);
-    else if (function == EigerFWImageNrStart)
-        status = putInt(SSFWConfig, "image_nr_start", value);
-    else if (function == EigerFWMode)
-        status = putString(SSFWConfig, "mode", eigerFWModeStr[value]);
-    else if (function == EigerFWNImgsPerFile)
-        status = putInt(SSFWConfig, "nimages_per_file", value);
-    else if (function == ADTriggerMode)
-        status = putString(SSDetConfig, "trigger_mode", eigerTMStr[value]);
-    else if (function == ADNumImages)
-        status = putInt(SSDetConfig, "nimages", value);
-    else if (function == ADReadStatus)
-        status = eigerStatus();
-    else if (function == ADAcquire)
-    {
-        getIntegerParam(ADStatus, &adstatus);
-
-        if (value && (adstatus == ADStatusIdle || adstatus == ADStatusError ||
-                adstatus == ADStatusAborted))
-        {
-            setStringParam(ADStatusMessage, "Acquiring data");
-            setIntegerParam(ADStatus, ADStatusAcquire);
-        }
-
-        if (!value && adstatus == ADStatusAcquire)
-        {
-            setStringParam(ADStatusMessage, "Acquisition aborted");
-            setIntegerParam(ADStatus, ADStatusAborted);
-        }
-    }
-    else if(function < FIRST_EIGER_PARAM)
-        status = ADDriver::writeInt32(pasynUser, value);
-
-    if(status)
-    {
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-              "%s:%s: error, status=%d function=%d, value=%d\n",
-              driverName, functionName, status, function, value);
-        return status;
-    }
-
-    status = setIntegerParam(function, value);
-    callParamCallbacks();
-
-    // Effectively start/stop acquisition if that's the case
-    if (function == ADAcquire)
-    {
-        if (value && (adstatus == ADStatusIdle || adstatus == ADStatusError ||
-                adstatus == ADStatusAborted))
-        {
-            epicsEventSignal(this->startEventId);
-        }
-        else if (!value && (adstatus == ADStatusAcquire))
-        {
-            epicsEventSignal(this->stopEventId);
-        }
-    }
-
-    if (status)
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-              "%s:%s: error, status=%d function=%d, value=%d\n",
-              driverName, functionName, status, function, value);
-    else
-        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
-              "%s:%s: function=%d, value=%d\n",
-              driverName, functionName, function, value);
-
-    return status;
-}
-
-/** Called when asyn clients call pasynFloat64->write().
-  * This function performs actions for some parameters, including ADAcquireTime,
-  * ADGain, etc.
-  * For all parameters it sets the value in the parameter library and calls any
-  * registered callbacks..
-  * \param[in] pasynUser pasynUser structure that encodes the reason and
-  *            address.
-  * \param[in] value Value to write. */
-asynStatus eigerDetector::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
-{
-    int function = pasynUser->reason;
-    asynStatus status = asynSuccess;
-    const char *functionName = "writeFloat64";
-
-    if (function == EigerBeamX)
-        status = putDouble(SSDetConfig, "beam_center_x", value);
-    else if (function == EigerBeamY)
-        status = putDouble(SSDetConfig, "beam_center_y", value);
-    else if (function == EigerDetDist)
-        status = putDouble(SSDetConfig, "detector_distance", value);
-    else if (function == EigerPhotonEnergy)
-        status = putDouble(SSDetConfig, "photon_energy", value);
-    else if (function == EigerThreshold)
-        status = putDouble(SSDetConfig, "threshold_energy", value);
-    else if (function == EigerWavelength)
-        status = putDouble(SSDetConfig, "wavelength", value);
-    else if (function == ADAcquireTime)
-        status = putDouble(SSDetConfig, "count_time", value);
-    else if (function == ADAcquirePeriod)
-        status = putDouble(SSDetConfig, "frame_time", value);
-    else if (function < FIRST_EIGER_PARAM)
-        status = ADDriver::writeFloat64(pasynUser, value);
-
-    if (status)
-    {
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-              "%s:%s error, status=%d function=%d, value=%f\n",
-              driverName, functionName, status, function, value);
-    }
-    else
-    {
-        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
-              "%s:%s: function=%d, value=%f\n",
-              driverName, functionName, function, value);
-
-        /* Do callbacks so higher layers see any changes */
-        setDoubleParam(function, value);
-        callParamCallbacks();
-    }
-    return status;
-}
-
-/** Called when asyn clients call pasynOctet->write().
-  * This function performs actions for some parameters, including eigerBadPixelFile, ADFilePath, etc.
-  * For all parameters it sets the value in the parameter library and calls any registered callbacks..
-  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
-  * \param[in] value Address of the string to write.
-  * \param[in] nChars Number of characters to write.
-  * \param[out] nActual Number of characters actually written. */
-asynStatus eigerDetector::writeOctet(asynUser *pasynUser, const char *value,
-                                    size_t nChars, size_t *nActual)
-{
-    int function = pasynUser->reason;
-    asynStatus status = asynSuccess;
-    const char *functionName = "writeOctet";
-
-    if (function == EigerFWNamePattern)
-        putString(SSFWConfig, "name_pattern", value);
-    else if (function < FIRST_EIGER_PARAM)
-        status = ADDriver::writeOctet(pasynUser, value, nChars, nActual);
-
-    status = setStringParam(function, value);
-    callParamCallbacks();
-
-    if (status)
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-                  "%s:%s: status=%d, function=%d, value=%s",
-                  driverName, functionName, status, function, value);
-    else
-        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
-              "%s:%s: function=%d, value=%s\n",
-              driverName, functionName, function, value);
-
-    *nActual = nChars;
-    return status;
-}
-
-/** Report status of the driver.
-  * Prints details about the driver if details>0.
-  * It then calls the ADDriver::report() method.
-  * \param[in] fp File pointed passed by caller where the output is written to.
-  * \param[in] details If >0 then driver details are printed.
-  */
-void eigerDetector::report(FILE *fp, int details)
-{
-    fprintf(fp, "Eiger detector %s\n", this->portName);
-    if (details > 0) {
-        int nx, ny, dataType;
-        getIntegerParam(ADSizeX, &nx);
-        getIntegerParam(ADSizeY, &ny);
-        getIntegerParam(NDDataType, &dataType);
-        fprintf(fp, "  NX, NY:            %d  %d\n", nx, ny);
-        fprintf(fp, "  Data type:         %d\n", dataType);
-    }
-    /* Invoke the base class method */
-    ADDriver::report(fp, details);
-}
 
 extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
         int maxBuffers, size_t maxMemory, int priority, int stackSize)
@@ -1317,446 +1805,6 @@ extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
             stackSize);
     return(asynSuccess);
 }
-
-/** Constructor for Eiger driver; most parameters are simply passed to
-  * ADDriver::ADDriver.
-  * After calling the base class constructor this method creates a thread to
-  * collect the detector data, and sets reasonable default values for the
-  * parameters defined in this class, asynNDArrayDriver, and ADDriver.
-  * \param[in] portName The name of the asyn port driver to be created.
-  * \param[in] serverPort The name of the asyn port previously created with
-  *            drvAsynIPPortConfigure to communicate with server.
-  * \param[in] portName The name of the asyn port driver to be created.
-  * \param[in] maxBuffers The maximum number of NDArray buffers that the
-  *            NDArrayPool for this driver is allowed to allocate. Set this to
-  *            -1 to allow an unlimited number of buffers.
-  * \param[in] maxMemory The maximum amount of memory that the NDArrayPool for
-  *            this driver is allowed to allocate. Set this to -1 to allow an
-  *            unlimited amount of memory.
-  * \param[in] priority The thread priority for the asyn port driver thread if
-  *            ASYN_CANBLOCK is set in asynFlags.
-  * \param[in] stackSize The stack size for the asyn port driver thread if
-  *            ASYN_CANBLOCK is set in asynFlags.
-  */
-eigerDetector::eigerDetector(const char *portName, const char *serverPort,
-        int maxBuffers, size_t maxMemory, int priority,
-        int stackSize)
-
-    : ADDriver(portName, 1, NUM_EIGER_PARAMS, maxBuffers, maxMemory,
-               0, 0,             /* No interfaces beyond ADDriver.cpp */
-               ASYN_CANBLOCK,    /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
-               1,                /* autoConnect=1 */
-               priority, stackSize)
-{
-    int status = asynSuccess;
-    const char *functionName = "eigerDetector";
-
-    /* Connect to REST server */
-    status = pasynOctetSyncIO->connect(serverPort, 0, &pasynUserServer, NULL);
-
-    /* Create the epicsEvents for signaling to the eiger task when acquisition
-     * starts and stops */
-    startEventId = epicsEventCreate(epicsEventEmpty);
-    if (!startEventId)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s epicsEventCreate failure for start event\n",
-                driverName, functionName);
-        return;
-    }
-
-    stopEventId = epicsEventCreate(epicsEventEmpty);
-    if (!stopEventId)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s epicsEventCreate failure for stop event\n",
-                driverName, functionName);
-        return;
-    }
-
-    createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
-    createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
-    createParam(EigerFWImageNrStartString,asynParamInt32, &EigerFWImageNrStart);
-    createParam(EigerFWModeString,        asynParamInt32, &EigerFWMode);
-    createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
-    createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
-
-    createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
-    createParam(EigerBeamYString,         asynParamFloat64, &EigerBeamY);
-    createParam(EigerDetDistString,       asynParamFloat64, &EigerDetDist);
-    createParam(EigerPhotonEnergyString,  asynParamFloat64, &EigerPhotonEnergy);
-    createParam(EigerThresholdString,     asynParamFloat64, &EigerThreshold);
-    createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
-
-    /* Detector Status Parameters */
-    createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
-    createParam(EigerThHumid0String,      asynParamFloat64, &EigerThHumid0);
-
-    /* Other parameters */
-    createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
-    createParam(EigerSequenceIdString,    asynParamInt32,   &EigerSequenceId);
-
-    status = asynSuccess;
-
-    /* Set some default values for parameters */
-    char desc[MAX_BUF_SIZE] = "";
-    char *manufacturer, *space, *model;
-
-    if(getString(SSDetConfig, "description", desc, sizeof(desc)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_WARNING,
-                "%s:%s Eiger seems to be uninitialized\n"
-                "Initializing... (may take a while)\n",
-                driverName, functionName);
-
-        if(command("initialize", DEF_TIMEOUT_INIT))
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s Eiger FAILED TO INITIALIZE\n",
-                    driverName, functionName);
-            return;
-        }
-
-        asynPrint(pasynUserSelf, ASYN_TRACE_WARNING,
-                    "%s:%s Eiger initialized\n",
-                    driverName, functionName);
-    }
-
-    status = getString(SSDetConfig, "description", desc, sizeof(desc));
-
-    // Assume 'description' is of the form 'Dectris Eiger 1M'
-    space = strchr(desc, ' ');
-    *space = '\0';
-    manufacturer = desc;
-    model = space + 1;
-
-    status |= setStringParam (ADManufacturer, manufacturer);
-    status |= setStringParam (ADModel, model);
-
-    int maxSizeX, maxSizeY;
-    status |= getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
-    status |= getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
-
-    status |= setIntegerParam(ADMaxSizeX, maxSizeX);
-    status |= setIntegerParam(ADMaxSizeY, maxSizeY);
-    status |= setIntegerParam(ADSizeX, maxSizeX);
-    status |= setIntegerParam(ADSizeY, maxSizeY);
-    status |= setIntegerParam(NDArraySizeX, maxSizeX);
-    status |= setIntegerParam(NDArraySizeY, maxSizeY);
-
-    char trigger[MAX_BUF_SIZE];
-    status |= getString(SSDetConfig, "trigger_mode", trigger, sizeof(trigger));
-    for(int i = 0; i < TMCount; ++i)
-        if(!strcmp(trigger, eigerTMStr[i]))
-        {
-             status |= setIntegerParam(ADTriggerMode, i);
-             break;
-        }
-
-    char fwMode[MAX_BUF_SIZE];
-    status |= getString(SSFWConfig, "mode", fwMode, sizeof(fwMode));
-    status |= setIntegerParam(EigerFWMode, (int)(fwMode[0] == 'e'));
-
-    status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
-    status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
-    status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
-    status |= getDoubleP(SSDetConfig, "photon_energy",    EigerPhotonEnergy);
-    status |= getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
-
-    status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
-    status |= getIntP   (SSFWConfig, "image_nr_start",     EigerFWImageNrStart);
-    status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
-    status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
-
-    status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
-    status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
-    status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
-    status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
-    status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
-
-    status |= getDoubleP(SSDetStatus, "board_000/th0_temp",     EigerThTemp0);
-    status |= getDoubleP(SSDetStatus, "board_000/th0_humidity", EigerThHumid0);
-
-    status |= setIntegerParam(NDArraySize, 0);
-    status |= setIntegerParam(NDDataType,  NDUInt32);
-    status |= setIntegerParam(ADImageMode, ADImageMultiple);
-    status |= setIntegerParam(EigerArmed,  0);
-    status |= setIntegerParam(EigerSequenceId,  0);
-
-    callParamCallbacks();
-
-    // We do not support these features yet
-    status |= putBool(SSDetConfig, "flatfield_correction_applied", false);
-    status |= putBool(SSDetConfig, "pixel_mask_applied", false);
-    status |= putBool(SSDetConfig, "auto_summation", true);
-
-    if (status)
-    {
-        printf("%s: unable to set camera parameters\n", functionName);
-        return;
-    }
-
-    /* Create the thread that updates the images */
-    status = (epicsThreadCreate("eigerDetTask", epicsThreadPriorityMedium,
-            epicsThreadGetStackSize(epicsThreadStackMedium),
-            (EPICSTHREADFUNC)eigerTaskC, this) == NULL);
-
-    if (status)
-    {
-        printf("%s:%s epicsThreadCreate failure for image task\n",
-            driverName, functionName);
-        return;
-    }
-}
-
-asynStatus eigerDetector::imgCopy(char *pbuffer, size_t numbytes)
-{
-    unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
-
-    //Open h5 file from memory
-    //std::cout<<"Openning "<<numbytes<<" bytes"<<std::endl;
-    hid_t fid = H5LTopen_file_image(pbuffer,numbytes,flags);
-    if(fid<0)
-      return asynError;
-
-    //Access /entry group inside h5
-    //std::cout<<"Oppening /entry group"<<std::endl;
-    hid_t gid_entry = H5Gopen2(fid, "/entry", H5P_DEFAULT);
-    if(gid_entry<0)
-    {
-        H5Fclose(fid);
-        return asynError;
-    }
-
-    htri_t attrExists = H5Aexists_by_name(gid_entry,  "data" , "image_nr_low", H5P_DEFAULT);
-    hid_t attr_id = H5Aopen_by_name(gid_entry,  "data", "image_nr_low", H5P_DEFAULT, H5P_DEFAULT);
-    if(attrExists < 0 || attrExists == false || attr_id < 0)
-        //couldn't find image_nr_low attribute
-        return asynError;
-    hid_t attr_type = H5Aget_type (attr_id);
-    int image_nr_low;
-    herr_t status = H5Aread (attr_id, attr_type, &image_nr_low);
-    if(status < 0)
-        //couldn't read attr image_nr_low
-        return asynError;
-    //std::cout<<"image_nr_low = "<<image_nr_low<<std::endl;
-    H5Aclose(attr_id);
-
-    attrExists = H5Aexists_by_name(gid_entry,  "data" , "image_nr_high", H5P_DEFAULT);
-    attr_id = H5Aopen_by_name(gid_entry,  "data", "image_nr_high", H5P_DEFAULT, H5P_DEFAULT);
-    if(attrExists < 0 || attrExists == false || attr_id < 0)
-         //couldn't find image_nr_high attribute
-         return asynError;
-    attr_type = H5Aget_type (attr_id);
-    int image_nr_high;
-    status = H5Aread (attr_id, attr_type, &image_nr_high);
-    if(status < 0)
-        //couldn't read attr image_nr_high
-        return asynError;
-    //std::cout<<"image_nr_high = "<<image_nr_high<<std::endl;
-    H5Aclose(attr_id);
-
-    //Access dataset 'data'
-    //std::cout<<"Oppening dataset 'data'"<<std::endl;
-    hid_t dataid = H5Dopen2(gid_entry, "data", H5P_DEFAULT);
-    if(dataid<0)
-    {
-        H5Gclose(gid_entry);
-        H5Fclose(fid);
-        return asynError;
-    }
-
-    //get dataset type and test
-    hid_t dtype_id = H5Dget_type(dataid);
-    if(is_native_uint32(dtype_id))
-    {
-        //std::cout<<"Data type is UINT32"<<std::endl;
-        std::vector<uint32_t> img;
-        fillArray(dataid,img,image_nr_low,image_nr_high);
-    }
-    else if(is_native_uint16(dtype_id))
-    {
-        //std::cout<<"Data type is UINT16"<<std::endl;
-        std::vector<uint16_t> img;
-        fillArray(dataid,img,image_nr_low,image_nr_high);
-    }
-    else
-    {
-        //std::cout<<"Unsupported data type!"<<std::endl;
-        return asynError;
-    }
-
-    H5Dclose(dataid);
-    H5Gclose(gid_entry);
-    H5Fclose(fid);
-    return asynSuccess;
-}
-
-template <typename Type>
-asynStatus eigerDetector::fillArray(hid_t dataid,std::vector<Type> img,int img_nr_low,int img_nr_high)
-{
-    const char *functionName = "fillArray";
-
-    NDArray *pImage;
-    int ADdims0, ADdims1, imageCounter;
-    size_t ndArray_dims[2];
-    epicsTimeStamp startTime;
-
-    std::vector<hsize_t> dim;
-    dim.resize(2);
-/*
-    size_t totSize = 1;   /// total size (in units of T)
-    for(uint i=0; i<dim.size();++i)
-    {
-        totSize *= dim.at(i);
-    }
-*/
-    hid_t dataspace = H5Dget_space(dataid);
-    if(dataspace<0)
-    {
-        //std::cout<<"cannot get dataspace"<<std::endl;
-        return asynError;
-    }
-
-    int rank    =  H5Sget_simple_extent_ndims(dataspace);
-    if(rank<0)
-    {
-        //std::cout<<"cannot get rank"<<std::endl;
-        return asynError;
-    }
-    if(rank != 3) /// images dataset must be 3D!
-    {
-        //std::cout<<"image dataset not 3D"<<std::endl;
-        return asynError;
-    }
-
-    hsize_t dims[3];
-    hsize_t maxdims[3];
-    H5Sget_simple_extent_dims(dataspace, dims, maxdims);
-
-    dim.at(0) = dims[1]; // dims[0] is z index
-    dim.at(1) = dims[2];
-
-    img.resize(dims[1]*dims[2]); /// image is 1D in memory, dimensions are saved in std::array<> dim
-
-    /// create hyperslab ////
-    hsize_t count[3];
-    count[0] = 1; /// hyperslab is one image
-    count[1]  = dims[1];
-    count[2]  = dims[2];
-
-    hid_t memspace_id = H5Screate_simple(3, count, NULL);
-
-    /// compute the offset of image number:
-    hsize_t offset[3];
-
-    offset[1] = 0;
-    offset[2] = 0;
-    for(offset[0] = 0; offset[0] < (img_nr_high-img_nr_low)+1; offset[0]++){
-        //std::cout<<"offset = "<<offset[0]<<std::endl;
-        /// select the hyperslab ///
-        herr_t errstatus = H5Sselect_hyperslab(dataspace, H5S_SELECT_SET, offset, NULL, count, NULL);
-        if(errstatus<0)
-        {
-            //std::cout<<"cannot select hyperslab"<<std::endl;
-            return asynError;
-        }
-
-        /// the saved datatype in the hdf5 file //
-        hid_t  h5FileDataType = H5Dget_type(dataid);
-
-        /// and finally read the image ///
-        herr_t status = H5Dread(dataid, h5FileDataType, memspace_id, dataspace , H5P_DEFAULT, img.data());
-        if(status<0)
-        {
-            //std::cout<<"cannot read data"<<std::endl;
-            return asynError;
-        }
-
-        /* Get an image buffer from the pool */
-        getIntegerParam(NDArrayCounter, &imageCounter);
-        imageCounter++;
-        setIntegerParam(NDArrayCounter, imageCounter);
-        getIntegerParam(ADMaxSizeX, &ADdims0);
-        getIntegerParam(ADMaxSizeY, &ADdims1);
-        ndArray_dims[0] = ADdims0;
-        ndArray_dims[1] = ADdims1;
-
-        pImage = this->pNDArrayPool->alloc(2, ndArray_dims, NDUInt32, 0, NULL);
-        /*epicsSnprintf(statusMessage, sizeof(statusMessage),
-                            "Reading image file %s", fullFileName);
-                    setStringParam(ADStatusMessage, statusMessage);*/
-        memcpy(pImage->pData,&img[0],pImage->dataSize);
-        callParamCallbacks();
-
-        /* If there was an error jump to bottom of loop */
-        if (status) {
-            //TODO: what?
-            //acquire = 0;
-            //aborted = 1;
-            pImage->release();
-            continue;
-        }
-
-        /* Put the frame number and time stamp into the buffer */
-        pImage->uniqueId = imageCounter;
-        epicsTimeGetCurrent(&startTime);
-        pImage->timeStamp =  startTime.secPastEpoch + startTime.nsec / 1.e9;
-        updateTimeStamp(&pImage->epicsTS);
-
-        /* Get any attributes that have been defined for this driver */
-        this->getAttributes(pImage->pAttributeList);
-
-        /* Call the NDArray callback */
-        /* Must release the lock here, or we can get into a deadlock,
-         * because we can block on the plugin lock, and the plugin
-         * can be calling us */
-        this->unlock();
-        asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                "%s:%s: calling NDArray callback\n", driverName, functionName);
-        doCallbacksGenericPointer(pImage, NDArrayData, 0);
-        this->lock();
-
-        /* Free the image buffer */
-        pImage->release();
-
-        /* Call the callbacks to update any changes */
-        callParamCallbacks();
-
-        /*print few elements
-        std::cout<<"image dimensions: "<<dim[0]<<" "<<dim[1]<<std::endl;
-        for(size_t pix_x = 0; pix_x <dim[0]; pix_x++)
-        {
-            for(size_t pix_y = 0; pix_y <dim[1]; pix_y++)
-            {
-                //uint16_t pxval = getPixelValue(pix_x, pix_y, img, dim);
-                uint32_t pxval = getPixelValue(pix_x, pix_y, img, dim);
-                if (pix_x < 5 && pix_y < 5)
-                    std::cout<<"pix["<<pix_x<<"]["<<pix_y<<"]="<<pxval<<"\t";
-            }
-            if (pix_x < 5)
-                std::cout<<std::endl;
-        }*/
-    }
-    H5Sclose( memspace_id);
-
-    return asynSuccess;
-}
-
-template<typename Type>
-  Type eigerDetector::getPixelValue(size_t pix_x, size_t pix_y, const std::vector<Type> &img,  const std::vector<hsize_t> &dim)
-{
-    if(pix_x >= dim[0] || pix_y >= dim[1])
-    {
-        std::cout<<"invalid pixel"<<std::endl;
-        return -1;
-    }
-
-    size_t addr = pix_y*dim[0] + pix_x;
-    return img[addr];
-  }
-
-
 
 /* Code for iocsh registration */
 static const iocshArg eigerDetectorConfigArg0 = {"Port name", iocshArgString};
@@ -1786,6 +1834,6 @@ static void eigerDetectorRegister(void)
 }
 
 extern "C" {
-epicsExportRegistrar(eigerDetectorRegister);
+    epicsExportRegistrar(eigerDetectorRegister);
 }
 
