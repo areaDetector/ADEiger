@@ -108,6 +108,22 @@ record(ai, "$(P)$(R)FWImageNrStart_RBV")
     field(SCAN, "I/O Intr")
 }
 
+# Save files locally
+record(bo,"$(P)$(R)SaveFiles") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)SaveFiles_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+
 # Flatfield correction applied
 record(bo,"$(P)$(R)FlatfieldApplied") {
     field(DTYP, "asynInt32")
