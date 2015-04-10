@@ -431,7 +431,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
     status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
     status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
-    status |= getBoolP  (SSDetConfig, "flatfield_correction_applied", EigerFlatfield);
+    status |= getBoolP  (SSDetConfig, "flatfield_correction_applied",
+            EigerFlatfield);
     status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
 
@@ -442,7 +443,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     status |= setIntegerParam(NDDataType,  NDUInt32);
     status |= setIntegerParam(ADImageMode, ADImageMultiple);
     status |= setIntegerParam(EigerArmed,  0);
-    status |= setIntegerParam(EigerSequenceId,  0);
+    status |= setIntegerParam(EigerSequenceId, 0);
+
+    status |= setStringParam(NDFileTemplate, "%s");
 
     callParamCallbacks();
 
@@ -697,8 +700,20 @@ void eigerDetector::eigerTask (void)
 
             status = epicsEventWait(this->startEventId);   // Wait for semaphore
             this->lock();
+        }
 
-            acquire = 1;
+        int filePathExists;
+        checkPath();
+        getIntegerParam(NDFilePathExists, &filePathExists);
+        if(!filePathExists)
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: invalid local File Path\n",
+                    driverName, functionName);
+            status = asynError;
+            setIntegerParam(ADStatus, ADStatusError);
+            setStringParam(ADStatusMessage, "Invalid file path");
+            goto end;
         }
 
         /*
@@ -709,8 +724,9 @@ void eigerDetector::eigerTask (void)
             asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                     "%s:%s: underlying capture failed\n",
                     driverName, functionName);
-            acquire = 0;
-            continue;
+
+            setIntegerParam(ADStatus, ADStatusError);
+            goto end;
         }
 
         /*
@@ -725,10 +741,11 @@ void eigerDetector::eigerTask (void)
                 asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                         "%s:%s: underlying downloadAndPublish failed\n",
                         driverName, functionName);
-                setIntegerParam(ADStatus, ADStatusAborted);
-                setStringParam(ADStatusMessage, "Download failed\n");
+                setIntegerParam(ADStatus, ADStatusError);
+                setStringParam(ADStatusMessage, "Download failed");
             }
 
+end:
         /* If everything was ok, set the status back to idle */
         int statusParam = 0;
         getIntegerParam(ADStatus, &statusParam);
@@ -1270,10 +1287,11 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
     const char *functionName = "getFile";
     const char *reqFmt = REQUEST_GET_PARTIAL;
     const char *url = eigerSysStr[SSData];
-    asynStatus status;
+    asynStatus status = asynSuccess;
     size_t reqSize;
     struct response response;
     size_t remaining;
+    char *dataPtr;
 
     *len = 0;
 
@@ -1285,18 +1303,35 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
         return asynError;
     }
 
+    char fullFileName[MAX_FILENAME_LEN];
+    setStringParam(NDFileName, remoteFile);
+    setStringParam(NDFileTemplate, "%s%s");
+    createFileName(sizeof(fullFileName), fullFileName);
+    setStringParam(NDFullFileName, fullFileName);
+    callParamCallbacks();
+
+    FILE *fhandle = fopen(fullFileName, "wb");
+    if(!fhandle)
+    {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s::%s(%s), unable to open file to be written\n[%s]\n",
+                driverName, functionName, remoteFile, fullFileName);
+        return asynError;
+    }
+
     *data = (char*)malloc(remaining);
     if(!*data)
     {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                 "%s::%s(%s), malloc(%lu) failed\n",
                 driverName, functionName, remoteFile, remaining);
-        return asynError;
+        status = asynError;
+        goto closeFile;
     }
 
     printf("Will download %s: %lu bytes\n", remoteFile, remaining);
 
-    char *dataPtr = *data;
+    dataPtr = *data;
     while(remaining)
     {
         reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile,
@@ -1307,10 +1342,8 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
             asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                     "%s::%s(%s), partial GET request failed\n",
                     driverName, functionName, remoteFile);
-
-            free(*data);
-            *data = NULL;
-            return status;
+            status = asynError;
+            break;
         }
 
         if(response.code != 206)
@@ -1318,17 +1351,35 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
             asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                     "%s::%s(%s), server returned error code %d\n",
                     driverName, functionName, remoteFile, response.code);
-            return asynError;
+            status = asynError;
+            break;
         }
 
         memcpy(dataPtr, response.data, response.size);
+        if(fwrite(response.data, 1, response.size, fhandle) < response.size)
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s::%s(%s), failed to write chunk to local file\n",
+                    driverName, functionName, remoteFile);
+            status = asynError;
+            break;
+
+        }
 
         dataPtr += response.size;
         *len += response.size;
         remaining -= response.size;
     }
 
-    return asynSuccess;
+    if(status)
+    {
+        free(*data);
+        *data = NULL;
+    }
+
+closeFile:
+    fclose(fhandle);
+    return status;
 }
 
 asynStatus eigerDetector::getMasterFile (int sequenceId, char **data,
@@ -1409,7 +1460,7 @@ asynStatus eigerDetector::capture (void)
                 driverName, functionName);
 
         retStatus = status;
-        setIntegerParam(ADStatus, ADStatusAborted);
+        setIntegerParam(ADStatus, ADStatusError);
         setStringParam(ADStatusMessage, "Failed to arm the detector");
         goto closeShutter;
     }
@@ -1427,7 +1478,7 @@ asynStatus eigerDetector::capture (void)
                 driverName, functionName);
 
         retStatus = status;
-        setIntegerParam(ADStatus, ADStatusAborted);
+        setIntegerParam(ADStatus, ADStatusError);
         setStringParam(ADStatusMessage, "Failed to trigger the detector");
         // continue to disarm
     }
@@ -1440,7 +1491,7 @@ asynStatus eigerDetector::capture (void)
                 driverName, functionName);
 
         retStatus = status;
-        setIntegerParam(ADStatus, ADStatusAborted);
+        setIntegerParam(ADStatus, ADStatusError);
         setStringParam(ADStatusMessage, "Failed to disarm the detector");
         goto closeShutter;
     }
@@ -1448,7 +1499,6 @@ asynStatus eigerDetector::capture (void)
     setIntegerParam(EigerArmed, 0);
 
 closeShutter:
-    setIntegerParam(ADAcquire, 0);
     setShutter(0);
     callParamCallbacks();
     return retStatus;
@@ -1476,7 +1526,7 @@ asynStatus eigerDetector::downloadAndPublish (void)
         getString(SSFWStatus, "state", buf, sizeof(buf));
     }while(buf[0] == 'a');
 
-    /*setStringParam(ADStatusMessage, "Downloading master file");
+    setStringParam(ADStatusMessage, "Downloading master file");
     callParamCallbacks();
 
     char *master;
@@ -1486,15 +1536,14 @@ asynStatus eigerDetector::downloadAndPublish (void)
         asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                 "%s:%s: failed to get master file\n",
                 driverName, functionName);
-
-        return status; //TODO: what?
+        return status;
     }
 
     if(master)
     {
         free(master);
         master = NULL;
-    }*/
+    }
 
     setStringParam(ADStatusMessage, "Downloading data files");
     callParamCallbacks();
