@@ -1777,8 +1777,6 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
             goto end;
         }
 
-        pImage = pNDArrayPool->alloc(2, dims, ndType, 0, NULL);
-
         // Select the hyperslab
         if(H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL, count,
                 NULL) < 0)
@@ -1787,7 +1785,17 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
                     "%s:%s couldn't select hyperslab\n",
                     driverName, functionName);
             status = asynError;
-            pImage->release();
+            goto end;
+        }
+
+        pImage = pNDArrayPool->alloc(2, dims, ndType, 0, NULL);
+
+        if(!pImage)
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s couldn't allocate NDArray\n",
+                    driverName, functionName);
+            status = asynError;
             goto end;
         }
 
