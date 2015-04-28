@@ -41,7 +41,7 @@
 
 #define API_VERSION     "1.0.4"
 #define EOL             "\r\n"      // End of Line
-#define EOH EOL         EOL         // End of Header
+#define EOH             EOL EOL     // End of Header
 #define EOH_LEN         4           // End of Header Length
 
 #define DATA_NATIVE "application/json; charset=utf-8"

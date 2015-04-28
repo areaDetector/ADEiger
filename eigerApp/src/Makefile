@@ -12,10 +12,9 @@ LIB_SRCS += eigerDetector.cpp
 
 DBD += eigerDetectorSupport.dbd
 
-LIB_LIBS_Linux	+= hdf5_hl 
+LIB_LIBS_Linux += hdf5_hl 
 hdf5_hl_DIR = $(HDF5_LIB)
-
-#hdf5_hl sz 
+USR_INCLUDES += $(HDF5_INCLUDE)
 
 include $(ADCORE)/ADApp/commonLibraryMakefile
 
