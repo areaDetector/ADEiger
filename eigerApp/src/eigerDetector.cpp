@@ -66,6 +66,23 @@
     "GET %s%s HTTP/1.0" EOL \
     "Range: bytes=%lu-%lu" EOH
 
+// Macros to improve code readability
+#define FAIL_IF(cond,statement,msg)\
+    do{if(cond){\
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s:%s %s\n",\
+                driverName, functionName, msg);\
+        status = asynError;\
+        statement;\
+    }}while(0)
+
+#define FAIL_IF_ARGS(cond,statement,fmt,...)\
+    do{if(cond){\
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s:%s"fmt"\n",\
+                driverName, functionName, __VA_ARGS__);\
+        status = asynError;\
+        statement;\
+    }}while(0)
+
 /** Subsystems */
 typedef enum
 {
@@ -324,22 +341,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     /* Create the epicsEvents for signaling to the eiger task when acquisition
      * starts and stops */
     startEventId = epicsEventCreate(epicsEventEmpty);
-    if (!startEventId)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s epicsEventCreate failure for start event\n",
-                driverName, functionName);
-        return;
-    }
+    FAIL_IF(!startEventId, return, "epicsEventCreate failure for start event");
 
     stopEventId = epicsEventCreate(epicsEventEmpty);
-    if (!stopEventId)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s epicsEventCreate failure for stop event\n",
-                driverName, functionName);
-        return;
-    }
+    FAIL_IF(!stopEventId, return, "epicsEventCreate failure for stop event");
 
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
@@ -378,13 +383,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
                 "Initializing... (may take a while)\n",
                 driverName, functionName);
 
-        if(command("initialize", DEF_TIMEOUT_INIT))
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s Eiger FAILED TO INITIALIZE\n",
-                    driverName, functionName);
-            return;
-        }
+        asynStatus s = command("initialize", DEF_TIMEOUT_INIT);
+        FAIL_IF(s, return, "Eiger FAILED TO INITIALIZE");
 
         asynPrint(pasynUserSelf, ASYN_TRACE_WARNING,
                     "%s:%s Eiger initialized\n",
@@ -455,23 +455,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     // Auto Summation should always be true (Eiger API Reference v1.1pre)
     status |= putBool(SSDetConfig, "auto_summation", true);
 
-    if (status)
-    {
-        printf("%s: unable to set camera parameters\n", functionName);
-        return;
-    }
+    FAIL_IF(status, return, "unable to set camera parameters");
 
     /* Create the thread that updates the images */
     status = (epicsThreadCreate("eigerDetTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)eigerTaskC, this) == NULL);
 
-    if (status)
-    {
-        printf("%s:%s epicsThreadCreate failure for image task\n",
-            driverName, functionName);
-        return;
-    }
+    FAIL_IF(status, , "epicsThreadCreate failure for image task");
 }
 
 /** Called when asyn clients call pasynInt32->write().
@@ -529,13 +520,8 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
-    if(status)
-    {
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-              "%s:%s: error, status=%d function=%d, value=%d\n",
-              driverName, functionName, status, function, value);
-        return status;
-    }
+    FAIL_IF_ARGS(status, return status, "error status=%d function=%d, value=%d",
+            status, function, value);
 
     status = setIntegerParam(function, value);
     callParamCallbacks();
@@ -775,59 +761,37 @@ asynStatus eigerDetector::doRequest (size_t requestSize,
     const char *functionName = "doRequest";
     asynStatus status;
     size_t nwrite, nread;
-    int eomReason;
+    int eomReason, scanned;
 
     setStringParam(ADStringToServer, toServer);
     setStringParam(ADStringFromServer, "");
     callParamCallbacks();
 
     // Send request / get response
-    if((status = pasynOctetSyncIO->writeRead(pasynUserServer,
+    status = pasynOctetSyncIO->writeRead(pasynUserServer,
             toServer, requestSize, fromServer, sizeof(fromServer),
-            timeout, &nwrite, &nread, &eomReason)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, send/recv failed\n[%s]\n",
-                driverName, functionName, pasynUserServer->errorMessage);
-        return status;
-    }
+            timeout, &nwrite, &nread, &eomReason);
+
+    FAIL_IF_ARGS(status, return status, "send/recv failed\n[%s]",
+            pasynUserServer->errorMessage);
 
     // Find Content-Length (useful for HEAD requests)
     char *contentLength = strcasestr(fromServer, "Content-Length");
-    if(!contentLength)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, malformed packet: no Content-Length\n",
-                driverName, functionName);
-        return asynError;
-    }
+    FAIL_IF(!contentLength, return status,
+            "malformed packet: no Content-Length");
 
-    if(sscanf(contentLength, "%*s %lu", &response->contentLength) != 1)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, malformed packet: couldn't parse Content-Length\n",
-                driverName, functionName);
-        return asynError;
-    }
+    scanned = sscanf(contentLength, "%*s %lu", &response->contentLength);
+    FAIL_IF(scanned != 1, return status,
+            "malformed packet: couldn't parse Content-Length");
 
     // Find end of header
     char *eoh = strstr(fromServer, EOH);
-    if(!eoh)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, malformed packet: no End of Header\n",
-                driverName, functionName);
-        return asynError;
-    }
+    FAIL_IF(!eoh, return status, "malformed packet: no End of Header");
 
     // Fill response
-    if(sscanf(fromServer, "%*s %d", &response->code) != 1)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, malformed packet: couldn't parse response code\n",
-                driverName, functionName);
-        return asynError;
-    }
+    scanned = sscanf(fromServer, "%*s %d", &response->code);
+    FAIL_IF(scanned != 1, return status,
+            "malformed packet: couldn't parse response code");
 
     response->data = eoh + EOH_LEN;
     response->size = nread - (size_t)(response->data-fromServer);
@@ -850,24 +814,14 @@ asynStatus eigerDetector::get (eigerSys sys, const char *param, char *value,
     asynStatus status;
     size_t reqSize;
     struct response response;
+    int err;
 
     reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, param);
 
-    if((status = doRequest(reqSize, &response, timeout)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), request failed\n",
-                driverName, functionName, param);
-        return status;
-    }
-
-    if(response.code != 200)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), server returned error code %d\n",
-                driverName, functionName, param, response.code);
-        return asynError;
-    }
+    status = doRequest(reqSize, &response, timeout);
+    FAIL_IF_ARGS(status, return status, "[param=%s] request failed", param);
+    FAIL_IF_ARGS(response.code != 200, return status,
+            "[param=%s] server returned error code %d", param, response.code);
 
     if(!value)
         return asynSuccess;
@@ -875,32 +829,18 @@ asynStatus eigerDetector::get (eigerSys sys, const char *param, char *value,
     struct json_token tokens[MAX_JSON_TOKENS];
     struct json_token *valueToken;
 
-    if(parse_json(response.data, response.size, tokens, MAX_JSON_TOKENS) < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), unable to parse response json\n[%.*s]\n",
-                driverName, functionName, param, (int)response.size,
-                response.data);
-        return asynError;
-    }
+    err = parse_json(response.data, response.size, tokens, MAX_JSON_TOKENS);
+    FAIL_IF_ARGS(err < 0, return status,
+            "[param=%s] unable to parse json response\n[%.*s]",
+            param, (int)response.size, response.data);
 
     valueToken = find_json_token(tokens, "value");
+    FAIL_IF_ARGS(valueToken == NULL, return status,
+            "[param=%s] unable to find 'value' json field", param);
 
-    if(valueToken == NULL)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), unable to find 'value' json field\n",
-                driverName, functionName, param);
-        return asynError;
-    }
-
-    if((size_t)valueToken->len > ((size_t)(len + 1)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), destination buffer is too short\n",
-                driverName, functionName, param);
-        return asynError;
-    }
+    FAIL_IF_ARGS((size_t)valueToken->len > ((size_t)(len + 1)),
+            return status, "[param=%s] destination buffer is too short",
+            param);
 
     memcpy((void*)value, (void*)valueToken->ptr, valueToken->len);
     value[valueToken->len] = '\0';
@@ -921,13 +861,8 @@ asynStatus eigerDetector::put (eigerSys sys, const char *param,
     reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, param, len);
     remaining = sizeof(toServer) - reqSize;
 
-    if(remaining < len)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), toServer buffer is not big enough\n",
-                driverName, functionName, param);
-        return asynError;
-    }
+    FAIL_IF_ARGS(remaining < len, return status,
+            "[param=%s] toServer buffer is not big enough", param);
 
     if(len && value)
     {
@@ -937,30 +872,19 @@ asynStatus eigerDetector::put (eigerSys sys, const char *param,
     }
 
     if(remaining)
-        *(toServer+reqSize) = '\0';     // Prettify  ADStringToServer
+        *(toServer+reqSize) = '\0';     // Make ADStringToServer printable
 
-    if((status = doRequest(reqSize, &response, timeout)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), request failed\n",
-                driverName, functionName, param);
-        return status;
-    }
+    status = doRequest(reqSize, &response, timeout);
+    FAIL_IF_ARGS(status, return status, "[param=%s] request failed", param);
 
-    if(response.code != 200)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), server returned error code %d\n",
-                driverName, functionName, param, response.code);
-        return asynError;
-    }
+    FAIL_IF_ARGS(response.code != 200, return status,
+            "[param=%s] server returned error code %d", param, response.code);
 
-    if(response.size && (status = parsePutResponse(response)))
+    if(response.size)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s::%s(%s), unable to parse response\n",
-            driverName, functionName, param);
-        return status;
+        status = parsePutResponse(response);
+        FAIL_IF_ARGS(status, return status,
+                "[param=%s] unable to parse response", param);
     }
 
     return asynSuccess;
@@ -973,40 +897,27 @@ asynStatus eigerDetector::parsePutResponse(struct response response)
     //   Response to PUT to a parameter: list of changed values
     //   Response to the arm command: sequence id
     const char *functionName = "parsePutResponse";
+    int err;
+    asynStatus status = asynSuccess;
 
     // Copy response data locally (may be overwritten by GETs)
     char responseData[response.size];
     memcpy(responseData, response.data, response.size);
 
     struct json_token tokens[MAX_JSON_TOKENS];
-    if(parse_json(responseData, response.size, tokens, MAX_JSON_TOKENS) < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, unable to parse response json\n",
-                driverName, functionName);
-        return asynError;
-    }
+    err = parse_json(responseData, response.size, tokens, MAX_JSON_TOKENS);
+    FAIL_IF(err < 0, return status, "unable to parse response json");
 
     if(tokens[0].type == JSON_TYPE_OBJECT)  // sequence id
     {
         struct json_token *seqIdToken = find_json_token(tokens, "sequence id");
-
-        if(!seqIdToken)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s, unable to find 'sequence_id' token\n",
-                    driverName, functionName);
-            return asynError;
-        }
+        FAIL_IF(!seqIdToken, return status,
+                "unable to find 'sequence_id' token");
 
         int seqId;
-        if(sscanf(seqIdToken->ptr, "%d", &seqId) != 1)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s, unable to parse 'sequence_id' token\n",
-                    driverName, functionName);
-            return asynError;
-        }
+        int scanned = sscanf(seqIdToken->ptr, "%d", &seqId);
+        FAIL_IF(scanned != 1, return status,
+                "unable to parse 'sequence_id' token");
 
         setIntegerParam(EigerSequenceId, seqId);
         callParamCallbacks();
@@ -1038,13 +949,10 @@ asynStatus eigerDetector::parsePutResponse(struct response response)
     }
     else
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s, unexpected json token type\n",
-                driverName, functionName);
-        return asynError;
+        FAIL_IF(true, return status, "unexpected json token type");
     }
 
-    return asynSuccess;
+    return status;
 }
 
 asynStatus eigerDetector::getString (eigerSys sys, const char *param,
@@ -1059,21 +967,13 @@ asynStatus eigerDetector::getInt (eigerSys sys, const char *param, int *value)
     asynStatus status;
     char buf[MAX_BUF_SIZE];
 
-    if((status = get(sys, param, buf, sizeof(buf))))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), underlying get failed\n",
-                    driverName, functionName, param);
-        return status;
-    }
+    status = get(sys, param, buf, sizeof(buf));
+    FAIL_IF_ARGS(status, return status, "[param=%s] underlying get failed",
+            param);
 
-    if(sscanf(buf, "%d", value) != 1)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), couldn't parse '%s' as integer\n",
-                driverName, functionName, param, buf);
-        return asynError;
-    }
+    int scanned = sscanf(buf, "%d", value);
+    FAIL_IF_ARGS(scanned != 1, return status,
+            "[param=%s] couldn't parse '%s' as integer", param, buf);
 
     return asynSuccess;
 }
@@ -1085,21 +985,13 @@ asynStatus eigerDetector::getDouble (eigerSys sys, const char *param,
     asynStatus status;
     char buf[MAX_BUF_SIZE];
 
-    if((status = get(sys, param, buf, sizeof(buf))))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying get failed\n",
-                driverName, functionName, param);
-        return status;
-    }
+    status = get(sys, param, buf, sizeof(buf));
+    FAIL_IF_ARGS(status, return status, "[param=%s] underlying get failed",
+            param);
 
-    if(sscanf(buf, "%lf", value) != 1)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), couldn't parse '%s' as double\n",
-                driverName, functionName, param, buf);
-        return asynError;
-    }
+    int scanned = sscanf(buf, "%lf", value);
+    FAIL_IF_ARGS(scanned != 1, return status,
+            "[param=%s] couldn't parse '%s' as double", param, buf);
 
     return asynSuccess;
 }
@@ -1110,13 +1002,9 @@ asynStatus eigerDetector::getBool (eigerSys sys, const char *param, bool *value)
     asynStatus status;
     char buf[MAX_BUF_SIZE];
 
-    if((status = get(sys, param, buf, sizeof(buf))))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying get failed\n",
-                driverName, functionName, param);
-        return status;
-    }
+    status = get(sys, param, buf, sizeof(buf));
+    FAIL_IF_ARGS(status, return status, "[param=%s] underlying get failed",
+            param);
 
     *value = buf[0] == 't';
 
@@ -1168,10 +1056,7 @@ asynStatus eigerDetector::putString (eigerSys sys, const char *param,
     size_t len = sprintf(buf, "{\"value\": \"%s\"}", value);
     asynStatus status = put(sys, param, buf, len);
 
-    if(status)
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying put failed\n",
-                driverName, functionName, param);
+    FAIL_IF_ARGS(status, , "[param=%s] underlying put failed", param);
 
     return status;
 }
@@ -1183,10 +1068,7 @@ asynStatus eigerDetector::putInt (eigerSys sys, const char *param, int value)
     size_t len = sprintf(buf, "{\"value\":%d}", value);
     asynStatus status = put(sys, param, buf, len);
 
-    if(status)
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying put failed\n",
-                driverName, functionName, param);
+    FAIL_IF_ARGS(status, , "[param=%s] underlying put failed", param);
 
     return status;
 }
@@ -1198,10 +1080,7 @@ asynStatus eigerDetector::putBool (eigerSys sys, const char *param, bool value)
     size_t len = sprintf(buf, "{\"value\": %s}", value ? "true" : "false");
     asynStatus status = put(sys, param, buf, len);
 
-    if(status)
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying put failed\n",
-                driverName, functionName, param);
+    FAIL_IF_ARGS(status, , "[param=%s] underlying put failed", param);
 
     return status;
 }
@@ -1214,10 +1093,7 @@ asynStatus eigerDetector::putDouble (eigerSys sys, const char *param,
     size_t len = sprintf(buf, "{\"value\": %lf}", value);
     asynStatus status = put(sys, param, buf, len);
 
-    if(status)
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying put failed\n",
-                driverName, functionName, param);
+    FAIL_IF_ARGS(status, , "[param=%s] underlying put failed", param);
 
     return status;
 }
@@ -1227,12 +1103,7 @@ asynStatus eigerDetector::command (const char *name, double timeout)
     const char *functionName = "command";
     asynStatus status = put(SSCommand, name, NULL, 0, timeout);
 
-    if(status)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s::%s(%s), underlying put failed\n",
-            driverName, functionName, name);
-    }
+    FAIL_IF(status, , "underlying put failed");
 
     return status;
 }
@@ -1252,39 +1123,25 @@ asynStatus eigerDetector::getFileSize (const char *remoteFile, size_t *len)
 
     while(retries > 0)
     {
-        if((status = doRequest(reqSize, &response)))
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), HEAD request failed\n",
-                    driverName, functionName, remoteFile);
-            return status;
-        }
+        status = doRequest(reqSize, &response);
+        FAIL_IF_ARGS(status, return status, "[file=%s] HEAD request failed",
+                remoteFile);
 
-        if(response.code == 404)
-        {
-            epicsThreadSleep(.01);
-            retries -= 1;
-            continue;
-        }
+        if(response.code == 200)
+            break;
 
-        if(response.code != 200)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), server returned error code %d\n",
-                    driverName, functionName, remoteFile, response.code);
-            return asynError;
-        }
-        break;
+        FAIL_IF_ARGS(response.code != 404, return status,
+                "[file=%s] server returned error code %d", remoteFile,
+                response.code);
+
+        // Got 404, file is not there yet
+        epicsThreadSleep(.01);
+        retries -= 1;
     }
 
-    if(!retries)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), server returned error code %d %d times\n",
-                driverName, functionName, remoteFile, response.code,
-                GET_FILE_RETRIES);
-        return asynError;
-    }
+    FAIL_IF_ARGS(!retries, return asynError,
+            "[file=%s] server returned error code %d %d times", remoteFile,
+            response.code, GET_FILE_RETRIES);
 
     *len = response.contentLength;
     return asynSuccess;
@@ -1304,22 +1161,13 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
 
     *len = 0;
 
-    if((status = getFileSize(remoteFile, &remaining)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), underlying getFileSize failed\n",
-                driverName, functionName, remoteFile);
-        return asynError;
-    }
+    status = getFileSize(remoteFile, &remaining);
+    FAIL_IF_ARGS(status, return status,
+            "[file=%s] underlying getFileSize failed", remoteFile);
 
     *data = (char*)malloc(remaining);
-    if(!*data)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), malloc(%lu) failed\n",
-                driverName, functionName, remoteFile, remaining);
-        return asynError;
-    }
+    FAIL_IF_ARGS(!*data, return status, "[file=%s] malloc(%lu) failed",
+            remoteFile, remaining);
 
     dataPtr = *data;
     while(remaining)
@@ -1327,23 +1175,13 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
         reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile,
                 *len, *len + CHUNK_SIZE - 1);
 
-        if((status = doRequest(reqSize, &response)))
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), partial GET request failed\n",
-                    driverName, functionName, remoteFile);
-            status = asynError;
-            break;
-        }
+        status = doRequest(reqSize, &response);
+        FAIL_IF_ARGS(status, break, "[file=%s] partial GET request failed",
+                remoteFile);
 
-        if(response.code != 206)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), server returned error code %d\n",
-                    driverName, functionName, remoteFile, response.code);
-            status = asynError;
-            break;
-        }
+        FAIL_IF_ARGS(response.code != 206, break,
+                "[file=%s] server returned error code %d", remoteFile,
+                response.code);
 
         memcpy(dataPtr, response.data, response.size);
 
@@ -1356,12 +1194,11 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
     getIntegerParam(EigerSaveFiles, &saveFiles);
 
     if(!status && saveFiles)
-        if((status = saveFile(remoteFile, *data, *len)))
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s::%s(%s), underlying saveFile failed\n",
-                    driverName, functionName, remoteFile);
-        }
+    {
+        status = saveFile(remoteFile, *data, *len);
+        FAIL_IF_ARGS(status, , "[file=%s] underlying saveFile failed",
+                remoteFile);
+    }
 
     if(status)
     {
@@ -1376,7 +1213,7 @@ asynStatus eigerDetector::getMasterFile (int sequenceId, char **data,
         size_t *len)
 {
     const char *functionName = "getMasterFile";
-    asynStatus status;
+    asynStatus status = asynSuccess;
     char pattern[MAX_BUF_SIZE];
     getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
     char *id = strstr(pattern, ID_STR);
@@ -1386,40 +1223,30 @@ asynStatus eigerDetector::getMasterFile (int sequenceId, char **data,
     sprintf(fileName, "%s%d%s_master.h5", pattern, sequenceId,
             id + ID_LEN);
 
-    if((status = getFile(fileName, data, len)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s::%s, underlying getFile(%s) failed\n",
-            driverName, functionName, fileName);
-        return status;
-    }
+    status = getFile(fileName, data, len);
+    FAIL_IF_ARGS(status, ,"underlying getFile(%s) failed", fileName);
 
-    return asynSuccess;
+    return status;
 }
 
 asynStatus eigerDetector::getDataFile (int sequenceId, int nr, char **data,
         size_t *len)
 {
     const char *functionName = "getDataFile";
-    asynStatus status;
+    asynStatus status = asynSuccess;
     char pattern[MAX_BUF_SIZE];
     getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
     char *id = strstr(pattern, ID_STR);
     *id = '\0';
 
-    char filename[MAX_BUF_SIZE];
-    sprintf(filename, "%s%d%s_data_%06d.h5", pattern, sequenceId,
+    char fileName[MAX_BUF_SIZE];
+    sprintf(fileName, "%s%d%s_data_%06d.h5", pattern, sequenceId,
             id + ID_LEN, nr);
 
-    if((status = getFile(filename, data, len)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s::%s, underlying getFile(%s) failed\n",
-            driverName, functionName, filename);
-        return status;
-    }
+    status = getFile(fileName, data, len);
+    FAIL_IF_ARGS(status, ,"underlying getFile(%s) failed", fileName);
 
-    return asynSuccess;
+    return status;
 }
 
 asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
@@ -1435,22 +1262,14 @@ asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
     callParamCallbacks();
 
     FILE *fhandle = fopen(fullFileName, "wb");
-    if(!fhandle)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), unable to open file to be written\n[%s]\n",
-                driverName, functionName, file, fullFileName);
-        return asynError;
-    }
+    FAIL_IF_ARGS(!fhandle, return status,
+            "[file=%s] unable to open file to be written\n[%s]", file,
+            fullFileName);
 
     size_t written = fwrite(data, 1, len, fhandle);
-    if(written < len)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), failed to write to local file (%u written)\n",
-                driverName, functionName, file, written);
-        status = asynError;
-    }
+    FAIL_IF_ARGS(written < len, ,
+            "[file=%s] failed to write to local file (%lu written)", file,
+            written);
 
     fclose(fhandle);
     return status;
@@ -1559,13 +1378,9 @@ asynStatus eigerDetector::downloadAndPublish (void)
 
         char *master;
         size_t masterLen;
-        if((status = getMasterFile(sequenceId, &master, &masterLen)))
-        {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: failed to get master file\n",
-                    driverName, functionName);
-            return status;
-        }
+
+        status = getMasterFile(sequenceId, &master, &masterLen);
+        FAIL_IF(status, return status, "failed to get master file");
 
         if(master)
         {
@@ -1584,22 +1399,14 @@ asynStatus eigerDetector::downloadAndPublish (void)
         char *data;
         size_t dataLen;
 
-        if((status = getDataFile(sequenceId, i + nrStart, &data, &dataLen)))
-        {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: failed to get data file %d\n",
-                    driverName, functionName, i + nrStart);
-            break;
-        }
+        status = getDataFile(sequenceId, i + nrStart, &data, &dataLen);
+        FAIL_IF_ARGS(status, break, "failed to get data file %d", i + nrStart);
+
         printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
 
         // Copy from memory to NDArrays
-        if((status = parseH5File(data, dataLen)))
-        {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: underlying parseH5File failed\n",
-                    driverName, functionName);
-        }
+        status = parseH5File(data, dataLen);
+        FAIL_IF(status, , "underlying parseH5File failed");
 
         if(data)
         {
@@ -1620,31 +1427,14 @@ asynStatus eigerDetector::readH5Attr (hid_t entry, const char *name, int *value)
     asynStatus status = asynSuccess;
 
     htri_t exists = H5Aexists_by_name(entry, "data", name, H5P_DEFAULT);
-    if(exists <= 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't find '%s' attribute\n",
-                driverName, functionName, name);
-        return asynError;
-    }
+    FAIL_IF_ARGS(exists <= 0, return status, "couldn't find '%s' attribute", name);
 
     hid_t id = H5Aopen_by_name  (entry, "data", name, H5P_DEFAULT, H5P_DEFAULT);
-    if(id < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't open '%s' attribute\n",
-                driverName, functionName, name);
-        return asynError;
-    }
+    FAIL_IF_ARGS(id < 0, return status, "couldn't open '%s' attribute", name);
 
     hid_t type = H5Aget_type(id);
-    if(H5Aread (id, type, value) < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't read '%s' attribute\n",
-                driverName, functionName, name);
-        status = asynError;
-    }
+    herr_t err = H5Aread (id, type, value);
+    FAIL_IF_ARGS(err < 0, , "couldn't read '%s' attribute", name);
 
     H5Aclose(id);
     return status;
@@ -1661,60 +1451,26 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
 
     // Open h5 file from memory
     fileId = H5LTopen_file_image(buf, bufLen, flags);
-    if(fileId < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s unable to open memory as file\n",
-                driverName, functionName);
-        return asynError;
-    }
+    FAIL_IF(fileId < 0, return status, "unable to open memory as file");
 
     //Access /entry group inside h5
     groupId = H5Gopen2(fileId, "/entry", H5P_DEFAULT);
-    if(groupId < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s unable to open 'entry' group\n",
-                driverName, functionName);
-        status = asynError;
-        goto closeFile;
-    }
+    FAIL_IF(groupId < 0, goto closeFile, "unable to open 'entry' group");
 
     int image_nr_low;
-    if((status = readH5Attr(groupId, "image_nr_low", &image_nr_low)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s underlying readH5Attr failed\n",
-                driverName, functionName);
-        goto closeGroup;
-    }
+    status = readH5Attr(groupId, "image_nr_low", &image_nr_low);
+    FAIL_IF(status, goto closeGroup, "underlying readH5Attr failed");
 
     int image_nr_high;
-    if((status = readH5Attr(groupId, "image_nr_high", &image_nr_high)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s underlying readH5Attr failed\n",
-                driverName, functionName);
-        goto closeGroup;
-    }
+    status = readH5Attr(groupId, "image_nr_high", &image_nr_high);
+    FAIL_IF(status, goto closeGroup, "underlying readH5Attr failed");
 
     // Access dataset 'data'
     dataId = H5Dopen2(groupId, "data", H5P_DEFAULT);
-    if(dataId < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s unable to open 'data' dataset\n",
-                driverName, functionName);
-        status = asynError;
-        goto closeGroup;
-    }
+    FAIL_IF(dataId < 0, goto closeGroup, "unable to open 'data' dataset");
 
-    if((status = fillNDArrays(dataId, (image_nr_high-image_nr_low)+1)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s underlying fillNDArrays failed\n",
-                driverName, functionName);
-    }
+    status = fillNDArrays(dataId, (image_nr_high-image_nr_low)+1);
+    FAIL_IF(status, , "underlying fillNDArrays failed");
 
     H5Dclose(dataId);
 closeGroup:
@@ -1732,22 +1488,11 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
     epicsTimeStamp startTime;
 
     hid_t dSpace = H5Dget_space(dId);
-    if(dSpace < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't get dataspace\n",
-                driverName, functionName);
-        return asynError;
-    }
+    FAIL_IF(dSpace < 0, return status, "couldn't get dataspace");
 
     int rank = H5Sget_simple_extent_ndims(dSpace);
-    if(rank < 0 || rank != 3)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't get rank or rank invalid (rank=%d)\n",
-                driverName, functionName, rank);
-        return asynError;
-    }
+    FAIL_IF_ARGS(rank < 0 || rank != 3, return status,
+            "couldn't get rank or rank invalid (rank=%d)", rank);
 
     hsize_t count[3];
     hsize_t maxdims[3];
@@ -1762,6 +1507,7 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
         size_t dims[2] = {count[1], count[2]};
         NDDataType_t ndType;
         NDArray *pImage;
+        herr_t err;
 
         hid_t dTypeId = H5Dget_type(dId);
         if(H5Tequal(dTypeId, H5T_NATIVE_UINT32) > 0)
@@ -1770,48 +1516,23 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
             ndType = NDUInt16;
         else
         {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s invalid data type\n",
-                    driverName, functionName);
-            status = asynError;
-            goto end;
+            FAIL_IF(true, goto end, "invalid data type");
         }
 
         // Select the hyperslab
-        if(H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL, count,
-                NULL) < 0)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s couldn't select hyperslab\n",
-                    driverName, functionName);
-            status = asynError;
-            goto end;
-        }
+        err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL, count,
+                NULL);
+        FAIL_IF(err < 0, goto end, "couldn't select hyperslab");
 
         pImage = pNDArrayPool->alloc(2, dims, ndType, 0, NULL);
-
-        if(!pImage)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s couldn't allocate NDArray\n",
-                    driverName, functionName);
-            status = asynError;
-            goto end;
-        }
+        FAIL_IF(!pImage, goto end, "couldn't allocate NDArray");
 
         // the saved datatype in the hdf5 file
         hid_t dType = H5Dget_type(dId);
 
         // and finally read the image
-        if(H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData) < 0)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s couldn't read image\n",
-                    driverName, functionName);
-            status = asynError;
-            pImage->release();
-            goto end;
-        }
+        err = H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData);
+        FAIL_IF(err < 0, pImage->release(); goto end, "couldn't read image");
 
         int imageCounter;
         getIntegerParam(NDArrayCounter, &imageCounter);
