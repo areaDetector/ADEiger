@@ -108,7 +108,7 @@ typedef enum
 typedef enum {
     TMInternal,         // INTS: One trigger multiple frames
     TMExternal,         // EXTS: One trigger multiple frames
-    TMExternalMultiple, // EXTE" One trigger per frame, trigger width=exposure
+    TMExternalMultiple, // EXTE: One trigger per frame, trigger width=exposure
 
     TMCount
 } eigerTriggerMode;
@@ -284,7 +284,6 @@ private:
     /*
      * HDF5 helpers
      */
-    asynStatus readH5Attr   (hid_t entry, const char *name, int *value);
     asynStatus parseH5File  (char *buf, size_t len);
     asynStatus fillNDArrays (hid_t dId, size_t nimages);
 
@@ -1421,31 +1420,13 @@ asynStatus eigerDetector::downloadAndPublish (void)
     return status;
 }
 
-asynStatus eigerDetector::readH5Attr (hid_t entry, const char *name, int *value)
-{
-    const char *functionName = "readH5Attr";
-    asynStatus status = asynSuccess;
-
-    htri_t exists = H5Aexists_by_name(entry, "data", name, H5P_DEFAULT);
-    FAIL_IF_ARGS(exists <= 0, return status, "couldn't find '%s' attribute", name);
-
-    hid_t id = H5Aopen_by_name  (entry, "data", name, H5P_DEFAULT, H5P_DEFAULT);
-    FAIL_IF_ARGS(id < 0, return status, "couldn't open '%s' attribute", name);
-
-    hid_t type = H5Aget_type(id);
-    herr_t err = H5Aread (id, type, value);
-    FAIL_IF_ARGS(err < 0, , "couldn't read '%s' attribute", name);
-
-    H5Aclose(id);
-    return status;
-}
-
 asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
 {
-    const char *functionName = "imgCopy";
+    const char *functionName = "parseH5File";
     asynStatus status = asynSuccess;
 
     hid_t fileId, groupId, dataId;
+    herr_t err;
 
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
@@ -1458,12 +1439,12 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     FAIL_IF(groupId < 0, goto closeFile, "unable to open 'entry' group");
 
     int image_nr_low;
-    status = readH5Attr(groupId, "image_nr_low", &image_nr_low);
-    FAIL_IF(status, goto closeGroup, "underlying readH5Attr failed");
+    err = H5LTget_attribute_int(groupId, ".", "image_nr_low", &image_nr_low);
+    FAIL_IF(err < 0, goto closeGroup, "failed to get image_nr_low attr");
 
     int image_nr_high;
-    status = readH5Attr(groupId, "image_nr_high", &image_nr_high);
-    FAIL_IF(status, goto closeGroup, "underlying readH5Attr failed");
+    err = H5LTget_attribute_int(groupId, ".", "image_nr_high", &image_nr_high);
+    FAIL_IF(err < 0, goto closeGroup, "failed to get image_nr_high attr");
 
     // Access dataset 'data'
     dataId = H5Dopen2(groupId, "data", H5P_DEFAULT);
