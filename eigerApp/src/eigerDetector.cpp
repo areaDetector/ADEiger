@@ -1485,7 +1485,8 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
     hsize_t offset[3] = {0,0,0};
     for(offset[0] = 0; offset[0] < nimages; offset[0]++)
     {
-        size_t dims[2] = {count[1], count[2]};
+        // count[] = {# image, height, width}
+        size_t dims[2] = {count[2], count[1]};
         NDDataType_t ndType;
         NDArray *pImage;
         herr_t err;
