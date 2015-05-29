@@ -266,8 +266,6 @@ private:
      */
     asynStatus getFileSize   (const char *remoteFile, size_t *len);
     asynStatus getFile       (const char *remoteFile, char **data, size_t *len);
-    asynStatus getMasterFile (int sequenceId, char **data, size_t *len);
-    asynStatus getDataFile   (int sequenceId, int nr, char **data, size_t *len);
     asynStatus saveFile      (const char *file, char *data, size_t len);
 
     /*
@@ -1197,61 +1195,11 @@ asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
         remaining -= response.size;
     }
 
-    int saveFiles;
-    getIntegerParam(EigerSaveFiles, &saveFiles);
-
-    if(!status && saveFiles)
-    {
-        status = saveFile(remoteFile, *data, *len);
-        FAIL_IF_ARGS(status, , "[file=%s] underlying saveFile failed",
-                remoteFile);
-    }
-
     if(status)
     {
         free(*data);
         *data = NULL;
     }
-
-    return status;
-}
-
-asynStatus eigerDetector::getMasterFile (int sequenceId, char **data,
-        size_t *len)
-{
-    const char *functionName = "getMasterFile";
-    asynStatus status = asynSuccess;
-    char pattern[MAX_BUF_SIZE];
-    getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
-    char *id = strstr(pattern, ID_STR);
-    *id = '\0';
-
-    char fileName[MAX_BUF_SIZE];
-    sprintf(fileName, "%s%d%s_master.h5", pattern, sequenceId,
-            id + ID_LEN);
-
-    status = getFile(fileName, data, len);
-    FAIL_IF_ARGS(status, ,"underlying getFile(%s) failed", fileName);
-
-    return status;
-}
-
-asynStatus eigerDetector::getDataFile (int sequenceId, int nr, char **data,
-        size_t *len)
-{
-    const char *functionName = "getDataFile";
-    asynStatus status = asynSuccess;
-    char pattern[MAX_BUF_SIZE];
-    getStringParam(EigerFWNamePattern, sizeof(pattern), pattern);
-    char *id = strstr(pattern, ID_STR);
-    *id = '\0';
-
-    char fileName[MAX_BUF_SIZE];
-    sprintf(fileName, "%s%d%s_data_%06d.h5", pattern, sequenceId,
-            id + ID_LEN, nr);
-
-    status = getFile(fileName, data, len);
-    FAIL_IF_ARGS(status, ,"underlying getFile(%s) failed", fileName);
 
     return status;
 }
@@ -1344,16 +1292,26 @@ asynStatus eigerDetector::downloadAndPublish (void)
 {
     const char *functionName = "downloadAndPublish";
     asynStatus status = asynSuccess;
-
     int saveFiles, numImages, sequenceId, numImagesPerFile, nrStart, nFiles;
+    char pattern[MAX_BUF_SIZE];
+    char *prefix, *suffix;
 
     getIntegerParam(EigerSaveFiles,      &saveFiles);
     getIntegerParam(ADNumImages,         &numImages);
     getIntegerParam(EigerSequenceId,     &sequenceId);
     getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
     getIntegerParam(EigerFWImageNrStart, &nrStart);
+    getStringParam (EigerFWNamePattern,  sizeof(pattern), pattern);
+
+    // Compute prefix and suffix to file name
+    prefix = pattern;
+    suffix = strstr(pattern, ID_STR);
+    *suffix = '\0';
+    suffix += ID_LEN;
 
     setIntegerParam(ADStatus, ADStatusReadout);
+    setStringParam(ADStatusMessage, "Downloading data files");
+    callParamCallbacks();
 
     // Wait for file to exist
     // TODO: Is this the best way?
@@ -1363,52 +1321,50 @@ asynStatus eigerDetector::downloadAndPublish (void)
         getString(SSFWStatus, "state", buf, sizeof(buf));
     }while(buf[0] == 'a');
 
-    // Only download master if we are saving files to disk
-    if(saveFiles)
-    {
-        setStringParam(ADStatusMessage, "Downloading master file");
-        callParamCallbacks();
-
-        char *master;
-        size_t masterLen;
-
-        status = getMasterFile(sequenceId, &master, &masterLen);
-        FAIL_IF(status, return status, "failed to get master file");
-
-        if(master)
-        {
-            free(master);
-            master = NULL;
-        }
-    }
-
-    setStringParam(ADStatusMessage, "Downloading data files");
-    callParamCallbacks();
-
-    nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile));
+    // Calculate number of files (master + data files)
+    nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile)) + 1;
 
     for(int i = 0; i < nFiles; ++i)
     {
-        char *data;
+        bool isMaster = i == 0;
+
+        // Only download master if saving files locally
+        if(isMaster && !saveFiles)
+            continue;
+
+        // Build file names accordingly, first one is the master file
+        char fileName[MAX_BUF_SIZE];
+        if(isMaster)
+            sprintf(fileName, "%s%d%s_master.h5", prefix, sequenceId,
+                    suffix);
+        else
+            sprintf(fileName, "%s%d%s_data_%06d.h5", prefix, sequenceId,
+                    suffix, i-1+nrStart);
+
+        // Download file into memory
+        char *data = NULL;
         size_t dataLen;
 
-        status = getDataFile(sequenceId, i + nrStart, &data, &dataLen);
-        FAIL_IF_ARGS(status, break, "failed to get data file %d", i + nrStart);
+        status = getFile(fileName, &data, &dataLen);
+        FAIL_IF_ARGS(status, break, "underlying getFile(%s) failed", fileName);
 
-        printf("got data file %d, %lu bytes\n", i+nrStart, dataLen);
-
-        // Copy from memory to NDArrays
-        status = parseH5File(data, dataLen);
-        FAIL_IF(status, , "underlying parseH5File failed");
-
-        if(data)
+        // Save file to disk
+        if(saveFiles)
         {
-            free(data);
-            data = NULL;
+            status = saveFile(fileName, data, dataLen);
+            FAIL_IF_ARGS(status, free(data); break,
+                    "underlying saveFile(%s) failed", fileName);
         }
 
-        if(status)
-            break;
+        // Parse file into NDArray
+        if(!isMaster)
+        {
+            status = parseH5File(data, dataLen);
+            FAIL_IF_ARGS(status, free(data); break,
+                    "underlying parseH5File(%s) failed", fileName);
+        }
+
+        free(data);
     }
 
     return status;
