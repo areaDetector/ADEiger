@@ -273,7 +273,7 @@ private:
     /*
      * Arm, trigger and disarm
      */
-    asynStatus capture (void);
+    asynStatus capture (eigerTriggerMode triggerMode, double triggerTimeout);
 
     /*
      * Download detector files locally and, at the same time, publish as
@@ -713,7 +713,19 @@ void eigerDetector::eigerTask (void)
         /*
          * Acquire
          */
-        if((status = capture()))
+        double acquirePeriod, triggerTimeout;
+        int numImages;
+
+        getDoubleParam(ADAcquirePeriod, &acquirePeriod);
+        getIntegerParam(ADNumImages, &numImages);
+        triggerTimeout = acquirePeriod*numImages + 10.0;
+
+        setIntegerParam(ADStatus, ADStatusAcquire);
+        setShutter(1);
+        status = capture(TMInternal, triggerTimeout);
+        setShutter(0);
+
+        if(status)
         {
             asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                     "%s:%s: underlying capture failed\n",
@@ -1274,23 +1286,13 @@ asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
     return status;
 }
 
-asynStatus eigerDetector::capture (void)
+asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
+        double triggerTimeout)
 {
     const char *functionName = "capture";
     asynStatus status;
     asynStatus retStatus = asynSuccess;
 
-    double acquirePeriod, triggerTimeout;
-    int numImages;
-
-    getDoubleParam(ADAcquirePeriod, &acquirePeriod);
-    getIntegerParam(ADNumImages, &numImages);
-    triggerTimeout = acquirePeriod*numImages + 10.0;
-
-    // Open shutter
-    setShutter(1);
-
-    setIntegerParam(ADStatus, ADStatusAcquire);
     setStringParam(ADStatusMessage, "Arming the detector (takes a while)");
     callParamCallbacks();
 
@@ -1302,9 +1304,8 @@ asynStatus eigerDetector::capture (void)
                 driverName, functionName);
 
         retStatus = status;
-        setIntegerParam(ADStatus, ADStatusError);
         setStringParam(ADStatusMessage, "Failed to arm the detector");
-        goto closeShutter;
+        goto end;
     }
 
     // Set armed flag
@@ -1320,7 +1321,6 @@ asynStatus eigerDetector::capture (void)
                 driverName, functionName);
 
         retStatus = status;
-        setIntegerParam(ADStatus, ADStatusError);
         setStringParam(ADStatusMessage, "Failed to trigger the detector");
         // continue to disarm
     }
@@ -1333,15 +1333,13 @@ asynStatus eigerDetector::capture (void)
                 driverName, functionName);
 
         retStatus = status;
-        setIntegerParam(ADStatus, ADStatusError);
         setStringParam(ADStatusMessage, "Failed to disarm the detector");
-        goto closeShutter;
+        goto end;
     }
 
     setIntegerParam(EigerArmed, 0);
 
-closeShutter:
-    setShutter(0);
+end:
     callParamCallbacks();
     return retStatus;
 }
