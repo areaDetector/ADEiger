@@ -738,18 +738,14 @@ void eigerDetector::eigerTask (void)
         /*
          * Download and publish
          */
-
-        int arrayCallbacks;
-        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-        if (arrayCallbacks)
-            if((status = downloadAndPublish()))
-            {
-                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                        "%s:%s: underlying downloadAndPublish failed\n",
-                        driverName, functionName);
-                setIntegerParam(ADStatus, ADStatusError);
-                setStringParam(ADStatusMessage, "Download failed");
-            }
+        if((status = downloadAndPublish()))
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: underlying downloadAndPublish failed\n",
+                    driverName, functionName);
+            setIntegerParam(ADStatus, ADStatusError);
+            setStringParam(ADStatusMessage, "Download failed");
+        }
 
 end:
         /* If everything was ok, set the status back to idle */
@@ -1465,6 +1461,7 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
     asynStatus status = asynSuccess;
 
     epicsTimeStamp startTime;
+    int arrayCallbacks;
 
     hid_t dSpace = H5Dget_space(dId);
     FAIL_IF(dSpace < 0, return status, "couldn't get dataspace");
@@ -1516,9 +1513,6 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
 
         int imageCounter;
         getIntegerParam(NDArrayCounter, &imageCounter);
-        imageCounter++;
-        setIntegerParam(NDArrayCounter, imageCounter);
-        callParamCallbacks();
 
         // Put the frame number and time stamp into the buffer
         pImage->uniqueId = imageCounter;
@@ -1529,15 +1523,22 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
         // Get any attributes that have been defined for this driver
         this->getAttributes(pImage->pAttributeList);
 
-        // Call the NDArray callback
-        this->unlock();
+        // Call the NDArray callback if necessary
+        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+        if (arrayCallbacks)
+        {
+            this->unlock();
 
-        asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                "%s:%s: calling NDArray callback\n",
-                driverName, functionName);
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                    "%s:%s: calling NDArray callback\n",
+                    driverName, functionName);
 
-        doCallbacksGenericPointer(pImage, NDArrayData, 0);
-        this->lock();
+            doCallbacksGenericPointer(pImage, NDArrayData, 0);
+            this->lock();
+        }
+
+        setIntegerParam(NDArrayCounter, imageCounter+1);
+        callParamCallbacks();
 
         pImage->release();
 
