@@ -3168,7 +3168,7 @@ $(pv_value)</tooltip>
       <tooltip>$(pv_name)
 $(pv_value)</tooltip>
       <rules />
-      <enabled>false</enabled>
+      <enabled>true</enabled>
       <wuid>-51362ba6:14c6b927493:-6075</wuid>
       <pv_value />
       <scripts />
@@ -3271,7 +3271,7 @@ $(pv_value)</tooltip>
         <color red="0" green="128" blue="255" />
       </border_color>
       <widget_type>Action Button</widget_type>
-      <width>115</width>
+      <width>75</width>
       <x>125</x>
       <name>Action Button</name>
       <y>145</y>
@@ -3320,8 +3320,8 @@ $(pv_value)</tooltip>
         <color red="0" green="128" blue="255" />
       </border_color>
       <widget_type>Action Button</widget_type>
-      <width>115</width>
-      <x>250</x>
+      <width>75</width>
+      <x>290</x>
       <name>Action Button_1</name>
       <y>145</y>
       <style>1</style>
@@ -4139,6 +4139,55 @@ $(pv_value)</tooltip>
         <color red="0" green="0" blue="0" />
       </foreground_color>
       <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+      <toggle_button>false</toggle_button>
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <push_action_index>0</push_action_index>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7947</wuid>
+      <pv_value />
+      <text>Disarm</text>
+      <scripts />
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+      <height>25</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <image></image>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)Disarm</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>Action Button</widget_type>
+      <width>75</width>
+      <x>207</x>
+      <name>Action Button</name>
+      <y>145</y>
+      <style>1</style>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false">
+        <action type="WRITE_PV">
+          <pv_name>$(pv_name)</pv_name>
+          <value>1</value>
+          <timeout>10</timeout>
+          <confirm_message></confirm_message>
+          <description></description>
+        </action>
+      </actions>
       <font>
         <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
       </font>

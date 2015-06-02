@@ -1,26 +1,37 @@
 # Database for the records specific to the Eiger driver
-# Mark Rivers
-# July 25, 2008
+# Bruno Martins
+# June 2, 2015
 
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")
     field(ZRVL,"0")
-    field(ZRST,"Internal")
-#    field(ONVL,"1")
-#    field(ONST,"External")
-#    field(TWVL,"2")
-#    field(TWST,"External Multiple")
+    field(ZRST,"Internal Series")
+    field(ONVL,"1")
+    field(ONST,"Internal Enable")
+    field(TWVL,"2")
+    field(TWST,"External Series")
+    field(THVL,"3")
+    field(THST,"External Enable")
 }
 
 record(mbbi,"$(P)$(R)TriggerMode_RBV") {
     field(DESC,"Acquire mode")
     field(ZRVL,"0")
-    field(ZRST,"Internal")
-#    field(ONVL,"1")
-#    field(ONST,"External")
-#    field(TWVL,"2")
-#    field(TWST,"External Multiple")
+    field(ZRST,"Internal Series")
+    field(ONVL,"1")
+    field(ONST,"Internal Enable")
+    field(TWVL,"2")
+    field(TWST,"External Series")
+    field(THVL,"3")
+    field(THST,"External Enable")
+}
+
+# Disarm the detector
+record(ao, "$(P)$(R)Disarm") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DISARM")
+    field(DESC, "Disarm the detector")
 }
 
 # FileWriter clear all files
@@ -170,7 +181,7 @@ record(ai, "$(P)$(R)PhotonEnergy_RBV")
     field(SCAN, "I/O Intr")
 }
 
-# Armed flag, which indicates Eiger is ready for external triggers
+# Armed flag, which indicates Eiger is ready for triggers
 record(bi, "$(P)$(R)Armed")
 {
     field(DTYP, "asynInt32")

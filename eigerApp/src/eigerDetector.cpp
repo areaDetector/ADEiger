@@ -106,9 +106,10 @@ typedef enum
 } eigerFWMode;
 
 typedef enum {
-    TMInternal,         // INTS: One trigger multiple frames
-    TMExternal,         // EXTS: One trigger multiple frames
-    TMExternalMultiple, // EXTE: One trigger per frame, trigger width=exposure
+    TMInternalSeries,   // INTS
+    TMInternalEnable,   // INTE
+    TMExternalSeries,   // EXTS
+    TMExternalEnable,   // EXTE
 
     TMCount
 } eigerTriggerMode;
@@ -128,7 +129,7 @@ static const char *eigerFWModeStr [FWModeCount] = {
 };
 
 static const char *eigerTMStr [TMCount] = {
-    "ints", "exts", "exte"
+    "ints", "inte", "exts", "exte"
 };
 
 struct response
@@ -168,6 +169,7 @@ static const char *driverName = "eigerDetector";
 
 /* Other */
 #define EigerArmedString                "ARMED"
+#define EigerDisarmString               "DISARM"
 #define EigerSaveFilesString            "SAVE_FILES"
 #define EigerSequenceIdString           "SEQ_ID"
 
@@ -217,11 +219,13 @@ protected:
 
     /* Other parameters */
     int EigerArmed;
+    int EigerDisarm;
     int EigerSaveFiles;
     int EigerSequenceId;
     #define LAST_EIGER_PARAM EigerSequenceId
 
 private:
+    epicsEvent disarmEvent;
     epicsEventId startEventId;
     epicsEventId stopEventId;
     char toServer[MAX_MESSAGE_SIZE];
@@ -333,7 +337,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
                0, 0,             /* No interfaces beyond ADDriver.cpp */
                ASYN_CANBLOCK,    /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
                1,                /* autoConnect=1 */
-               priority, stackSize)
+               priority, stackSize),
+    disarmEvent(epicsEventEmpty)
 {
     int status = asynSuccess;
     const char *functionName = "eigerDetector";
@@ -374,6 +379,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
 
     /* Other parameters */
     createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
+    createParam(EigerDisarmString,        asynParamInt32,   &EigerDisarm);
     createParam(EigerSaveFilesString,     asynParamInt32,   &EigerSaveFiles);
     createParam(EigerSequenceIdString,    asynParamInt32,   &EigerSequenceId);
 
@@ -421,8 +427,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     status |= setIntegerParam(NDArraySizeY, maxSizeY);
 
     // Only internal trigger is supported at this time
-    status |= setIntegerParam(ADTriggerMode, TMInternal);
-    status |= putString(SSDetConfig, "trigger_mode", eigerTMStr[TMInternal]);
+    status |= setIntegerParam(ADTriggerMode, TMInternalSeries);
+    status |= putString(SSDetConfig, "trigger_mode", eigerTMStr[TMInternalSeries]);
 
     char fwMode[MAX_BUF_SIZE];
     status |= getString(SSFWConfig, "mode", fwMode, sizeof(fwMode));
@@ -499,10 +505,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     else if (function == EigerFlatfield)
         status = putBool(SSDetConfig, "flatfield_correction_applied", (bool)value);
     else if (function == ADTriggerMode)
-    {
-        value = TMInternal; // only supported trigger mode
-        //status = putString(SSDetConfig, "trigger_mode", eigerTMStr[value]);
-    }
+        status = putString(SSDetConfig, "trigger_mode", eigerTMStr[value]);
     else if (function == ADNumImages)
         status = putInt(SSDetConfig, "nimages", value);
     else if (function == ADReadStatus)
@@ -523,6 +526,12 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
             setStringParam(ADStatusMessage, "Acquisition aborted");
             setIntegerParam(ADStatus, ADStatusAborted);
         }
+    }
+    else if (function == EigerDisarm)
+    {
+        status = command("disarm");
+        if(!status)
+            disarmEvent.signal();
     }
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
@@ -722,15 +731,17 @@ void eigerDetector::eigerTask (void)
          * Acquire
          */
         double acquirePeriod, triggerTimeout;
-        int numImages;
+        int numImages, triggerMode;
 
         getDoubleParam(ADAcquirePeriod, &acquirePeriod);
         getIntegerParam(ADNumImages, &numImages);
-        triggerTimeout = acquirePeriod*numImages + 10.0;
+        getIntegerParam(ADTriggerMode, &triggerMode);
+
+        triggerTimeout = triggerMode == TMInternalSeries ? acquirePeriod*numImages + 10.0 : 0.0;
 
         setIntegerParam(ADStatus, ADStatusAcquire);
         setShutter(1);
-        status = capture(TMInternal, triggerTimeout);
+        status = capture((eigerTriggerMode) triggerMode, triggerTimeout);
         setShutter(0);
 
         if(status)
@@ -1247,6 +1258,8 @@ asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
     asynStatus status;
     asynStatus retStatus = asynSuccess;
 
+    disarmEvent.tryWait();  // Clear any previously uncaught disarm event
+
     setStringParam(ADStatusMessage, "Arming the detector (takes a while)");
     callParamCallbacks();
 
@@ -1264,31 +1277,38 @@ asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
 
     // Set armed flag
     setIntegerParam(EigerArmed, 1);
-    setStringParam(ADStatusMessage, "Triggering the detector");
+    setStringParam(ADStatusMessage, "Detector armed");
     callParamCallbacks();
 
     // Actually acquire the image(s)
-    if((status = command("trigger", triggerTimeout)))
+    if(triggerMode == TMInternalSeries)
     {
-        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s: failed to trigger the detector\n",
-                driverName, functionName);
+        if((status = command("trigger", triggerTimeout)))
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: failed to trigger the detector\n",
+                    driverName, functionName);
 
-        retStatus = status;
-        setStringParam(ADStatusMessage, "Failed to trigger the detector");
-        // continue to disarm
+            retStatus = status;
+            setStringParam(ADStatusMessage, "Failed to trigger the detector");
+            // continue to disarm
+        }
+
+        // Image(s) acquired or aborted. Disarm the detector
+        if((status = command("disarm")))
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: failed to disarm the detector\n",
+                    driverName, functionName);
+
+            retStatus = status;
+            setStringParam(ADStatusMessage, "Failed to disarm the detector");
+            goto end;
+        }
     }
-
-    // Image(s) acquired or aborted. Disarm the detector
-    if((status = command("disarm")))
+    else
     {
-        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s: failed to disarm the detector\n",
-                driverName, functionName);
-
-        retStatus = status;
-        setStringParam(ADStatusMessage, "Failed to disarm the detector");
-        goto end;
+        disarmEvent.wait();
     }
 
     setIntegerParam(EigerArmed, 0);
