@@ -274,8 +274,7 @@ private:
     asynStatus capture (eigerTriggerMode triggerMode, double triggerTimeout);
 
     /*
-     * Download detector files locally and, at the same time, publish as
-     * NDArrays
+     * Download detector files locally and publish as NDArrays
      */
     asynStatus downloadAndPublish (void);
 
@@ -283,7 +282,6 @@ private:
      * HDF5 helpers
      */
     asynStatus parseH5File  (char *buf, size_t len);
-    asynStatus fillNDArrays (hid_t dId, size_t nimages);
 
     /*
      * Read some detector status parameters
@@ -1375,100 +1373,78 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     const char *functionName = "parseH5File";
     asynStatus status = asynSuccess;
 
-    hid_t fileId, groupId, dataId;
+    int imageCounter, arrayCallbacks;
+    hid_t fId, dId, dSpace, dType, mSpace;
+    hsize_t dims[3], count[3], offset[3] = {0,0,0};
     herr_t err;
+    size_t nImages, width, height;
+
+    size_t ndDims[2];
+    NDDataType_t ndType;
+
+    epicsTimeStamp startTime;
 
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
     // Open h5 file from memory
-    fileId = H5LTopen_file_image(buf, bufLen, flags);
-    FAIL_IF(fileId < 0, return status, "unable to open memory as file");
-
-    //Access /entry group inside h5
-    groupId = H5Gopen2(fileId, "/entry", H5P_DEFAULT);
-    FAIL_IF(groupId < 0, goto closeFile, "unable to open 'entry' group");
-
-    int image_nr_low;
-    err = H5LTget_attribute_int(groupId, ".", "image_nr_low", &image_nr_low);
-    FAIL_IF(err < 0, goto closeGroup, "failed to get image_nr_low attr");
-
-    int image_nr_high;
-    err = H5LTget_attribute_int(groupId, ".", "image_nr_high", &image_nr_high);
-    FAIL_IF(err < 0, goto closeGroup, "failed to get image_nr_high attr");
+    fId = H5LTopen_file_image(buf, bufLen, flags);
+    FAIL_IF(fId < 0, goto end, "unable to open memory as file");
 
     // Access dataset 'data'
-    dataId = H5Dopen2(groupId, "data", H5P_DEFAULT);
-    FAIL_IF(dataId < 0, goto closeGroup, "unable to open 'data' dataset");
+    dId = H5Dopen2(fId, "/entry/data", H5P_DEFAULT);
+    FAIL_IF(dId < 0, goto closeFile, "unable to open 'data' dataset");
 
-    status = fillNDArrays(dataId, (image_nr_high-image_nr_low)+1);
-    FAIL_IF(status, , "underlying fillNDArrays failed");
+    // Get dataset dimensions (assume 3 dimensions)
+    err = H5LTget_dataset_info(dId, ".", dims, NULL, NULL);
+    FAIL_IF(err, goto closeDataset, "couldn't read dataset info");
 
-    H5Dclose(dataId);
-closeGroup:
-    H5Gclose(groupId);
-closeFile:
-    H5Fclose(fileId);
-    return status;
-}
+    nImages = dims[0];
+    height  = dims[1];
+    width   = dims[2];
 
-asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
-{
-    const char *functionName = "fillArray";
-    asynStatus status = asynSuccess;
+    ndDims[0] = width;
+    ndDims[1] = height;
 
-    epicsTimeStamp startTime;
-    int arrayCallbacks;
-
-    hid_t dSpace = H5Dget_space(dId);
-    FAIL_IF(dSpace < 0, return status, "couldn't get dataspace");
-
-    int rank = H5Sget_simple_extent_ndims(dSpace);
-    FAIL_IF_ARGS(rank < 0 || rank != 3, return status,
-            "couldn't get rank or rank invalid (rank=%d)", rank);
-
-    hsize_t count[3];
-    hsize_t maxdims[3];
-    H5Sget_simple_extent_dims(dSpace, count, maxdims);
     count[0] = 1;
+    count[1] = height;
+    count[2] = width;
 
-    hid_t mSpace = H5Screate_simple(3, count, NULL);
+    // Get dataset type
+    dType = H5Dget_type(dId);
+    FAIL_IF(dType < 0, goto closeDataset, "couldn't get dataset type");
 
-    hsize_t offset[3] = {0,0,0};
-    for(offset[0] = 0; offset[0] < nimages; offset[0]++)
+    // Parse dataset type
+    if(H5Tequal(dType, H5T_NATIVE_UINT32) > 0)
+        ndType = NDUInt32;
+    else if(H5Tequal(dType, H5T_NATIVE_UINT16) > 0)
+        ndType = NDUInt16;
+    else
+        FAIL_IF(true, goto closeDataType, "invalid data type");
+
+    // Get dataspace
+    dSpace = H5Dget_space(dId);
+    FAIL_IF(dSpace < 0, goto closeDataType, "couldn't get dataspace");
+
+    // Create memspace
+    mSpace = H5Screate_simple(3, count, NULL);
+    FAIL_IF(mSpace < 0, goto closeMemSpace, "failed to create memSpace");
+
+    getIntegerParam(NDArrayCounter, &imageCounter);
+    for(offset[0] = 0; offset[0] < nImages; ++offset[0])
     {
-        // count[] = {# image, height, width}
-        size_t dims[2] = {count[2], count[1]};
-        NDDataType_t ndType;
         NDArray *pImage;
-        herr_t err;
 
-        hid_t dTypeId = H5Dget_type(dId);
-        if(H5Tequal(dTypeId, H5T_NATIVE_UINT32) > 0)
-            ndType = NDUInt32;
-        else if(H5Tequal(dTypeId, H5T_NATIVE_UINT16) > 0)
-            ndType = NDUInt16;
-        else
-        {
-            FAIL_IF(true, goto end, "invalid data type");
-        }
+        pImage = pNDArrayPool->alloc(2, ndDims, ndType, 0, NULL);
+        FAIL_IF(!pImage, break, "couldn't allocate NDArray");
 
         // Select the hyperslab
-        err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL, count,
-                NULL);
-        FAIL_IF(err < 0, goto end, "couldn't select hyperslab");
-
-        pImage = pNDArrayPool->alloc(2, dims, ndType, 0, NULL);
-        FAIL_IF(!pImage, goto end, "couldn't allocate NDArray");
-
-        // the saved datatype in the hdf5 file
-        hid_t dType = H5Dget_type(dId);
+        err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL,
+                count, NULL);
+        FAIL_IF(err < 0, pImage->release(); break, "couldn't select hyperslab");
 
         // and finally read the image
         err = H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData);
-        FAIL_IF(err < 0, pImage->release(); goto end, "couldn't read image");
-
-        int imageCounter;
-        getIntegerParam(NDArrayCounter, &imageCounter);
+        FAIL_IF(err < 0, pImage->release(); break, "couldn't read image");
 
         // Put the frame number and time stamp into the buffer
         pImage->uniqueId = imageCounter;
@@ -1479,12 +1455,11 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
         // Get any attributes that have been defined for this driver
         this->getAttributes(pImage->pAttributeList);
 
-        // Call the NDArray callback if necessary
+        // Call the NDArray callback
         getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
         if (arrayCallbacks)
         {
             this->unlock();
-
             asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                     "%s:%s: calling NDArray callback\n",
                     driverName, functionName);
@@ -1493,16 +1468,21 @@ asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
             this->lock();
         }
 
-        setIntegerParam(NDArrayCounter, imageCounter+1);
+        setIntegerParam(NDArrayCounter, ++imageCounter);
         callParamCallbacks();
 
         pImage->release();
-
-        callParamCallbacks();
     }
 
-end:
+closeMemSpace:
     H5Sclose(mSpace);
+closeDataType:
+    H5Tclose(dType);
+closeDataset:
+    H5Dclose(dId);
+closeFile:
+    H5Fclose(fId);
+end:
     return status;
 }
 
