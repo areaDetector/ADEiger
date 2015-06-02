@@ -161,6 +161,10 @@ static const char *driverName = "eigerDetector";
 /* Status */
 #define EigerThTemp0String              "TH_TEMP_0"
 #define EigerThHumid0String             "TH_HUMID_0"
+#define EigerLink0String                "LINK_0"
+#define EigerLink1String                "LINK_1"
+#define EigerLink2String                "LINK_2"
+#define EigerLink3String                "LINK_3"
 
 /* Other */
 #define EigerArmedString                "ARMED"
@@ -206,6 +210,10 @@ protected:
     /* Detector Status Parameters */
     int EigerThTemp0;
     int EigerThHumid0;
+    int EigerLink0;
+    int EigerLink1;
+    int EigerLink2;
+    int EigerLink3;
 
     /* Other parameters */
     int EigerArmed;
@@ -359,6 +367,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     /* Detector Status Parameters */
     createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
     createParam(EigerThHumid0String,      asynParamFloat64, &EigerThHumid0);
+    createParam(EigerLink0String,         asynParamInt32,   &EigerLink0);
+    createParam(EigerLink1String,         asynParamInt32,   &EigerLink1);
+    createParam(EigerLink2String,         asynParamInt32,   &EigerLink2);
+    createParam(EigerLink3String,         asynParamInt32,   &EigerLink3);
 
     /* Other parameters */
     createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
@@ -1494,21 +1506,28 @@ asynStatus eigerDetector::eigerStatus (void)
     int status;
     double temp = 0.0;
     double humid = 0.0;
+    char link[4][MAX_BUF_SIZE];
 
     // Read temperature and humidity
     status  = getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
     status |= getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
+    status |= getString(SSDetStatus, "link0", link[0], sizeof(link[0]));
+    status |= getString(SSDetStatus, "link1", link[1], sizeof(link[1]));
+    status |= getString(SSDetStatus, "link2", link[2], sizeof(link[2]));
+    status |= getString(SSDetStatus, "link3", link[3], sizeof(link[3]));
 
     if(!status)
     {
         setDoubleParam(ADTemperature, temp);
         setDoubleParam(EigerThTemp0,  temp);
         setDoubleParam(EigerThHumid0, humid);
+        setIntegerParam(EigerLink0, !strcmp(link[0], "up"));
+        setIntegerParam(EigerLink1, !strcmp(link[1], "up"));
+        setIntegerParam(EigerLink2, !strcmp(link[2], "up"));
+        setIntegerParam(EigerLink3, !strcmp(link[3], "up"));
     }
     else
-    {
         setIntegerParam(ADStatus, ADStatusError);
-    }
 
     // Other temperatures/humidities available, do we want them?
     // "board_000/th1_temp"   "board_000/th1_humidity"
@@ -1520,7 +1539,6 @@ asynStatus eigerDetector::eigerStatus (void)
     callParamCallbacks();
     return (asynStatus)status;
 }
-
 
 extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
         int maxBuffers, size_t maxMemory, int priority, int stackSize)

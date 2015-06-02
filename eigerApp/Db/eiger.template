@@ -392,3 +392,40 @@ record(ai, "$(P)$(R)Humid0_RBV")
     field(VAL,  "0")
     field(PREC, "1")
 }
+
+record(bi, "$(P)$(R)Link0_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_0")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link1_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_1")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link2_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_2")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link3_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_3")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
