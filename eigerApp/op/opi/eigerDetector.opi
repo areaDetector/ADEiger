@@ -1727,7 +1727,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>190</height>
+    <height>216</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -1881,7 +1881,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>37</y>
+      <y>36</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -1931,9 +1931,9 @@ $(pv_value)</tooltip>
         <color red="255" green="255" blue="255" />
       </background_color>
       <width>115</width>
-      <x>125</x>
+      <x>250</x>
       <name>asyn Port</name>
-      <y>101</y>
+      <y>98</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -1973,7 +1973,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>101</y>
+      <y>98</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2023,9 +2023,9 @@ $(pv_value)</tooltip>
         <color red="255" green="255" blue="255" />
       </background_color>
       <width>115</width>
-      <x>125</x>
+      <x>250</x>
       <name>asyn Port</name>
-      <y>135</y>
+      <y>129</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2065,7 +2065,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>135</y>
+      <y>129</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2169,7 +2169,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_1</name>
-      <y>37</y>
+      <y>36</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2209,7 +2209,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>69</y>
+      <y>67</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2266,7 +2266,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>34</y>
+      <y>33</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -2319,7 +2319,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_1</name>
-      <y>69</y>
+      <y>67</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2376,7 +2376,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>66</y>
+      <y>64</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -2385,6 +2385,262 @@ $(pv_value)</tooltip>
       <font>
         <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
       </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
+      <border_style>0</border_style>
+      <tooltip></tooltip>
+      <horizontal_alignment>2</horizontal_alignment>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7f78</wuid>
+      <transparent>true</transparent>
+      <auto_size>false</auto_size>
+      <text>Links</text>
+      <scripts />
+      <height>20</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <visible>true</visible>
+      <vertical_alignment>1</vertical_alignment>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>Label</widget_type>
+      <wrap_words>false</wrap_words>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>115</width>
+      <x>0</x>
+      <name>Label_4</name>
+      <y>160</y>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+      <alarm_pulsing>false</alarm_pulsing>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <rules />
+      <effect_3d>true</effect_3d>
+      <bit>-1</bit>
+      <pv_value />
+      <height>20</height>
+      <border_width>1</border_width>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)Link0_RBV</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>LED</widget_type>
+      <name>LED</name>
+      <actions hook="false" hook_all="false" />
+      <show_boolean_label>false</show_boolean_label>
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7f72</wuid>
+      <on_color>
+        <color red="0" green="255" blue="0" />
+      </on_color>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <on_label>ON</on_label>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>true</keep_wh_ratio>
+      </scale_options>
+      <off_color>
+        <color red="0" green="100" blue="0" />
+      </off_color>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="240" green="240" blue="240" />
+      </background_color>
+      <square_led>false</square_led>
+      <width>20</width>
+      <x>250</x>
+      <data_type>0</data_type>
+      <y>160</y>
+      <foreground_color>
+        <color red="192" green="192" blue="192" />
+      </foreground_color>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+      <off_label>OFF</off_label>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+      <alarm_pulsing>false</alarm_pulsing>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <rules />
+      <effect_3d>true</effect_3d>
+      <bit>-1</bit>
+      <pv_value />
+      <height>20</height>
+      <border_width>1</border_width>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)Link3_RBV</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>LED</widget_type>
+      <name>LED</name>
+      <actions hook="false" hook_all="false" />
+      <show_boolean_label>false</show_boolean_label>
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7f60</wuid>
+      <on_color>
+        <color red="0" green="255" blue="0" />
+      </on_color>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <on_label>ON</on_label>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>true</keep_wh_ratio>
+      </scale_options>
+      <off_color>
+        <color red="0" green="100" blue="0" />
+      </off_color>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="240" green="240" blue="240" />
+      </background_color>
+      <square_led>false</square_led>
+      <width>20</width>
+      <x>345</x>
+      <data_type>0</data_type>
+      <y>160</y>
+      <foreground_color>
+        <color red="192" green="192" blue="192" />
+      </foreground_color>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+      <off_label>OFF</off_label>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+      <alarm_pulsing>false</alarm_pulsing>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <rules />
+      <effect_3d>true</effect_3d>
+      <bit>-1</bit>
+      <pv_value />
+      <height>20</height>
+      <border_width>1</border_width>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)Link1_RBV</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>LED</widget_type>
+      <name>LED</name>
+      <actions hook="false" hook_all="false" />
+      <show_boolean_label>false</show_boolean_label>
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7f5b</wuid>
+      <on_color>
+        <color red="0" green="255" blue="0" />
+      </on_color>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <on_label>ON</on_label>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>true</keep_wh_ratio>
+      </scale_options>
+      <off_color>
+        <color red="0" green="100" blue="0" />
+      </off_color>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="240" green="240" blue="240" />
+      </background_color>
+      <square_led>false</square_led>
+      <width>20</width>
+      <x>281</x>
+      <data_type>0</data_type>
+      <y>160</y>
+      <foreground_color>
+        <color red="192" green="192" blue="192" />
+      </foreground_color>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+      <off_label>OFF</off_label>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+      <alarm_pulsing>false</alarm_pulsing>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <rules />
+      <effect_3d>true</effect_3d>
+      <bit>-1</bit>
+      <pv_value />
+      <height>20</height>
+      <border_width>1</border_width>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)Link2_RBV</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>LED</widget_type>
+      <name>LED</name>
+      <actions hook="false" hook_all="false" />
+      <show_boolean_label>false</show_boolean_label>
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7f56</wuid>
+      <on_color>
+        <color red="0" green="255" blue="0" />
+      </on_color>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <on_label>ON</on_label>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>true</keep_wh_ratio>
+      </scale_options>
+      <off_color>
+        <color red="0" green="100" blue="0" />
+      </off_color>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="240" green="240" blue="240" />
+      </background_color>
+      <square_led>false</square_led>
+      <width>20</width>
+      <x>312</x>
+      <data_type>0</data_type>
+      <y>160</y>
+      <foreground_color>
+        <color red="192" green="192" blue="192" />
+      </foreground_color>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+      <off_label>OFF</off_label>
     </widget>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -2436,7 +2692,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>381</height>
+    <height>356</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -2457,7 +2713,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>280</x>
     <name>Collect</name>
-    <y>225</y>
+    <y>250</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -2498,7 +2754,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>31</y>
+      <y>33</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2538,7 +2794,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>57</y>
+      <y>61</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2653,7 +2909,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>54</y>
+      <y>58</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -2819,98 +3075,6 @@ $(pv_value)</tooltip>
       <horizontal_alignment>2</horizontal_alignment>
       <rules />
       <enabled>false</enabled>
-      <wuid>-51362ba6:14c6b927493:-60b6</wuid>
-      <transparent>true</transparent>
-      <auto_size>false</auto_size>
-      <text># Exp. / Image</text>
-      <scripts />
-      <height>20</height>
-      <border_width>1</border_width>
-      <scale_options>
-        <width_scalable>true</width_scalable>
-        <height_scalable>true</height_scalable>
-        <keep_wh_ratio>false</keep_wh_ratio>
-      </scale_options>
-      <visible>true</visible>
-      <vertical_alignment>1</vertical_alignment>
-      <border_color>
-        <color red="0" green="128" blue="255" />
-      </border_color>
-      <widget_type>Label</widget_type>
-      <wrap_words>false</wrap_words>
-      <background_color>
-        <color red="255" green="255" blue="255" />
-      </background_color>
-      <width>115</width>
-      <x>0</x>
-      <name>Label_5</name>
-      <y>83</y>
-      <foreground_color>
-        <color red="0" green="0" blue="0" />
-      </foreground_color>
-      <actions hook="false" hook_all="false" />
-      <font>
-        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
-      </font>
-    </widget>
-    <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
-      <border_style>0</border_style>
-      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-      <alarm_pulsing>false</alarm_pulsing>
-      <precision>0</precision>
-      <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-      <horizontal_alignment>0</horizontal_alignment>
-      <rules />
-      <enabled>false</enabled>
-      <wuid>-51362ba6:14c6b927493:-60b4</wuid>
-      <transparent>false</transparent>
-      <pv_value />
-      <auto_size>false</auto_size>
-      <text>######</text>
-      <rotation_angle>0.0</rotation_angle>
-      <scripts />
-      <border_alarm_sensitive>true</border_alarm_sensitive>
-      <show_units>true</show_units>
-      <height>20</height>
-      <border_width>1</border_width>
-      <scale_options>
-        <width_scalable>true</width_scalable>
-        <height_scalable>true</height_scalable>
-        <keep_wh_ratio>false</keep_wh_ratio>
-      </scale_options>
-      <visible>true</visible>
-      <pv_name>$(P)$(R)NumExposures_RBV</pv_name>
-      <vertical_alignment>1</vertical_alignment>
-      <border_color>
-        <color red="0" green="128" blue="255" />
-      </border_color>
-      <precision_from_pv>true</precision_from_pv>
-      <widget_type>Text Update</widget_type>
-      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-      <wrap_words>false</wrap_words>
-      <format_type>0</format_type>
-      <background_color>
-        <color red="255" green="255" blue="255" />
-      </background_color>
-      <width>115</width>
-      <x>250</x>
-      <name>asyn Port_2</name>
-      <y>83</y>
-      <foreground_color>
-        <color red="0" green="0" blue="0" />
-      </foreground_color>
-      <actions hook="false" hook_all="false" />
-      <font>
-        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
-      </font>
-    </widget>
-    <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
-      <border_style>0</border_style>
-      <tooltip></tooltip>
-      <horizontal_alignment>2</horizontal_alignment>
-      <rules />
-      <enabled>false</enabled>
       <wuid>-51362ba6:14c6b927493:-608f</wuid>
       <transparent>true</transparent>
       <auto_size>false</auto_size>
@@ -2936,7 +3100,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>151</y>
+      <y>119</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2988,7 +3152,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>151</y>
+      <y>119</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3030,7 +3194,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>145</y>
+      <y>113</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3070,7 +3234,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>183</y>
+      <y>148</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3110,7 +3274,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Action Button</name>
-      <y>180</y>
+      <y>145</y>
       <style>1</style>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -3159,7 +3323,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>Action Button_1</name>
-      <y>181</y>
+      <y>145</y>
       <style>1</style>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -3208,7 +3372,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>209</y>
+      <y>177</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3262,7 +3426,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>298</x>
       <data_type>0</data_type>
-      <y>209</y>
+      <y>177</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -3302,7 +3466,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>235</y>
+      <y>206</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3356,7 +3520,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>298</x>
       <data_type>0</data_type>
-      <y>235</y>
+      <y>206</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -3408,7 +3572,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_1</name>
-      <y>57</y>
+      <y>61</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3500,7 +3664,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>261</y>
+      <y>235</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3552,7 +3716,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>261</y>
+      <y>235</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3609,65 +3773,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>258</y>
-      <maximum>1.7976931348623157E308</maximum>
-      <foreground_color>
-        <color red="0" green="0" blue="0" />
-      </foreground_color>
-      <minimum>-1.7976931348623157E308</minimum>
-      <font>
-        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
-      </font>
-    </widget>
-    <widget typeId="org.csstudio.opibuilder.widgets.TextInput" version="2.0.0">
-      <alarm_pulsing>false</alarm_pulsing>
-      <precision>0</precision>
-      <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-      <horizontal_alignment>0</horizontal_alignment>
-      <rules />
-      <pv_value />
-      <auto_size>false</auto_size>
-      <read_only>false</read_only>
-      <text>######</text>
-      <show_units>true</show_units>
-      <height>25</height>
-      <multiline_input>false</multiline_input>
-      <border_width>1</border_width>
-      <visible>true</visible>
-      <pv_name>$(P)$(R)NumExposures</pv_name>
-      <border_color>
-        <color red="0" green="128" blue="255" />
-      </border_color>
-      <precision_from_pv>true</precision_from_pv>
-      <widget_type>Text Input</widget_type>
-      <confirm_message></confirm_message>
-      <name>asyn Port_3</name>
-      <style>1</style>
-      <actions hook="false" hook_all="false" />
-      <border_style>0</border_style>
-      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-      <show_native_border>true</show_native_border>
-      <enabled>false</enabled>
-      <wuid>-51362ba6:14c6b927493:-60b3</wuid>
-      <next_focus>0</next_focus>
-      <scripts />
-      <border_alarm_sensitive>true</border_alarm_sensitive>
-      <scale_options>
-        <width_scalable>true</width_scalable>
-        <height_scalable>true</height_scalable>
-        <keep_wh_ratio>false</keep_wh_ratio>
-      </scale_options>
-      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-      <format_type>0</format_type>
-      <limits_from_pv>false</limits_from_pv>
-      <background_color>
-        <color red="255" green="255" blue="255" />
-      </background_color>
-      <password_input>false</password_input>
-      <width>115</width>
-      <x>125</x>
-      <y>80</y>
+      <y>232</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -3708,7 +3814,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>287</y>
+      <y>264</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3760,7 +3866,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>287</y>
+      <y>264</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3800,7 +3906,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>313</y>
+      <y>293</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3852,7 +3958,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>313</y>
+      <y>293</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3894,7 +4000,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>307</y>
+      <y>287</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3934,7 +4040,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>116</y>
+      <y>90</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3986,7 +4092,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>116</y>
+      <y>91</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4028,7 +4134,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>110</y>
+      <y>85</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4467,7 +4573,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>11</y>
+      <y>5</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4519,7 +4625,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>11</y>
+      <y>5</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4561,7 +4667,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>5</y>
+      <y>-1</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4601,7 +4707,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>75</y>
+      <y>69</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4653,7 +4759,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>75</y>
+      <y>69</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4710,7 +4816,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>72</y>
+      <y>66</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -4751,7 +4857,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>43</y>
+      <y>37</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4803,7 +4909,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>43</y>
+      <y>37</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4845,7 +4951,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>37</y>
+      <y>31</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4885,7 +4991,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>108</y>
+      <y>101</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4937,7 +5043,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>108</y>
+      <y>101</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4994,7 +5100,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>105</y>
+      <y>98</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -5035,7 +5141,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>138</y>
+      <y>133</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -5087,7 +5193,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>138</y>
+      <y>133</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -5144,7 +5250,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>135</y>
+      <y>130</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -5326,7 +5432,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>685</x>
     <name>MX</name>
-    <y>465</y>
+    <y>400</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -5988,7 +6094,7 @@ $(pv_value)</tooltip>
       <auto_size>true</auto_size>
       <text>Path</text>
       <scripts />
-      <height>20</height>
+      <height>17</height>
       <border_width>1</border_width>
       <scale_options>
         <width_scalable>true</width_scalable>
@@ -6005,70 +6111,14 @@ $(pv_value)</tooltip>
       <background_color>
         <color red="255" green="255" blue="255" />
       </background_color>
-      <width>41</width>
+      <width>28</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>40</y>
+      <y>42</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
       <actions hook="false" hook_all="false" />
-      <font>
-        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
-      </font>
-    </widget>
-    <widget typeId="org.csstudio.opibuilder.widgets.TextInput" version="2.0.0">
-      <alarm_pulsing>false</alarm_pulsing>
-      <precision>0</precision>
-      <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-      <horizontal_alignment>0</horizontal_alignment>
-      <rules />
-      <pv_value />
-      <auto_size>false</auto_size>
-      <read_only>false</read_only>
-      <text>######</text>
-      <show_units>false</show_units>
-      <height>31</height>
-      <multiline_input>false</multiline_input>
-      <border_width>1</border_width>
-      <visible>true</visible>
-      <pv_name>$(P)$(R)FilePath {"longString":true}</pv_name>
-      <border_color>
-        <color red="0" green="128" blue="255" />
-      </border_color>
-      <precision_from_pv>true</precision_from_pv>
-      <widget_type>Text Input</widget_type>
-      <confirm_message></confirm_message>
-      <name>asyn Port_3</name>
-      <style>1</style>
-      <actions hook="false" hook_all="false" />
-      <border_style>0</border_style>
-      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-      <show_native_border>true</show_native_border>
-      <enabled>true</enabled>
-      <wuid>6fcefab8:14c9591e4c7:-76c4</wuid>
-      <next_focus>0</next_focus>
-      <scripts />
-      <border_alarm_sensitive>true</border_alarm_sensitive>
-      <scale_options>
-        <width_scalable>true</width_scalable>
-        <height_scalable>true</height_scalable>
-        <keep_wh_ratio>false</keep_wh_ratio>
-      </scale_options>
-      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-      <format_type>4</format_type>
-      <limits_from_pv>true</limits_from_pv>
-      <background_color>
-        <color red="255" green="255" blue="255" />
-      </background_color>
-      <password_input>false</password_input>
-      <width>311</width>
-      <x>40</x>
-      <y>35</y>
-      <foreground_color>
-        <color red="0" green="0" blue="0" />
-      </foreground_color>
       <font>
         <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
       </font>
@@ -6257,6 +6307,65 @@ $(pv_value)</tooltip>
         <color red="0" green="0" blue="0" />
       </foreground_color>
       <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.TextInput" version="2.0.0">
+      <alarm_pulsing>false</alarm_pulsing>
+      <precision>0</precision>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <horizontal_alignment>0</horizontal_alignment>
+      <rules />
+      <pv_value />
+      <auto_size>false</auto_size>
+      <text>######</text>
+      <rotation_angle>0.0</rotation_angle>
+      <show_units>false</show_units>
+      <height>31</height>
+      <multiline_input>false</multiline_input>
+      <border_width>1</border_width>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)FilePath {"longString":true}</pv_name>
+      <selector_type>1</selector_type>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <precision_from_pv>true</precision_from_pv>
+      <widget_type>Text Input</widget_type>
+      <confirm_message></confirm_message>
+      <name>Text Input</name>
+      <style>0</style>
+      <actions hook="false" hook_all="false" />
+      <border_style>3</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <file_source>1</file_source>
+      <enabled>true</enabled>
+      <wuid>469ffd1d:14db4d557e0:-7cfc</wuid>
+      <transparent>false</transparent>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <file_return_part>3</file_return_part>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <format_type>4</format_type>
+      <limits_from_pv>false</limits_from_pv>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>311</width>
+      <x>40</x>
+      <y>35</y>
+      <maximum>1.7976931348623157E308</maximum>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <minimum>-1.7976931348623157E308</minimum>
       <font>
         <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
       </font>
