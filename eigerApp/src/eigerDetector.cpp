@@ -1707,10 +1707,10 @@ asynStatus eigerDetector::eigerStatus (void)
     // Read temperature and humidity
     status  = getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
     status |= getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
-    status |= getString(SSDetStatus, "link0", link[0], sizeof(link[0]));
-    status |= getString(SSDetStatus, "link1", link[1], sizeof(link[1]));
-    status |= getString(SSDetStatus, "link2", link[2], sizeof(link[2]));
-    status |= getString(SSDetStatus, "link3", link[3], sizeof(link[3]));
+    status |= getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
+    status |= getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
+    status |= getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
+    status |= getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
 
     if(!status)
     {
@@ -1725,7 +1725,7 @@ asynStatus eigerDetector::eigerStatus (void)
     else
         setIntegerParam(ADStatus, ADStatusError);
 
-    // Other temperatures/humidities available, do we want them?
+    // TODO: Other temperatures/humidities available, do we want them?
     // "board_000/th1_temp"   "board_000/th1_humidity"
     // "module_000/temp"      "module_000/humidity"
     // "module_001/temp"      "module_001/humidity"
