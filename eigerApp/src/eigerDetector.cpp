@@ -993,13 +993,19 @@ asynStatus eigerDetector::parsePutResponse(struct response response)
         return asynError;
     }
 
-    if(tokens[0].type == JSON_TYPE_OBJECT)  // sequence id
+    if(tokens[0].type == JSON_TYPE_OBJECT)  // sequence id or series id
     {
         struct json_token *seqIdToken = find_json_token(tokens, "sequence id");
         if(!seqIdToken)
         {
-            ERR("unable to find 'sequence_id' token");
-            return asynError;
+            ERR("unable to find 'sequence id' token, will try 'series id'");
+
+            seqIdToken = find_json_token(tokens, "series id");
+            if(!seqIdToken)
+            {
+                ERR("unable to find 'series id' token");
+                return asynError;
+            }
         }
 
         int seqId;
@@ -1550,11 +1556,17 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     }
 
     // Access dataset 'data'
-    dId = H5Dopen2(fId, "/entry/data", H5P_DEFAULT);
+    dId = H5Dopen2(fId, "/entry/data/data", H5P_DEFAULT);
     if(dId < 0)
     {
-        ERR("unable to open 'data/data' dataset");
-        goto closeFile;
+        ERR("unable to open '/entry/data/data'. Will try '/entry/data'");
+
+        dId = H5Dopen2(fId, "/entry/data", H5P_DEFAULT);
+        if(dId < 0)
+        {
+            ERR("unable to open '/entry/data' dataset");
+            goto closeFile;
+        }
     }
 
     // Get dataset dimensions (assume 3 dimensions)
