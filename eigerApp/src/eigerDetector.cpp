@@ -1383,10 +1383,7 @@ asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
     // Arm the detector
     if((status = command("arm", DEF_TIMEOUT_ARM)))
     {
-        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s: failed to arm the detector\n",
-                driverName, functionName);
-
+        ERR("failed to arm the detector");
         retStatus = status;
         setStringParam(ADStatusMessage, "Failed to arm the detector");
         goto end;
@@ -1394,18 +1391,15 @@ asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
 
     // Set armed flag
     setIntegerParam(EigerArmed, 1);
-    setStringParam(ADStatusMessage, "Detector armed");
-    callParamCallbacks();
 
     // Actually acquire the image(s)
     if(triggerMode == TMInternalSeries)
     {
+        setStringParam(ADStatusMessage, "Triggering the detector");
+        callParamCallbacks();
         if((status = command("trigger", triggerTimeout)))
         {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: failed to trigger the detector\n",
-                    driverName, functionName);
-
+            ERR("failed to trigger the detector");
             retStatus = status;
             setStringParam(ADStatusMessage, "Failed to trigger the detector");
             // continue to disarm
@@ -1414,10 +1408,7 @@ asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
         // Image(s) acquired or aborted. Disarm the detector
         if((status = command("disarm")))
         {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s: failed to disarm the detector\n",
-                    driverName, functionName);
-
+            ERR("failed to disarm the detector");
             retStatus = status;
             setStringParam(ADStatusMessage, "Failed to disarm the detector");
             goto end;
