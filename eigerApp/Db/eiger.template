@@ -2,6 +2,14 @@
 # Bruno Martins
 # June 2, 2015
 
+# Eiger Server software version
+record(stringin, "$(P)$(R)SWVersion_RBV") {
+    field(DESC, "Software Version")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SW_VERSION")
+    field(SCAN, "I/O Intr")
+}
+
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")

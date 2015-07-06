@@ -20,6 +20,8 @@
 #define EigerThresholdString            "THRESHOLD"
 #define EigerWavelengthString           "WAVELENGTH"
 
+#define EigerSWVersionString            "SW_VERSION"
+
 /* Status */
 #define EigerThTemp0String              "TH_TEMP_0"
 #define EigerThHumid0String             "TH_HUMID_0"
@@ -71,6 +73,9 @@ protected:
     int EigerPhotonEnergy;
     int EigerThreshold;
     int EigerWavelength;
+
+    /* Detector info */
+    int EigerSWVersion;
 
     /* Detector Status Parameters */
     int EigerThTemp0;

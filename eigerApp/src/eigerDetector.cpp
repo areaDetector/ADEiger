@@ -88,6 +88,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerThresholdString,     asynParamFloat64, &EigerThreshold);
     createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
 
+    /* Detector Info Parameters */
+    createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
+
     /* Detector Status Parameters */
     createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
     createParam(EigerThHumid0String,      asynParamFloat64, &EigerThHumid0);
@@ -136,6 +139,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     status |= setStringParam (ADManufacturer, manufacturer);
     status |= setStringParam (ADModel, model);
+
+    char swVersion[MAX_BUF_SIZE];
+    status |= eiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
+    status |= setStringParam(EigerSWVersion, swVersion);
 
     int maxSizeX, maxSizeY;
     status |= eiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
