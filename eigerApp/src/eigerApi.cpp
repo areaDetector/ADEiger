@@ -111,45 +111,22 @@ void Eiger::deinit (void)
     osiSockRelease();
 }
 
-int Eiger::breakPattern (char *pattern, char **prefix, int *prefixLen, char **suffix)
+int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
 {
-    const char *functionName = "breakPattern";
-    *prefix = pattern;
-    *suffix = strstr(pattern, ID_STR);
+    const char *idStr = strstr(pattern, ID_STR);
+    int prefixLen = idStr - pattern;
 
-    if(!*suffix)
-    {
-        ERR_ARGS("invalid pattern %s", pattern);
-        return EXIT_FAILURE;
-    }
-
-    *prefixLen = *suffix-*prefix;
-    *suffix += ID_LEN;
-    return EXIT_SUCCESS;
-}
-
-int Eiger::buildMasterName (char *pattern, int seqId, char *buf, size_t bufSize)
-{
-    int prefixLen;
-    char *prefix, *suffix;
-
-    if(Eiger::breakPattern(pattern, &prefix, &prefixLen, &suffix))
-        return EXIT_FAILURE;
-
-    epicsSnprintf(buf, bufSize, "%.*s%d%s_master.h5", prefixLen, prefix, seqId, suffix);
+    epicsSnprintf(buf, bufSize, "%.*s%d%s_master.h5", prefixLen, pattern, seqId, pattern+prefixLen+ID_LEN);
 
     return EXIT_SUCCESS;
 }
 
-int Eiger::buildDataName (int n, char *pattern, int seqId, char *buf, size_t bufSize)
+int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
 {
-    int prefixLen;
-    char *prefix, *suffix;
+    const char *idStr = strstr(pattern, ID_STR);
+    int prefixLen = idStr - pattern;
 
-    if(Eiger::breakPattern(pattern, &prefix, &prefixLen, &suffix))
-        return EXIT_FAILURE;
-
-    epicsSnprintf(buf, bufSize, "%.*s%d%s_data_%06d.h5", prefixLen, prefix, seqId, suffix, n);
+    epicsSnprintf(buf, bufSize, "%.*s%d%s_data_%06d.h5", prefixLen, pattern, seqId, pattern+prefixLen+ID_LEN, n);
 
     return EXIT_SUCCESS;
 }

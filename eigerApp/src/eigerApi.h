@@ -55,8 +55,6 @@ private:
     epicsMutex mSockMutex;
     bool mSockClosed;
 
-    static int breakPattern (char *pattern, char **prefix, int *prefixLen, char **suffix);
-
     int connect (void);
 
     int doRequest (const request_t *request, response_t *response, int timeout = DEFAULT_TIMEOUT);
@@ -75,8 +73,8 @@ public:
 
     static int init    (void);
     static void deinit (void);
-    static int buildMasterName (char *pattern, int seqId, char *buf, size_t bufSize);
-    static int buildDataName   (int n, char *pattern, int seqId, char *buf, size_t bufSize);
+    static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
+    static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
     Eiger(const char *hostname);
 
