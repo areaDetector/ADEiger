@@ -181,15 +181,15 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
 
-    status |= getDoubleP(SSDetStatus, "board_000/th0_temp",     EigerThTemp0);
-    status |= getDoubleP(SSDetStatus, "board_000/th0_humidity", EigerThHumid0);
-
     status |= setIntegerParam(NDArraySize, 0);
     status |= setIntegerParam(NDDataType,  NDUInt32);
     status |= setIntegerParam(ADImageMode, ADImageMultiple);
     status |= setIntegerParam(EigerArmed,  0);
     status |= setIntegerParam(EigerSaveFiles, 1);
     status |= setIntegerParam(EigerSequenceId, 0);
+
+    // Read status once at startup
+    eigerStatus();
 
     callParamCallbacks();
 
