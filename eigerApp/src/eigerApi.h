@@ -24,15 +24,6 @@ typedef enum
     SSCount,
 } sys_t;
 
-// Filewriter mode
-typedef enum
-{
-    FWDisabled,
-    FWEnabled,
-
-    FWModeCount
-} fwMode_t;
-
 // Trigger mode
 typedef enum {
     TMInternalSeries,   // INTS
@@ -80,7 +71,6 @@ private:
 
 public:
     static const char *sysStr [SSCount];
-    static const char *fwModeStr [FWModeCount];
     static const char *triggerModeStr [TMCount];
 
     static int init    (void);

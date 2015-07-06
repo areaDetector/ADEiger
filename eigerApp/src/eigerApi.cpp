@@ -97,10 +97,6 @@ const char *Eiger::sysStr [SSCount] = {
     "/data/",
 };
 
-const char *Eiger::fwModeStr [FWModeCount] = {
-    "disabled", "enabled"
-};
-
 const char *Eiger::triggerModeStr [TMCount] = {
     "ints", "inte", "exts", "exte"
 };

@@ -6,9 +6,6 @@
 /* FileWriter Config Parameters */
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
-#define EigerFWImageNrStartString       "IMAGE_NR_START"
-#define EigerFWModeString               "MODE"
-#define EigerFWNamePatternString        "NAME_PATTERN"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
 
 /* Detector Config Parameters */
@@ -48,8 +45,6 @@ public:
     /* These are the methods that we override from ADDriver */
     virtual asynStatus writeInt32  (asynUser *pasynUser, epicsInt32 value);
     virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
-    virtual asynStatus writeOctet  (asynUser *pasynUser, const char *value,
-            size_t nChars, size_t *nActual);
     void report(FILE *fp, int details);
 
     /* This should be private but is called from C so must be public */
@@ -60,9 +55,6 @@ protected:
     int EigerFWClear;
     #define FIRST_EIGER_PARAM EigerFWClear
     int EigerFWCompression;
-    int EigerFWImageNrStart;
-    int EigerFWMode;
-    int EigerFWNamePattern;
     int EigerFWNImgsPerFile;
 
     /* Detector Config Parameters */
@@ -95,6 +87,8 @@ protected:
 private:
     epicsEvent disarmEvent, startEvent, stopEvent;
     Eiger eiger;
+    int fwImageNrStart;
+    char fwNamePattern[32];
 
     /*
      * Nice wrappers to get parameters

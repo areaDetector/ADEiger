@@ -21,7 +21,9 @@
 #include "eigerDetector.h"
 #include "eigerApi.h"
 
-#define MAX_BUF_SIZE 256
+#define MAX_BUF_SIZE        256
+#define DEFAULT_PATTERN     "series_$id"
+#define DEFAULT_NR_START    1
 
 // Error message formatters
 #define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
@@ -75,9 +77,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
-    createParam(EigerFWImageNrStartString,asynParamInt32, &EigerFWImageNrStart);
-    createParam(EigerFWModeString,        asynParamInt32, &EigerFWMode);
-    createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
     createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
 
     createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
@@ -131,6 +130,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         status = eiger.getString(SSDetConfig, "description", desc, sizeof(desc));
     }
 
+    // Read parameters that won't be touched
+
     // Assume 'description' is of the form 'Dectris Eiger 1M'
     space = strchr(desc, ' ');
     *space = '\0';
@@ -158,10 +159,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= setIntegerParam(ADTriggerMode, TMInternalSeries);
     status |= putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[TMInternalSeries]);
 
-    char fwMode[MAX_BUF_SIZE];
-    status |= eiger.getString(SSFWConfig, "mode", fwMode, sizeof(fwMode));
-    status |= setIntegerParam(EigerFWMode, (int)(fwMode[0] == 'e'));
-
     status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
     status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
     status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
@@ -169,8 +166,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
 
     status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
-    status |= getIntP   (SSFWConfig, "image_nr_start",     EigerFWImageNrStart);
-    status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
     status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
 
     status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
@@ -193,8 +188,17 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     callParamCallbacks();
 
+    // Set some detector parameters
+
     // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
     status |= putBool(SSDetConfig, "auto_summation", true);
+
+    // FileWriter should always be enabled
+    status |= putString(SSFWConfig, "mode", "enabled");
+
+    // This driver expects the following parameters to always have the same value
+    status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
+    status |= putString(SSFWConfig, "name_pattern", DEFAULT_PATTERN);
 
     if(status)
     {
@@ -232,10 +236,6 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         status = putInt(SSFWConfig, "clear", 1);
     else if (function == EigerFWCompression)
         status = putBool(SSFWConfig, "compression_enabled", (bool)value);
-    else if (function == EigerFWImageNrStart)
-        status = putInt(SSFWConfig, "image_nr_start", value);
-    else if (function == EigerFWMode)
-        status = putString(SSFWConfig, "mode", Eiger::fwModeStr[value]);
     else if (function == EigerFWNImgsPerFile)
         status = putInt(SSFWConfig, "nimages_per_file", value);
     else if (function == EigerFlatfield)
@@ -355,43 +355,6 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         setDoubleParam(function, value);
         callParamCallbacks();
     }
-    return status;
-}
-
-/** Called when asyn clients call pasynOctet->write().
-  * This function performs actions for some parameters, including
-  * eigerBadPixelFile, ADFilePath, etc.
-  * For all parameters it sets the value in the parameter library and calls any
-  * registered callbacks.
-  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
-  * \param[in] value Address of the string to write.
-  * \param[in] nChars Number of characters to write.
-  * \param[out] nActual Number of characters actually written. */
-asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
-                                    size_t nChars, size_t *nActual)
-{
-    int function = pasynUser->reason;
-    asynStatus status = asynSuccess;
-    const char *functionName = "writeOctet";
-
-    if (function == EigerFWNamePattern)
-        putString(SSFWConfig, "name_pattern", value);
-    else if (function < FIRST_EIGER_PARAM)
-        status = ADDriver::writeOctet(pasynUser, value, nChars, nActual);
-
-    status = setStringParam(function, value);
-    callParamCallbacks();
-
-    if (status)
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-                  "%s:%s: status=%d, function=%d, value=%s",
-                  driverName, functionName, status, function, value);
-    else
-        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
-              "%s:%s: function=%d, value=%s\n",
-              driverName, functionName, function, value);
-
-    *nActual = nChars;
     return status;
 }
 
@@ -748,15 +711,12 @@ asynStatus eigerDetector::downloadAndPublish (void)
 {
     const char *functionName = "downloadAndPublish";
     asynStatus status = asynSuccess;
-    int saveFiles, numImages, sequenceId, numImagesPerFile, nrStart, nFiles;
-    char pattern[MAX_BUF_SIZE];
+    int saveFiles, numImages, sequenceId, numImagesPerFile, nFiles;
 
     getIntegerParam(EigerSaveFiles,      &saveFiles);
     getIntegerParam(ADNumImages,         &numImages);
     getIntegerParam(EigerSequenceId,     &sequenceId);
     getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
-    getIntegerParam(EigerFWImageNrStart, &nrStart);
-    getStringParam (EigerFWNamePattern,  sizeof(pattern), pattern);
     setIntegerParam(ADStatus, ADStatusReadout);
     setStringParam (ADStatusMessage, "Downloading data files");
     callParamCallbacks();
@@ -784,9 +744,9 @@ asynStatus eigerDetector::downloadAndPublish (void)
         char fileName[MAX_BUF_SIZE];
 
         if(isMaster)
-            Eiger::buildMasterName(pattern, sequenceId, fileName, sizeof(fileName));
+            Eiger::buildMasterName(DEFAULT_PATTERN, sequenceId, fileName, sizeof(fileName));
         else
-            Eiger::buildDataName(i-1+nrStart, pattern, sequenceId, fileName, sizeof(fileName));
+            Eiger::buildDataName(i-1+DEFAULT_NR_START, DEFAULT_PATTERN, sequenceId, fileName, sizeof(fileName));
 
         // Download file into memory
         char *data = NULL;

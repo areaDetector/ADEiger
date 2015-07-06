@@ -49,22 +49,6 @@ record(ao, "$(P)$(R)FWClear") {
     field(DESC, "Clear files in the detector")
 }
 
-# FileWriter mode
-record(bo,"$(P)$(R)FWMode") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MODE")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
-}
-
-record(bi,"$(P)$(R)FWMode_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MODE")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
-    field(SCAN, "I/O Intr")
-}
-
 # FileWriter compression enabled
 record(bo,"$(P)$(R)FWCompression") {
     field(DTYP, "asynInt32")
@@ -81,18 +65,6 @@ record(bi,"$(P)$(R)FWCompression_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-# FileWriter name pattern
-record(stringout, "$(P)$(R)FWNamePattern") {
-    field(DTYP, "asynOctetWrite")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
-}
-
-record(stringin, "$(P)$(R)FWNamePattern_RBV") {
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
-    field(SCAN, "I/O Intr")
-}
-
 # FileWriter number of images per HDF5 file
 record(ao, "$(P)$(R)FWNImagesPerFile") {
     field(DTYP, "asynInt32")
@@ -106,23 +78,6 @@ record(ai, "$(P)$(R)FWNImagesPerFile_RBV")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NIMAGES_PER_FILE")
     field(DESC, "Number of images per HDF5 file")
-    field(PREC, "0")
-    field(SCAN, "I/O Intr")
-}
-
-# FileWriter image number start
-record(ao, "$(P)$(R)FWImageNrStart") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))IMAGE_NR_START")
-    field(DESC, "Number of the first image file")
-    field(PREC, "0")
-}
-
-record(ai, "$(P)$(R)FWImageNrStart_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))IMAGE_NR_START")
-    field(DESC, "Number of the first image file")
     field(PREC, "0")
     field(SCAN, "I/O Intr")
 }
