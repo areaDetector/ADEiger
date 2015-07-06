@@ -1,6 +1,5 @@
-/* eigerDetector.cpp
- *
- * This is a driver for a Eiger pixel array detector.
+/*
+ * This is a driver for the Eiger pixel array detector.
  *
  * Authors: Bruno Martins
  *          Diego Omitto
@@ -13,284 +12,25 @@
 #include <epicsExport.h>
 #include <epicsThread.h>
 #include <iocsh.h>
-#include <asynOctetSyncIO.h>
 #include <math.h>
 
-#include <vector>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-#include <iostream>
-
-#include <frozen.h> // JSON parser
 
 #include "ADDriver.h"
+#include "eigerDetector.h"
+#include "eigerApi.h"
 
-/** Messages to/from server */
-#define GET_FILE_RETRIES    10
-#define MAX_MESSAGE_SIZE    65536
-#define MAX_BUF_SIZE        256
-#define MAX_JSON_TOKENS     100
-#define DEF_TIMEOUT         2.0
-#define DEF_TIMEOUT_INIT    30.0
-#define DEF_TIMEOUT_ARM     55.0
-#define DEF_TIMEOUT_CMD     5.0
-#define CHUNK_SIZE          (MAX_MESSAGE_SIZE-512)
+#define MAX_BUF_SIZE 256
 
-#define ID_STR          "$id"
-#define ID_LEN          3
-
-#define API_VERSION     "1.0.4"
-#define EOL             "\r\n"      // End of Line
-#define EOH             EOL EOL     // End of Header
-#define EOH_LEN         4           // End of Header Length
-
-#define DATA_NATIVE "application/json; charset=utf-8"
-#define DATA_TIFF   "application/tiff"
-#define DATA_HDF5   "application/hdf5"
-#define DATA_HTML   "text/html"
-
-#define REQUEST_GET\
-    "GET %s%s HTTP/1.0" EOL \
-    "Accept: " DATA_NATIVE EOH
-
-#define REQUEST_PUT\
-    "PUT %s%s HTTP/1.0" EOL \
-    "Accept-Encoding: identity" EOL\
-    "Content-Type: " DATA_NATIVE EOL \
-    "Content-Length: %u" EOH
-
-#define REQUEST_HEAD\
-    "HEAD %s%s HTTP/1.0" EOH
-
-#define REQUEST_GET_PARTIAL\
-    "GET %s%s HTTP/1.0" EOL \
-    "Range: bytes=%lu-%lu" EOH
-
-#define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s:%s %s\n", \
+// Error message formatters
+#define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
     driverName, functionName, msg)
 
 #define ERR_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, \
-    "%s:%s "fmt"\n", driverName, functionName, __VA_ARGS__);
-
-/** Subsystems */
-typedef enum
-{
-    SSAPIVersion,
-    SSDetConfig,
-    SSDetStatus,
-    SSFWConfig,
-    SSFWStatus,
-    SSCommand,
-    SSData,
-
-    SSCount,
-} eigerSys;
-
-typedef enum
-{
-    FWDisabled,
-    FWEnabled,
-
-    FWModeCount
-} eigerFWMode;
-
-typedef enum {
-    TMInternalSeries,   // INTS
-    TMInternalEnable,   // INTE
-    TMExternalSeries,   // EXTS
-    TMExternalEnable,   // EXTE
-
-    TMCount
-} eigerTriggerMode;
-
-static const char *eigerSysStr [SSCount] = {
-    "/detector/api/version",
-    "/detector/api/"   API_VERSION "/config/",
-    "/detector/api/"   API_VERSION "/status/",
-    "/filewriter/api/" API_VERSION "/config/",
-    "/filewriter/api/" API_VERSION "/status/",
-    "/detector/api/"   API_VERSION "/command/",
-    "/data/",
-};
-
-static const char *eigerFWModeStr [FWModeCount] = {
-    "disabled", "enabled"
-};
-
-static const char *eigerTMStr [TMCount] = {
-    "ints", "inte", "exts", "exte"
-};
-
-struct response
-{
-    int code;
-    char *data;
-    size_t size;
-    size_t contentLength;
-};
+    "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
 
 static const char *driverName = "eigerDetector";
-
-/* FileWriter Config Parameters */
-#define EigerFWClearString              "CLEAR"
-#define EigerFWCompressionString        "COMPRESSION"
-#define EigerFWImageNrStartString       "IMAGE_NR_START"
-#define EigerFWModeString               "MODE"
-#define EigerFWNamePatternString        "NAME_PATTERN"
-#define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
-
-/* Detector Config Parameters */
-#define EigerBeamXString                "BEAM_X"
-#define EigerBeamYString                "BEAM_Y"
-#define EigerDetDistString              "DET_DIST"
-#define EigerFlatfieldString            "FLATFIELD_APPLIED"
-#define EigerPhotonEnergyString         "PHOTON_ENERGY"
-#define EigerThresholdString            "THRESHOLD"
-#define EigerWavelengthString           "WAVELENGTH"
-
-/* Status */
-#define EigerThTemp0String              "TH_TEMP_0"
-#define EigerThHumid0String             "TH_HUMID_0"
-#define EigerLink0String                "LINK_0"
-#define EigerLink1String                "LINK_1"
-#define EigerLink2String                "LINK_2"
-#define EigerLink3String                "LINK_3"
-
-/* Other */
-#define EigerArmedString                "ARMED"
-#define EigerDisarmString               "DISARM"
-#define EigerSaveFilesString            "SAVE_FILES"
-#define EigerSequenceIdString           "SEQ_ID"
-
-/** Driver for Dectris Eiger pixel array detectors using their REST server */
-class eigerDetector : public ADDriver
-{
-public:
-    eigerDetector(const char *portName, const char *serverPort, int maxBuffers,
-            size_t maxMemory, int priority, int stackSize);
-
-    /* These are the methods that we override from ADDriver */
-    virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-    virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
-    virtual asynStatus writeOctet(asynUser *pasynUser, const char *value,
-                                    size_t nChars, size_t *nActual);
-    void report(FILE *fp, int details);
-
-    /* This should be private but is called from C so must be public */
-    void eigerTask();
-
-protected:
-    /* FileWriter Config Parameters */
-    int EigerFWClear;
-    #define FIRST_EIGER_PARAM EigerFWClear
-    int EigerFWCompression;
-    int EigerFWImageNrStart;
-    int EigerFWMode;
-    int EigerFWNamePattern;
-    int EigerFWNImgsPerFile;
-
-    /* Detector Config Parameters */
-    int EigerBeamX;
-    int EigerBeamY;
-    int EigerDetDist;
-    int EigerFlatfield;
-    int EigerPhotonEnergy;
-    int EigerThreshold;
-    int EigerWavelength;
-
-    /* Detector Status Parameters */
-    int EigerThTemp0;
-    int EigerThHumid0;
-    int EigerLink0;
-    int EigerLink1;
-    int EigerLink2;
-    int EigerLink3;
-
-    /* Other parameters */
-    int EigerArmed;
-    int EigerDisarm;
-    int EigerSaveFiles;
-    int EigerSequenceId;
-    #define LAST_EIGER_PARAM EigerSequenceId
-
-private:
-    epicsEvent disarmEvent;
-    epicsEventId startEventId;
-    epicsEventId stopEventId;
-    char toServer[MAX_MESSAGE_SIZE];
-    char fromServer[MAX_MESSAGE_SIZE];
-    asynUser *pasynUserServer;
-
-    /* These are the methods that are new to this class */
-
-    /*
-     * Basic HTTP communication
-     */
-    asynStatus doRequest  (size_t requestSize, struct response *response,
-            double timeout = DEF_TIMEOUT);
-
-    /*
-     * Get/set parameter value (string form)
-     */
-    asynStatus get (eigerSys sys, const char *param, char *value, size_t len,
-            double timeout = DEF_TIMEOUT);
-    asynStatus put (eigerSys sys, const char *param, const char *value,
-            size_t len, double timeout = DEF_TIMEOUT);
-    asynStatus parsePutResponse (struct response response);
-
-    /*
-     * Nice wrappers to set/get parameters
-     */
-    asynStatus getString  (eigerSys sys, const char *param, char *value,
-            size_t len);
-    asynStatus getInt     (eigerSys sys, const char *param, int *value);
-    asynStatus getDouble  (eigerSys sys, const char *param, double *value);
-    asynStatus getBool    (eigerSys sys, const char *param, bool *value);
-
-    asynStatus getStringP (eigerSys sys, const char *param, int dest);
-    asynStatus getIntP    (eigerSys sys, const char *param, int dest);
-    asynStatus getDoubleP (eigerSys sys, const char *param, int dest);
-    asynStatus getBoolP   (eigerSys sys, const char *param, int dest);
-
-    asynStatus putString  (eigerSys sys, const char *param, const char *value);
-    asynStatus putInt     (eigerSys sys, const char *param, int value);
-    asynStatus putDouble  (eigerSys sys, const char *param, double value);
-    asynStatus putBool    (eigerSys sys, const char *param, bool value);
-
-    /*
-     * Send a command to the detector
-     */
-    asynStatus command (const char *name, double timeout = DEF_TIMEOUT_CMD);
-
-    /*
-     * File getters
-     */
-    asynStatus getFileSize   (const char *remoteFile, size_t *len);
-    asynStatus getFile       (const char *remoteFile, char **data, size_t *len);
-    asynStatus saveFile      (const char *file, char *data, size_t len);
-
-    /*
-     * Arm, trigger and disarm
-     */
-    asynStatus capture (eigerTriggerMode triggerMode, double triggerTimeout);
-
-    /*
-     * Download detector files locally and publish as NDArrays
-     */
-    asynStatus downloadAndPublish (void);
-
-    /*
-     * HDF5 helpers
-     */
-    asynStatus parseH5File  (char *buf, size_t len);
-
-    /*
-     * Read some detector status parameters
-     */
-    asynStatus eigerStatus (void);
-};
-
-#define NUM_EIGER_PARAMS ((int)(&LAST_EIGER_PARAM - &FIRST_EIGER_PARAM + 1))
 
 static void eigerTaskC (void *drvPvt)
 {
@@ -298,27 +38,25 @@ static void eigerTaskC (void *drvPvt)
     pPvt->eigerTask();
 }
 
-/** Constructor for Eiger driver; most parameters are simply passed to
-  * ADDriver::ADDriver.
-  * After calling the base class constructor this method creates a thread to
-  * collect the detector data, and sets reasonable default values for the
-  * parameters defined in this class, asynNDArrayDriver, and ADDriver.
-  * \param[in] portName The name of the asyn port driver to be created.
-  * \param[in] serverPort The name of the asyn port previously created with
-  *            drvAsynIPPortConfigure to communicate with server.
-  * \param[in] portName The name of the asyn port driver to be created.
-  * \param[in] maxBuffers The maximum number of NDArray buffers that the
-  *            NDArrayPool for this driver is allowed to allocate. Set this to
-  *            -1 to allow an unlimited number of buffers.
-  * \param[in] maxMemory The maximum amount of memory that the NDArrayPool for
-  *            this driver is allowed to allocate. Set this to -1 to allow an
-  *            unlimited amount of memory.
-  * \param[in] priority The thread priority for the asyn port driver thread if
-  *            ASYN_CANBLOCK is set in asynFlags.
-  * \param[in] stackSize The stack size for the asyn port driver thread if
-  *            ASYN_CANBLOCK is set in asynFlags.
-  */
-eigerDetector::eigerDetector (const char *portName, const char *serverPort,
+/* Constructor for Eiger driver; most parameters are simply passed to
+ * ADDriver::ADDriver.
+ * After calling the base class constructor this method creates a thread to
+ * collect the detector data, and sets reasonable default values for the
+ * parameters defined in this class, asynNDArrayDriver, and ADDriver.
+ * \param[in] portName The name of the asyn port driver to be created.
+ * \param[in] serverHostname The IP or url of the detector webserver.
+ * \param[in] maxBuffers The maximum number of NDArray buffers that the
+ *            NDArrayPool for this driver is allowed to allocate. Set this to
+ *            -1 to allow an unlimited number of buffers.
+ * \param[in] maxMemory The maximum amount of memory that the NDArrayPool for
+ *            this driver is allowed to allocate. Set this to -1 to allow an
+ *            unlimited amount of memory.
+ * \param[in] priority The thread priority for the asyn port driver thread if
+ *            ASYN_CANBLOCK is set in asynFlags.
+ * \param[in] stackSize The stack size for the asyn port driver thread if
+ *            ASYN_CANBLOCK is set in asynFlags.
+ */
+eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         int maxBuffers, size_t maxMemory, int priority,
         int stackSize)
 
@@ -327,29 +65,13 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
                ASYN_CANBLOCK,    /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
                1,                /* autoConnect=1 */
                priority, stackSize),
-    disarmEvent(epicsEventEmpty)
+    disarmEvent(epicsEventEmpty), startEvent(epicsEventEmpty),
+    stopEvent(epicsEventEmpty), eiger(serverHostname)
 {
     int status = asynSuccess;
     const char *functionName = "eigerDetector";
 
-    /* Connect to REST server */
-    status = pasynOctetSyncIO->connect(serverPort, 0, &pasynUserServer, NULL);
-
-    /* Create the epicsEvents for signaling to the eiger task when acquisition
-     * starts and stops */
-    startEventId = epicsEventCreate(epicsEventEmpty);
-    if(!startEventId)
-    {
-        ERR("epicsEventCreate failure for start event");
-        return;
-    }
-
-    stopEventId = epicsEventCreate(epicsEventEmpty);
-    if(!stopEventId)
-    {
-        ERR("epicsEventCreate failure for stop event");
-        return;
-    }
+    Eiger::init();
 
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
@@ -386,14 +108,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     char desc[MAX_BUF_SIZE] = "";
     char *manufacturer, *space, *model;
 
-    if(getString(SSDetConfig, "description", desc, sizeof(desc)))
+    if(eiger.getString(SSDetConfig, "description", desc, sizeof(desc)))
     {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                 "%s:%s Eiger seems to be uninitialized\n"
                 "Initializing... (may take a while)\n",
                 driverName, functionName);
 
-        if(command("initialize", DEF_TIMEOUT_INIT))
+        if(eiger.initialize())
         {
             ERR("Eiger FAILED TO INITIALIZE");
             return;
@@ -402,9 +124,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
         asynPrint(pasynUserSelf, ASYN_TRACE_FLOW,
                     "%s:%s Eiger initialized\n",
                     driverName, functionName);
-    }
 
-    status = getString(SSDetConfig, "description", desc, sizeof(desc));
+        status = eiger.getString(SSDetConfig, "description", desc, sizeof(desc));
+    }
 
     // Assume 'description' is of the form 'Dectris Eiger 1M'
     space = strchr(desc, ' ');
@@ -416,8 +138,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     status |= setStringParam (ADModel, model);
 
     int maxSizeX, maxSizeY;
-    status |= getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
-    status |= getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
+    status |= eiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
+    status |= eiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
 
     status |= setIntegerParam(ADMaxSizeX, maxSizeX);
     status |= setIntegerParam(ADMaxSizeY, maxSizeY);
@@ -426,12 +148,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
     status |= setIntegerParam(NDArraySizeX, maxSizeX);
     status |= setIntegerParam(NDArraySizeY, maxSizeY);
 
-    // Only internal trigger is supported at this time
     status |= setIntegerParam(ADTriggerMode, TMInternalSeries);
-    status |= putString(SSDetConfig, "trigger_mode", eigerTMStr[TMInternalSeries]);
+    status |= putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[TMInternalSeries]);
 
     char fwMode[MAX_BUF_SIZE];
-    status |= getString(SSFWConfig, "mode", fwMode, sizeof(fwMode));
+    status |= eiger.getString(SSFWConfig, "mode", fwMode, sizeof(fwMode));
     status |= setIntegerParam(EigerFWMode, (int)(fwMode[0] == 'e'));
 
     status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
@@ -465,16 +186,16 @@ eigerDetector::eigerDetector (const char *portName, const char *serverPort,
 
     callParamCallbacks();
 
-    // Auto Summation should always be true (Eiger API Reference v1.1pre)
+    // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
     status |= putBool(SSDetConfig, "auto_summation", true);
 
     if(status)
     {
-        ERR("unable to set camera parameters");
+        ERR("unable to set detector parameters");
         return;
     }
 
-    /* Create the thread that updates the images */
+    // Create the thread that updates the images
     status = (epicsThreadCreate("eigerDetTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)eigerTaskC, this) == NULL);
@@ -507,13 +228,13 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     else if (function == EigerFWImageNrStart)
         status = putInt(SSFWConfig, "image_nr_start", value);
     else if (function == EigerFWMode)
-        status = putString(SSFWConfig, "mode", eigerFWModeStr[value]);
+        status = putString(SSFWConfig, "mode", Eiger::fwModeStr[value]);
     else if (function == EigerFWNImgsPerFile)
         status = putInt(SSFWConfig, "nimages_per_file", value);
     else if (function == EigerFlatfield)
         status = putBool(SSDetConfig, "flatfield_correction_applied", (bool)value);
     else if (function == ADTriggerMode)
-        status = putString(SSDetConfig, "trigger_mode", eigerTMStr[value]);
+        status = putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[value]);
     else if (function == ADNumImages)
         status = putInt(SSDetConfig, "nimages", value);
     else if (function == ADReadStatus)
@@ -537,8 +258,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     }
     else if (function == EigerDisarm)
     {
-        status = command("disarm");
-        if(!status)
+        if(!eiger.disarm())
             disarmEvent.signal();
     }
     else if(function < FIRST_EIGER_PARAM)
@@ -559,11 +279,11 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         if (value && (adstatus == ADStatusIdle || adstatus == ADStatusError ||
                 adstatus == ADStatusAborted))
         {
-            epicsEventSignal(this->startEventId);
+            startEvent.signal();
         }
         else if (!value && (adstatus == ADStatusAcquire))
         {
-            epicsEventSignal(this->stopEventId);
+            stopEvent.signal();
         }
     }
 
@@ -632,8 +352,10 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
 }
 
 /** Called when asyn clients call pasynOctet->write().
-  * This function performs actions for some parameters, including eigerBadPixelFile, ADFilePath, etc.
-  * For all parameters it sets the value in the parameter library and calls any registered callbacks..
+  * This function performs actions for some parameters, including
+  * eigerBadPixelFile, ADFilePath, etc.
+  * For all parameters it sets the value in the parameter library and calls any
+  * registered callbacks.
   * \param[in] pasynUser pasynUser structure that encodes the reason and address.
   * \param[in] value Address of the string to write.
   * \param[in] nChars Number of characters to write.
@@ -666,12 +388,13 @@ asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
     return status;
 }
 
-/** Report status of the driver.
-  * Prints details about the driver if details>0.
-  * It then calls the ADDriver::report() method.
-  * \param[in] fp File pointed passed by caller where the output is written to.
-  * \param[in] details If >0 then driver details are printed.
-  */
+/*
+ * Report status of the driver.
+ * Prints details about the driver if details>0.
+ * It then calls the ADDriver::report() method.
+ * \param[in] fp File pointed passed by caller where the output is written to.
+ * \param[in] details If >0 then driver details are printed.
+ */
 void eigerDetector::report (FILE *fp, int details)
 {
     fprintf(fp, "Eiger detector %s\n", this->portName);
@@ -687,8 +410,10 @@ void eigerDetector::report (FILE *fp, int details)
     ADDriver::report(fp, details);
 }
 
-/** This thread controls acquisition, reads image files to get the image data,
-  * and does the callbacks to send it to higher layers */
+/*
+ * This thread controls acquisition, reads image files to get the image data,
+ * and does the callbacks to send it to higher layers.
+ */
 void eigerDetector::eigerTask (void)
 {
     const char *functionName = "eigerTask";
@@ -708,16 +433,19 @@ void eigerDetector::eigerTask (void)
 
             callParamCallbacks();
 
-            this->unlock(); // Wait for semaphore unlocked
+            this->unlock();     // Do the waiting unlocked
 
             asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                     "%s:%s: waiting for acquire to start\n",
                     driverName, functionName);
 
-            status = epicsEventWait(this->startEventId);   // Wait for semaphore
+            startEvent.wait();  // Wait for event
             this->lock();
         }
 
+        /*
+         * If saving files, check if the File Path is valid
+         */
         int saveFiles;
         getIntegerParam(EigerSaveFiles, &saveFiles);
 
@@ -748,11 +476,14 @@ void eigerDetector::eigerTask (void)
         getIntegerParam(ADNumImages, &numImages);
         getIntegerParam(ADTriggerMode, &triggerMode);
 
-        triggerTimeout = triggerMode == TMInternalSeries ? acquirePeriod*numImages + 10.0 : 0.0;
+        if(triggerMode == TMInternalSeries)
+            triggerTimeout = acquirePeriod*numImages + 10.0;
+        else
+            triggerTimeout = 0.0;
 
         setIntegerParam(ADStatus, ADStatusAcquire);
         setShutter(1);
-        status = capture((eigerTriggerMode) triggerMode, triggerTimeout);
+        status = capture((triggerMode_t) triggerMode, triggerTimeout);
         setShutter(0);
 
         if(status)
@@ -766,7 +497,7 @@ void eigerDetector::eigerTask (void)
         }
 
         /*
-         * Download and publish
+         * Download and publish as NDArray
          */
         if((status = downloadAndPublish()))
         {
@@ -792,551 +523,132 @@ end:
     }
 }
 
-asynStatus eigerDetector::doRequest (size_t requestSize,
-        struct response *response, double timeout)
-{
-    const char *functionName = "doRequest";
-    asynStatus status;
-    size_t nwrite, nread;
-    int eomReason, scanned;
-
-    setStringParam(ADStringToServer, toServer);
-    setStringParam(ADStringFromServer, "");
-    callParamCallbacks();
-
-    // Send request / get response
-    status = pasynOctetSyncIO->writeRead(pasynUserServer,
-            toServer, requestSize, fromServer, sizeof(fromServer),
-            timeout, &nwrite, &nread, &eomReason);
-    if(status)
-    {
-        ERR_ARGS("send/recv failed\n[%s]", pasynUserServer->errorMessage);
-        return status;
-    }
-
-    // Find Content-Length (useful for HEAD requests)
-    char *contentLength = strcasestr(fromServer, "Content-Length");
-    if(!contentLength)
-    {
-        ERR("malformed packet: no Content-Length");
-        return asynError;
-    }
-
-    scanned = sscanf(contentLength, "%*s %lu", &response->contentLength);
-    if(scanned != 1)
-    {
-        ERR("malformed packet: couldn't parse Content-Length");
-        return asynError;
-    }
-
-    // Find end of header
-    char *eoh = strstr(fromServer, EOH);
-    if(!eoh)
-    {
-        ERR("malformed packet: no End of Header");
-        return asynError;
-    }
-
-    // Fill response
-    scanned = sscanf(fromServer, "%*s %d", &response->code);
-    if(scanned != 1)
-    {
-        ERR("malformed packet: couldn't parse response code");
-        return asynError;
-    }
-
-    response->data = eoh + EOH_LEN;
-    response->size = nread - (size_t)(response->data-fromServer);
-
-    if(response->size < sizeof(fromServer))
-        response->data[response->size] = '\0';
-
-    setStringParam(ADStringFromServer, fromServer);
-    callParamCallbacks();
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::get (eigerSys sys, const char *param, char *value,
-        size_t len, double timeout)
-{
-    const char *functionName = "get";
-    const char *reqFmt = REQUEST_GET;
-    const char *url = eigerSysStr[sys];
-    asynStatus status;
-    size_t reqSize;
-    struct response response;
-    int err;
-
-    reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, param);
-
-    status = doRequest(reqSize, &response, timeout);
-    if(status)
-    {
-        ERR_ARGS("[param=%s] request failed", param);
-        return status;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[param=%s] server returned error code %d", param, response.code);
-        return asynError;
-    }
-
-    if(!value)
-        return asynSuccess;
-
-    struct json_token tokens[MAX_JSON_TOKENS];
-    struct json_token *valueToken;
-
-    err = parse_json(response.data, response.size, tokens, MAX_JSON_TOKENS);
-    if(err < 0)
-    {
-        ERR_ARGS("[param=%s] unable to parse json response\n[%.*s]",
-            param, (int)response.size, response.data);
-        return asynError;
-    }
-
-    valueToken = find_json_token(tokens, "value");
-    if(valueToken == NULL)
-    {
-        ERR_ARGS("[param=%s] unable to find 'value' json field", param);
-        return asynError;
-    }
-
-    if((size_t)valueToken->len > ((size_t)(len + 1)))
-    {
-        ERR_ARGS("[param=%s] destination buffer is too short", param);
-        return asynError;
-    }
-
-    memcpy((void*)value, (void*)valueToken->ptr, valueToken->len);
-    value[valueToken->len] = '\0';
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::put (eigerSys sys, const char *param,
-        const char *value, size_t len, double timeout)
-{
-    const char *functionName = "put";
-    const char *reqFmt = REQUEST_PUT ;
-    const char *url = eigerSysStr[sys];
-    asynStatus status;
-    size_t reqSize, remaining;
-    struct response response;
-
-    reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, param, len);
-    remaining = sizeof(toServer) - reqSize;
-
-    if(remaining < len)
-    {
-        ERR_ARGS("[param=%s] toServer buffer is not big enough", param);
-        return asynError;
-    }
-
-    if(len && value)
-    {
-        memcpy(toServer + reqSize, value, len);
-        reqSize += len;
-        remaining -= len;
-    }
-
-    if(remaining)
-        *(toServer+reqSize) = '\0';     // Make ADStringToServer printable
-
-    status = doRequest(reqSize, &response, timeout);
-    if(status)
-    {
-        ERR_ARGS("[param=%s] request failed", param);
-        return status;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[param=%s] server returned error code %d", param, response.code);
-        return asynError;
-    }
-
-    if(response.size)
-    {
-        status = parsePutResponse(response);
-        if(status)
-        {
-            ERR_ARGS("[param=%s] unable to parse response", param);
-            return status;
-        }
-    }
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::parsePutResponse(struct response response)
-{
-    // Try to parse the response
-    // Two possibilities:
-    //   Response to PUT to a parameter: list of changed values
-    //   Response to the arm command: sequence id
-    const char *functionName = "parsePutResponse";
-    int err;
-    asynStatus status = asynSuccess;
-
-    // Copy response data locally (may be overwritten by GETs)
-    char responseData[response.size];
-    memcpy(responseData, response.data, response.size);
-
-    struct json_token tokens[MAX_JSON_TOKENS];
-    err = parse_json(responseData, response.size, tokens, MAX_JSON_TOKENS);
-    if(err < 0)
-    {
-        ERR("unable to parse response json");
-        return asynError;
-    }
-
-    if(tokens[0].type == JSON_TYPE_OBJECT)  // sequence id or series id
-    {
-        struct json_token *seqIdToken = find_json_token(tokens, "sequence id");
-        if(!seqIdToken)
-        {
-            ERR("unable to find 'sequence id' token, will try 'series id'");
-
-            seqIdToken = find_json_token(tokens, "series id");
-            if(!seqIdToken)
-            {
-                ERR("unable to find 'series id' token");
-                return asynError;
-            }
-        }
-
-        int seqId;
-        int scanned = sscanf(seqIdToken->ptr, "%d", &seqId);
-        if(scanned != 1)
-        {
-            ERR("unable to parse 'sequence_id' token");
-            return asynError;
-        }
-
-        setIntegerParam(EigerSequenceId, seqId);
-        callParamCallbacks();
-    }
-    else if(tokens[0].type == JSON_TYPE_ARRAY)  // list of parameter names
-    {
-        for(int i = 1; i <= tokens[0].num_desc; ++i)
-        {
-            if(!strncmp(tokens[i].ptr, "count_time", tokens[i].len))
-                getDoubleP (SSDetConfig, "count_time", ADAcquireTime);
-            else if(!strncmp(tokens[i].ptr, "frame_time", tokens[i].len))
-                getDoubleP (SSDetConfig, "frame_time", ADAcquirePeriod);
-            else if(!strncmp(tokens[i].ptr, "nimages", tokens[i].len))
-                getIntP (SSDetConfig, "nimages", ADNumImages);
-            else if(!strncmp(tokens[i].ptr, "photon_energy", tokens[i].len))
-                getDoubleP(SSDetConfig, "photon_energy", EigerPhotonEnergy);
-            else if(!strncmp(tokens[i].ptr, "beam_center_x", tokens[i].len))
-                getDoubleP(SSDetConfig, "beam_center_x", EigerBeamX);
-            else if(!strncmp(tokens[i].ptr, "beam_center_y", tokens[i].len))
-                getDoubleP(SSDetConfig, "beam_center_y", EigerBeamY);
-            else if(!strncmp(tokens[i].ptr, "detector_distance", tokens[i].len))
-                getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
-            else if(!strncmp(tokens[i].ptr, "threshold_energy", tokens[i].len))
-                getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
-            else if(!strncmp(tokens[i].ptr, "wavelength", tokens[i].len))
-                getDoubleP(SSDetConfig, "wavelength", EigerWavelength);
-        }
-        callParamCallbacks();
-    }
-    else
-    {
-        ERR("unexpected json token type");
-        return asynError;
-    }
-
-    return status;
-}
-
-asynStatus eigerDetector::getString (eigerSys sys, const char *param,
-        char *value, size_t len)
-{
-    return get(sys, param, value, len);
-}
-
-asynStatus eigerDetector::getInt (eigerSys sys, const char *param, int *value)
-{
-    const char *functionName = "getInt";
-    asynStatus status;
-    char buf[MAX_BUF_SIZE];
-
-    status = get(sys, param, buf, sizeof(buf));
-    if(status)
-    {
-        ERR_ARGS("[param=%s] underlying get failed", param);
-        return status;
-    }
-
-    int scanned = sscanf(buf, "%d", value);
-    if(scanned != 1)
-    {
-        ERR_ARGS("[param=%s] couldn't parse '%s' as integer", param, buf);
-        return asynError;
-    }
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getDouble (eigerSys sys, const char *param,
-        double *value)
-{
-    const char *functionName = "getDouble";
-    asynStatus status;
-    char buf[MAX_BUF_SIZE];
-
-    status = get(sys, param, buf, sizeof(buf));
-    if(status)
-    {
-        ERR_ARGS("[param=%s] underlying get failed",  param);
-        return status;
-    }
-
-    int scanned = sscanf(buf, "%lf", value);
-    if(scanned != 1)
-    {
-        ERR_ARGS("[param=%s] couldn't parse '%s' as double", param, buf);
-        return asynError;
-    }
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getBool (eigerSys sys, const char *param, bool *value)
-{
-    const char *functionName = "getBool";
-    asynStatus status;
-    char buf[MAX_BUF_SIZE];
-
-    status = get(sys, param, buf, sizeof(buf));
-    if(status)
-    {
-        ERR_ARGS("[param=%s] underlying get failed", param);
-        return status;
-    }
-
-    *value = buf[0] == 't';
-
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::getStringP (eigerSys sys, const char *param, int dest)
+asynStatus eigerDetector::getStringP (sys_t sys, const char *param, int dest)
 {
     int status;
     char value[MAX_BUF_SIZE];
 
-    status = getString(sys, param, value, sizeof(value)) |
+    status = eiger.getString(sys, param, value, sizeof(value)) |
             setStringParam(dest, value);
     return (asynStatus)status;
 }
 
-asynStatus eigerDetector::getIntP (eigerSys sys, const char *param, int dest)
+asynStatus eigerDetector::getIntP (sys_t sys, const char *param, int dest)
 {
     int status;
     int value;
 
-    status = getInt(sys, param, &value) | setIntegerParam(dest,value);
+    status = eiger.getInt(sys, param, &value) | setIntegerParam(dest,value);
     return (asynStatus)status;
 }
 
-asynStatus eigerDetector::getDoubleP (eigerSys sys, const char *param, int dest)
+asynStatus eigerDetector::getDoubleP (sys_t sys, const char *param, int dest)
 {
     int status;
     double value;
 
-    status = getDouble(sys, param, &value) | setDoubleParam(dest, value);
+    status = eiger.getDouble(sys, param, &value) | setDoubleParam(dest, value);
     return (asynStatus)status;
 }
 
-asynStatus eigerDetector::getBoolP (eigerSys sys, const char *param, int dest)
+asynStatus eigerDetector::getBoolP (sys_t sys, const char *param, int dest)
 {
     int status;
     bool value;
 
-    status = getBool(sys, param, &value) | setIntegerParam(dest, (int)value);
+    status = eiger.getBool(sys, param, &value) | setIntegerParam(dest, (int)value);
     return (asynStatus)status;
 }
 
-asynStatus eigerDetector::putString (eigerSys sys, const char *param,
+asynStatus eigerDetector::putString (sys_t sys, const char *param,
         const char *value)
 {
     const char *functionName = "putString";
-    char buf[MAX_BUF_SIZE];
-    size_t len = sprintf(buf, "{\"value\": \"%s\"}", value);
-    asynStatus status;
+    paramList_t paramList;
 
-    if((status = put(sys, param, buf, len)))
-        ERR_ARGS("[param=%s] underlying put failed", param);
-
-    return status;
-}
-
-asynStatus eigerDetector::putInt (eigerSys sys, const char *param, int value)
-{
-    const char *functionName = "putInt";
-    char buf[MAX_BUF_SIZE];
-    size_t len = sprintf(buf, "{\"value\":%d}", value);
-    asynStatus status;
-
-    if((status = put(sys, param, buf, len)))
-        ERR_ARGS("[param=%s] underlying put failed", param);
-
-    return status;
-}
-
-asynStatus eigerDetector::putBool (eigerSys sys, const char *param, bool value)
-{
-    const char *functionName = "putBool";
-    char buf[MAX_BUF_SIZE];
-    size_t len = sprintf(buf, "{\"value\": %s}", value ? "true" : "false");
-    asynStatus status;
-
-    if((status = put(sys, param, buf, len)))
-        ERR_ARGS("[param=%s] underlying put failed", param);
-
-    return status;
-}
-
-asynStatus eigerDetector::putDouble (eigerSys sys, const char *param,
-        double value)
-{
-    const char *functionName = "putDouble";
-    char buf[MAX_BUF_SIZE];
-    size_t len = sprintf(buf, "{\"value\": %lf}", value);
-    asynStatus status;
-
-    if((status = put(sys, param, buf, len)))
-        ERR_ARGS("[param=%s] underlying put failed", param);
-
-    return status;
-}
-
-asynStatus eigerDetector::command (const char *name, double timeout)
-{
-    const char *functionName = "command";
-    asynStatus status;
-
-    if((status = put(SSCommand, name, NULL, 0, timeout)))
-        ERR("underlying put failed");
-
-    return status;
-}
-
-asynStatus eigerDetector::getFileSize (const char *remoteFile, size_t *len)
-{
-    const char *functionName = "getFileSize";
-    const char *reqFmt = REQUEST_HEAD;
-    const char *url = eigerSysStr[SSData];
-    asynStatus status;
-    size_t reqSize;
-    struct response response;
-
-    size_t retries = GET_FILE_RETRIES;
-
-    reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile);
-
-    while(retries > 0)
+    if(eiger.putString(sys, param, value, &paramList))
     {
-        status = doRequest(reqSize, &response);
-        if(status)
-        {
-            ERR_ARGS("[file=%s] HEAD request failed", remoteFile);
-            return status;
-        }
-
-        if(response.code == 200)
-            break;
-
-        if(response.code != 404)
-        {
-            ERR_ARGS("[file=%s] server returned error code %d", remoteFile,
-                    response.code);
-            return asynError;
-        }
-
-        // Got 404, file is not there yet
-        epicsThreadSleep(.01);
-        retries -= 1;
-    }
-
-    if(!retries)
-    {
-        ERR_ARGS("[file=%s] server returned error code %d %d times", remoteFile,
-                response.code, GET_FILE_RETRIES);
+        ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
     }
 
-    *len = response.contentLength;
+    updateParams(&paramList);
+
     return asynSuccess;
 }
 
-asynStatus eigerDetector::getFile (const char *remoteFile, char **data,
-        size_t *len)
+asynStatus eigerDetector::putInt (sys_t sys, const char *param, int value)
 {
-    const char *functionName = "getFile";
-    const char *reqFmt = REQUEST_GET_PARTIAL;
-    const char *url = eigerSysStr[SSData];
-    asynStatus status = asynSuccess;
-    size_t reqSize;
-    struct response response;
-    size_t remaining;
-    char *dataPtr;
+    const char *functionName = "putInt";
+    paramList_t paramList;
 
-    *len = 0;
-
-    status = getFileSize(remoteFile, &remaining);
-    if(status)
+    if(eiger.putInt(sys, param, value, &paramList))
     {
-        ERR_ARGS("[file=%s] underlying getFileSize failed", remoteFile);
-        return status;
-    }
-
-    *data = (char*)malloc(remaining);
-    if(!*data)
-    {
-        ERR_ARGS("[file=%s] malloc(%lu) failed", remoteFile, remaining);
+        ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
     }
 
-    dataPtr = *data;
-    while(remaining)
+    updateParams(&paramList);
+
+    return asynSuccess;
+}
+
+asynStatus eigerDetector::putBool (sys_t sys, const char *param, bool value)
+{
+    const char *functionName = "putBool";
+    paramList_t paramList;
+
+    if(eiger.putBool(sys, param, value, &paramList))
     {
-        reqSize = snprintf(toServer, sizeof(toServer), reqFmt, url, remoteFile,
-                *len, *len + CHUNK_SIZE - 1);
-
-        status = doRequest(reqSize, &response);
-        if(status)
-        {
-            ERR_ARGS("[file=%s] partial GET request failed",
-                    remoteFile);
-            break;
-        }
-
-        if(response.code != 206)
-        {
-            ERR_ARGS("[file=%s] server returned error code %d", remoteFile,
-                    response.code);
-            break;
-        }
-
-        memcpy(dataPtr, response.data, response.size);
-
-        dataPtr += response.size;
-        *len += response.size;
-        remaining -= response.size;
+        ERR("underlying eigerPutBool failed");
+        return asynError;
     }
 
-    if(status)
+    updateParams(&paramList);
+
+    return asynSuccess;
+}
+
+asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
+        double value)
+{
+    const char *functionName = "putDouble";
+    paramList_t paramList;
+
+    if(eiger.putDouble(sys, param, value, &paramList))
     {
-        free(*data);
-        *data = NULL;
+        ERR_ARGS("[param=%s] underlying put failed", param);
+        return asynError;
     }
 
-    return status;
+    updateParams(&paramList);
+
+    return asynSuccess;
+}
+
+void eigerDetector::updateParams(paramList_t *paramList)
+{
+    for(int i = 0; i < paramList->nparams; ++i)
+    {
+        if(!strcmp(paramList->params[i], "count_time"))
+            getDoubleP (SSDetConfig, "count_time", ADAcquireTime);
+        else if(!strcmp(paramList->params[i], "frame_time"))
+            getDoubleP (SSDetConfig, "frame_time", ADAcquirePeriod);
+        else if(!strcmp(paramList->params[i], "nimages"))
+            getIntP (SSDetConfig, "nimages", ADNumImages);
+        else if(!strcmp(paramList->params[i], "photon_energy"))
+            getDoubleP(SSDetConfig, "photon_energy", EigerPhotonEnergy);
+        else if(!strcmp(paramList->params[i], "beam_center_x"))
+            getDoubleP(SSDetConfig, "beam_center_x", EigerBeamX);
+        else if(!strcmp(paramList->params[i], "beam_center_y"))
+            getDoubleP(SSDetConfig, "beam_center_y", EigerBeamY);
+        else if(!strcmp(paramList->params[i], "detector_distance"))
+            getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+        else if(!strcmp(paramList->params[i], "threshold_energy"))
+            getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
+        else if(!strcmp(paramList->params[i], "wavelength"))
+            getDoubleP(SSDetConfig, "wavelength", EigerWavelength);
+    }
 }
 
 asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
@@ -1368,12 +680,11 @@ asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
     return status;
 }
 
-asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
+asynStatus eigerDetector::capture (triggerMode_t triggerMode,
         double triggerTimeout)
 {
     const char *functionName = "capture";
-    asynStatus status;
-    asynStatus retStatus = asynSuccess;
+    asynStatus status = asynSuccess;
 
     disarmEvent.tryWait();  // Clear any previously uncaught disarm event
 
@@ -1381,49 +692,49 @@ asynStatus eigerDetector::capture (eigerTriggerMode triggerMode,
     callParamCallbacks();
 
     // Arm the detector
-    if((status = command("arm", DEF_TIMEOUT_ARM)))
+    int sequenceId;
+    if(eiger.arm(&sequenceId))
     {
         ERR("failed to arm the detector");
-        retStatus = status;
+        status = asynError;
         setStringParam(ADStatusMessage, "Failed to arm the detector");
         goto end;
     }
 
-    // Set armed flag
+    setIntegerParam(EigerSequenceId, sequenceId);
     setIntegerParam(EigerArmed, 1);
+    callParamCallbacks();
 
     // Actually acquire the image(s)
     if(triggerMode == TMInternalSeries)
     {
         setStringParam(ADStatusMessage, "Triggering the detector");
         callParamCallbacks();
-        if((status = command("trigger", triggerTimeout)))
+        if(eiger.trigger(triggerTimeout))
         {
             ERR("failed to trigger the detector");
-            retStatus = status;
+            status = asynError;
             setStringParam(ADStatusMessage, "Failed to trigger the detector");
             // continue to disarm
         }
 
         // Image(s) acquired or aborted. Disarm the detector
-        if((status = command("disarm")))
+        if(eiger.disarm())
         {
             ERR("failed to disarm the detector");
-            retStatus = status;
+            status = asynError;
             setStringParam(ADStatusMessage, "Failed to disarm the detector");
             goto end;
         }
     }
     else
-    {
         disarmEvent.wait();
-    }
 
     setIntegerParam(EigerArmed, 0);
 
 end:
     callParamCallbacks();
-    return retStatus;
+    return status;
 }
 
 asynStatus eigerDetector::downloadAndPublish (void)
@@ -1432,7 +743,6 @@ asynStatus eigerDetector::downloadAndPublish (void)
     asynStatus status = asynSuccess;
     int saveFiles, numImages, sequenceId, numImagesPerFile, nrStart, nFiles;
     char pattern[MAX_BUF_SIZE];
-    char *prefix, *suffix;
 
     getIntegerParam(EigerSaveFiles,      &saveFiles);
     getIntegerParam(ADNumImages,         &numImages);
@@ -1440,15 +750,8 @@ asynStatus eigerDetector::downloadAndPublish (void)
     getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
     getIntegerParam(EigerFWImageNrStart, &nrStart);
     getStringParam (EigerFWNamePattern,  sizeof(pattern), pattern);
-
-    // Compute prefix and suffix to file name
-    prefix = pattern;
-    suffix = strstr(pattern, ID_STR);
-    *suffix = '\0';
-    suffix += ID_LEN;
-
     setIntegerParam(ADStatus, ADStatusReadout);
-    setStringParam(ADStatusMessage, "Downloading data files");
+    setStringParam (ADStatusMessage, "Downloading data files");
     callParamCallbacks();
 
     // Wait for file to exist
@@ -1456,7 +759,7 @@ asynStatus eigerDetector::downloadAndPublish (void)
     char buf[MAX_BUF_SIZE];
     do
     {
-        getString(SSFWStatus, "state", buf, sizeof(buf));
+        eiger.getString(SSFWStatus, "state", buf, sizeof(buf));
     }while(buf[0] == 'a');
 
     // Calculate number of files (master + data files)
@@ -1472,20 +775,19 @@ asynStatus eigerDetector::downloadAndPublish (void)
 
         // Build file names accordingly, first one is the master file
         char fileName[MAX_BUF_SIZE];
+
         if(isMaster)
-            sprintf(fileName, "%s%d%s_master.h5", prefix, sequenceId,
-                    suffix);
+            Eiger::buildMasterName(pattern, sequenceId, fileName, sizeof(fileName));
         else
-            sprintf(fileName, "%s%d%s_data_%06d.h5", prefix, sequenceId,
-                    suffix, i-1+nrStart);
+            Eiger::buildDataName(i-1+nrStart, pattern, sequenceId, fileName, sizeof(fileName));
 
         // Download file into memory
         char *data = NULL;
         size_t dataLen;
 
-        status = getFile(fileName, &data, &dataLen);
-        if(status)
+        if(eiger.getFile(fileName, &data, &dataLen))
         {
+            status = asynError;
             ERR_ARGS("underlying getFile(%s) failed", fileName);
             break;
         }
@@ -1696,12 +998,12 @@ asynStatus eigerDetector::eigerStatus (void)
     char link[4][MAX_BUF_SIZE];
 
     // Read temperature and humidity
-    status  = getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
-    status |= getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
-    status |= getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
-    status |= getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
-    status |= getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
-    status |= getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
+    status  = eiger.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
+    status |= eiger.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
+    status |= eiger.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
+    status |= eiger.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
+    status |= eiger.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
+    status |= eiger.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
 
     if(!status)
     {
@@ -1715,13 +1017,6 @@ asynStatus eigerDetector::eigerStatus (void)
     }
     else
         setIntegerParam(ADStatus, ADStatusError);
-
-    // TODO: Other temperatures/humidities available, do we want them?
-    // "board_000/th1_temp"   "board_000/th1_humidity"
-    // "module_000/temp"      "module_000/humidity"
-    // "module_001/temp"      "module_001/humidity"
-    // "module_002/temp"      "module_002/humidity"
-    // "module_003/temp"      "module_003/humidity"
 
     callParamCallbacks();
     return (asynStatus)status;
@@ -1737,7 +1032,7 @@ extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
 
 /* Code for iocsh registration */
 static const iocshArg eigerDetectorConfigArg0 = {"Port name", iocshArgString};
-static const iocshArg eigerDetectorConfigArg1 = {"Server port name",
+static const iocshArg eigerDetectorConfigArg1 = {"Server host name",
     iocshArgString};
 static const iocshArg eigerDetectorConfigArg2 = {"maxBuffers", iocshArgInt};
 static const iocshArg eigerDetectorConfigArg3 = {"maxMemory", iocshArgInt};

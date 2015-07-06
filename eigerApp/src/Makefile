@@ -9,6 +9,7 @@ LIBRARY_IOC_Darwin = eigerDetector
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
 
 LIB_SRCS += eigerDetector.cpp
+LIB_SRCS += eigerApi.cpp
 
 DBD += eigerDetectorSupport.dbd
 
