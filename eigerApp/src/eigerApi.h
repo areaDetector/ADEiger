@@ -94,6 +94,7 @@ public:
     int putBool   (sys_t sys, const char *param, bool value,        paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
 
     int getFileSize (const char *filename, size_t *size);
+    int waitFile    (const char *filename, double timeout = DEFAULT_TIMEOUT);
     int getFile     (const char *filename, char **buf, size_t *bufSize);
 };
 

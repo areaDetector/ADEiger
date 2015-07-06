@@ -110,7 +110,7 @@ private:
     /*
      * File getters
      */
-    asynStatus saveFile (const char *file, char *data, size_t len);
+    asynStatus saveFile (const char *file, const char *data, size_t len);
 
     /*
      * Arm, trigger and disarm

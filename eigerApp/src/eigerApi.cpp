@@ -9,6 +9,7 @@
 
 #include <epicsStdio.h>
 #include <epicsThread.h>
+#include <epicsTime.h>
 
 #define API_VERSION             "1.0.4"
 #define EOL                     "\r\n"      // End of Line
@@ -31,8 +32,6 @@
 
 #define DEFAULT_TIMEOUT_INIT    30
 #define DEFAULT_TIMEOUT_ARM     55
-
-#define GET_FILE_RETRIES        10
 
 #define ERR_PREFIX  "EigerApi"
 #define ERR(msg) fprintf(stderr, ERR_PREFIX "::%s: %s\n", functionName, msg)
@@ -259,7 +258,40 @@ int Eiger::getFileSize (const char *filename, size_t *size)
 {
     const char *functionName = "getFileSize";
 
-    size_t retries = GET_FILE_RETRIES;
+    request_t request;
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_HEAD, sysStr[SSData], filename);
+
+    response_t response;
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    if(doRequest(&request, &response))
+    {
+        ERR_ARGS("[file=%s] HEAD request failed", filename);
+        return EXIT_FAILURE;
+    }
+
+    if(response.code != 200)
+    {
+        ERR_ARGS("[file=%s] server returned error code %d", filename,
+                response.code);
+        return EXIT_FAILURE;
+    }
+
+    *size = response.contentLength;
+    return EXIT_SUCCESS;
+}
+
+int Eiger::waitFile (const char *filename, double timeout)
+{
+    const char *functionName = "waitFile";
+
+    epicsTimeStamp start, now;
 
     request_t request;
     char requestBuf[MAX_MESSAGE_SIZE];
@@ -273,7 +305,9 @@ int Eiger::getFileSize (const char *filename, size_t *size)
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
 
-    while(retries > 0)
+    epicsTimeGetCurrent(&start);
+
+    do
     {
         if(doRequest(&request, &response))
         {
@@ -282,7 +316,7 @@ int Eiger::getFileSize (const char *filename, size_t *size)
         }
 
         if(response.code == 200)
-            break;
+            return EXIT_SUCCESS;
 
         if(response.code != 404)
         {
@@ -291,20 +325,11 @@ int Eiger::getFileSize (const char *filename, size_t *size)
             return EXIT_FAILURE;
         }
 
-        // Got 404, file is not there yet
-        epicsThreadSleep(.01);
-        retries -= 1;
-    }
+        epicsTimeGetCurrent(&now);
+    }while(epicsTimeDiffInSeconds(&now, &start) < timeout);
 
-    if(!retries)
-    {
-        ERR_ARGS("[file=%s] server returned error code %d %d times", filename,
-                response.code, GET_FILE_RETRIES);
-        return EXIT_FAILURE;
-    }
-
-    *size = response.contentLength;
-    return EXIT_SUCCESS;
+    ERR_ARGS("timeout waiting for file %s", filename);
+    return EXIT_FAILURE;
 }
 
 int Eiger::getFile (const char *filename, char **buf, size_t *bufSize)
@@ -355,6 +380,13 @@ int Eiger::getFile (const char *filename, char **buf, size_t *bufSize)
     if((status = parseHeader(&response)))
     {
         ERR_ARGS("[file=%s] underlying parseResponse failed", filename);
+        goto markClosed;
+    }
+
+    if(response.code != 200)
+    {
+        ERR_ARGS("[file=%s] file not found", filename);
+        status = EXIT_FAILURE;
         goto markClosed;
     }
 

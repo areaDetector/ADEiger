@@ -621,7 +621,7 @@ void eigerDetector::updateParams(paramList_t *paramList)
     }
 }
 
-asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
+asynStatus eigerDetector::saveFile (const char *file, const char *data, size_t len)
 {
     const char *functionName = "saveFile";
     asynStatus status = asynSuccess;
@@ -721,14 +721,6 @@ asynStatus eigerDetector::downloadAndPublish (void)
     setStringParam (ADStatusMessage, "Downloading data files");
     callParamCallbacks();
 
-    // Wait for file to exist
-    // TODO: Is this the best way?
-    char buf[MAX_BUF_SIZE];
-    do
-    {
-        eiger.getString(SSFWStatus, "state", buf, sizeof(buf));
-    }while(buf[0] == 'a');
-
     // Calculate number of files (master + data files)
     nFiles = (int) ceil(((double)numImages)/((double)numImagesPerFile)) + 1;
 
@@ -747,6 +739,14 @@ asynStatus eigerDetector::downloadAndPublish (void)
             Eiger::buildMasterName(DEFAULT_PATTERN, sequenceId, fileName, sizeof(fileName));
         else
             Eiger::buildDataName(i-1+DEFAULT_NR_START, DEFAULT_PATTERN, sequenceId, fileName, sizeof(fileName));
+
+        // Wait for file to exist on the server
+        if(eiger.waitFile(fileName))
+        {
+            status = asynError;
+            ERR_ARGS("underlying waitFile(%s) failed", fileName);
+            break;
+        }
 
         // Download file into memory
         char *data = NULL;
@@ -808,7 +808,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
     // Open h5 file from memory
-    fId = H5LTopen_file_image(buf, bufLen, flags);
+    fId = H5LTopen_file_image((void*)buf, bufLen, flags);
     if(fId < 0)
     {
         ERR("unable to open memory as file");
