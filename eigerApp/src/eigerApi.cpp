@@ -39,9 +39,7 @@
 #define ERR_ARGS(fmt,...) fprintf(stderr, ERR_PREFIX "::%s: " fmt "\n", \
     functionName, __VA_ARGS__)
 
-/*
- * Requests
- */
+// Requests
 
 #define REQUEST_GET\
     "GET %s%s HTTP/1.0" EOL \
@@ -56,6 +54,8 @@
 
 #define REQUEST_HEAD\
     "HEAD %s%s HTTP/1.0" EOH
+
+// Structure definitions
 
 typedef struct socket
 {
@@ -82,9 +82,7 @@ typedef struct response
     int code;
 } response_t;
 
-/*
- * Static public members
- */
+// Static public members
 
 const char *Eiger::sysStr [SSCount] = {
     "/detector/api/version",
@@ -130,9 +128,7 @@ int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size
     return EXIT_SUCCESS;
 }
 
-/*
- * Public members
- */
+// Public members
 
 Eiger::Eiger (const char *hostname) :
     mSockFd(0), mSockMutex(), mSockClosed(true)
@@ -427,9 +423,7 @@ end:
     return status;
 }
 
-/*
- * Private members
- */
+// Private members
 
 int Eiger::connect (void)
 {

@@ -73,24 +73,29 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     int status = asynSuccess;
     const char *functionName = "eigerDetector";
 
+    // Initialize sockets
     Eiger::init();
 
+    // FileWriter Parameters
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
     createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
 
+    // Acquisition Metadata Parameters
     createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
     createParam(EigerBeamYString,         asynParamFloat64, &EigerBeamY);
     createParam(EigerDetDistString,       asynParamFloat64, &EigerDetDist);
+    createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
+
+    // Acquisition Parameters
     createParam(EigerFlatfieldString,     asynParamInt32,   &EigerFlatfield);
     createParam(EigerPhotonEnergyString,  asynParamFloat64, &EigerPhotonEnergy);
     createParam(EigerThresholdString,     asynParamFloat64, &EigerThreshold);
-    createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
 
-    /* Detector Info Parameters */
+    // Detector Info Parameters
     createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
 
-    /* Detector Status Parameters */
+    // Detector Status Parameters
     createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
     createParam(EigerThHumid0String,      asynParamFloat64, &EigerThHumid0);
     createParam(EigerLink0String,         asynParamInt32,   &EigerLink0);
@@ -98,7 +103,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerLink2String,         asynParamInt32,   &EigerLink2);
     createParam(EigerLink3String,         asynParamInt32,   &EigerLink3);
 
-    /* Other parameters */
+    // Other Parameters
     createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
     createParam(EigerDisarmString,        asynParamInt32,   &EigerDisarm);
     createParam(EigerSaveFilesString,     asynParamInt32,   &EigerSaveFiles);
@@ -106,7 +111,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     status = asynSuccess;
 
-    /* Set some default values for parameters */
+    // Set some default values for parameters
+
+    // Extract Manufacturer and Model from 'description'
     char desc[MAX_BUF_SIZE] = "";
     char *manufacturer, *space, *model;
 
@@ -130,8 +137,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         status = eiger.getString(SSDetConfig, "description", desc, sizeof(desc));
     }
 
-    // Read parameters that won't be touched
-
     // Assume 'description' is of the form 'Dectris Eiger 1M'
     space = strchr(desc, ' ');
     *space = '\0';
@@ -141,10 +146,12 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= setStringParam (ADManufacturer, manufacturer);
     status |= setStringParam (ADModel, model);
 
+    // Get software (detector firmware) version
     char swVersion[MAX_BUF_SIZE];
     status |= eiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
     status |= setStringParam(EigerSWVersion, swVersion);
 
+    // Get frame dimensions
     int maxSizeX, maxSizeY;
     status |= eiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
     status |= eiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
@@ -156,9 +163,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= setIntegerParam(NDArraySizeX, maxSizeX);
     status |= setIntegerParam(NDArraySizeY, maxSizeY);
 
+    // Set trigger mode to INTS
     status |= setIntegerParam(ADTriggerMode, TMInternalSeries);
     status |= putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[TMInternalSeries]);
 
+    // Read all the following parameters into their respective asyn params
     status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
     status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
     status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
@@ -176,6 +185,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
 
+    // Set some default values
     status |= setIntegerParam(NDArraySize, 0);
     status |= setIntegerParam(NDDataType,  NDUInt32);
     status |= setIntegerParam(ADImageMode, ADImageMultiple);
@@ -188,7 +198,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     callParamCallbacks();
 
-    // Set some detector parameters
+    // Set more parameters
 
     // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
     status |= putBool(SSDetConfig, "auto_summation", true);
@@ -218,13 +228,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     }
 }
 
-/** Called when asyn clients call pasynInt32->write().
-  * This function performs actions for some parameters, including ADAcquire,
-  * ADTriggerMode, etc.
-  * For all parameters it sets the value in the parameter library and calls any
-  * registered callbacks..
-  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
-  * \param[in] value Value to write. */
+/* Called when asyn clients call pasynInt32->write().
+ * This function performs actions for some parameters, including ADAcquire,
+ * ADTriggerMode, etc.
+ * For all parameters it sets the value in the parameter library and calls any
+ * registered callbacks..
+ * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+ * \param[in] value Value to write.
+ */
 asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
 {
     int function = pasynUser->reason;
@@ -306,14 +317,15 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     return status;
 }
 
-/** Called when asyn clients call pasynFloat64->write().
-  * This function performs actions for some parameters, including ADAcquireTime,
-  * ADGain, etc.
-  * For all parameters it sets the value in the parameter library and calls any
-  * registered callbacks..
-  * \param[in] pasynUser pasynUser structure that encodes the reason and
-  *            address.
-  * \param[in] value Value to write. */
+/* Called when asyn clients call pasynFloat64->write().
+ * This function performs actions for some parameters, including ADAcquireTime,
+ * ADAcquirePeriod, etc.
+ * For all parameters it sets the value in the parameter library and calls any
+ * registered callbacks..
+ * \param[in] pasynUser pasynUser structure that encodes the reason and
+ *            address.
+ * \param[in] value Value to write.
+ */
 asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
 {
     int function = pasynUser->reason;
@@ -351,15 +363,14 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
               "%s:%s: function=%d, value=%f\n",
               driverName, functionName, function, value);
 
-        /* Do callbacks so higher layers see any changes */
+        // Do callbacks so higher layers see any changes
         setDoubleParam(function, value);
         callParamCallbacks();
     }
     return status;
 }
 
-/*
- * Report status of the driver.
+/* Report status of the driver.
  * Prints details about the driver if details>0.
  * It then calls the ADDriver::report() method.
  * \param[in] fp File pointed passed by caller where the output is written to.
@@ -376,12 +387,12 @@ void eigerDetector::report (FILE *fp, int details)
         fprintf(fp, "  NX, NY:            %d  %d\n", nx, ny);
         fprintf(fp, "  Data type:         %d\n", dataType);
     }
-    /* Invoke the base class method */
+
+    // Invoke the base class method
     ADDriver::report(fp, details);
 }
 
-/*
- * This thread controls acquisition, reads image files to get the image data,
+/* This thread controls acquisition, reads image files to get the image data,
  * and does the callbacks to send it to higher layers.
  */
 void eigerDetector::eigerTask (void)
@@ -413,9 +424,7 @@ void eigerDetector::eigerTask (void)
             this->lock();
         }
 
-        /*
-         * If saving files, check if the File Path is valid
-         */
+        // If saving files, check if the File Path is valid
         int saveFiles;
         getIntegerParam(EigerSaveFiles, &saveFiles);
 
@@ -436,9 +445,7 @@ void eigerDetector::eigerTask (void)
             }
         }
 
-        /*
-         * Acquire
-         */
+        // Acquire
         double acquirePeriod, triggerTimeout;
         int numImages, triggerMode;
 
@@ -466,9 +473,7 @@ void eigerDetector::eigerTask (void)
             goto end;
         }
 
-        /*
-         * Download and publish as NDArray
-         */
+        // Download and publish as NDArray
         if((status = downloadAndPublish()))
         {
             asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
@@ -479,7 +484,7 @@ void eigerDetector::eigerTask (void)
         }
 
 end:
-        /* If everything was ok, set the status back to idle */
+        // If everything was ok, set the status back to idle
         int statusParam = 0;
         getIntegerParam(ADStatus, &statusParam);
 
@@ -492,6 +497,10 @@ end:
         callParamCallbacks();
     }
 }
+
+/* Functions named get<type>P get the detector parameter of type <type> and
+ * name 'param' and set the asyn parameter of index 'dest' with its value.
+ */
 
 asynStatus eigerDetector::getStringP (sys_t sys, const char *param, int dest)
 {
@@ -530,6 +539,10 @@ asynStatus eigerDetector::getBoolP (sys_t sys, const char *param, int dest)
     return (asynStatus)status;
 }
 
+/* The following functions are wrappers on the functions with the same name from
+ * the Eiger API. The wrapper takes care of updating the parameters list if
+ * more parameters are changed as an effect of a put.
+ */
 asynStatus eigerDetector::putString (sys_t sys, const char *param,
         const char *value)
 {
@@ -954,9 +967,9 @@ end:
     return status;
 }
 
-/** This function is called periodically read the detector status (temperature,
-  * humidity, etc.). It should not be called if we are acquiring data, to avoid
-  * polling server when taking data.*/
+/* This function is called periodically read the detector status (temperature,
+ * humidity, etc.).
+ */
 asynStatus eigerDetector::eigerStatus (void)
 {
     int status;
@@ -997,7 +1010,7 @@ extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
     return(asynSuccess);
 }
 
-/* Code for iocsh registration */
+// Code for iocsh registration
 static const iocshArg eigerDetectorConfigArg0 = {"Port name", iocshArgString};
 static const iocshArg eigerDetectorConfigArg1 = {"Server host name",
     iocshArgString};

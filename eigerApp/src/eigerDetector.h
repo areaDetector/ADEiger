@@ -3,23 +3,26 @@
 
 #include "eigerApi.h"
 
-/* FileWriter Config Parameters */
+// FileWriter Parameters
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
 
-/* Detector Config Parameters */
+// Acquisition Metadata Parameters
 #define EigerBeamXString                "BEAM_X"
 #define EigerBeamYString                "BEAM_Y"
 #define EigerDetDistString              "DET_DIST"
+#define EigerWavelengthString           "WAVELENGTH"
+
+// Acquisition Parameters
 #define EigerFlatfieldString            "FLATFIELD_APPLIED"
 #define EigerPhotonEnergyString         "PHOTON_ENERGY"
 #define EigerThresholdString            "THRESHOLD"
-#define EigerWavelengthString           "WAVELENGTH"
 
+// Detector Info Parameters
 #define EigerSWVersionString            "SW_VERSION"
 
-/* Status */
+// Detector Status Parameters
 #define EigerThTemp0String              "TH_TEMP_0"
 #define EigerThHumid0String             "TH_HUMID_0"
 #define EigerLink0String                "LINK_0"
@@ -27,57 +30,46 @@
 #define EigerLink2String                "LINK_2"
 #define EigerLink3String                "LINK_3"
 
-/* Other */
+// Other Parameters
 #define EigerArmedString                "ARMED"
 #define EigerDisarmString               "DISARM"
 #define EigerSaveFilesString            "SAVE_FILES"
 #define EigerSequenceIdString           "SEQ_ID"
 
-/*
- *  Driver for the Dectris' Eiger pixel array detector using their REST server
- */
+//  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
 {
 public:
     eigerDetector(const char *portName, const char *serverHostname,
             int maxBuffers, size_t maxMemory, int priority, int stackSize);
 
-    /* These are the methods that we override from ADDriver */
+    // These are the methods that we override from ADDriver
     virtual asynStatus writeInt32  (asynUser *pasynUser, epicsInt32 value);
     virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
     void report(FILE *fp, int details);
 
-    /* This should be private but is called from C so must be public */
+    // This should be private but is called from C so must be public
     void eigerTask();
 
 protected:
-    /* FileWriter Config Parameters */
     int EigerFWClear;
     #define FIRST_EIGER_PARAM EigerFWClear
     int EigerFWCompression;
     int EigerFWNImgsPerFile;
-
-    /* Detector Config Parameters */
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
+    int EigerWavelength;
     int EigerFlatfield;
     int EigerPhotonEnergy;
     int EigerThreshold;
-    int EigerWavelength;
-
-    /* Detector info */
     int EigerSWVersion;
-
-    /* Detector Status Parameters */
     int EigerThTemp0;
     int EigerThHumid0;
     int EigerLink0;
     int EigerLink1;
     int EigerLink2;
     int EigerLink3;
-
-    /* Other parameters */
     int EigerArmed;
     int EigerDisarm;
     int EigerSaveFiles;
@@ -90,46 +82,32 @@ private:
     int fwImageNrStart;
     char fwNamePattern[32];
 
-    /*
-     * Nice wrappers to get parameters
-     */
+    // Wrappers to get detector parameters into asyn parameter
     asynStatus getStringP (sys_t sys, const char *param, int dest);
     asynStatus getIntP    (sys_t sys, const char *param, int dest);
     asynStatus getDoubleP (sys_t sys, const char *param, int dest);
     asynStatus getBoolP   (sys_t sys, const char *param, int dest);
 
-    /*
-     * Nice wrappers to set parameters and catch parameters updates
-     */
+    // Nice wrappers to set parameters and catch related parameters updates
     asynStatus putString  (sys_t sys, const char *param, const char *value);
     asynStatus putInt     (sys_t sys, const char *param, int value);
     asynStatus putDouble  (sys_t sys, const char *param, double value);
     asynStatus putBool    (sys_t sys, const char *param, bool value);
-    void updateParams (paramList_t *paramList);
+    void updateParams     (paramList_t *paramList);
 
-    /*
-     * File getters
-     */
+    // Save a file from memory to disk
     asynStatus saveFile (const char *file, const char *data, size_t len);
 
-    /*
-     * Arm, trigger and disarm
-     */
+    // Arm, trigger and disarm
     asynStatus capture (triggerMode_t triggerMode, double triggerTimeout);
 
-    /*
-     * Download detector files locally and publish as NDArrays
-     */
+    // Download detector files locally and publish as NDArrays
     asynStatus downloadAndPublish (void);
 
-    /*
-     * HDF5 helpers
-     */
-    asynStatus parseH5File  (char *buf, size_t len);
+    // HDF5 parser
+    asynStatus parseH5File (char *buf, size_t len);
 
-    /*
-     * Read some detector status parameters
-     */
+    // Read some detector status parameters
     asynStatus eigerStatus (void);
 };
 
