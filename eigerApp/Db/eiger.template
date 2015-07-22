@@ -35,11 +35,32 @@ record(mbbi,"$(P)$(R)TriggerMode_RBV") {
     field(THST,"External Enable")
 }
 
+# Arm the detector
+record(ao, "$(P)$(R)Arm") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ARM")
+    field(DESC, "Arm the detector")
+}
+
+# Trigger the detector
+record(ao, "$(P)$(R)Trigger") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER")
+    field(DESC, "Trigger the detector")
+}
+
 # Disarm the detector
 record(ao, "$(P)$(R)Disarm") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DISARM")
     field(DESC, "Disarm the detector")
+}
+
+# Cancel the acquisition
+record(ao, "$(P)$(R)Cancel") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CANCEL")
+    field(DESC, "Cancel the detector")
 }
 
 # FileWriter clear all files

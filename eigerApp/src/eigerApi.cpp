@@ -440,6 +440,15 @@ int Eiger::connect (void)
         return EXIT_FAILURE;
     }
 
+    printf("will connect\n");
+    int yes = 1;
+    if(setsockopt(mSockFd, SOL_SOCKET, SOCK_NONBLOCK, &yes, sizeof(yes)))
+    {
+        perror("setsockopt");
+    }
+    else
+        printf("success\n");
+
     if(::connect(mSockFd, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
     {
         char error[MAX_BUF_SIZE];
@@ -447,6 +456,8 @@ int Eiger::connect (void)
         ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
         return EXIT_FAILURE;
     }
+
+    printf("connected\n");
 
     mSockClosed = false;
 

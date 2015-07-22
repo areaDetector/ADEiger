@@ -18,6 +18,8 @@
 #define EigerFlatfieldString            "FLATFIELD_APPLIED"
 #define EigerPhotonEnergyString         "PHOTON_ENERGY"
 #define EigerThresholdString            "THRESHOLD"
+#define EigerTriggerExpString           "TRIGGER_EXPOSURE"
+#define EigerNTriggersString            "NUM_TRIGGERS"
 
 // Detector Info Parameters
 #define EigerSWVersionString            "SW_VERSION"
@@ -30,11 +32,17 @@
 #define EigerLink2String                "LINK_2"
 #define EigerLink3String                "LINK_3"
 
+// Commands
+#define EigerArmString                  "ARM"
+#define EigerTriggerString              "TRIGGER"
+#define EigerDisarmString               "DISARM"
+#define EigerCancelString               "CANCEL"
+
 // Other Parameters
 #define EigerArmedString                "ARMED"
-#define EigerDisarmString               "DISARM"
 #define EigerSaveFilesString            "SAVE_FILES"
 #define EigerSequenceIdString           "SEQ_ID"
+#define EigerPendingFilesString         "PENDING_FILES"
 
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
@@ -48,8 +56,13 @@ public:
     virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
     void report(FILE *fp, int details);
 
-    // This should be private but is called from C so must be public
-    void eigerTask();
+    // These should be private but are called from C so must be public
+    void controlTask  (void);
+    void pollTask     (void);
+    void downloadTask (void);
+    void streamTask   (void);
+    void saveTask     (void);
+    void reapTask     (void);
 
 protected:
     int EigerFWClear;
@@ -63,6 +76,8 @@ protected:
     int EigerFlatfield;
     int EigerPhotonEnergy;
     int EigerThreshold;
+    int EigerTriggerExp;
+    int EigerNTriggers;
     int EigerSWVersion;
     int EigerThTemp0;
     int EigerThHumid0;
@@ -70,17 +85,21 @@ protected:
     int EigerLink1;
     int EigerLink2;
     int EigerLink3;
-    int EigerArmed;
+    int EigerArm;
+    int EigerTrigger;
     int EigerDisarm;
+    int EigerCancel;
+    int EigerArmed;
     int EigerSaveFiles;
     int EigerSequenceId;
-    #define LAST_EIGER_PARAM EigerSequenceId
+    int EigerPendingFiles;
+    #define LAST_EIGER_PARAM EigerPendingFiles
 
 private:
-    epicsEvent disarmEvent, startEvent, stopEvent;
+    char mHostname[512];
     Eiger eiger;
-    int fwImageNrStart;
-    char fwNamePattern[32];
+    epicsMessageQueue mCommandQueue, mPollQueue, mDownloadQueue, mStreamQueue,
+        mSaveQueue, mReapQueue;
 
     // Wrappers to get detector parameters into asyn parameter
     asynStatus getStringP (sys_t sys, const char *param, int dest);
@@ -94,15 +113,6 @@ private:
     asynStatus putDouble  (sys_t sys, const char *param, double value);
     asynStatus putBool    (sys_t sys, const char *param, bool value);
     void updateParams     (paramList_t *paramList);
-
-    // Save a file from memory to disk
-    asynStatus saveFile (const char *file, const char *data, size_t len);
-
-    // Arm, trigger and disarm
-    asynStatus capture (triggerMode_t triggerMode, double triggerTimeout);
-
-    // Download detector files locally and publish as NDArrays
-    asynStatus downloadAndPublish (void);
 
     // HDF5 parser
     asynStatus parseH5File (char *buf, size_t len);
