@@ -2566,7 +2566,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>251</height>
+    <height>276</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -2974,7 +2974,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>183</y>
+      <y>213</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3026,7 +3026,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>183</y>
+      <y>213</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3182,7 +3182,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>153</y>
+      <y>183</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3224,7 +3224,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>147</y>
+      <y>177</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3564,7 +3564,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>153</y>
+      <y>183</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3606,7 +3606,157 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>177</y>
+      <y>207</y>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
+      <border_style>0</border_style>
+      <tooltip></tooltip>
+      <horizontal_alignment>2</horizontal_alignment>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>-57e504b3:14ebb389d68:-7c41</wuid>
+      <transparent>true</transparent>
+      <auto_size>false</auto_size>
+      <text># Triggers</text>
+      <scripts />
+      <height>20</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <visible>true</visible>
+      <vertical_alignment>1</vertical_alignment>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>Label</widget_type>
+      <wrap_words>false</wrap_words>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>115</width>
+      <x>0</x>
+      <name>Label_4</name>
+      <y>153</y>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.TextInput" version="2.0.0">
+      <alarm_pulsing>false</alarm_pulsing>
+      <precision>0</precision>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <horizontal_alignment>0</horizontal_alignment>
+      <rules />
+      <pv_value />
+      <auto_size>false</auto_size>
+      <read_only>false</read_only>
+      <text>######</text>
+      <show_units>true</show_units>
+      <height>25</height>
+      <multiline_input>false</multiline_input>
+      <border_width>1</border_width>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)NumTriggers</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <precision_from_pv>true</precision_from_pv>
+      <widget_type>Text Input</widget_type>
+      <confirm_message></confirm_message>
+      <name>asyn Port</name>
+      <style>1</style>
+      <actions hook="false" hook_all="false" />
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <show_native_border>true</show_native_border>
+      <enabled>true</enabled>
+      <wuid>-57e504b3:14ebb389d68:-7c40</wuid>
+      <next_focus>0</next_focus>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <format_type>0</format_type>
+      <limits_from_pv>false</limits_from_pv>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <password_input>false</password_input>
+      <width>115</width>
+      <x>125</x>
+      <y>150</y>
+      <maximum>1.7976931348623157E308</maximum>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <minimum>-1.7976931348623157E308</minimum>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <alarm_pulsing>false</alarm_pulsing>
+      <precision>0</precision>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <horizontal_alignment>0</horizontal_alignment>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>-57e504b3:14ebb389d68:-7c3f</wuid>
+      <transparent>false</transparent>
+      <pv_value />
+      <auto_size>false</auto_size>
+      <text>######</text>
+      <rotation_angle>0.0</rotation_angle>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <show_units>true</show_units>
+      <height>20</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)NumTriggers_RBV</pv_name>
+      <vertical_alignment>1</vertical_alignment>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <precision_from_pv>true</precision_from_pv>
+      <widget_type>Text Update</widget_type>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <wrap_words>false</wrap_words>
+      <format_type>0</format_type>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>115</width>
+      <x>250</x>
+      <name>asyn Port_1</name>
+      <y>153</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -5214,7 +5364,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>279</x>
     <name>Acquire</name>
-    <y>285</y>
+    <y>310</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>

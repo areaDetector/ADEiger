@@ -35,6 +35,23 @@ record(mbbi,"$(P)$(R)TriggerMode_RBV") {
     field(THST,"External Enable")
 }
 
+# Number of Triggers
+record(ao, "$(P)$(R)NumTriggers") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
+    field(DESC, "Number of triggers per acquisition")
+    field(PREC, "0")
+}
+
+record(ai, "$(P)$(R)NumTriggers_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
+    field(DESC, "Number of triggers per acquisition")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
 # Arm the detector
 record(ao, "$(P)$(R)Arm") {
     field(DTYP, "asynInt32")
