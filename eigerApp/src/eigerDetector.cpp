@@ -542,6 +542,9 @@ void eigerDetector::controlTask (void)
                 }
             }
 
+            setStringParam(ADStatusMessage, "Arming...");
+            callParamCallbacks();
+
             // Send the arm command
             unlock();
             armed = !ctrlEiger.arm(&sequenceId);
@@ -571,6 +574,7 @@ void eigerDetector::controlTask (void)
                 triggerTimeout = triggerExposure + 0.1;
             }
 
+            setIntegerParam(ADAcquire,       1);
             setIntegerParam(ADStatus,        ADStatusAcquire);
             setIntegerParam(EigerSequenceId, sequenceId);
             setStringParam (ADStatusMessage, "Detector armed");
@@ -599,7 +603,8 @@ void eigerDetector::controlTask (void)
                 break;
             }
 
-            setStringParam(ADStatusMessage, "Triggering the detector...");
+            setStringParam(ADStatusMessage, "Triggering...");
+            callParamCallbacks();
 
             unlock();
             status = ctrlEiger.trigger(triggerTimeout);
@@ -620,6 +625,9 @@ void eigerDetector::controlTask (void)
 
             setShutter(0);
 
+            setStringParam(ADStatusMessage, "Disarming...");
+            callParamCallbacks();
+
             unlock();
             armed = (bool) ctrlEiger.disarm();
             lock();
@@ -632,7 +640,11 @@ void eigerDetector::controlTask (void)
                 setIntegerParam(ADStatus, ADStatusIdle);
             }
             else
+            {
                 setStringParam(ADStatusMessage, "Failed to disarm the detector");
+                setIntegerParam(ADStatus, ADStatusError);
+            }
+            setIntegerParam(ADAcquire, 0);
 
             break;
 
@@ -785,12 +797,13 @@ void eigerDetector::saveTask (void)
 
         printf("SAVE: %s\n", file->name);
 
+        lock();
         setStringParam(NDFileName, file->name);
         setStringParam(NDFileTemplate, "%s%s");
         createFileName(sizeof(fullFileName), fullFileName);
         setStringParam(NDFullFileName, fullFileName);
-
         callParamCallbacks();
+        unlock();
 
         fhandle = fopen(fullFileName, "wb");
         if(!fhandle)
