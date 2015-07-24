@@ -148,22 +148,48 @@ Eiger::Eiger (const char *hostname) :
 
 int Eiger::initialize (void)
 {
-    return command("initialize", NULL, DEFAULT_TIMEOUT_INIT);
+    return put(SSCommand, "trigger", "", 0, NULL);
 }
 
 int Eiger::arm (int *sequenceId)
 {
-    return command("arm", sequenceId, DEFAULT_TIMEOUT_ARM);
+    const char *functionName = "arm";
+
+    request_t request;
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_PUT, sysStr[SSCommand], "arm", 0lu);
+
+    response_t response;
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    if(doRequest(&request, &response, DEFAULT_TIMEOUT_ARM))
+    {
+        ERR("[param=arm] request failed");
+        return EXIT_FAILURE;
+    }
+
+    if(response.code != 200)
+    {
+        ERR_ARGS("[param=arm] server returned error code %d", response.code);
+        return EXIT_FAILURE;
+    }
+
+    return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
 int Eiger::trigger (int timeout)
 {
-    return command("trigger", NULL, timeout);
+    return put(SSCommand, "trigger", "", 0, NULL, timeout);
 }
 
 int Eiger::disarm (void)
 {
-    return command("disarm", NULL);
+    return put(SSCommand, "disarm", "", 0, NULL);
 }
 
 int Eiger::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
@@ -657,37 +683,6 @@ int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
     }
 
     return paramList ? parseParamList(&response, paramList) : EXIT_SUCCESS;
-}
-
-int Eiger::command (const char *param, int *sequenceId, int timeout)
-{
-    const char *functionName = "command";
-
-    request_t request;
-    char requestBuf[MAX_MESSAGE_SIZE];
-    request.data      = requestBuf;
-    request.dataLen   = sizeof(requestBuf);
-    request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], param, 0lu);
-
-    response_t response;
-    char responseBuf[MAX_MESSAGE_SIZE];
-    response.data    = responseBuf;
-    response.dataLen = sizeof(responseBuf);
-
-    if(doRequest(&request, &response, timeout))
-    {
-        ERR_ARGS("[param=%s] request failed", param);
-        return EXIT_FAILURE;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[param=%s] server returned error code %d", param, response.code);
-        return EXIT_FAILURE;
-    }
-
-    return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
 int Eiger::parseHeader (response_t *response)
