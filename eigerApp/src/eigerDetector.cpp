@@ -249,7 +249,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
     status |= getDoubleP(SSDetConfig, "photon_energy",    EigerPhotonEnergy);
     status |= getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
-    status |= getIntP   (SSDetConfig, "ntriggers",        EigerNTriggers);
+    status |= getIntP   (SSDetConfig, "ntrigger",         EigerNTriggers);
 
     status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
     status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
@@ -353,16 +353,29 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         status = putInt(SSFWConfig, "nimages_per_file", value);
     else if (function == EigerFlatfield)
         status = putBool(SSDetConfig, "flatfield_correction_applied", (bool)value);
+    else if (function == EigerNTriggers)
+        status = putInt(SSDetConfig, "ntrigger", value);
     else if (function == ADTriggerMode)
     {
         status = putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[value]);
 
         // Their firmware should do this automatically...
         if(value == TMInternalEnable || value == TMExternalEnable)
+        {
             putInt(SSDetConfig, "nimages", 1);
+            setIntegerParam(ADNumImages, 1);
+        }
     }
     else if (function == ADNumImages)
+    {
+        int triggerMode;
+        getIntegerParam(ADTriggerMode, &triggerMode);
+
+        if(triggerMode == TMInternalEnable || triggerMode == TMExternalEnable)
+            value = 1;
+
         status = putInt(SSDetConfig, "nimages", value);
+    }
     else if (function == ADReadStatus)
         status = eigerStatus();
     else if (function == EigerArm)
@@ -555,7 +568,7 @@ void eigerDetector::controlTask (void)
             else if(triggerMode == TMInternalEnable)
             {
                 getDoubleParam(EigerTriggerExp, &triggerExposure);
-                triggerTimeout += 0.1;
+                triggerTimeout = triggerExposure + 0.1;
             }
 
             setIntegerParam(ADStatus,        ADStatusAcquire);
@@ -614,7 +627,10 @@ void eigerDetector::controlTask (void)
             setIntegerParam(EigerArmed, (int)armed);
 
             if(!armed)
+            {
                 setStringParam(ADStatusMessage, "Detector disarmed");
+                setIntegerParam(ADStatus, ADStatusIdle);
+            }
             else
                 setStringParam(ADStatusMessage, "Failed to disarm the detector");
 
