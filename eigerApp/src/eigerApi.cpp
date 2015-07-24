@@ -11,6 +11,8 @@
 #include <epicsThread.h>
 #include <epicsTime.h>
 
+#include <fcntl.h>
+
 #define API_VERSION             "1.0.4"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
@@ -32,6 +34,7 @@
 
 #define DEFAULT_TIMEOUT_INIT    30
 #define DEFAULT_TIMEOUT_ARM     55
+#define DEFAULT_TIMEOUT_CONNECT 1
 
 #define ERR_PREFIX  "EigerApi"
 #define ERR(msg) fprintf(stderr, ERR_PREFIX "::%s: %s\n", functionName, msg)
@@ -440,31 +443,63 @@ int Eiger::connect (void)
         return EXIT_FAILURE;
     }
 
-    printf("will connect\n");
-    int yes = 1;
-    if(setsockopt(mSockFd, SOL_SOCKET, SOCK_NONBLOCK, &yes, sizeof(yes)))
-    {
-        perror("setsockopt");
-    }
-    else
-        printf("success\n");
+    setNonBlock(true);
 
     if(::connect(mSockFd, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
     {
-        char error[MAX_BUF_SIZE];
-        epicsSocketConvertErrnoToString(error, sizeof(error));
-        ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
-        return EXIT_FAILURE;
+        // Connection actually failed
+        if(errno != EINPROGRESS)
+        {
+            char error[MAX_BUF_SIZE];
+            epicsSocketConvertErrnoToString(error, sizeof(error));
+            ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+            epicsSocketDestroy(mSockFd);
+            return EXIT_FAILURE;
+        }
+        // Server didn't respond immediately, wait a little
+        else
+        {
+            fd_set set;
+            struct timeval tv;
+            int ret;
+
+            FD_ZERO(&set);
+            FD_SET(mSockFd, &set);
+            tv.tv_sec  = DEFAULT_TIMEOUT_CONNECT;
+            tv.tv_usec = 0;
+
+            ret = select(mSockFd + 1, NULL, &set, NULL, &tv);
+            if(ret <= 0)
+            {
+                const char *error = ret == 0 ? "TIMEOUT" : "select failed";
+                ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+                epicsSocketDestroy(mSockFd);
+                return EXIT_FAILURE;
+            }
+        }
     }
 
-    printf("connected\n");
-
+    setNonBlock(false);
     mSockClosed = false;
-
     return EXIT_SUCCESS;
 }
 
-int Eiger::doRequest(const request_t *request, response_t *response, int timeout)
+int Eiger::setNonBlock (bool nonBlock)
+{
+#ifdef WIN32
+    unsigned long mode = nonBlock ? 1 : 0;
+    return ioctlsocket(mSockFd, FIONBIO, &mode) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+#else
+    int flags = fcntl(mSockFd, F_GETFL, 0);
+    if(flags < 0)
+        return EXIT_FAILURE;
+
+    flags = nonBlock ? flags | O_NONBLOCK : flags & ~O_NONBLOCK;
+    return fcntl(mSockFd, F_SETFL, flags) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+}
+
+int Eiger::doRequest (const request_t *request, response_t *response, int timeout)
 {
     const char *functionName = "doRequest";
     int status = EXIT_SUCCESS;

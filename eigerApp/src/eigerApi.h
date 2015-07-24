@@ -56,6 +56,7 @@ private:
     bool mSockClosed;
 
     int connect (void);
+    int setNonBlock (bool nonBlock);
 
     int doRequest (const request_t *request, response_t *response, int timeout = DEFAULT_TIMEOUT);
     int get (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
