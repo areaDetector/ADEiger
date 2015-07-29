@@ -199,7 +199,7 @@ int Eiger::trigger (int timeout, double exposure)
     if(exposure)
         return putDouble(SSCommand, "trigger", exposure, NULL, timeout);
     else
-        return put(SSCommand, "trigger", "", 0, NULL);
+        return put(SSCommand, "trigger", "", 0, NULL, timeout);
 }
 
 int Eiger::disarm (void)
