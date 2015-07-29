@@ -148,7 +148,7 @@ Eiger::Eiger (const char *hostname) :
 
 int Eiger::initialize (void)
 {
-    return put(SSCommand, "trigger", "", 0, NULL);
+    return put(SSCommand, "initialize", "", 0, NULL);
 }
 
 int Eiger::arm (int *sequenceId)
