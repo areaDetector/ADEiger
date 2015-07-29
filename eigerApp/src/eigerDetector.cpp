@@ -658,7 +658,10 @@ void eigerDetector::controlTask (void)
             printf("[[DISARM]]\n");
 
             if(!armed)
+            {
                 setStringParam(ADStatusMessage, "Detector is not armed");
+                break;
+            }
 
             setShutter(0);
 
