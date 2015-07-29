@@ -6,6 +6,7 @@
 // FileWriter Parameters
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
+#define EigerFWNamePatternString        "NAME_PATTERN"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
 
 // Acquisition Metadata Parameters
@@ -54,6 +55,8 @@ public:
     // These are the methods that we override from ADDriver
     virtual asynStatus writeInt32  (asynUser *pasynUser, epicsInt32 value);
     virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
+    virtual asynStatus writeOctet  (asynUser *pasynUser, const char *value,
+            size_t nChars, size_t *nActual);
     void report(FILE *fp, int details);
 
     // These should be private but are called from C so must be public
@@ -68,6 +71,7 @@ protected:
     int EigerFWClear;
     #define FIRST_EIGER_PARAM EigerFWClear
     int EigerFWCompression;
+    int EigerFWNamePattern;
     int EigerFWNImgsPerFile;
     int EigerBeamX;
     int EigerBeamY;

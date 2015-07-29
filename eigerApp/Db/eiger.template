@@ -103,6 +103,19 @@ record(bi,"$(P)$(R)FWCompression_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# FileWriter name pattern
+record(stringout, "$(P)$(R)FWNamePattern") {
+    field(DTYP, "asynOctetWrite")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+}
+
+record(stringin, "$(P)$(R)FWNamePattern_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+    field(SCAN, "I/O Intr")
+}
+
+
 # FileWriter number of images per HDF5 file
 record(ao, "$(P)$(R)FWNImagesPerFile") {
     field(DTYP, "asynInt32")

@@ -23,7 +23,6 @@
 #include "eigerApi.h"
 
 #define MAX_BUF_SIZE            256
-#define DEFAULT_PATTERN         "series_$id"
 #define DEFAULT_NR_START        1
 #define DEFAULT_QUEUE_CAPACITY  2
 
@@ -44,6 +43,7 @@ typedef enum
 
 typedef struct
 {
+    char pattern[MAX_BUF_SIZE];
     int sequenceId;
     size_t nDataFiles;
     bool saveFiles;
@@ -147,6 +147,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // FileWriter Parameters
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
+    createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
     createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
 
     // Acquisition Metadata Parameters
@@ -248,6 +249,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= getIntP   (SSDetConfig, "ntrigger",         EigerNTriggers);
 
     status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
+    status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
     status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
 
     status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
@@ -282,7 +284,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // This driver expects the following parameters to always have the same value
     status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
-    status |= putString(SSFWConfig, "name_pattern", DEFAULT_PATTERN);
 
     if(status)
     {
@@ -459,6 +460,45 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
     return status;
 }
 
+/** Called when asyn clients call pasynOctet->write().
+  * This function performs actions for some parameters, including
+  * eigerBadPixelFile, ADFilePath, etc.
+  * For all parameters it sets the value in the parameter library and calls any
+  * registered callbacks.
+  * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+  * \param[in] value Address of the string to write.
+  * \param[in] nChars Number of characters to write.
+  * \param[out] nActual Number of characters actually written. */
+asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
+                                    size_t nChars, size_t *nActual)
+{
+    int function = pasynUser->reason;
+    asynStatus status = asynSuccess;
+    const char *functionName = "writeOctet";
+
+    if (function == EigerFWNamePattern)
+        status = putString(SSFWConfig, "name_pattern", value);
+    else if (function < FIRST_EIGER_PARAM)
+        status = ADDriver::writeOctet(pasynUser, value, nChars, nActual);
+
+    if (status)
+        asynPrint(pasynUser, ASYN_TRACE_ERROR,
+                  "%s:%s: status=%d, function=%d, value=%s",
+                  driverName, functionName, status, function, value);
+    else
+    {
+        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+              "%s:%s: function=%d, value=%s\n",
+              driverName, functionName, function, value);
+
+        setStringParam(function, value);
+        callParamCallbacks();
+    }
+
+    *nActual = nChars;
+    return status;
+}
+
 /* Report status of the driver.
  * Prints details about the driver if details>0.
  * It then calls the ADDriver::report() method.
@@ -576,6 +616,7 @@ void eigerDetector::controlTask (void)
             setStringParam (ADStatusMessage, "Detector armed");
 
             // Start polling
+            getStringParam(EigerFWNamePattern, sizeof(acquisition.pattern), acquisition.pattern);
             acquisition.sequenceId = sequenceId;
             acquisition.nDataFiles = numDataFiles(numTriggers, numImages, numImagesPerFile);
             acquisition.saveFiles  = saveFiles;
@@ -680,10 +721,10 @@ void eigerDetector::pollTask (void)
             files[i].refCount = files[i].save + files[i].stream;
 
             if(isMaster)
-                Eiger::buildMasterName(DEFAULT_PATTERN, acquisition.sequenceId,
+                Eiger::buildMasterName(acquisition.pattern, acquisition.sequenceId,
                         files[i].name, sizeof(files[i].name));
             else
-                Eiger::buildDataName(i-1+DEFAULT_NR_START, DEFAULT_PATTERN,
+                Eiger::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern,
                         acquisition.sequenceId, files[i].name,
                         sizeof(files[i].name));
         }
