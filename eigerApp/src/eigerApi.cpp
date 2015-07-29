@@ -114,9 +114,15 @@ void Eiger::deinit (void)
 int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
-    int prefixLen = idStr - pattern;
 
-    epicsSnprintf(buf, bufSize, "%.*s%d%s_master.h5", prefixLen, pattern, seqId, pattern+prefixLen+ID_LEN);
+    if(idStr)
+    {
+        int prefixLen = idStr - pattern;
+        epicsSnprintf(buf, bufSize, "%.*s%d%s_master.h5", prefixLen, pattern, seqId,
+                pattern+prefixLen+ID_LEN);
+    }
+    else
+        epicsSnprintf(buf, bufSize, "%s_master.h5", pattern);
 
     return EXIT_SUCCESS;
 }
@@ -124,9 +130,15 @@ int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bu
 int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
-    int prefixLen = idStr - pattern;
 
-    epicsSnprintf(buf, bufSize, "%.*s%d%s_data_%06d.h5", prefixLen, pattern, seqId, pattern+prefixLen+ID_LEN, n);
+    if(idStr)
+    {
+        int prefixLen = idStr - pattern;
+        epicsSnprintf(buf, bufSize, "%.*s%d%s_data_%06d.h5", prefixLen, pattern, seqId,
+                pattern+prefixLen+ID_LEN, n);
+    }
+    else
+        epicsSnprintf(buf, bufSize, "%s_data_%06d.h5", pattern, n);
 
     return EXIT_SUCCESS;
 }
