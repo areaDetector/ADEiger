@@ -79,7 +79,7 @@ public:
 
     int initialize (void);
     int arm        (int *sequenceId);
-    int trigger    (int timeout);
+    int trigger    (int timeout, double exposure = 0.0);
     int disarm     (void);
 
     int getString (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);

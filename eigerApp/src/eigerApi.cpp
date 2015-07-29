@@ -182,9 +182,12 @@ int Eiger::arm (int *sequenceId)
     return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
-int Eiger::trigger (int timeout)
+int Eiger::trigger (int timeout, double exposure)
 {
-    return put(SSCommand, "trigger", "", 0, NULL, timeout);
+    if(exposure)
+        return putDouble(SSCommand, "trigger", exposure, NULL, timeout);
+    else
+        return put(SSCommand, "trigger", "", 0, NULL);
 }
 
 int Eiger::disarm (void)
