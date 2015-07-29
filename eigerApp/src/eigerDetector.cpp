@@ -603,7 +603,10 @@ void eigerDetector::controlTask (void)
             getIntegerParam(ADTriggerMode,       &triggerMode);
 
             if(triggerMode == TMInternalSeries)
+            {
+                triggerExposure = 0.0;
                 triggerTimeout = acquirePeriod*numImages + 10.0;
+            }
             else if(triggerMode == TMInternalEnable)
             {
                 getDoubleParam(EigerTriggerExp, &triggerExposure);
@@ -644,7 +647,7 @@ void eigerDetector::controlTask (void)
             callParamCallbacks();
 
             unlock();
-            status = ctrlEiger.trigger(triggerTimeout);
+            status = ctrlEiger.trigger(triggerTimeout, triggerExposure);
             lock();
 
             if(status)
