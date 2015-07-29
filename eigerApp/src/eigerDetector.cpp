@@ -239,10 +239,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= setIntegerParam(NDArraySizeX, maxSizeX);
     status |= setIntegerParam(NDArraySizeY, maxSizeY);
 
-    // Set trigger mode to INTS
-    status |= setIntegerParam(ADTriggerMode, TMInternalSeries);
-    status |= putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[TMInternalSeries]);
-
     // Read all the following parameters into their respective asyn params
     status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
     status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
@@ -571,7 +567,7 @@ void eigerDetector::controlTask (void)
             else if(triggerMode == TMInternalEnable)
             {
                 getDoubleParam(EigerTriggerExp, &triggerExposure);
-                triggerTimeout = triggerExposure + 0.1;
+                triggerTimeout = triggerExposure + 1.0;
             }
 
             setIntegerParam(ADAcquire,       1);
