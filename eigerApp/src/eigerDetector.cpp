@@ -353,26 +353,9 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     else if (function == EigerNTriggers)
         status = putInt(SSDetConfig, "ntrigger", value);
     else if (function == ADTriggerMode)
-    {
         status = putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[value]);
-
-        // Their firmware should do this automatically...
-        if(value == TMInternalEnable || value == TMExternalEnable)
-        {
-            putInt(SSDetConfig, "nimages", 1);
-            setIntegerParam(ADNumImages, 1);
-        }
-    }
     else if (function == ADNumImages)
-    {
-        int triggerMode;
-        getIntegerParam(ADTriggerMode, &triggerMode);
-
-        if(triggerMode == TMInternalEnable || triggerMode == TMExternalEnable)
-            value = 1;
-
         status = putInt(SSDetConfig, "nimages", value);
-    }
     else if (function == ADReadStatus)
         status = eigerStatus();
     else if (function == EigerArm)
@@ -602,18 +585,25 @@ void eigerDetector::controlTask (void)
             getIntegerParam(EigerNTriggers,      &numTriggers);
             getIntegerParam(ADTriggerMode,       &triggerMode);
 
-            if(triggerMode == TMInternalSeries)
+            switch(triggerMode)
             {
+            case TMInternalSeries:
                 triggerExposure = 0.0;
                 triggerTimeout = acquirePeriod*numImages + 10.0;
-            }
-            else if(triggerMode == TMInternalEnable)
-            {
+                break;
+
+            case TMInternalEnable:
+                numImages = 1;
                 getDoubleParam(EigerTriggerExp, &triggerExposure);
                 triggerTimeout = triggerExposure + 1.0;
+                break;
+
+            case TMExternalEnable:
+                numImages = 1;
+                break;
             }
 
-            setIntegerParam(ADAcquire,       1);
+            // Set status parameters
             setIntegerParam(ADStatus,        ADStatusAcquire);
             setIntegerParam(EigerSequenceId, sequenceId);
             setStringParam (ADStatusMessage, "Detector armed");
@@ -707,16 +697,16 @@ void eigerDetector::pollTask (void)
     acquisition_t acquisition;
     int armed, pendingFiles;
     size_t totalFiles, i;
+    file_t *files;
 
     for(;;)
     {
         mPollQueue.receive(&acquisition, sizeof(acquisition));
         printf("[[POLL]]\n");
 
-        // Prepare files list
+        // Generate files list
         totalFiles = acquisition.nDataFiles + 1;
-        file_t files[totalFiles];
-        memset(files, 0, totalFiles*sizeof(file_t));
+        files = (file_t*) calloc(totalFiles, sizeof(*files));
 
         for(i = 0; i < totalFiles; ++i)
         {
@@ -769,6 +759,9 @@ void eigerDetector::pollTask (void)
 
             epicsThreadSleep(0.1);
         }while(pendingFiles);
+
+        // All pending files were processed and reaped
+        free(files);
     }
 }
 
