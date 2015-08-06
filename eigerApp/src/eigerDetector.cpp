@@ -1669,15 +1669,20 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         return asynError;
     }
 
-    //Access /entry group inside h5
-    groupId = H5Gopen2(fileId, "/entry", H5P_DEFAULT);
-    if(groupId < 0)
+    //Access /entry/data group inside h5
+    groupId = H5Gopen2(fileId, "/entry/data", H5P_DEFAULT);
+    if(groupId < 0) // Old firmware
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s unable to open 'entry' group\n",
-                driverName, functionName);
-        status = asynError;
-        goto closeFile;
+        groupId = H5Gopen2(fileId, "/entry", H5P_DEFAULT);
+
+        if(groupId < 0)
+        {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s unable to open 'entry' group\n",
+                    driverName, functionName);
+            status = asynError;
+            goto closeFile;
+        }
     }
 
     int image_nr_low;
