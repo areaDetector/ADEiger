@@ -7,6 +7,7 @@ LIBRARY_IOC_Linux = eigerDetector
 LIBRARY_IOC_Darwin = eigerDetector
 
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
+USR_INCLUDES += $(HDF5_INCLUDE)
 
 LIB_SRCS += eigerDetector.cpp
 
