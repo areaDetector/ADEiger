@@ -66,6 +66,10 @@
     "GET %s%s HTTP/1.0" EOL \
     "Range: bytes=%lu-%lu" EOH
 
+// Error message formatters
+#define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
+    driverName, functionName, msg)
+
 /** Subsystems */
 typedef enum
 {
@@ -267,9 +271,7 @@ private:
     /*
      * HDF5 helpers
      */
-    asynStatus readH5Attr   (hid_t entry, const char *name, int *value);
     asynStatus parseH5File  (char *buf, size_t len);
-    asynStatus fillNDArrays (hid_t dId, size_t nimages);
 
     /*
      * Read some detector status parameters
@@ -1447,7 +1449,7 @@ asynStatus eigerDetector::saveFile (const char *file, char *data, size_t len)
     if(written < len)
     {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s::%s(%s), failed to write to local file (%u written)\n",
+                "%s::%s(%s), failed to write to local file (%lu written)\n",
                 driverName, functionName, file, written);
         status = asynError;
     }
@@ -1614,242 +1616,166 @@ asynStatus eigerDetector::downloadAndPublish (void)
     return status;
 }
 
-asynStatus eigerDetector::readH5Attr (hid_t entry, const char *name, int *value)
-{
-    const char *functionName = "readH5Attr";
-    asynStatus status = asynSuccess;
-
-    htri_t exists = H5Aexists_by_name(entry, "data", name, H5P_DEFAULT);
-    if(exists <= 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't find '%s' attribute\n",
-                driverName, functionName, name);
-        return asynError;
-    }
-
-    hid_t id = H5Aopen_by_name  (entry, "data", name, H5P_DEFAULT, H5P_DEFAULT);
-    if(id < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't open '%s' attribute\n",
-                driverName, functionName, name);
-        return asynError;
-    }
-
-    hid_t type = H5Aget_type(id);
-    if(H5Aread (id, type, value) < 0)
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't read '%s' attribute\n",
-                driverName, functionName, name);
-        status = asynError;
-    }
-
-    H5Aclose(id);
-    return status;
-}
-
 asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
 {
-    const char *functionName = "imgCopy";
+    const char *functionName = "parseH5File";
     asynStatus status = asynSuccess;
 
-    hid_t fileId, groupId, dataId;
+    int imageCounter, arrayCallbacks;
+    hid_t fId, dId, dSpace, dType, mSpace;
+    hsize_t dims[3], count[3], offset[3] = {0,0,0};
+    herr_t err;
+    size_t nImages, width, height;
+
+    size_t ndDims[2];
+    NDDataType_t ndType;
+
+    epicsTimeStamp startTime;
 
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
     // Open h5 file from memory
-    fileId = H5LTopen_file_image(buf, bufLen, flags);
-    if(fileId < 0)
+    fId = H5LTopen_file_image((void*)buf, bufLen, flags);
+    if(fId < 0)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s unable to open memory as file\n",
-                driverName, functionName);
-        return asynError;
+        ERR("unable to open memory as file");
+        goto end;
     }
 
-    //Access /entry/data group inside h5
-    groupId = H5Gopen2(fileId, "/entry/data", H5P_DEFAULT);
-    if(groupId < 0) // Old firmware
+    // Access dataset 'data'
+    dId = H5Dopen2(fId, "/entry/data/data", H5P_DEFAULT);
+    if(dId < 0)
     {
-        groupId = H5Gopen2(fileId, "/entry", H5P_DEFAULT);
+        ERR("unable to open '/entry/data/data'. Will try '/entry/data'");
 
-        if(groupId < 0)
+        dId = H5Dopen2(fId, "/entry/data", H5P_DEFAULT);
+        if(dId < 0)
         {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s unable to open 'entry' group\n",
-                    driverName, functionName);
-            status = asynError;
+            ERR("unable to open '/entry/data' dataset");
             goto closeFile;
         }
     }
 
-    int image_nr_low;
-    if((status = readH5Attr(groupId, "image_nr_low", &image_nr_low)))
+    // Get dataset dimensions (assume 3 dimensions)
+    err = H5LTget_dataset_info(dId, ".", dims, NULL, NULL);
+    if(err)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s underlying readH5Attr failed\n",
-                driverName, functionName);
-        goto closeGroup;
+        ERR("couldn't read dataset info");
+        goto closeDataset;
     }
 
-    int image_nr_high;
-    if((status = readH5Attr(groupId, "image_nr_high", &image_nr_high)))
+    nImages = dims[0];
+    height  = dims[1];
+    width   = dims[2];
+
+    ndDims[0] = width;
+    ndDims[1] = height;
+
+    count[0] = 1;
+    count[1] = height;
+    count[2] = width;
+
+    // Get dataset type
+    dType = H5Dget_type(dId);
+    if(dType < 0)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s underlying readH5Attr failed\n",
-                driverName, functionName);
-        goto closeGroup;
+        ERR("couldn't get dataset type");
+        goto closeDataset;
     }
 
-    // Access dataset 'data'
-    dataId = H5Dopen2(groupId, "data", H5P_DEFAULT);
-    if(dataId < 0)
+    // Parse dataset type
+    if(H5Tequal(dType, H5T_NATIVE_UINT32) > 0)
+        ndType = NDUInt32;
+    else if(H5Tequal(dType, H5T_NATIVE_UINT16) > 0)
+        ndType = NDUInt16;
+    else
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s unable to open 'data' dataset\n",
-                driverName, functionName);
-        status = asynError;
-        goto closeGroup;
+        ERR("invalid data type");
+        goto closeDataType;
     }
 
-    if((status = fillNDArrays(dataId, (image_nr_high-image_nr_low)+1)))
-    {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s underlying fillNDArrays failed\n",
-                driverName, functionName);
-    }
-
-    H5Dclose(dataId);
-closeGroup:
-    H5Gclose(groupId);
-closeFile:
-    H5Fclose(fileId);
-    return status;
-}
-
-asynStatus eigerDetector::fillNDArrays (hid_t dId, size_t nimages)
-{
-    const char *functionName = "fillArray";
-    asynStatus status = asynSuccess;
-
-    epicsTimeStamp startTime;
-
-    hid_t dSpace = H5Dget_space(dId);
+    // Get dataspace
+    dSpace = H5Dget_space(dId);
     if(dSpace < 0)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't get dataspace\n",
-                driverName, functionName);
-        return asynError;
+        ERR("couldn't get dataspace");
+        goto closeDataType;
     }
 
-    int rank = H5Sget_simple_extent_ndims(dSpace);
-    if(rank < 0 || rank != 3)
+    // Create memspace
+    mSpace = H5Screate_simple(3, count, NULL);
+    if(mSpace < 0)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s couldn't get rank or rank invalid (rank=%d)\n",
-                driverName, functionName, rank);
-        return asynError;
+        ERR("failed to create memSpace");
+        goto closeMemSpace;
     }
 
-    hsize_t count[3];
-    hsize_t maxdims[3];
-    H5Sget_simple_extent_dims(dSpace, count, maxdims);
-    count[0] = 1;
-
-    hid_t mSpace = H5Screate_simple(3, count, NULL);
-
-    hsize_t offset[3] = {0,0,0};
-    for(offset[0] = 0; offset[0] < nimages; offset[0]++)
+    getIntegerParam(NDArrayCounter, &imageCounter);
+    for(offset[0] = 0; offset[0] < nImages; ++offset[0])
     {
-        size_t dims[2] = {count[1], count[2]};
-        NDDataType_t ndType;
         NDArray *pImage;
 
-        hid_t dTypeId = H5Dget_type(dId);
-        if(H5Tequal(dTypeId, H5T_NATIVE_UINT32) > 0)
-            ndType = NDUInt32;
-        else if(H5Tequal(dTypeId, H5T_NATIVE_UINT16) > 0)
-            ndType = NDUInt16;
-        else
+        pImage = pNDArrayPool->alloc(2, ndDims, ndType, 0, NULL);
+        if(!pImage)
         {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s invalid data type\n",
-                    driverName, functionName);
-            status = asynError;
-            goto end;
+            ERR("couldn't allocate NDArray");
+            break;
         }
 
         // Select the hyperslab
-        if(H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL, count,
-                NULL) < 0)
+        err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL,
+                count, NULL);
+        if(err < 0)
         {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s couldn't select hyperslab\n",
-                    driverName, functionName);
-            status = asynError;
-            goto end;
+            ERR("couldn't select hyperslab");
+            pImage->release();
+            break;
         }
-
-        pImage = pNDArrayPool->alloc(2, dims, ndType, 0, NULL);
-
-        if(!pImage)
-        {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s couldn't allocate NDArray\n",
-                    driverName, functionName);
-            status = asynError;
-            goto end;
-        }
-
-        // the saved datatype in the hdf5 file
-        hid_t dType = H5Dget_type(dId);
 
         // and finally read the image
-        if(H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData) < 0)
+        err = H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData);
+        if(err < 0)
         {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                    "%s:%s couldn't read image\n",
-                    driverName, functionName);
-            status = asynError;
+            ERR("couldn't read image");
             pImage->release();
-            goto end;
+            break;
         }
-
-        int imageCounter;
-        getIntegerParam(NDArrayCounter, &imageCounter);
-        imageCounter++;
-        setIntegerParam(NDArrayCounter, imageCounter);
-        callParamCallbacks();
 
         // Put the frame number and time stamp into the buffer
         pImage->uniqueId = imageCounter;
         epicsTimeGetCurrent(&startTime);
-        pImage->timeStamp =  startTime.secPastEpoch + startTime.nsec / 1.e9;
+        pImage->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
         updateTimeStamp(&pImage->epicsTS);
 
         // Get any attributes that have been defined for this driver
         this->getAttributes(pImage->pAttributeList);
 
         // Call the NDArray callback
-        this->unlock();
+        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+        if (arrayCallbacks)
+        {
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                    "%s:%s: calling NDArray callback\n",
+                    driverName, functionName);
 
-        asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                "%s:%s: calling NDArray callback\n",
-                driverName, functionName);
+            doCallbacksGenericPointer(pImage, NDArrayData, 0);
+        }
 
-        doCallbacksGenericPointer(pImage, NDArrayData, 0);
-        this->lock();
+        setIntegerParam(NDArrayCounter, ++imageCounter);
+        callParamCallbacks();
 
         pImage->release();
-
-        callParamCallbacks();
     }
 
-end:
+closeMemSpace:
     H5Sclose(mSpace);
+closeDataType:
+    H5Tclose(dType);
+closeDataset:
+    H5Dclose(dId);
+closeFile:
+    H5Fclose(fId);
+end:
     return status;
 }
 
