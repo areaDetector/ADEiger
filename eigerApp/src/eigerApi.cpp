@@ -207,6 +207,16 @@ int Eiger::disarm (void)
     return put(SSCommand, "disarm", "", 0, NULL);
 }
 
+int Eiger::cancel (void)
+{
+    return put(SSCommand, "cancel", "", 0, NULL);
+}
+
+int Eiger::abort (void)
+{
+    return put(SSCommand, "abort", "", 0, NULL);
+}
+
 int Eiger::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
 {
     return get(sys, param, value, len, timeout);
@@ -368,7 +378,7 @@ int Eiger::waitFile (const char *filename, double timeout)
         epicsTimeGetCurrent(&now);
     }while(epicsTimeDiffInSeconds(&now, &start) < timeout);
 
-    ERR_ARGS("timeout waiting for file %s", filename);
+    //ERR_ARGS("timeout waiting for file %s", filename);
     return EXIT_FAILURE;
 }
 

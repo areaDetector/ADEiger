@@ -81,6 +81,8 @@ public:
     int arm        (int *sequenceId);
     int trigger    (int timeout, double exposure = 0.0);
     int disarm     (void);
+    int cancel     (void);
+    int abort      (void);
 
     int getString (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
     int getInt    (sys_t sys, const char *param, int *value,              int timeout = DEFAULT_TIMEOUT);
