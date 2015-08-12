@@ -213,10 +213,7 @@ int Eiger::trigger (int timeout, double exposure)
 
     double diff = epicsTimeDiffInSeconds(&end, &start);
     if(diff < exposure)
-    {
-        printf("sleeping for %.3f\n", exposure-diff);
         epicsThreadSleep(exposure - diff);
-    }
 
     return EXIT_SUCCESS;
 }

@@ -19,8 +19,10 @@
 #define EigerFlatfieldString            "FLATFIELD_APPLIED"
 #define EigerPhotonEnergyString         "PHOTON_ENERGY"
 #define EigerThresholdString            "THRESHOLD"
+#define EigerTriggerString              "TRIGGER"
 #define EigerTriggerExpString           "TRIGGER_EXPOSURE"
 #define EigerNTriggersString            "NUM_TRIGGERS"
+#define EigerManualTriggerString        "MANUAL_TRIGGER"
 
 // Detector Info Parameters
 #define EigerSWVersionString            "SW_VERSION"
@@ -32,12 +34,6 @@
 #define EigerLink1String                "LINK_1"
 #define EigerLink2String                "LINK_2"
 #define EigerLink3String                "LINK_3"
-
-// Commands
-#define EigerArmString                  "ARM"
-#define EigerTriggerString              "TRIGGER"
-#define EigerDisarmString               "DISARM"
-#define EigerCancelString               "CANCEL"
 
 // Other Parameters
 #define EigerArmedString                "ARMED"
@@ -80,8 +76,10 @@ protected:
     int EigerFlatfield;
     int EigerPhotonEnergy;
     int EigerThreshold;
+    int EigerTrigger;
     int EigerTriggerExp;
     int EigerNTriggers;
+    int EigerManualTrigger;
     int EigerSWVersion;
     int EigerThTemp0;
     int EigerThHumid0;
@@ -89,10 +87,6 @@ protected:
     int EigerLink1;
     int EigerLink2;
     int EigerLink3;
-    int EigerArm;
-    int EigerTrigger;
-    int EigerDisarm;
-    int EigerCancel;
     int EigerArmed;
     int EigerSaveFiles;
     int EigerSequenceId;
@@ -101,9 +95,10 @@ protected:
 
 private:
     char mHostname[512];
-    Eiger eiger;
-    epicsMessageQueue mCommandQueue, mPollQueue, mDownloadQueue, mStreamQueue,
-        mSaveQueue, mReapQueue;
+    Eiger mEiger;
+    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mPollDoneEvent;
+    epicsMessageQueue mPollQueue, mDownloadQueue, mStreamQueue, mSaveQueue,
+            mReapQueue;
 
     // Wrappers to get detector parameters into asyn parameter
     asynStatus getStringP (sys_t sys, const char *param, int dest);
@@ -111,7 +106,7 @@ private:
     asynStatus getDoubleP (sys_t sys, const char *param, int dest);
     asynStatus getBoolP   (sys_t sys, const char *param, int dest);
 
-    // Nice wrappers to set parameters and catch related parameters updates
+    // Wrappers to set parameters and catch related parameters updates
     asynStatus putString  (sys_t sys, const char *param, const char *value);
     asynStatus putInt     (sys_t sys, const char *param, int value);
     asynStatus putDouble  (sys_t sys, const char *param, double value);

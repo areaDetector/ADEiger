@@ -33,13 +33,13 @@
 #define ERR_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, \
     "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
 
-typedef enum
-{
-    ARM,
-    TRIGGER,
-    DISARM,
-    CANCEL,
-}command_t;
+// Flow message formatters
+#define FLOW(msg) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, "%s::%s: %s\n", \
+    driverName, functionName, msg)
+
+#define FLOW_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, \
+    "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
+
 
 typedef struct
 {
@@ -57,11 +57,6 @@ typedef struct
     bool save, stream, failed;
     size_t refCount;
 }file_t;
-
-static command_t CMD_ARM       = ARM;
-static command_t CMD_TRIGGER   = TRIGGER;
-static command_t CMD_DISARM    = DISARM;
-static command_t CMD_CANCEL    = CANCEL;
 
 static const char *driverName = "eigerDetector";
 
@@ -127,8 +122,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                ASYN_CANBLOCK,    /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
                1,                /* autoConnect=1 */
                priority, stackSize),
-    eiger(serverHostname),
-    mCommandQueue(DEFAULT_QUEUE_CAPACITY, sizeof(command_t)),
+    mEiger(serverHostname),
+    mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mStreamQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -160,8 +155,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerFlatfieldString,     asynParamInt32,   &EigerFlatfield);
     createParam(EigerPhotonEnergyString,  asynParamFloat64, &EigerPhotonEnergy);
     createParam(EigerThresholdString,     asynParamFloat64, &EigerThreshold);
+    createParam(EigerTriggerString,       asynParamInt32,   &EigerTrigger);
     createParam(EigerTriggerExpString,    asynParamFloat64, &EigerTriggerExp);
     createParam(EigerNTriggersString,     asynParamInt32,   &EigerNTriggers);
+    createParam(EigerManualTriggerString, asynParamInt32,   &EigerManualTrigger);
 
     // Detector Info Parameters
     createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
@@ -173,12 +170,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerLink1String,         asynParamInt32,   &EigerLink1);
     createParam(EigerLink2String,         asynParamInt32,   &EigerLink2);
     createParam(EigerLink3String,         asynParamInt32,   &EigerLink3);
-
-    // Commands
-    createParam(EigerArmString,           asynParamInt32,   &EigerArm);
-    createParam(EigerTriggerString,       asynParamInt32,   &EigerTrigger);
-    createParam(EigerDisarmString,        asynParamInt32,   &EigerDisarm);
-    createParam(EigerCancelString,        asynParamInt32,   &EigerCancel);
 
     // Other Parameters
     createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
@@ -194,14 +185,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     char desc[MAX_BUF_SIZE] = "";
     char *manufacturer, *space, *model;
 
-    if(eiger.getString(SSDetConfig, "description", desc, sizeof(desc)))
+    if(mEiger.getString(SSDetConfig, "description", desc, sizeof(desc)))
     {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                 "%s:%s Eiger seems to be uninitialized\n"
                 "Initializing... (may take a while)\n",
                 driverName, functionName);
 
-        if(eiger.initialize())
+        if(mEiger.initialize())
         {
             ERR("Eiger FAILED TO INITIALIZE");
             return;
@@ -211,7 +202,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                     "%s:%s Eiger initialized\n",
                     driverName, functionName);
 
-        status = eiger.getString(SSDetConfig, "description", desc, sizeof(desc));
+        status = mEiger.getString(SSDetConfig, "description", desc, sizeof(desc));
     }
 
     // Assume 'description' is of the form 'Dectris Eiger 1M'
@@ -225,13 +216,13 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Get software (detector firmware) version
     char swVersion[MAX_BUF_SIZE];
-    status |= eiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
+    status |= mEiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
     status |= setStringParam(EigerSWVersion, swVersion);
 
     // Get frame dimensions
     int maxSizeX, maxSizeY;
-    status |= eiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
-    status |= eiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
+    status |= mEiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
+    status |= mEiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
 
     status |= setIntegerParam(ADMaxSizeX, maxSizeX);
     status |= setIntegerParam(ADMaxSizeY, maxSizeY);
@@ -323,7 +314,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     if(status)
     {
-        ERR("epicsThreadCreate failure for image task");
+        ERR("epicsThreadCreate failure for some task");
         return;
     }
 }
@@ -342,7 +333,29 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     asynStatus status = asynSuccess;
     const char *functionName = "writeInt32";
 
-    if (function == EigerFWClear)
+    int adStatus, armed;
+    getIntegerParam(ADStatus, &adStatus);
+    getIntegerParam(EigerArmed, &armed);
+
+    if(function == ADAcquire)
+    {
+        // Start
+        if(value && adStatus != ADStatusAcquire)
+        {
+            setIntegerParam(ADStatus, ADStatusAcquire);
+            mStartEvent.signal();
+        }
+        // Stop
+        else if (!value && adStatus == ADStatusAcquire)
+        {
+            unlock();
+            mEiger.abort();
+            lock();
+            setIntegerParam(ADStatus, ADStatusAborted);
+            mStopEvent.signal();
+        }
+    }
+    else if (function == EigerFWClear)
         status = putInt(SSFWConfig, "clear", 1);
     else if (function == EigerFWCompression)
         status = putBool(SSFWConfig, "compression_enabled", (bool)value);
@@ -358,14 +371,8 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         status = putInt(SSDetConfig, "nimages", value);
     else if (function == ADReadStatus)
         status = eigerStatus();
-    else if (function == EigerArm)
-        mCommandQueue.send(&CMD_ARM, sizeof(CMD_ARM));
     else if (function == EigerTrigger)
-        mCommandQueue.send(&CMD_TRIGGER, sizeof(CMD_TRIGGER));
-    else if (function == EigerDisarm)
-        mCommandQueue.send(&CMD_DISARM, sizeof(CMD_DISARM));
-    else if (function == EigerCancel)
-        mCommandQueue.send(&CMD_CANCEL, sizeof(CMD_CANCEL));
+        mTriggerEvent.signal();
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
@@ -511,182 +518,167 @@ void eigerDetector::controlTask (void)
 {
     Eiger ctrlEiger(mHostname);
     const char *functionName = "controlTask";
-    bool armed = false;
-    command_t command;
     acquisition_t acquisition;
 
-    int status;
-    int numTriggers;
-    int sequenceId, saveFiles, numImages, triggerMode, numImagesPerFile;
+    int status = asynSuccess;
+    int adStatus, manualTrigger;
+    int sequenceId, saveFiles, numImages, numTriggers, triggerMode, numImagesPerFile;
     double acquirePeriod, triggerTimeout = 0.0, triggerExposure;
 
-    setStringParam(ADStatusMessage, "Waiting for arm command");
-    callParamCallbacks();
+    lock();
 
     for(;;)
     {
-        mCommandQueue.receive(&command, sizeof(command));
+        // Clear uncaught events
+        mStopEvent.tryWait();
+        mTriggerEvent.tryWait();
+        mPollDoneEvent.tryWait();
 
+        // Wait for start event
+        getIntegerParam(ADStatus, &adStatus);
+        if(adStatus == ADStatusIdle)
+            setStringParam(ADStatusMessage, "Waiting for acquire command");
+        callParamCallbacks();
+
+        unlock();
+        mStartEvent.wait();
         lock();
 
-        switch(command)
+        // If saving files, check if the File Path is valid
+        getIntegerParam(EigerSaveFiles, &saveFiles);
+
+        if(saveFiles)
         {
-        case ARM:
-            printf("[[ARM]]\n");
+            int filePathExists;
+            checkPath();
+            getIntegerParam(NDFilePathExists, &filePathExists);
 
-            if(armed)
+            if(!filePathExists)
             {
-                setStringParam(ADStatusMessage, "Detector is already armed");
-                break;
-            }
-
-            // If saving files, check if the File Path is valid
-            getIntegerParam(EigerSaveFiles, &saveFiles);
-
-            if(saveFiles)
-            {
-                int filePathExists;
-                checkPath();
-                getIntegerParam(NDFilePathExists, &filePathExists);
-
-                if(!filePathExists)
-                {
-                    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                            "%s:%s: invalid local File Path\n",
-                            driverName, functionName);
-
-                    setIntegerParam(ADStatus, ADStatusError);
-                    setStringParam(ADStatusMessage, "Invalid file path");
-                    break;
-                }
-            }
-
-            setStringParam(ADStatusMessage, "Arming...");
-            callParamCallbacks();
-
-            // Send the arm command
-            unlock();
-            armed = !ctrlEiger.arm(&sequenceId);
-            lock();
-
-            setIntegerParam(EigerArmed, (int)armed);
-
-            if(!armed)
-            {
-                setStringParam(ADStatusMessage, "Failed to arm the detector");
+                ERR("invalid local file path");
+                setIntegerParam(ADAcquire, 0);
                 setIntegerParam(ADStatus, ADStatusError);
-                break;
+                setStringParam(ADStatusMessage, "Invalid file path");
+                continue;
             }
+        }
 
-            // Latch parameters
-            getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
-            getDoubleParam (ADAcquirePeriod,     &acquirePeriod);
-            getIntegerParam(ADNumImages,         &numImages);
-            getIntegerParam(EigerNTriggers,      &numTriggers);
-            getIntegerParam(ADTriggerMode,       &triggerMode);
+        // Latch parameters
+        getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
+        getDoubleParam (ADAcquirePeriod,     &acquirePeriod);
+        getIntegerParam(ADNumImages,         &numImages);
+        getIntegerParam(EigerNTriggers,      &numTriggers);
+        getIntegerParam(ADTriggerMode,       &triggerMode);
+        getIntegerParam(EigerManualTrigger,  &manualTrigger);
 
-            switch(triggerMode)
-            {
-            case TMInternalSeries:
-                triggerExposure = 0.0;
-                triggerTimeout = acquirePeriod*numImages + 10.0;
-                break;
+        // Arm the detector
+        setStringParam(ADStatusMessage, "Arming...");
+        callParamCallbacks();
 
-            case TMInternalEnable:
-                numImages = 1;
-                getDoubleParam(EigerTriggerExp, &triggerExposure);
-                triggerTimeout = triggerExposure + 1.0;
-                break;
+        unlock();
+        status = ctrlEiger.arm(&sequenceId);
+        lock();
 
-            case TMExternalEnable:
-                numImages = 1;
-                break;
-            }
-
-            // Set status parameters
-            setIntegerParam(ADStatus,        ADStatusAcquire);
-            setIntegerParam(EigerSequenceId, sequenceId);
-            setStringParam (ADStatusMessage, "Detector armed");
-
-            // Start polling
-            getStringParam(EigerFWNamePattern, sizeof(acquisition.pattern), acquisition.pattern);
-            acquisition.sequenceId = sequenceId;
-            acquisition.nDataFiles = numDataFiles(numTriggers, numImages, numImagesPerFile);
-            acquisition.saveFiles  = saveFiles;
-            mPollQueue.send(&acquisition, sizeof(acquisition));
-
-            setShutter(1);
-            break;
-
-        case TRIGGER:
-            printf("[[TRIGGER]]\n");
-
-            if(triggerMode == TMExternalSeries || triggerMode == TMExternalEnable)
-            {
-                setStringParam(ADStatusMessage, "Won't trigger: using external triggers");
-                break;
-            }
-
-            if(!armed)
-            {
-                setStringParam(ADStatusMessage, "Detector is not armed");
-                break;
-            }
-
-            setStringParam(ADStatusMessage, "Triggering...");
-            callParamCallbacks();
-
-            unlock();
-            status = ctrlEiger.trigger(triggerTimeout, triggerExposure);
-            lock();
-
-            if(status)
-                setStringParam(ADStatusMessage, "Failed to trigger");
-            else
-                setStringParam(ADStatusMessage, "Triggered");
-
-            break;
-
-        case DISARM:
-            printf("[[DISARM]]\n");
-
-            if(!armed)
-            {
-                setStringParam(ADStatusMessage, "Detector is not armed");
-                break;
-            }
-
-            setShutter(0);
-
-            setStringParam(ADStatusMessage, "Disarming...");
-            callParamCallbacks();
-
-            unlock();
-            armed = (bool) ctrlEiger.disarm();
-            lock();
-
-            setIntegerParam(EigerArmed, (int)armed);
-
-            if(!armed)
-            {
-                setStringParam(ADStatusMessage, "Detector disarmed");
-                setIntegerParam(ADStatus, ADStatusIdle);
-            }
-            else
-            {
-                setStringParam(ADStatusMessage, "Failed to disarm the detector");
-                setIntegerParam(ADStatus, ADStatusError);
-            }
+        if(status)
+        {
+            ERR("Failed to arm the detector");
             setIntegerParam(ADAcquire, 0);
+            setIntegerParam(ADStatus, ADStatusError);
+            setStringParam(ADStatusMessage, "Failed to arm the detector");
+            continue;
+        }
 
+        // Set status parameters
+        setIntegerParam(ADStatus,        ADStatusAcquire);
+        setStringParam (ADStatusMessage, "Detector armed");
+        setIntegerParam(EigerSequenceId, sequenceId);
+        setIntegerParam(EigerArmed, 1);
+        callParamCallbacks();
+
+        switch(triggerMode)
+        {
+        case TMInternalSeries:
+            triggerTimeout = acquirePeriod*numImages + 10.0;
             break;
 
-        case CANCEL:
-            printf("[[CANCEL]]\n");
+        case TMInternalEnable:
+        case TMExternalEnable:
+            numImages = 1;
             break;
         }
 
+        // Start polling
+        getStringParam(EigerFWNamePattern, sizeof(acquisition.pattern), acquisition.pattern);
+        acquisition.sequenceId = sequenceId;
+        acquisition.nDataFiles = numDataFiles(numTriggers, numImages, numImagesPerFile);
+        acquisition.saveFiles  = saveFiles;
+        mPollQueue.send(&acquisition, sizeof(acquisition));
+
+        // Open shutter
+        setShutter(1);
+
+        // Trigger
+        if(manualTrigger)
+            setStringParam(ADStatusMessage, "Waiting for triggers...");
+        else
+            setStringParam(ADStatusMessage, "Triggering...");
+        callParamCallbacks();
+
+        if(triggerMode == TMInternalSeries || triggerMode == TMInternalEnable)
+        {
+            getIntegerParam(ADStatus, &adStatus);
+
+            int triggers = 0;
+            while(adStatus == ADStatusAcquire && triggers < numTriggers)
+            {
+                bool doTrigger = true;
+
+                if(manualTrigger)
+                {
+                    unlock();
+                    doTrigger = mTriggerEvent.wait(0.1);
+                    lock();
+
+                    getDoubleParam(EigerTriggerExp, &triggerExposure);
+                    triggerTimeout = triggerExposure + 1.0;
+                }
+
+                if(doTrigger)
+                {
+                    unlock();
+                    status = ctrlEiger.trigger(triggerTimeout, triggerExposure);
+                    lock();
+                    ++triggers;
+                }
+
+                getIntegerParam(ADStatus, &adStatus);
+            }
+        }
+        else // triggerMode == TMExternalSeries || triggerMode == TMExternalEnable
+            mStopEvent.wait();
+
+        // Close shutter
+        setShutter(0);
+
+        // All triggers issued, disarm the detector and wait for pollTask
         unlock();
+        status = ctrlEiger.disarm();
+        lock();
+        setIntegerParam(EigerArmed, 0);
+        setStringParam(ADStatusMessage, "Waiting for files to be processed...");
+        callParamCallbacks();
+
+        unlock();
+        mPollDoneEvent.wait();
+        lock();
+
+        getIntegerParam(ADStatus, &adStatus);
+        if(adStatus == ADStatusAcquire)
+            setIntegerParam(ADStatus, ADStatusIdle);
+        else if(adStatus == ADStatusAborted)
+            setStringParam(ADStatusMessage, "Acquisition aborted");
+
+        setIntegerParam(ADAcquire, 0);
         callParamCallbacks();
     }
 }
@@ -695,14 +687,13 @@ void eigerDetector::pollTask (void)
 {
     Eiger pollEiger(mHostname);
     acquisition_t acquisition;
-    int armed, pendingFiles;
+    int adStatus, pendingFiles;
     size_t totalFiles, i;
     file_t *files;
 
     for(;;)
     {
         mPollQueue.receive(&acquisition, sizeof(acquisition));
-        printf("[[POLL]]\n");
 
         // Generate files list
         totalFiles = acquisition.nDataFiles + 1;
@@ -725,7 +716,7 @@ void eigerDetector::pollTask (void)
                         sizeof(files[i].name));
         }
 
-        // While armed, wait and download every file on the list
+        // While acquiring, wait and download every file on the list
         i = 0;
         do
         {
@@ -746,11 +737,12 @@ void eigerDetector::pollTask (void)
             }
 
             lock();
-            getIntegerParam(EigerArmed, &armed);
+            getIntegerParam(ADStatus, &adStatus);
             unlock();
-        }while(armed && i < totalFiles);
+        }while((adStatus == ADStatusAcquire || ADStatus == ADStatusReadout)
+                && i < totalFiles);
 
-        // Not armed anymore, wait for all pending files to be reaped
+        // Not acquiring anymore, wait for all pending files to be reaped
         do
         {
             lock();
@@ -762,6 +754,7 @@ void eigerDetector::pollTask (void)
 
         // All pending files were processed and reaped
         free(files);
+        mPollDoneEvent.signal();
     }
 }
 
@@ -775,7 +768,7 @@ void eigerDetector::downloadTask (void)
     {
         mDownloadQueue.receive(&file, sizeof(file_t *));
 
-        printf("DOWNLOAD: %s\n", file->name);
+        FLOW_ARGS("file=%s", file->name);
 
         file->refCount = file->stream + file->save;
 
@@ -806,7 +799,7 @@ void eigerDetector::streamTask (void)
     {
         mStreamQueue.receive(&file, sizeof(file_t *));
 
-        printf("STREAM: %s\n", file->name);
+        FLOW_ARGS("file=%s", file->name);
 
         if(parseH5File(file->data, file->len))
         {
@@ -831,7 +824,7 @@ void eigerDetector::saveTask (void)
 
         mSaveQueue.receive(&file, sizeof(file_t *));
 
-        printf("SAVE: %s\n", file->name);
+        FLOW_ARGS("file=%s", file->name);
 
         lock();
         setStringParam(NDFileName, file->name);
@@ -866,6 +859,7 @@ reap:
 
 void eigerDetector::reapTask (void)
 {
+    const char *functionName = "reapTask";
     file_t *file;
     int pendingFiles;
 
@@ -873,7 +867,7 @@ void eigerDetector::reapTask (void)
     {
         mReapQueue.receive(&file, sizeof(file));
 
-        printf("REAP: %s, refCount=%lu\n", file->name, file->refCount);
+        FLOW_ARGS("file=%s refCount=%lu", file->name, file->refCount)
 
         if(! --file->refCount)
         {
@@ -881,7 +875,7 @@ void eigerDetector::reapTask (void)
             {
                 free(file->data);
                 file->data = NULL;
-                printf("freed\n");
+                FLOW_ARGS("file=%s reaped", file->name);
             }
 
             lock();
@@ -901,7 +895,7 @@ asynStatus eigerDetector::getStringP (sys_t sys, const char *param, int dest)
     int status;
     char value[MAX_BUF_SIZE];
 
-    status = eiger.getString(sys, param, value, sizeof(value)) |
+    status = mEiger.getString(sys, param, value, sizeof(value)) |
             setStringParam(dest, value);
     return (asynStatus)status;
 }
@@ -911,7 +905,7 @@ asynStatus eigerDetector::getIntP (sys_t sys, const char *param, int dest)
     int status;
     int value;
 
-    status = eiger.getInt(sys, param, &value) | setIntegerParam(dest,value);
+    status = mEiger.getInt(sys, param, &value) | setIntegerParam(dest,value);
     return (asynStatus)status;
 }
 
@@ -920,7 +914,7 @@ asynStatus eigerDetector::getDoubleP (sys_t sys, const char *param, int dest)
     int status;
     double value;
 
-    status = eiger.getDouble(sys, param, &value) | setDoubleParam(dest, value);
+    status = mEiger.getDouble(sys, param, &value) | setDoubleParam(dest, value);
     return (asynStatus)status;
 }
 
@@ -929,7 +923,7 @@ asynStatus eigerDetector::getBoolP (sys_t sys, const char *param, int dest)
     int status;
     bool value;
 
-    status = eiger.getBool(sys, param, &value) | setIntegerParam(dest, (int)value);
+    status = mEiger.getBool(sys, param, &value) | setIntegerParam(dest, (int)value);
     return (asynStatus)status;
 }
 
@@ -943,7 +937,7 @@ asynStatus eigerDetector::putString (sys_t sys, const char *param,
     const char *functionName = "putString";
     paramList_t paramList;
 
-    if(eiger.putString(sys, param, value, &paramList))
+    if(mEiger.putString(sys, param, value, &paramList))
     {
         ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
@@ -959,7 +953,7 @@ asynStatus eigerDetector::putInt (sys_t sys, const char *param, int value)
     const char *functionName = "putInt";
     paramList_t paramList;
 
-    if(eiger.putInt(sys, param, value, &paramList))
+    if(mEiger.putInt(sys, param, value, &paramList))
     {
         ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
@@ -975,7 +969,7 @@ asynStatus eigerDetector::putBool (sys_t sys, const char *param, bool value)
     const char *functionName = "putBool";
     paramList_t paramList;
 
-    if(eiger.putBool(sys, param, value, &paramList))
+    if(mEiger.putBool(sys, param, value, &paramList))
     {
         ERR("underlying eigerPutBool failed");
         return asynError;
@@ -992,7 +986,7 @@ asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
     const char *functionName = "putDouble";
     paramList_t paramList;
 
-    if(eiger.putDouble(sys, param, value, &paramList))
+    if(mEiger.putDouble(sys, param, value, &paramList))
     {
         ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
@@ -1202,12 +1196,12 @@ asynStatus eigerDetector::eigerStatus (void)
     char link[4][MAX_BUF_SIZE];
 
     // Read temperature and humidity
-    status  = eiger.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
-    status |= eiger.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
-    status |= eiger.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
-    status |= eiger.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
-    status |= eiger.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
-    status |= eiger.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
+    status  = mEiger.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
+    status |= mEiger.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
+    status |= mEiger.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
+    status |= mEiger.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
+    status |= mEiger.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
+    status |= mEiger.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
 
     if(!status)
     {
