@@ -52,11 +52,41 @@ record(ai, "$(P)$(R)NumTriggers_RBV")
     field(SCAN, "I/O Intr")
 }
 
-# Arm the detector
-record(ao, "$(P)$(R)Arm") {
+# Manual trigger
+record(bo,"$(P)$(R)ManualTrigger") {
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ARM")
-    field(DESC, "Arm the detector")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
+    field(DESC, "Disable auto triggering")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)ManualTrigger_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
+    field(DESC, "Disable auto triggering")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+# Exposure for triggers on INTE mode
+record(ao, "$(P)$(R)TriggerExposure")
+{
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
+    field(DESC, "Trigger Exposure for INTE mode")
+    field(EGU,  "s")
+    field(PREC, "6")
+}
+
+record(ai, "$(P)$(R)TriggerExposure_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
+    field(DESC, "Trigger Exposure for INTE mode")
+    field(EGU,  "s")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
 }
 
 # Trigger the detector
@@ -64,20 +94,6 @@ record(ao, "$(P)$(R)Trigger") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER")
     field(DESC, "Trigger the detector")
-}
-
-# Disarm the detector
-record(ao, "$(P)$(R)Disarm") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DISARM")
-    field(DESC, "Disarm the detector")
-}
-
-# Cancel the acquisition
-record(ao, "$(P)$(R)Cancel") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CANCEL")
-    field(DESC, "Cancel the detector")
 }
 
 # FileWriter clear all files
