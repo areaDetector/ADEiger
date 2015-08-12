@@ -196,10 +196,29 @@ int Eiger::arm (int *sequenceId)
 
 int Eiger::trigger (int timeout, double exposure)
 {
-    if(exposure)
-        return putDouble(SSCommand, "trigger", exposure, NULL, timeout);
-    else
+    // Trigger for INTS mode
+    if(!exposure)
         return put(SSCommand, "trigger", "", 0, NULL, timeout);
+
+    // Tigger for INTE mode
+    // putDouble should block for the whole exposure duration, but it doesn't
+    // (Eiger's fault)
+
+    epicsTimeStamp start, end;
+
+    epicsTimeGetCurrent(&start);
+    if(putDouble(SSCommand, "trigger", exposure, NULL, timeout))
+        return EXIT_FAILURE;
+    epicsTimeGetCurrent(&end);
+
+    double diff = epicsTimeDiffInSeconds(&end, &start);
+    if(diff < exposure)
+    {
+        printf("sleeping for %.3f\n", exposure-diff);
+        epicsThreadSleep(exposure - diff);
+    }
+
+    return EXIT_SUCCESS;
 }
 
 int Eiger::disarm (void)
