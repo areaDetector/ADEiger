@@ -9,12 +9,14 @@ driver for the Eiger pixel array detectors from
 Additional information:
 * [Documentation](http://cars.uchicago.edu/software/epics/eigerDoc.html).
 * [Release notes and links to source and binary releases](RELEASE.md).
+=======
 
 How to install:
 ---------------
 
 * Clone and compile [areaDetector](https://github.com/areaDetector/areaDetector) according to its instructions. 
-* Clone this repository inside the `areaDetector` folder.
+* Clone this repository.
+* Edit AREADETECTOR variable inside ADEiger/configure/RELEASE to point to the correct location. 
 * Run `make` inside `ADEiger`.
 * Under `areaDetector/ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC:
   - If there is no `envPaths`, run `make envPaths` there.

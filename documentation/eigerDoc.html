@@ -1,70 +1,73 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>areaDetector eiger driver</title>
+  <title>areaDetector Eiger driver</title>
   <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type" />
 </head>
 <body>
   <div style="text-align: center">
-    <h1>
-      areaDetector eiger driver</h1>
-    <h2>
-      October 1, 2012</h2>
-    <h2>
-      Mark Rivers</h2>
-    <h2>
-      University of Chicago</h2>
+    <h1> areaDetector Eiger driver</h1>
+    <h2> August 12, 2015</h2>
+    <h2> Bruno Martins<br/>Diego Omitto<br/> Brookhaven National Laboratory</h2>
   </div>
-  <h2>
-    Table of Contents</h2>
+  <h2> Table of Contents</h2>
   <ul>
     <li><a href="#Introduction">Introduction</a></li>
     <li><a href="#StandardNotes">Implementation of standard driver parameters</a></li>
-    <li><a href="#Driver_parameters">eiger specific parameters</a></li>
+    <li><a href="#Driver_parameters">Andor specific parameters</a></li>
+    <li><a href="#Unsupported">Unsupported standard driver parameters</a></li>
+    <li><a href="#Usage">Usage</a></li>
     <li><a href="#Configuration">Configuration</a></li>
-    <li><a href="#MEDM_screens">MEDM screens</a></li>
-    <li><a href="#Performance_measurements">Performance measurements</a> </li>
-    <li><a href="#Hardware_notes">Hardware notes</a> </li>
-    <li><a href="#Restrictions">Restrictions</a> </li>
+    <li><a href="#CSS_screen">CSS screen</a></li>
+    <li><a href="#Notes">Notes</a> </li>
+    <ul>
+      <li><a href="#Downloading_Images">Downloading Images</a></li>
+      <li><a href="#Trigger_Modes">Trigger Modes</a></li>
+    </ul>
   </ul>
-  <h2 id="Introduction" style="text-align: left">
-    Introduction</h2>
+  <h2 id="Introduction" style="text-align: left"> Introduction</h2>
   <p>
     This is an <a href="http://www.aps.anl.gov/epics">EPICS</a> <a href="areaDetector.html">
-      areaDetector</a> driver for the eiger pixel array detectors from <a href="http://www.dectris.com">
-        Dectris</a>.
+    areaDetector</a> driver for the Eiger detector from <a href="http://www.dectris.com">Dectris
+    </a>. It has been tested on the Eiger 1M with firmware versions up to 1.3.0, but should work 
+    with other Eigers. The driver communicates with the detector via its SIMPLON REST interface, so
+    no library from Dectris is required. The images are pulled from the detector as HDF5 files, and
+    can be both saved to disk and streamed to the areaDetector pipeline at the same time.
   </p>
-  <p>
-    The interface to the detector is via a TCP/IP socket interface to the <b>camserver</b>
-    server that Dectris provides. The camserver program must be started before the areaDetector
-    software is started, typically by running the <b>camonly</b> script provided by
-    Dectris.
-  </p>
-  <p>
-    The camserver program saves the data to disk as TIFF or CBF files. The areaDetector
-    software reads these disk files in order to read the data, because camserver does
-    not provide another mechanism to access the data.
-  </p>
+  <p> All trigger modes are supported.</p>
   <p>
     This driver inherits from <a href="areaDetectorDoc.html#ADDriver">ADDriver</a>.
     It implements many of the parameters in <a href="areaDetectorDoxygenHTML/asyn_n_d_array_driver_8h.html">
-      asynNDArrayDriver.h</a> and in <a href="areaDetectorDoxygenHTML/_a_d_driver_8h.html">
-        ADArrayDriver.h</a>. It also implements a number of parameters that are specific
-    to the eiger detectors.The <a href="areaDetectorDoxygenHTML/classeiger_detector.html">
-      eigerDetector class documentation</a> describes this class in detail.</p>
-  <h2 id="StandardNotes" style="text-align: left">
+    asynNDArrayDriver.h</a> and in <a href="areaDetectorDoxygenHTML/_a_d_driver_8h.html">
+    ADArrayDriver.h</a>. It also implements a number of parameters that are specific
+    to the Eiger detector. The <a href="areaDetectorDoxygenHTML/classeiger_detector.html">eigerDetector
+    class documentation</a> describes this class in detail.
+  </p>
+  <p>
+    This document does not attempt to explain the meaning of the Eiger-specific parameters, as they
+    are explained in the SIMPLON API Reference and in the EIGER Detector Manual documents from Dectris.
+  </p>
+  <p>
+    The SIMPLON API provides ways to query parameter limits, valid values for enums, error conditions, etc,
+    but those features are not currently in use.
+  </p>
+  <p>
+    The driver was built upon a multithreaded architecture. 
+  </p>
+
+   <h2 id="StandardNotes" style="text-align: left">
     Implementation of standard driver parameters</h2>
   <p>
-    The following table describes how the eiger driver implements some of the standard
+    The following table describes how the Andor driver implements some of the standard
     driver parameters.
   </p>
   <table border="1" cellpadding="2" cellspacing="2" style="text-align: left">
     <tbody>
       <tr>
         <td align="center" colspan="3">
-          <b>Parameter Definitions in eigerDetector.cpp and EPICS Record Definitions in eiger.template</b>
-        </td>
+          <b>Implementation of Parameters in asynNDArrayDriver.h and ADDriver.h, and EPICS Record
+            Definitions in ADBase.template and NDFile.template</b></td>
       </tr>
       <tr>
         <th>
@@ -78,133 +81,90 @@
         <td>
           ADTriggerMode</td>
         <td>
-          $(P)$(R)TriggerMode</td>
+          $(P)$(R)TriggerMode<br />
+          $(P)$(R)TriggerMode_RBV</td>
         <td>
-          The driver redefines the choices for the ADTriggerMode parameter (record $(P)$(R)TriggerMode)
-          from ADDriver.h. The choices for the eiger are:
+          Sets the trigger mode for the detector. Options are:
           <ul>
-            <li>Internal (external signal not used)</li>
-            <li>External Enable (count while external trigger line is high, readout on high to
-              low transition)</li>
-            <li>External Trigger (begin acquisition sequence on high to low transition of external
-              trigger line)</li>
-            <li>Multiple External Trigger (high to low transition on external signal triggers
-              a single acquisition for the programmed exposure time)</li>
-            <li>Alignment (collect images as fast as exposure time and readout permit, images
-              written to a temporary file)</li>
+            <li>Internal Series [INTS]</li>
+            <li>Internal Enable [INTE]</li>
+            <li>External Series [EXTS]</li>
+            <li>External Enable [EXTE]</li>
           </ul>
-          The first 4 modes correspond directly to the camserver commands <code>Exposure</code>,
-          <code>ExtEnable</code>, <code>ExtTrigger</code>, and <code>ExtMTrigger</code> respectively.
-          Alignment mode uses the <code>Exposure</code> command as well, but continuously
-          takes images into the same temporary file (<code>alignment.tif</code>).</td>
+        </td>
       </tr>
       <tr>
+        <td>ADImageMode</td>
         <td>
-          ADAcquireTime</td>
+          $(P)$(R)ImageMode<br />
+          $(P)$(R)ImageMode_RBV
+        </td>
         <td>
-          $(P)$(R)AcquireTime</td>
-        <td>
-          Controls the acquisision time in all modes except External Enable. In External Enable
-          mode the timing is controlled entirely by the external trigger line. However, even
-          in ExternalEnable mode AcquireTime is used by camserver and by the driver to estimate
-          how long the acquisition will take. Hardware timeouts will occur if the actual time
-          to acquire differs significantly from the estimated time based on AcquireTime and
-          AcquirePeriod.</td>
+          Sets the image mode for the detector. There's really only one option:
+          <ul>
+            <li>Fixed</li>
+          </ul>
+          Collects NumImages per trigger on INTS and EXTS mode. Collects one image per trigger on
+          INTE and EXTE modes.
+        </td>
       </tr>
       <tr>
+        <td>ADNumImages</td>
         <td>
-          ADNumImages</td>
-        <td>
-          $(P)$(R)NumImages</td>
-        <td>
-          Controls the number of images to acquire. It applies in all trigger modes except
-          Alignment.</td>
+          $(P)$(R)NumImages<br />
+          $(P)$(R)NumImages_RBV
+        </td>
+        <td> Sets the number of images to take per trigger when on INTS or EXTS mode</td>
       </tr>
       <tr>
+        <td>ADAcquireTime</td>
         <td>
-          ADAcquirePeriod</td>
+          $(P)$(R)AcquireTime<br />
+          $(P)$(R)AcquireTime_RBV
+        </td>
         <td>
-          $(P)$(R)AcquirePeriod</td>
-        <td>
-          Controls the exposure period in seconds in Internal or External Trigger modes when
-          NumImages &gt;1. In External Enable mode the timing is controlled entirely by the
-          external trigger line. However, even in ExternalEnable mode AcquirePeriod is used
-          by camserver and by the driver to estimate how long the acquisition will take. Hardware
-          timeouts will occur if the actual time to acquire differs significantly from the
-          estimated time based on AcquireTime and AcquirePeriod.</td>
+          Sets the parameter "count_time", which is the exposure time for a single image
+          on INTS or EXTS mode.
+        </td>
       </tr>
       <tr>
+        <td>ADAcquirePeriod</td>
         <td>
-          ADNumExposures</td>
+          $(P)$(R)AcquirePeriod<br />
+          $(P)$(R)AcquirePeriod_RBV
+        </td>
         <td>
-          $(P)$(R)NumExposures</td>
-        <td>
-          Controls the number of exposures per image. It is most useful in External Enable
-          mode, but it can be set in any mode. </td>
+          Sets the parameter "frame_time", which directly affects the frame rate of the detector.
+          The resulting frame rate will be 1/AcquirePeriod.
+        </td>
       </tr>
       <tr>
+        <td>NDDataType</td>
         <td>
-          ADAquire</td>
+          $(P)$(R)DataType<br />
+          $(P)$(R)DataType_RBV
+        </td>
         <td>
-          $(P)$(R)Acquire</td>
-        <td>
-          Controls the acquisition. Setting this to 1 starts image acquisition. The driver
-          sets the record to 0 when acquisition is complete. This means an entire acquisition
-          series if NImages &gt;1. Setting this to 0 aborts an acquisition. If the driver
-          was currently acquiring imges then this record will cause the "Stop" and "K" (Kill)
-          commands to be sent to camserver.</td>
+          The data type for the image data. Only one choice is allowed:
+          <ul>
+            <li>UInt32</li>
+          </ul>
+          The detector parameter "auto_summation" is always on, as the manual recommends.
+          This makes the images 32-bit.
+        </td>
       </tr>
       <tr>
-        <td>
-          NDFilePath</td>
-        <td>
-          $(P)$(R)FilePath</td>
-        <td>
-          Controls the path for saving images. It must be a valid path for camserver <i>and</i>
-          for the areaDetector driver, which is normally running in an EPICS IOC. If camserver
-          and the EPICS IOC are not running on the same machine then soft links will typically
-          be used to make the paths look identical.</td>
-      </tr>
-      <tr>
-        <td>
-          NDFileTemplate</td>
-        <td>
-          $(P)$(R)FileTemplate</td>
-        <td>
-          camserver uses the file extension to determine what format to save the files in.
-          The areaDetector eiger driver only supports TIFF and CBF files, so the extension
-          should be .tif or .cbf. When saving multiple images (NImages>1) camserver has its
-          own rules for creating the names of the individual files. The rules are as follows.
-          The name constructed using the algorithm described for NDFileTemplate under <a href="areaDetectorDoc.html#asynNDArrayDriver">
-            File Saving Parameters</a> is used as a basename. The following examples show
-          the interpretation of the basename.
-          <pre>Basename            Files produced
-
-test6.tif           test6_00000.tif,  test6_00001.tif, ...
-test6_.tif          test6_00000.tif,  test6_00001.tif, ...
-test6_000.tif       test6_000.tif,    test6_001.tif, ...
-test6_014.tif       test6_014.tif,    test6_015.tif, ...
-test6_0008.tif      test6_0008.tif,   test6_0009.tif, ...
-test6_2_0035.tif    test6_2_0035.tif, test6_2_0036.tif, ...
-      </pre>
-          The numbers following the last '_' are taken as a format template, and as a start
-          value. The minimum format is 3; there is no maximum; the default is 5. The format
-          is also constrained by the requested number of images.</td>
+        <td>ADTemperatureActual</td>
+        <td> $(P)$(R)TemperatureActual</td>
+        <td> Reads the actual temperature of the detector.</td>
       </tr>
     </tbody>
   </table>
-  <p>
-    It is useful to load and enable an NDPluginStats plugin that gets its data from
-    the eiger driver. The MaxValue_RBV PV for that plugin can be monitored to make
-    sure that the 20-bit limit of 1,048,575 is not being approached in any pixel.
-  </p>
   <h2 id="Driver_parameters" style="text-align: left">
-    eiger specific parameters</h2>
+    Eiger specific parameters</h2>
   <p>
-    The eiger driver implements the following parameters in addition to those in asynNDArrayDriver.h
-    and ADDriver.h:. Note that to reduce the width of this table the parameter index
-    variable names have been split into 2 lines, but these are just a single name, for
-    example <code>eigerDelayTime</code>.
+    The Eiger driver implements the following parameters in addition to those in asynNDArrayDriver.h
+    and ADDriver.h.
   </p>
   <table border="1" cellpadding="2" cellspacing="2" style="text-align: left">
     <tbody>
@@ -214,1201 +174,367 @@ test6_2_0035.tif    test6_2_0035.tif, test6_2_0036.tif, ...
         </td>
       </tr>
       <tr>
-        <th>
-          Parameter index variable</th>
-        <th>
-          asyn interface</th>
-        <th>
-          Access</th>
-        <th>
-          Description</th>
-        <th>
-          drvInfo string</th>
-        <th>
-          EPICS record name</th>
-        <th>
-          EPICS record type</th>
+        <th> Parameter index variable</th>
+        <th> asyn interface</th>
+        <th> Access</th>
+        <th> Description</th>
+        <th> drvInfo string</th>
+        <th> EPICS record name</th>
+        <th> EPICS record type</th>
       </tr>
       <tr>
-        <td>
-          eiger<br />
-          DelayTime</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          Delay in seconds between the external trigger and the start of image acquisition.
-          It only applies in External Trigger mode</td>
-        <td>
-          DELAY_TIME</td>
-        <td>
-          $(P)$(R)DelayTime</td>
-        <td>
-          ao</td>
+        <td align="center" colspan="7"> <b>Version information</b> </td>
       </tr>
       <tr>
-        <td>
-          eiger<br />
-          Threshold</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          Threshold energy in keV</td>
-        <td>
-          THRESHOLD</td>
-        <td>
-          $(P)$(R)ThresholdEnergy</td>
-        <td>
-          ao</td>
+        <td> EigerSerialNumber</td>
+        <td> asynOctet</td>
+        <td> R/O</td>
+        <td> Detector serial number</td>
+        <td> SERIAL_NUMBER</td>
+        <td> SerialNumber_RBV</td>
+        <td> stringin</td>
       </tr>
       <tr>
-        <td>
-          N/A</td>
-        <td>
-          N/A</td>
-        <td>
-          r/w</td>
-        <td>
-          Gain menu. Controls the value of Vrf, which determines the shaping time and gain
-          of the input amplifiers. The allowed values are:
-          <ul>
-            <li>0 ("Fast/Low") Fastest shaping time (~125ns) and lowest gain. </li>
-            <li>1 ("Medium/Medium") Medium shaping time (~200 ns) and medium gain. </li>
-            <li>2 ("Slow/High") Slow shaping time (~400 ns) and high gain. </li>
-            <li>3 ("Slow/Ultrahigh") Slowest peaking time (? ns) and highest gain. </li>
-          </ul>
+        <td> EigerSWVersion</td>
+        <td> asynOctet</td>
+        <td> R/O</td>
+        <td> Detector firmware version</td>
+        <td> SW_VERSION</td>
+        <td> SWVersion_RBV</td>
+        <td> stringin</td>
+      </tr>
+      <tr>
+        <td> EigerSerialNumber</td>
+        <td> asynOctet</td>
+        <td> R/O</td>
+        <td> Detector Serial Number</td>
+        <td> SERIAL_NUMBER</td>
+        <td> SerialNumber_RBV</td>
+        <td> stringin</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>Temperature, humidity and link status</b> </td>
+      </tr>
+      <tr>
+        <td> EigerThTemp0</td>
+        <td> asynFloat64</td>
+        <td> R/O</td>
+        <td> Temperature of the first module</td>
+        <td> TH_TEMP_0</td>
+        <td> Temp0_RBV</td>
+        <td> ai</td>
+      </tr>
+      <tr>
+        <td> EigerThHumid0</td>
+        <td> asynFloat64</td>
+        <td> R/O</td>
+        <td> Humidity of the first module</td>
+        <td> TH_HUMID_0</td>
+        <td> Humid0_RBV</td>
+        <td> ai</td>
+      </tr>
+      <tr>
+        <td> EigerLink0</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 0 between the detector server and the head</td>
+        <td> LINK_0</td>
+        <td> Link0_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerLink1</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 1 between the detector server and the head</td>
+        <td> LINK_1</td>
+        <td> Link1_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerLink2</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 2 between the detector server and the head</td>
+        <td> LINK_2</td>
+        <td> Link2_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerLink3</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 3 between the detector server and the head</td>
+        <td> LINK_3</td>
+        <td> Link3_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>FileWriter control</b> </td>
+      </tr>
+      <tr>
+        <td> EigerFWClear</td>
+        <td> asynInt32</td>
+        <td> W/O</td>
+        <td> Writing to this PV clears *all* files on the detector server disk</td>
+        <td> CLEAR</td>
+        <td> FWClear</td>
+        <td> ao</td>
+      </tr>
+      <tr>
+        <td> EigerFWCompression</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Enables or disables LZ4 compression on the server side </td>
+        <td> COMPRESSION</td>
+        <td> FWCompression<br/>FWCompression_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+      <tr>
+        <td> EigerFWNamePattern</td>
+        <td> asynOctet</td>
+        <td> R/W</td>
+        <td> 
+            Name pattern for the generated HDF5 files. The pattern can be anything, but it
+            must contain the string '$id' in it. This string is replaced with the current
+            sequence id of the acquisition. The default is: "series_$id", which would generate
+            the files:<br/>
+            <ul>
+                <li>series_1_master.hdf5</li>
+                <li>series_1_data_000001.hdf5</li>
+                <li>series_1_data_000002.hdf5</li>
+                <li>...</li>
+            </ul>
+            For the sequence id 1. If '$id' is omitted, files might get overwritten on the 
+            server, because then every acqusition would generate files with the same name
         </td>
-        <td>
-          N/A</td>
-        <td>
-          $(P)$(R)GainMenu</td>
-        <td>
-          mbbo</td>
+        <td> NAME_PATTERN</td>
+        <td> FWNamePattern<br/>FWNamePattern_RBV</td>
+        <td> stringout<br/>stringin</td>
       </tr>
       <tr>
-        <td>
-          eiger<br />
-          Armed</td>
-        <td>
-          asynInt32</td>
-        <td>
-          r/o</td>
-        <td>
-          Flag to indicate when the eiger is ready to accept external trigger signals (0=not
-          ready, 1=ready). This should be used by clients to indicate when it is OK to start
-          sending trigger pulses to the eiger. If pulses are send before Armed=1 then the
-          eiger may miss them, leading to DMA timeout errors from camserver</td>
-        <td>
-          ARMED</td>
-        <td>
-          $(P)$(R)Armed</td>
-        <td>
-          bi</td>
+        <td> EigerFWNImagesPerFile</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Number of images per HDF5 file </td>
+        <td> NIMAGES_PER_FILE</td>
+        <td> FWNImgsPerFile<br/>FWNImgsPerFile_RBV</td>
+        <td> ao<br/>ai</td>
       </tr>
       <tr>
-        <td>
-          eigerImage<br />
-          FileTmot</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          Timeout in seconds when reading a TIFF or CBF file. It should be set to several
-          seconds, because there can be delays for various reasons. One reason is that there
-          is sometimes a delay between when an External Enable acquisition is started and
-          when the first external pulse occurs. Another is that it can take some time for
-          camserver processes to finish writing the files.</td>
-        <td>
-          IMAGE_FILE_TMOT</td>
-        <td>
-          $(P)$(R)ImageFileTmot</td>
-        <td>
-          ao</td>
+        <td align="center" colspan="7"> <b>Acquisition metadata</b> </td>
       </tr>
       <tr>
-        <td>
-          eiger<br />
-          BadPixelFile</td>
-        <td>
-          asynOctet</td>
-        <td>
-          r/w</td>
-        <td>
-          Name of a file to be used to replace bad pixels. If this record does not point to
-          a valid bad pixel file then no bad pixel mapping is performed. The bad pixel map
-          is used before making the NDArray callbacks. It does not modify the data in the
-          files that camserver writes. This is a simple ASCII file with the following format:
-          <pre>badX1,badY1 replacementX1,replacementY1
-badX2,badY2 replacementX2,replacementY2
-...
-          </pre>
-          The X and Y coordinates range from 0 to NXPixels-1 and NYPixels-1. Up to 100 bad
-          pixels can be defined. The bad pixel mapping simply replaces the bad pixels with
-          another pixel's value. It does not do any averaging. It is felt that this is sufficient
-          for the purpose for which this driver was written, namely fast on-line viewing of
-          ROIs and image data. More sophisticated algorithms can be used for offline analysis
-          of the image files themselves. The following is an example bad pixel file for a
-          GSECARS detector:
-          <pre>
-263,3   262,3
-264,3   266,3
-263,3   266,3
-300,85  299,85
-300,86  299,86
-471,129 472,129
-          </pre>
+        <td> EigerBeamX</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> X position of the beam </td>
+        <td> BEAM_X</td>
+        <td> BeamX<br/>BeamX_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerBeamY</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Y position of the beam </td>
+        <td> BEAM_Y</td>
+        <td> BeamY<br/>BeamY_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerDetDist</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Detector distance </td>
+        <td> DET_DIST</td>
+        <td> DetDist<br/>DetDist_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerWavelength</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> 
+            Wavelength of the beam. This parameter is automatically changed
+            whenever the PhotonEnergy changes
         </td>
-        <td>
-          BAD_PIXEL_FILE</td>
-        <td>
-          $(P)$(R)BadPixelFile</td>
-        <td>
-          waveform</td>
+        <td> WAVELENGTH</td>
+        <td> Wavelength<br/>Wavelength_RBV</td>
+        <td> ao<br/>ai</td>
       </tr>
       <tr>
-        <td>
-          eiger<br />
-          NumBadPixels</td>
-        <td>
-          asynInt32</td>
-        <td>
-          r/o</td>
-        <td>
-          The number of bad pixels defined in the bad pixel file. Useful for seeing if the
-          bad pixel file was read correctly.</td>
-        <td>
-          NUM_BAD_PIXELS</td>
-        <td>
-          $(P)$(R)NumBadPixels</td>
-        <td>
-          longin</td>
+        <td align="center" colspan="7"> <b>Acquisition control</b> </td>
       </tr>
       <tr>
-        <td>
-          eiger<br />
-          FlatFieldFile</td>
-        <td>
-          asynOctet</td>
-        <td>
-          r/w</td>
-        <td>
-          Name of a file to be used to correct for the flat field. If this record does not
-          point to a valid flat field file then no flat field correction is performed. The
-          flat field file is simply a TIFF or CBF file collected by the eiger that is used
-          to correct for spatial non-uniformity in the response of the detector. It should
-          be collected with a spatially uniform intensity on the detector at roughly the same
-          energy as the measurements being corrected. When the flat field file is read, the
-          average pixel value (averageFlatField) is computed using all pixels with intensities
-          &gt;eigerMinFlatField. All pixels with intensity &lt;eigerMinFlatField in the
-          flat field are replaced with averageFlatField. When images are collected before
-          the NDArray callbacks are performed the following per-pixel correction is applied:
-          <pre>ImageData[i] =
-    (averageFlatField *
-    ImageData[i])/flatField[i];
-          </pre>
+        <td> EigerArmed</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Armed state of the detector </td>
+        <td> ARMED</td>
+        <td> Armed</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerSaveFiles</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Controls wheter acquired files should be saved locally to disk </td>
+        <td> SAVE_FILES</td>
+        <td> SaveFiles<br/>SaveFiles_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+      <tr>
+        <td> EigerSequenceId</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Sequence ID of the current acquisition</td>
+        <td> SEQ_ID</td>
+        <td> SequenceId</td>
+        <td> ai</td>
+      </tr>
+      <tr>
+        <td> EigerFlatfield</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Controls wheter the flatfield correction should be applied </td>
+        <td> FLATFIELD_APPLIED</td>
+        <td> FlatfieldApplied<br/>FlatfieldApplied_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+      <tr>
+        <td> EigerPhotonEnergy</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Photon energy for the acquisition </td>
+        <td> PHOTON_ENERGY</td>
+        <td> PhotonEnergy<br/>PhotonEnergy_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerThreshold</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Energy threshold for the acquisition</td>
+        <td> THRESHOLD</td>
+        <td> Threshold<br/>Threshold_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerTrigger</td>
+        <td> asynInt32</td>
+        <td> W/O</td>
+        <td> Software trigger to be used on modes INTS and INTE when ManualTrigger is set</td>
+        <td> TRIGGER</td>
+        <td> Trigger</td>
+        <td> ao</td>
+      </tr>
+      <tr>
+        <td> EigerTriggerExp</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Exposure to be used with the triggers on the INTE mode</td>
+        <td> TRIGGER_EXPOSURE</td>
+        <td> TriggerExposure<br/>TriggerExposure_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerNTriggers</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Number of triggers for the acquisition</td>
+        <td> NUM_TRIGGERS</td>
+        <td> NumTriggers<br/>NumTriggers_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerManualTrigger</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> 
+            On INTS and INTE modes, controls whether triggers will be issued automatically (0)
+            or only via the Trigger PV (1).
         </td>
-        <td>
-          FLAT_FIELD_FILE</td>
-        <td>
-          $(P)$(R)FlatFieldFile</td>
-        <td>
-          waveform</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          MinFlatField</td>
-        <td>
-          asynInt32</td>
-        <td>
-          r/w</td>
-        <td>
-          The mimimum valid intensity in the flat field. This value must be set > 0 to prevent
-          divide by 0 errors. If the flat field was collected with some pixels having very
-          low intensity then this value can be used to replace those pixels with the average
-          response.</td>
-        <td>
-          MIN_FLAT_FIELD</td>
-        <td>
-          $(P)$(R)MinFlatField</td>
-        <td>
-          longout</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          FlatFieldValid</td>
-        <td>
-          asynInt32</td>
-        <td>
-          r/o</td>
-        <td>
-          This record indicates if a valid flat field file has been read. 0=No, 1=Yes.</td>
-        <td>
-          FLAT_FIELD_VALID</td>
-        <td>
-          $(P)$(R)FlatFieldValid</td>
-        <td>
-          bi</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Wavelength</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX wavelength to write to CBF and TIFF image header.</td>
-        <td>
-          WAVELENGTH</td>
-        <td>
-          $(P)$(R)Wavelength</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          EnergyLow</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX energy range low value to write to CBF and TIFF image header.</td>
-        <td>
-          ENERGY_LOW</td>
-        <td>
-          $(P)$(R)EnergyLow</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          EnergyHigh</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX energy range high value to write to CBF and TIFF image header.</td>
-        <td>
-          ENERGY_HIGH</td>
-        <td>
-          $(P)$(R)EnergyHigh</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          DetDist</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX detector distance to write to CBF and TIFF image header.</td>
-        <td>
-          DET_DIST</td>
-        <td>
-          $(P)$(R)DetDist</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          DetVOffset</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX detector vertical offset to write to CBF and TIFF image header.</td>
-        <td>
-          DET_VOFFSET</td>
-        <td>
-          $(P)$(R)DetVOffset</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          BeamX</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX beam X to write to CBF and TIFF image header.</td>
-        <td>
-          BEAM_X</td>
-        <td>
-          $(P)$(R)BeamX</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          BeamY</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX beam Y to write to CBF and TIFF image header.</td>
-        <td>
-          BEAM_Y</td>
-        <td>
-          $(P)$(R)BeamY</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Flux</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX flux to write to CBF and TIFF image header.</td>
-        <td>
-          FLUX</td>
-        <td>
-          $(P)$(R)Flux</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          FilterTransm</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX filter transmission to write to CBF and TIFF image header.</td>
-        <td>
-          FILTER_TRANSM</td>
-        <td>
-          $(P)$(R)FilterTransm</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          StartAngle</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX start angle to write to CBF and TIFF image header. When saving multiple images
-          (ADNumImages&gt;1) camserver will automatically increment the field in the image
-          header by eigerAngleIncr for each image.</td>
-        <td>
-          START_ANGLE</td>
-        <td>
-          $(P)$(R)StartAngle</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          AngleIncr</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX angle increment to write to CBF and TIFF image header. When saving multiple images
-          (ADNumImages&gt;1) camserver will automatically increment the field corresponding
-          to eigerStartAngle in the image header by this value for each image.</td>
-        <td>
-          ANGLE_INCR</td>
-        <td>
-          $(P)$(R)AngleIncr</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Det2theta</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX detector 2theta to write to CBF and TIFF image header.</td>
-        <td>
-          DET_2THETA</td>
-        <td>
-          $(P)$(R)Det2theta</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Polarization</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX polarization to write to CBF and TIFF image header.</td>
-        <td>
-          POLARIZATION</td>
-        <td>
-          $(P)$(R)Polarization</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Alpha</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX alpha to write to CBF and TIFF image header.</td>
-        <td>
-          ALPHA</td>
-        <td>
-          $(P)$(R)Alpha</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Kappa</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX kappa to write to CBF and TIFF image header.</td>
-        <td>
-          KAPPA</td>
-        <td>
-          $(P)$(R)Kappa</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Phi</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX phi to write to CBF and TIFF image header.</td>
-        <td>
-          PHI</td>
-        <td>
-          $(P)$(R)Phi</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          Chi</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/w</td>
-        <td>
-          MX chi to write to CBF and TIFF image header.</td>
-        <td>
-          CHI</td>
-        <td>
-          $(P)$(R)Chi</td>
-        <td>
-          ao</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          OscillAxis</td>
-        <td>
-          asynOctet</td>
-        <td>
-          r/w</td>
-        <td>
-          MX oscillation axis text, up to 18 characters in length, to write to CBF and TIFF
-          image header.</td>
-        <td>
-          OSCILL_AXIS</td>
-        <td>
-          $(P)$(R)OscillAxis</td>
-        <td>
-          stringout</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          NumOscill</td>
-        <td>
-          asynInt32</td>
-        <td>
-          r/w</td>
-        <td>
-          MX number of oscillations to write to CBF and TIFF image header.</td>
-        <td>
-          NUM_OSCILL</td>
-        <td>
-          $(P)$(R)NumOscill</td>
-        <td>
-          longout</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          CbfTemplateFile</td>
-        <td>
-          asynOctet</td>
-        <td>
-          r/w</td>
-        <td>
-          Template file to be used to obtain all of the MX parameters above. Set the name
-          of this file to "0" to disable the template file.</td>
-        <td>
-          CBFTEMPLATEFILE</td>
-        <td>
-          $(P)$(R)CbfTemplateFile</td>
-        <td>
-          waveform</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          HeaderString</td>
-        <td>
-          asynOctet</td>
-        <td>
-          r/w</td>
-        <td>
-          Header string to write in the COMMENT field of the CBF file.</td>
-        <td>
-          HEADERSTRING</td>
-        <td>
-          $(P)$(R)HeaderString</td>
-        <td>
-          waveform</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          PixelCutoff</td>
-        <td>
-          asynInt32</td>
-        <td>
-          r/o</td>
-        <td>
-          Maximum possible count rate per pixel.</td>
-        <td>
-          PIXEL_CUTOFF</td>
-        <td>
-          $(P)$(R)PixelCutOff_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          ThTemp0</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/o</td>
-        <td>
-          Temperature readout 0.</td>
-        <td>
-          TH_TEMP_0</td>
-        <td>
-          $(P)$(R)Temp0_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          ThTemp1</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/o</td>
-        <td>
-          Temperature readout 1.</td>
-        <td>
-          TH_TEMP_1</td>
-        <td>
-          $(P)$(R)Temp1_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          ThTemp2</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/o</td>
-        <td>
-          Temperature readout 2.</td>
-        <td>
-          TH_TEMP_2</td>
-        <td>
-          $(P)$(R)Temp2_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          ThHumid0</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/o</td>
-        <td>
-          Humidity readout 0.</td>
-        <td>
-          TH_HUMID_0</td>
-        <td>
-          $(P)$(R)Humid0_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          ThHumid1</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/o</td>
-        <td>
-          Humidity readout 1.</td>
-        <td>
-          TH_HUMID_1</td>
-        <td>
-          $(P)$(R)Humid1_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          ThHumid2</td>
-        <td>
-          asynFloat64</td>
-        <td>
-          r/o</td>
-        <td>
-          Humidity readout 2.</td>
-        <td>
-          TH_HUMID_2</td>
-        <td>
-          $(P)$(R)Humid2_RBV</td>
-        <td>
-          ai</td>
-      </tr>
-      <tr>
-        <td>
-          eiger<br />
-          TvxVersion</td>
-        <td>
-          asynOctet</td>
-        <td>
-          r/o</td>
-        <td>
-          Version of TVX and camserver.</td>
-        <td>
-          TVXVERSION</td>
-        <td>
-          $(P)$(R)TVXVersion_RBV</td>
-        <td>
-          stringin</td>
-      </tr>
-      <tr>
-        <td>
-          N/A</td>
-        <td>
-          N/A</td>
-        <td>
-          N/A</td>
-        <td>
-          asyn record to control debugging communication with camserver. Setting the CNCT
-          field in this record to <code>Disconnect</code> causes the drvAsynIPPort server
-          to disconnect from camserver. This can be used to allow another program, such as
-          TVX, to temporarily take control of camserver, without restarting the EPICS IOC.
-          Set CNCT to <code>Connect</code> to reconnect the IOC to camserver, or simply process
-          any record which communicates with camserver, because the driver will automatically
-          reconnect.</td>
-        <td>
-          N/A</td>
-        <td>
-          $(P)$(R)CamserverAsyn</td>
-        <td>
-          asyn</td>
+        <td> MANUAL_TRIGGER</td>
+        <td> ManualTrigger<br/>ManualTrigger_RBV</td>
+        <td> bo<br/>bi</td>
       </tr>
     </tbody>
   </table>
-  <h2 id="Configuration">
-    Configuration</h2>
+
+  <h2 id="Unsupported" style="text-align: left"> Unsupported standard driver parameters</h2>
+  <p> ColorMode, ReverseX, and ReverseY are not supported.</p>
+
+  <h2 id="Usage" style="text-align: left"> Usage</h2>
   <p>
-    The eigerDetector driver is created with the eigerDetectorConfig command, either
-    from C/C++ or from the EPICS IOC shell.</p>
-  <pre>int eigerDetectorConfig(const char *portName, const char *camserverPort,
-                          int maxSizeX, int maxSizeY,
-                          int maxBuffers, size_t maxMemory,
-                          int priority, int stackSize)
+    If any of the parameters set are out of range the detector will ignore it.
+    The _RBV value will indicate the actual value in effect.
+  </p>
+  <h2 id="Configuration"> Configuration</h2>
+  <p>
+    The Eiger driver is created with the eigerDetectorConfig command, either from C/C++ or
+    from the EPICS IOC shell.</p>
+  <pre>int eigerDetectorConfig(const char *portName, const char *hostname,
+                int maxBuffers, size_t maxMemory, int priority, int stackSize)
   </pre>
   <p>
     For details on the meaning of the parameters to this function refer to the detailed
     documentation on the eigerDetectorConfig function in the <a href="areaDetectorDoxygenHTML/eiger_detector_8cpp.html">
-      eigerDetector.cpp documentation</a> and in the documentation for the constructor
-    for the <a href="areaDetectorDoxygenHTML/classeiger_detector.html">eigerDetector
-      class</a>.
-  </p>
+      eigerDetector.cpp documentation</a> and in the documentation for the constructor for
+    the <a href="areaDetectorDoxygenHTML/classeiger_detector.html">eigerDetector class</a>
+    </p>
+  <p> There an example IOC boot directory and startup script provided with areaDetector. </p>
+  <h2 id="CSS_screen" style="text-align: left"> CSS screen</h2>
   <p>
-    There an example IOC boot directory and startup script (<a href="eiger_st_cmd.html">iocBoot/ioceiger/st.cmd)</a>
-    provided with areaDetector.
-  </p>
-  <h2 id="MEDM_screens" style="text-align: left">
-    MEDM screens</h2>
+    The following shows the CSS screen that is used to control the Eiger detector.
+    Note that the general purpose screen ADBase.adl can be used, but it exposes a few
+    controls that are not applicable to the Eiger, and lacks some fields that are important
+    for the Eiger.</p>
   <p>
-    The following show the MEDM screens that are used to control the eiger detector.
-    Note that the general purpose screen ADBase.adl can be used, but it exposes many
-    controls that are not applicable to the eiger.</p>
-  <p>
-    <code>eigerDetector.adl</code> is the main screen used to control the eiger
-    driver.
+    <code>eiger.opi</code> is the main screen used to control the Eiger driver.
   </p>
   <div style="text-align: center">
-    <h3 style="text-align: center">
-      eigerDetector.adl</h3>
-    <img alt="eigerDetector.png" src="eigerDetector.png" /></div>
-  <p>
-    <code>eigerAncillary.adl</code> is the screen used to control define the metadata
-    that will be written to the eiger data file.
-  </p>
-  <div style="text-align: center">
-    <h3 style="text-align: center">
-      eigerAncillary.adl</h3>
-    <img alt="eigerAncillary.png" src="eigerAncillary.png" /></div>
-  <p>
-    <code>NDROI4.adl</code> is used to define the ROIs. In this example there are 3
-    valid ROIs defined. ROI 1 is the entire detector, ROI 2 is a 300x50 rectangle starting
-    at [100,60], and ROI 3 is a 50x30 rectangle starting at [220,70].</p>
-  <div style="text-align: center">
-    <h3 style="text-align: center">
-      NDROI4.adl</h3>
-    <img alt="eigerROI4.png" src="eigerROI4.png" /></div>
-  <p>
-    <code>NDStats5.adl</code> is used to display the statistics in the ROIs defined
-    above.
-  </p>
-  <div style="text-align: center">
-    <h3 style="text-align: center">
-      NDStats5.adl</h3>
-    <img alt="eigerStats5.png" src="eigerStats5.png" /></div>
-  <p>
-    <code>mca.adl or mca_small.adl</code> can be used to plot the net or total counts
-    in an ROI when NImages>1. In this example the plot is the net counts in ROI 1 as
-    the diffractometer chi was scanned +- 1 degree with 1000 points at .02 seconds/point.
-    This was done with the SPEC command
-  </p>
-  <pre>lup chi -1 1 1000 .02
-</pre>
-  <p>
-    using trajectory scanning on a Newport kappa diffractometer. This was a compound
-    motor scan with the Newport XPS putting out pulses every .02 seconds. These pulses
-    triggered the eiger in External Enable mode. The eiger driver read each TIFF
-    file as it was created and updated this plot every 0.2 seconds. The total time to
-    collect this scan with 1000 images was 20.8 seconds.</p>
-  <div style="text-align: center">
-    <h3 style="text-align: center">
-      mca_small.adl</h3>
-    <img alt="eigerMCA.png" src="eigerMCA.png" style="text-align: left" /></div>
-  <p>
-    <code>scan_more.adl</code> is used to define a scan. In this example the sscan record
-    is set up to scan the ThresholdEnergy PV and to collect the total counts in ROI2,
-    which was defined to include the entire detector.</p>
-  <div style="text-align: center">
-    <h3>
-      scan_more.adl</h3>
-    <img alt="eigerThresholdScanSetup.png" src="eigerThresholdScanSetup.png" /></div>
-  <p>
-    <code>scanDetPlot.adl</code> is used to plot the results of a scan after it is complete.
-    In this example the total counts in ROI 1 are plotted as a function of the ThresholdEnergy
-    as it was scanned from 3000 to 10000 eV in 250 eV steps. The source was Fe55, and
-    the cut-off is at 6 keV, as expected for the Mn Ka and Mn Kb x-rays that this source
-    produces.</p>
-  <div style="text-align: center">
-    <h3>
-      scanDetPlot.adl</h3>
-    <img alt="eigerThresholdScanPlot.png" src="eigerThresholdScanPlot.png" /></div>
-  <p>
-    <code>asynRecord.adl</code> is used to control the debugging information printed
-    by the asyn TCP/IP driver for camserver (asynTraceIODriver).</p>
-  <div style="text-align: center">
-    <h3>
-      asynRecord.adl</h3>
-    <img alt="eigerAsyn.png" src="eigerAsyn.png" /></div>
-  <p>
-    <code>asynOctet.adl</code> can be used to send any command to camserver and display
-    the response. It can be loaded from the More menu in asynRecord.adl above.</p>
-  <div style="text-align: center">
-    <h3>
-      asynOctet.adl</h3>
-    <img alt="eigerAsynOctet.png" src="eigerAsynOctet.png" /></div>
-  <h2 id="SPEC_interface" style="text-align: left">
-    SPEC interface</h2>
-  <p>
-    At the GSECARS beamlines (13-ID-C and 13-BM-C) at the APS we use SPEC to control
-    our Newport diffractometers. We have added and modified SPEC macros to use the eigerDetector
-    areaDetector driver to treat the eiger detector as a SPEC counter. This works
-    in both traditional step-scanning mode, as well as in <a href="http://cars.uchicago.edu/software/epics/trajectoryScan.html">
-      trajectory scanning</a> mode. Here are some snippets from the SPEC macros for
-    the eiger. We can supply the source files on request.</p>
-  <pre>  # need some more globals (kludge)
-global    eiger_ROI_PV
-global    eiger_ROI_ARRAY_PV
-global    eiger_ROI_ARRAY_START_PV
-global    eiger_ROI_ARRAY_NUSE_PV
-global    eiger_ROI_ARRAY_ACQ_PV
-global    eiger_IMGPATH_PV
-global    eiger_FNAME_PV
-global    eiger_FILENUMBER_PV
-global    eiger_FILEFORMAT_PV
-global    eiger_EXPSRTM_PV
-global    eiger_NFRAME_PV
-global    eiger_EXPPRD_PV
-global    eiger_NEXPFRM_PV
-global    eiger_ACQ_PV
-global    eiger_ARMED_PV
-global    eiger_ABORT_PV
-global    eiger_ACQMODE_PV
-global    eiger_READOUT_TIME
+    <h3 style="text-align: center"> eiger.opi</h3>
+    <img alt="eiger.png" src="eiger.png" />
+  </div>
 
-global    eiger_ROI_0_MinX_PV
-global    eiger_ROI_0_SizeX_PV
-global    eiger_ROI_0_MinY_PV
-global    eiger_ROI_0_SizeY_PV
-
-
-###############################################################
-def _setup_img '{
-...
-     # eiger_PREFIX detector name i.e. (GSE-eiger1:)
-     if ( eiger_PREFIX == "") eiger_PREFIX = "GSE-eiger1:"
-     eiger_PREFIX = getsval("Enter eiger detector name i.e. GSE-eiger1:",eiger_PREFIX)
-
-     # eiger_DET_PREFIX is the pv used by areaDetector to identify a specific detector.
-     # When only one detector is used it is usally (cam1:)
-     if ( eiger_DET_PREFIX == "") eiger_DET_PREFIX = "cam1:"
-     eiger_DET_PREFIX = getsval("Enter eiger specific detector name i.e. cam1:",eiger_DET_PREFIX)
-
-     # eiger_ROI_PREFIX is the pv used by areaDetector to identify a specific a ROI plugin.
-     # When only one ROI plugin is used it is usally (ROI1:)
-     if ( eiger_ROI_PREFIX == "") eiger_DET_PREFIX = "ROI1:"
-     eiger_ROI_PREFIX = getsval("Enter eiger ROI plugin name i.e. ROI1:",eiger_ROI_PREFIX)
-
-     if (eiger_MOUNT == "") eiger_MOUNT = "cars5/Data"
-     eiger_MOUNT = getsval("Enter mount point relative to camserver home directory",eiger_MOUNT)
-     if (eiger_SPEC_MOUNT == "") eiger_SPEC_MOUNT = "cars5/Data"
-     eiger_SPEC_MOUNT = getsval("Enter mount point relative to spec home directory",eiger_SPEC_MOUNT)
-...
-     eiger_ROI_PV             = eiger_PREFIX eiger_ROI_PREFIX "0:Net_RBV"
-     eiger_ROI_ARRAY_PV       = eiger_PREFIX eiger_ROI_PREFIX "0:NetArray"
-     eiger_ROI_ARRAY_START_PV = eiger_PREFIX eiger_ROI_PREFIX "0:NetArrayEraseStart"
-     eiger_ROI_ARRAY_NUSE_PV  = eiger_PREFIX eiger_ROI_PREFIX "0:NetArray.NUSE"
-     eiger_ROI_ARRAY_ACQ_PV   = eiger_PREFIX eiger_ROI_PREFIX "0:NetArray.ACQG"
-     eiger_IMGPATH_PV         = eiger_PREFIX eiger_DET_PREFIX "FilePath"
-     eiger_FNAME_PV           = eiger_PREFIX eiger_DET_PREFIX "FileName"
-     eiger_FILENUMBER_PV      = eiger_PREFIX eiger_DET_PREFIX "FileNumber"
-     eiger_FILEFORMAT_PV      = eiger_PREFIX eiger_DET_PREFIX "FileTemplate"
-     eiger_EXPSRTM_PV         = eiger_PREFIX eiger_DET_PREFIX "AcquireTime"
-     eiger_NFRAME_PV          = eiger_PREFIX eiger_DET_PREFIX "NumImages"
-     eiger_EXPPRD_PV          = eiger_PREFIX eiger_DET_PREFIX "AcquirePeriod"
-     eiger_NEXPFRM_PV         = eiger_PREFIX eiger_DET_PREFIX "NumExposures"
-     eiger_ACQ_PV             = eiger_PREFIX eiger_DET_PREFIX "Acquire"
-     eiger_ARMED_PV           = eiger_PREFIX eiger_DET_PREFIX "Armed"
-     eiger_ABORT_PV           = eiger_PREFIX eiger_DET_PREFIX "Acquire"
-     eiger_ACQMODE_PV         = eiger_PREFIX eiger_DET_PREFIX "TriggerMode"
-     eiger_THRESHOLD_PV       = eiger_PREFIX eiger_DET_PREFIX "ThresholdEnergy"
-     eiger_ROI_0_MinX_PV      = eiger_PREFIX eiger_ROI_PREFIX "0:MinX"
-     eiger_ROI_0_SizeX_PV     = eiger_PREFIX eiger_ROI_PREFIX "0:SizeX"
-     eiger_ROI_0_MinY_PV      = eiger_PREFIX eiger_ROI_PREFIX "0:MinY"
-     eiger_ROI_0_SizeY_PV     = eiger_PREFIX eiger_ROI_PREFIX "0:SizeY"
-     eiger_ROI_0_BgdWidth_PV  = eiger_PREFIX eiger_ROI_PREFIX "0:BgdWidth"
-...
-
-def epics_eiger_count '{
-...
-     # Call macro that creates and set the eiger path and filename
-     img_full_filename
-
-     # Setup exposure time, collection mode and number of frames
-     epics_put(eiger_FILENUMBER_PV,NPTS, 1)
-     epics_put(eiger_NFRAME_PV, 1, 1)
-     epics_put(eiger_ACQMODE_PV,0, 1)  # Internal trigger
-     epics_put(eiger_EXPSRTM_PV,cnt_time_val, 1)
-     epics_put(eiger_NEXPFRM_PV, 1, 1)
-
-...
-     # hit the triggers
-     epics_put(eiger_ACQ_PV,1)
-
-     epics_put(sc_cnt_pv,1)
-
-     # wait for scaler and eiger AQG to finish
-     status     = 1
-     sc_done    = FALSE
-     img_done   = FALSE
-     data_done  = FALSE
-     while(status){
-         # is the scalar done
-        if (epics_get(sc_cnt_pv)=="Done"){
-             sc_done = TRUE;
-             #p "scaler done"
-        }
-
-        # is the eiger done
-        if (epics_get(eiger_ACQ_PV) == "Done"){
-            img_done = TRUE;
-            #p "image collection done"
-        }
-
-        if( (sc_done==TRUE) &amp;&amp; (img_done==TRUE)) break;
-        sleep(0.01)
-     }
-
-
-     # use the get_counts routine to read the scalers
-     # note get_counts also calls user_getcounts
-     # thats where the rois get read.
-     get_counts
-}'
-
-
-def user_getcounts '{
-...
-    # using image_count routine
-    } else if ( EPICS_COUNT == 4 ) {
-        S[iroi] = 0
-        S[iroi] = epics_get(eiger_ROI_PV)
-
-</pre>
-  <h2 id="Performance_measurements">
-    Performance measurements</h2>
-  <p>
-    The following measurements were done to demonstrate the performance that can be
-    obtained with the areaDetector eiger driver.</p>
-  <ol>
-    <li>AcquireMode=Internal, NumImages=1000, AcquireTime=.005, AcquirePeriod=.01, NumExposures=1.
-      The time to collect this series should be exactly 10.0 seconds. The actual time
-      was measured using the EPICS camonitor program. It printed the time when acquisition
-      was started (Acquire changed to Acquire=1) and when acquisition was complete (Acquire
-      changed to Done=0). The time was 10.022 seconds. This includes the time for camserver
-      to save all 1000 images to disk (366 MB), and for the driver to read each file,
-      correct the bad pixels and flat field, compute the ROIs, and post the ROIs to EPICS.
-      It also posted all of the images to EPICS. The total additional time was less than
-      0.03 seconds for all 1000 images.</li>
-    <li>AcquireMode=Internal, NImages=1, ExposureTime=.01, NExposures=1. An EPICS sscan
-      record was used to collect 1000 points. There were no positioner PVs (to eliminate
-      motor overhead). The only detector trigger was the eiger Acquire PV. The only
-      detector PV was ROI1:0:Total_RBV. In this mode camserver is being told to individually
-      collect each file. If there were no overhead then time to collect this series should
-      be exactly 10.0 seconds. The actual time measured using the EPICS camonitor program
-      was 45.514 seconds. The overhead is thus 35.514 seconds, or 35 ms per point. In
-      this single-frame mode the driver is thus able to collect >20 images/second. For
-      comparison, another measurement was done using the same EPICS sscan record, but
-      using a Joerger VSC16 scaler as the detector trigger and detector. The preset time
-      was also .01 seconds. The elapsed time for a 1000 point scan was 16.068 seconds,
-      so the overhead was 6.068 seconds, or 6 ms per point.</li>
-    <li>AcquireMode=Ext. Enable, NImages=1000, NExposures=1. SPEC was used to collect
-      1000 points using <a href="http://cars.uchicago.edu/software/epics/trajectoryScan.html">
-        trajectory scanning</a> mode with the Newport XPS motor controller. The following
-      SPEC command was used:
-      <pre>      lup chi -1 1 1000 .02
-      </pre>
-      This tells SPEC to do a relative scan of the chi axis from -2 degrees to +2 degrees
-      with 1000 points at .015 seconds/point. On our kappa diffractometer this entails
-      a coordinated motion of the phi, kappa and omega axes. The EPICS trajectory scanning
-      software downloads the non-linear trajectory that SPEC computes into the XPS controller,
-      which executes it. As the motors are moving the XPS outputs synchronization pulses
-      at the period of the collection time, .020 seconds in this case. These pulses are
-      used as the external trigger to the eiger. The time to execute this scan should
-      be 20.0 seconds. The actual time was 20.8 seconds, measured using camonitor on the
-      Acquire PV. Again, this includes the time for camserver to save all 1000 images
-      to disk (366 MB), and for the eiger driver to read each file, correct the bad
-      pixels and flat field, compute the ROIs, and post the ROIs to EPICS. It also posted
-      all of the images to EPICS. The total additional time was less than 0.8 seconds
-      for all 1000 images. As soon as the acquisition was complete SPEC plotted the net
-      counts in the first ROI (containing the Bragg peak) as follows:
-      <div style="text-align: center">
-        <h3>
-          1000 point SPEC scan with 20 ms per point collected in 20.8 seconds</h3>
-        <img alt="eigerSPEC.png" src="eigerSPEC.png" /></div>
+  <h2 id="Notes" style="text-align: left"> Notes</h2>
+    <h3 id="Downloading_Images"> Downloading images </h3>
       <p>
+      At the moment (Eiger firmware version 1.3.0) the only way to recover the images from 
+      the detector server is by downloading the generated HDF5 files and parsing them into NDArrays 
+      for the areaDetector pipeline. The driver is multithreaded, so it is capable of downloading
+      a file while a previous one is being parsed and saved to disk at the same time. The files saved
+      to disk are exactly how they were generated by the detector.
       </p>
-      For comparison this identical scan was executed in traditional step-scanning mode,
-      where the motors stopped at each point in the scan. The eiger was run in Internal
-      mode with NumImages=1. The total time for the scan was 870 seconds (more than 14
-      minutes), compared to 20.8 seconds in trajectory mode. Most of this overhead is
-      the settling time for the motors, with only a small fraction due to the eiger
-      single-exposure mode. The trajectory scanning mode is thus more than 50 times faster
-      to execute the identical SPEC scan.</li>
-  </ol>
-  <h2 id="Hardware_notes">
-    Hardware notes</h2>
-  <h3>
-    Trigger pulses</h3>
-  <p>
-    The eiger supports 3 types of external triggering. In External Trigger mode (the
-    camserver ExtTrigger command) the eiger uses the programmed values of AcquireTime,
-    AcquirePeriod, NImages and NExposures. It waits for a single external trigger, then
-    waits for Delay seconds and then collects the entire sequence. It is very similar
-    to Internal mode with NImages>1, except that it waits for a trigger to begin collecting
-    the sequence.</p>
-  <p>
-    In External Enable mode (the camserver ExtEnable command) the eiger uses the external
-    signal to control acquisition. Only NImages and NExposures are used, AcquireTime
-    and AcquirePeriod are not used. When the signal is high the detector counts, and
-    on the transition to low it begins its readout.</p>
-  <p>
-    In External MultiTrigger Mode (the camserver ExtMTrigger command) the eiger uses
-    the programmed AcquireTime, in addition to NImages and NExposures. Each external
-    trigger pulse causes the eiger to collect one image at the programmed exposure
-    time. This mode works well with a trigger source like the Newport motor controllers
-    or the SIS380x multichannel scaler, that put out a short trigger pulse for each
-    image. One only needs to take care that the time between external trigger pulses
-    is at least 4msec longer than the programmed exposure time, to allow time for the
-    detector to read out before the next trigger pulse arrives.</p>
-  <p>
-    When using the External Enable mode, we use an inexpensive analog pulse generator
-    to convert the trigger pulses from the MM4005 and XPS to a form suitable for External
-    Enable mode with the eiger. This is the solution we have developed that seems
-    to be reliable:</p>
-  <ul>
-    <li>The synchonization pulses from the Newport MM4005 or XPS controller are input
-      into the external next pulse (channel advance, control signal 1) input of the SIS3801
-      multiscaler. This is the normal configuration used for MCS counting without the
-      eiger in trajectory scanning mode.</li>
-    <li>The Copy In Progress (CIP) output of the SIS3801 (control signal 5) is connected
-      to the Trigger Input of a Tenma TGP110 10 MHz Pulse Generator. CIP will output a
-      pulse whenever the SIS3801 does a channel advance, either in external mode with
-      the motor controller pulse input, or in internal timed channel advance mode. The
-      TGP100 Pulse Generator is configured as follows:
-      <ul>
-        <li>Trigger Input connected to CIP output of SIS3801.</li>
-        <li>Triggered mode.</li>
-        <li>Complement output.</li>
-        <li>Pulse duration set with knobs to 3msec.</li>
-        <li>TTL Output connected to the External Input of the eiger.</li>
-      </ul>
-    </li>
-    <li>With this configuration the SIS3801 CIP output is normally at 5V, and outputs
-      a 0V pulse 1 microsecond long. The trailing (rising) edge of that pulse triggers
-      the TGP110. The TGP110 TTL output is also normally at 5V, and outputs a 0V pulse
-      3 milliseconds long each time the SIS3801 pulses. That output is connected to the
-      eiger External Input. In External Enable mode when eiger External Input is high
-      the eiger is counting. When the External Input is low the eiger reads out. The
-      readout time is set via the knobs on the pulse generator to be 3 ms, which is close
-      to the minimum time allowed on the eiger.</li>
-  </ul>
-  <p>
-    The Tenma TGP110 seems to be currently called a Tenma 72-6860, and lists for about
-    $350 new at <a href="http://www.newark.com">Newark</a>.
+      <p>
+      There is a promise for a future streaming interface, that will probably be based on ZeroMQ.
+      </p>
+
+    <h3 id="Trigger_Modes"> Trigger modes </h3>
+    <p>
+    The Eiger has four trigger modes, namely:
+    <ul>
+      <li>INTS: Internal Series</li>
+      <li>INTE: Internal Enable</li>
+      <li>EXTS: External Series</li>
+      <li>EXTE: External Enable</li>
+    </ul>
+    
+    The Eiger driver is capable of driving the acquisition all by itself on trigger modes
+    INTS and INTE. This happens if ManualTrigger is set to 0. If ManualTrigger is 1, however,
+    the driver waits for triggers on the Trigger PV.
+    </p>
+    <p>
+    On INTS mode, each trigger generates NumImages. On INTE mode, each trigger generates 1
+    image, and NumImages is ignored. Also, on INTE, the exposure of each individual trigger can
+    be different from each other, as set by TriggerExposure.
+    </p>
+    <p>
+    On the EXTS, each trigger generates NumImages. On EXTE mode, each trigger generates 1
+    image, and NumImages is ignored. On both EXTS and EXTE, there is currently (as of firmware
+    1.3.0) no way to know when to send a disarm to finish the acquisition. Therefore, the user
+    must manually stop the acquisition after the desired number of triggers is sent.
   </p>
-  <h3>
-    Detector Voltage</h3>
-  <p>
-    When we were initially testing the eiger in the lab, we had many errors in External
-    Enable mode, where it did not seem to be seeing the external pulses. camserver would
-    get DMA timeouts, and need to be restarted. Dectris said these were happening because
-    the cables on our detector are longer than normal, and the voltage drop from the
-    power supply to the detector was leading to marginal voltage values. They suggested
-    shortening the cables or increasing the supply voltage slightly. When moving the
-    detector to the hutch these problems initially went away. However, they then recurred,
-    and we fixed the problem by increasing the power supply voltage from 4.4 to 4.7
-    volts at the detector.</p>
-  <p>
-    Dectris has since informed me that they have increased the power supply voltage
-    on all new eiger systems, so this should no longer be an issue.</p>
-  <h2 id="Restrictions">
-    Restrictions</h2>
-  <p>
-    The following are some current restrictions of the areaDetector eiger driver:</p>
-  <ul>
-    <li>Limited to TIFF or CBF file format. camserver can save files in other formats,
-      but the driver can currently only read TIFF and CBF files. It uses the standard
-      libtiff library to read the TIFF files, so it should work on big or little endian
-      machines, and should work with uncompressed or compressed files. It has only been
-      tested with uncompressed files on a little-endian machine. It uses the CBFlib library
-      to read the CBF files.</li>
-    <li>The EPICS IOC should be run on the same computer as camserver. This is not strictly
-      necessary, and places a small additional load on the CPU and network on that computer.
-      However, we have found that TIFF files are available to be read within 10ms after
-      camserver says they have been written if the IOC is running on the same machine
-      as camserver. This is true even if the files are being saved on a remote NFS or
-      SMB file system. On the other hand, if the IOC and camserver are running on separate
-      machines, then the filesystem can wait up to 1 second after camserver says the TIFF
-      file has been written before the IOC can read it. This is true even if the files
-      are being written to the computer that the IOC is running on! This 1 second delay
-      is often unacceptable for fast single-exposure scans, i.e. with NImages=1.</li>
-    <li>The eiger driver keeps retrying to read each image file until the modification
-      date of the image file is <i>after</i> the time that the acquisition was started.
-      If it did not do this check then it could be reading and displaying old files that
-      happen to have the same name as the current files being collected. This check requires
-      that the computer that is running the soft IOC must have its clock well synchronized
-      with the clock on the computer on which the files are being written (i.e. the computer
-      generating the file modification time). If the clocks are not synchronized then
-      the files may appear to be stale when they are not, and the driver will time out.
-      The driver actually tolerates up to 10 second clock skew betweeen the computers
-      but any more than this may lead to problems.</li>
-    <li>Setting Acquire to 0 does not always stop acquisition immediately because camserver
-      does not reliably implement the "K" command to stop an exposure sequence. In particular
-      with NumImages>1 camserver seems to often ignore the K command completely, even
-      with exposure times/periods as long as 10 seconds. With NumImages=1 it does kill
-      the exposure after a few seconds.</li>
-    <li>The following items are hardcoded in the driver. They can be changed by compiling
-      if necessary.
-      <ul>
-        <li>MAX_MESSAGE_SIZE=256 The maximum size of message to/from camserver.</li>
-        <li>MAX_FILENAME_LEN=256 The maximum size of a complete file name including path and
-          extension.</li>
-        <li>FILE_READ_DELAY=.01 seconds. The time between polling to see if the image file
-          exists or if it is the expected size.</li>
-        <li>MAX_BAD_PIXELS=100 The maximum number of bad pixels.</li>
-      </ul>
-    </li>
-  </ul>
 </body>
 </html>

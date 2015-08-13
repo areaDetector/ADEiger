@@ -1,26 +1,107 @@
 # Database for the records specific to the Eiger driver
-# Mark Rivers
-# July 25, 2008
+# Bruno Martins
+# June 2, 2015
+
+# Eiger Server software version
+record(stringin, "$(P)$(R)SWVersion_RBV") {
+    field(DESC, "Software Version")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SW_VERSION")
+    field(SCAN, "I/O Intr")
+}
+
+# Eiger Serial Number
+record(stringin, "$(P)$(R)SerialNumber_RBV") {
+    field(DESC, "Serial Number")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SERIAL_NUMBER")
+    field(SCAN, "I/O Intr")
+}
 
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")
     field(ZRVL,"0")
-    field(ZRST,"Internal")
-#    field(ONVL,"1")
-#    field(ONST,"External")
-#    field(TWVL,"2")
-#    field(TWST,"External Multiple")
+    field(ZRST,"Internal Series")
+    field(ONVL,"1")
+    field(ONST,"Internal Enable")
+    field(TWVL,"2")
+    field(TWST,"External Series")
+    field(THVL,"3")
+    field(THST,"External Enable")
 }
 
 record(mbbi,"$(P)$(R)TriggerMode_RBV") {
     field(DESC,"Acquire mode")
     field(ZRVL,"0")
-    field(ZRST,"Internal")
-#    field(ONVL,"1")
-#    field(ONST,"External")
-#    field(TWVL,"2")
-#    field(TWST,"External Multiple")
+    field(ZRST,"Internal Series")
+    field(ONVL,"1")
+    field(ONST,"Internal Enable")
+    field(TWVL,"2")
+    field(TWST,"External Series")
+    field(THVL,"3")
+    field(THST,"External Enable")
+}
+
+# Number of Triggers
+record(ao, "$(P)$(R)NumTriggers") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
+    field(DESC, "Number of triggers per acquisition")
+    field(PREC, "0")
+}
+
+record(ai, "$(P)$(R)NumTriggers_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
+    field(DESC, "Number of triggers per acquisition")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
+# Manual trigger
+record(bo,"$(P)$(R)ManualTrigger") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
+    field(DESC, "Disable auto triggering")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)ManualTrigger_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
+    field(DESC, "Disable auto triggering")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+# Exposure for triggers on INTE mode
+record(ao, "$(P)$(R)TriggerExposure")
+{
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
+    field(DESC, "Trigger Exposure for INTE mode")
+    field(EGU,  "s")
+    field(PREC, "6")
+}
+
+record(ai, "$(P)$(R)TriggerExposure_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
+    field(DESC, "Trigger Exposure for INTE mode")
+    field(EGU,  "s")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+# Trigger the detector
+record(ao, "$(P)$(R)Trigger") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER")
+    field(DESC, "Trigger the detector")
 }
 
 # FileWriter clear all files
@@ -28,22 +109,6 @@ record(ao, "$(P)$(R)FWClear") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
     field(DESC, "Clear files in the detector")
-}
-
-# FileWriter mode
-record(bo,"$(P)$(R)FWMode") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MODE")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
-}
-
-record(bi,"$(P)$(R)FWMode_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MODE")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
-    field(SCAN, "I/O Intr")
 }
 
 # FileWriter compression enabled
@@ -74,6 +139,7 @@ record(stringin, "$(P)$(R)FWNamePattern_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+
 # FileWriter number of images per HDF5 file
 record(ao, "$(P)$(R)FWNImagesPerFile") {
     field(DTYP, "asynInt32")
@@ -87,23 +153,6 @@ record(ai, "$(P)$(R)FWNImagesPerFile_RBV")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NIMAGES_PER_FILE")
     field(DESC, "Number of images per HDF5 file")
-    field(PREC, "0")
-    field(SCAN, "I/O Intr")
-}
-
-# FileWriter image number start
-record(ao, "$(P)$(R)FWImageNrStart") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))IMAGE_NR_START")
-    field(DESC, "Number of the first image file")
-    field(PREC, "0")
-}
-
-record(ai, "$(P)$(R)FWImageNrStart_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))IMAGE_NR_START")
-    field(DESC, "Number of the first image file")
     field(PREC, "0")
     field(SCAN, "I/O Intr")
 }
@@ -170,7 +219,7 @@ record(ai, "$(P)$(R)PhotonEnergy_RBV")
     field(SCAN, "I/O Intr")
 }
 
-# Armed flag, which indicates Eiger is ready for external triggers
+# Armed flag, which indicates Eiger is ready for triggers
 record(bi, "$(P)$(R)Armed")
 {
     field(DTYP, "asynInt32")
@@ -200,15 +249,6 @@ record(ai, "$(P)$(R)ThresholdEnergy_RBV")
     field(EGU,  "eV")
     field(PREC, "3")
     field(SCAN, "I/O Intr")
-}
-
-# asyn record for interactive communication with REST server
-record(asyn, "$(P)$(R)ServerAsyn")
-{
-    field(PORT,  "$(SERVER_PORT)")
-    field(IMAX, "64")
-    field(OMAX, "64")
-    field(AUCT, "0")
 }
 
 # ancillary information
@@ -392,3 +432,40 @@ record(ai, "$(P)$(R)Humid0_RBV")
     field(VAL,  "0")
     field(PREC, "1")
 }
+
+record(bi, "$(P)$(R)Link0_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_0")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link1_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_1")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link2_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_2")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link3_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_3")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+

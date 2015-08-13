@@ -10,13 +10,13 @@ USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
 USR_INCLUDES += $(HDF5_INCLUDE)
 
 LIB_SRCS += eigerDetector.cpp
+LIB_SRCS += eigerApi.cpp
 
 DBD += eigerDetectorSupport.dbd
 
-LIB_LIBS_Linux	+= hdf5_hl 
+LIB_LIBS_Linux += hdf5_hl 
 hdf5_hl_DIR = $(HDF5_LIB)
-
-#hdf5_hl sz 
+USR_INCLUDES += $(HDF5_INCLUDE)
 
 include $(ADCORE)/ADApp/commonLibraryMakefile
 
