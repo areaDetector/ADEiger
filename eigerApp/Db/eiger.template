@@ -10,6 +10,14 @@ record(stringin, "$(P)$(R)SWVersion_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Eiger Serial Number
+record(stringin, "$(P)$(R)SerialNumber_RBV") {
+    field(DESC, "Serial Number")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SERIAL_NUMBER")
+    field(SCAN, "I/O Intr")
+}
+
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")
@@ -35,11 +43,65 @@ record(mbbi,"$(P)$(R)TriggerMode_RBV") {
     field(THST,"External Enable")
 }
 
-# Disarm the detector
-record(ao, "$(P)$(R)Disarm") {
+# Number of Triggers
+record(ao, "$(P)$(R)NumTriggers") {
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DISARM")
-    field(DESC, "Disarm the detector")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
+    field(DESC, "Number of triggers per acquisition")
+    field(PREC, "0")
+}
+
+record(ai, "$(P)$(R)NumTriggers_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
+    field(DESC, "Number of triggers per acquisition")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
+# Manual trigger
+record(bo,"$(P)$(R)ManualTrigger") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
+    field(DESC, "Disable auto triggering")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)ManualTrigger_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
+    field(DESC, "Disable auto triggering")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+# Exposure for triggers on INTE mode
+record(ao, "$(P)$(R)TriggerExposure")
+{
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
+    field(DESC, "Trigger Exposure for INTE mode")
+    field(EGU,  "s")
+    field(PREC, "6")
+}
+
+record(ai, "$(P)$(R)TriggerExposure_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
+    field(DESC, "Trigger Exposure for INTE mode")
+    field(EGU,  "s")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+# Trigger the detector
+record(ao, "$(P)$(R)Trigger") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER")
+    field(DESC, "Trigger the detector")
 }
 
 # FileWriter clear all files
@@ -64,6 +126,19 @@ record(bi,"$(P)$(R)FWCompression_RBV") {
     field(ONAM, "Enabled")
     field(SCAN, "I/O Intr")
 }
+
+# FileWriter name pattern
+record(stringout, "$(P)$(R)FWNamePattern") {
+    field(DTYP, "asynOctetWrite")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+}
+
+record(stringin, "$(P)$(R)FWNamePattern_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+    field(SCAN, "I/O Intr")
+}
+
 
 # FileWriter number of images per HDF5 file
 record(ao, "$(P)$(R)FWNImagesPerFile") {

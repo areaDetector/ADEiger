@@ -56,12 +56,11 @@ private:
     bool mSockClosed;
 
     int connect (void);
+    int setNonBlock (bool nonBlock);
 
     int doRequest (const request_t *request, response_t *response, int timeout = DEFAULT_TIMEOUT);
     int get (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
     int put (sys_t sys, const char *param, const char *value, size_t len, paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
-
-    int command (const char *param, int *sequenceId, int timeout = DEFAULT_TIMEOUT);
 
     int parseHeader     (response_t *response);
     int parseParamList  (const response_t *response, paramList_t *paramList);
@@ -76,12 +75,14 @@ public:
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
-    Eiger(const char *hostname);
+    Eiger (const char *hostname);
 
     int initialize (void);
     int arm        (int *sequenceId);
-    int trigger    (int timeout);
+    int trigger    (int timeout, double exposure = 0.0);
     int disarm     (void);
+    int cancel     (void);
+    int abort      (void);
 
     int getString (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
     int getInt    (sys_t sys, const char *param, int *value,              int timeout = DEFAULT_TIMEOUT);

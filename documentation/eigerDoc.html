@@ -1,0 +1,540 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>areaDetector Eiger driver</title>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type" />
+</head>
+<body>
+  <div style="text-align: center">
+    <h1> areaDetector Eiger driver</h1>
+    <h2> August 12, 2015</h2>
+    <h2> Bruno Martins<br/>Diego Omitto<br/> Brookhaven National Laboratory</h2>
+  </div>
+  <h2> Table of Contents</h2>
+  <ul>
+    <li><a href="#Introduction">Introduction</a></li>
+    <li><a href="#StandardNotes">Implementation of standard driver parameters</a></li>
+    <li><a href="#Driver_parameters">Andor specific parameters</a></li>
+    <li><a href="#Unsupported">Unsupported standard driver parameters</a></li>
+    <li><a href="#Usage">Usage</a></li>
+    <li><a href="#Configuration">Configuration</a></li>
+    <li><a href="#CSS_screen">CSS screen</a></li>
+    <li><a href="#Notes">Notes</a> </li>
+    <ul>
+      <li><a href="#Downloading_Images">Downloading Images</a></li>
+      <li><a href="#Trigger_Modes">Trigger Modes</a></li>
+    </ul>
+  </ul>
+  <h2 id="Introduction" style="text-align: left"> Introduction</h2>
+  <p>
+    This is an <a href="http://www.aps.anl.gov/epics">EPICS</a> <a href="areaDetector.html">
+    areaDetector</a> driver for the Eiger detector from <a href="http://www.dectris.com">Dectris
+    </a>. It has been tested on the Eiger 1M with firmware versions up to 1.3.0, but should work 
+    with other Eigers. The driver communicates with the detector via its SIMPLON REST interface, so
+    no library from Dectris is required. The images are pulled from the detector as HDF5 files, and
+    can be both saved to disk and streamed to the areaDetector pipeline at the same time.
+  </p>
+  <p> All trigger modes are supported.</p>
+  <p>
+    This driver inherits from <a href="areaDetectorDoc.html#ADDriver">ADDriver</a>.
+    It implements many of the parameters in <a href="areaDetectorDoxygenHTML/asyn_n_d_array_driver_8h.html">
+    asynNDArrayDriver.h</a> and in <a href="areaDetectorDoxygenHTML/_a_d_driver_8h.html">
+    ADArrayDriver.h</a>. It also implements a number of parameters that are specific
+    to the Eiger detector. The <a href="areaDetectorDoxygenHTML/classeiger_detector.html">eigerDetector
+    class documentation</a> describes this class in detail.
+  </p>
+  <p>
+    This document does not attempt to explain the meaning of the Eiger-specific parameters, as they
+    are explained in the SIMPLON API Reference and in the EIGER Detector Manual documents from Dectris.
+  </p>
+  <p>
+    The SIMPLON API provides ways to query parameter limits, valid values for enums, error conditions, etc,
+    but those features are not currently in use.
+  </p>
+  <p>
+    The driver was built upon a multithreaded architecture. 
+  </p>
+
+   <h2 id="StandardNotes" style="text-align: left">
+    Implementation of standard driver parameters</h2>
+  <p>
+    The following table describes how the Andor driver implements some of the standard
+    driver parameters.
+  </p>
+  <table border="1" cellpadding="2" cellspacing="2" style="text-align: left">
+    <tbody>
+      <tr>
+        <td align="center" colspan="3">
+          <b>Implementation of Parameters in asynNDArrayDriver.h and ADDriver.h, and EPICS Record
+            Definitions in ADBase.template and NDFile.template</b></td>
+      </tr>
+      <tr>
+        <th>
+          Parameter index variable</th>
+        <th>
+          EPICS record name</th>
+        <th>
+          Description</th>
+      </tr>
+      <tr>
+        <td>
+          ADTriggerMode</td>
+        <td>
+          $(P)$(R)TriggerMode<br />
+          $(P)$(R)TriggerMode_RBV</td>
+        <td>
+          Sets the trigger mode for the detector. Options are:
+          <ul>
+            <li>Internal Series [INTS]</li>
+            <li>Internal Enable [INTE]</li>
+            <li>External Series [EXTS]</li>
+            <li>External Enable [EXTE]</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>ADImageMode</td>
+        <td>
+          $(P)$(R)ImageMode<br />
+          $(P)$(R)ImageMode_RBV
+        </td>
+        <td>
+          Sets the image mode for the detector. There's really only one option:
+          <ul>
+            <li>Fixed</li>
+          </ul>
+          Collects NumImages per trigger on INTS and EXTS mode. Collects one image per trigger on
+          INTE and EXTE modes.
+        </td>
+      </tr>
+      <tr>
+        <td>ADNumImages</td>
+        <td>
+          $(P)$(R)NumImages<br />
+          $(P)$(R)NumImages_RBV
+        </td>
+        <td> Sets the number of images to take per trigger when on INTS or EXTS mode</td>
+      </tr>
+      <tr>
+        <td>ADAcquireTime</td>
+        <td>
+          $(P)$(R)AcquireTime<br />
+          $(P)$(R)AcquireTime_RBV
+        </td>
+        <td>
+          Sets the parameter "count_time", which is the exposure time for a single image
+          on INTS or EXTS mode.
+        </td>
+      </tr>
+      <tr>
+        <td>ADAcquirePeriod</td>
+        <td>
+          $(P)$(R)AcquirePeriod<br />
+          $(P)$(R)AcquirePeriod_RBV
+        </td>
+        <td>
+          Sets the parameter "frame_time", which directly affects the frame rate of the detector.
+          The resulting frame rate will be 1/AcquirePeriod.
+        </td>
+      </tr>
+      <tr>
+        <td>NDDataType</td>
+        <td>
+          $(P)$(R)DataType<br />
+          $(P)$(R)DataType_RBV
+        </td>
+        <td>
+          The data type for the image data. Only one choice is allowed:
+          <ul>
+            <li>UInt32</li>
+          </ul>
+          The detector parameter "auto_summation" is always on, as the manual recommends.
+          This makes the images 32-bit.
+        </td>
+      </tr>
+      <tr>
+        <td>ADTemperatureActual</td>
+        <td> $(P)$(R)TemperatureActual</td>
+        <td> Reads the actual temperature of the detector.</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2 id="Driver_parameters" style="text-align: left">
+    Eiger specific parameters</h2>
+  <p>
+    The Eiger driver implements the following parameters in addition to those in asynNDArrayDriver.h
+    and ADDriver.h.
+  </p>
+  <table border="1" cellpadding="2" cellspacing="2" style="text-align: left">
+    <tbody>
+      <tr>
+        <td align="center" colspan="7">
+          <b>Parameter Definitions in eigerDetector.cpp and EPICS Record Definitions in eiger.template</b>
+        </td>
+      </tr>
+      <tr>
+        <th> Parameter index variable</th>
+        <th> asyn interface</th>
+        <th> Access</th>
+        <th> Description</th>
+        <th> drvInfo string</th>
+        <th> EPICS record name</th>
+        <th> EPICS record type</th>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>Version information</b> </td>
+      </tr>
+      <tr>
+        <td> EigerSerialNumber</td>
+        <td> asynOctet</td>
+        <td> R/O</td>
+        <td> Detector serial number</td>
+        <td> SERIAL_NUMBER</td>
+        <td> SerialNumber_RBV</td>
+        <td> stringin</td>
+      </tr>
+      <tr>
+        <td> EigerSWVersion</td>
+        <td> asynOctet</td>
+        <td> R/O</td>
+        <td> Detector firmware version</td>
+        <td> SW_VERSION</td>
+        <td> SWVersion_RBV</td>
+        <td> stringin</td>
+      </tr>
+      <tr>
+        <td> EigerSerialNumber</td>
+        <td> asynOctet</td>
+        <td> R/O</td>
+        <td> Detector Serial Number</td>
+        <td> SERIAL_NUMBER</td>
+        <td> SerialNumber_RBV</td>
+        <td> stringin</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>Temperature, humidity and link status</b> </td>
+      </tr>
+      <tr>
+        <td> EigerThTemp0</td>
+        <td> asynFloat64</td>
+        <td> R/O</td>
+        <td> Temperature of the first module</td>
+        <td> TH_TEMP_0</td>
+        <td> Temp0_RBV</td>
+        <td> ai</td>
+      </tr>
+      <tr>
+        <td> EigerThHumid0</td>
+        <td> asynFloat64</td>
+        <td> R/O</td>
+        <td> Humidity of the first module</td>
+        <td> TH_HUMID_0</td>
+        <td> Humid0_RBV</td>
+        <td> ai</td>
+      </tr>
+      <tr>
+        <td> EigerLink0</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 0 between the detector server and the head</td>
+        <td> LINK_0</td>
+        <td> Link0_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerLink1</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 1 between the detector server and the head</td>
+        <td> LINK_1</td>
+        <td> Link1_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerLink2</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 2 between the detector server and the head</td>
+        <td> LINK_2</td>
+        <td> Link2_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerLink3</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Status of the Link 3 between the detector server and the head</td>
+        <td> LINK_3</td>
+        <td> Link3_RBV</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>FileWriter control</b> </td>
+      </tr>
+      <tr>
+        <td> EigerFWClear</td>
+        <td> asynInt32</td>
+        <td> W/O</td>
+        <td> Writing to this PV clears *all* files on the detector server disk</td>
+        <td> CLEAR</td>
+        <td> FWClear</td>
+        <td> ao</td>
+      </tr>
+      <tr>
+        <td> EigerFWCompression</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Enables or disables LZ4 compression on the server side </td>
+        <td> COMPRESSION</td>
+        <td> FWCompression<br/>FWCompression_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+      <tr>
+        <td> EigerFWNamePattern</td>
+        <td> asynOctet</td>
+        <td> R/W</td>
+        <td> 
+            Name pattern for the generated HDF5 files. The pattern can be anything, but it
+            must contain the string '$id' in it. This string is replaced with the current
+            sequence id of the acquisition. The default is: "series_$id", which would generate
+            the files:<br/>
+            <ul>
+                <li>series_1_master.hdf5</li>
+                <li>series_1_data_000001.hdf5</li>
+                <li>series_1_data_000002.hdf5</li>
+                <li>...</li>
+            </ul>
+            For the sequence id 1. If '$id' is omitted, files might get overwritten on the 
+            server, because then every acqusition would generate files with the same name
+        </td>
+        <td> NAME_PATTERN</td>
+        <td> FWNamePattern<br/>FWNamePattern_RBV</td>
+        <td> stringout<br/>stringin</td>
+      </tr>
+      <tr>
+        <td> EigerFWNImagesPerFile</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Number of images per HDF5 file </td>
+        <td> NIMAGES_PER_FILE</td>
+        <td> FWNImgsPerFile<br/>FWNImgsPerFile_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>Acquisition metadata</b> </td>
+      </tr>
+      <tr>
+        <td> EigerBeamX</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> X position of the beam </td>
+        <td> BEAM_X</td>
+        <td> BeamX<br/>BeamX_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerBeamY</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Y position of the beam </td>
+        <td> BEAM_Y</td>
+        <td> BeamY<br/>BeamY_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerDetDist</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Detector distance </td>
+        <td> DET_DIST</td>
+        <td> DetDist<br/>DetDist_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerWavelength</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> 
+            Wavelength of the beam. This parameter is automatically changed
+            whenever the PhotonEnergy changes
+        </td>
+        <td> WAVELENGTH</td>
+        <td> Wavelength<br/>Wavelength_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td align="center" colspan="7"> <b>Acquisition control</b> </td>
+      </tr>
+      <tr>
+        <td> EigerArmed</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Armed state of the detector </td>
+        <td> ARMED</td>
+        <td> Armed</td>
+        <td> bi</td>
+      </tr>
+      <tr>
+        <td> EigerSaveFiles</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Controls wheter acquired files should be saved locally to disk </td>
+        <td> SAVE_FILES</td>
+        <td> SaveFiles<br/>SaveFiles_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+      <tr>
+        <td> EigerSequenceId</td>
+        <td> asynInt32</td>
+        <td> R/O</td>
+        <td> Sequence ID of the current acquisition</td>
+        <td> SEQ_ID</td>
+        <td> SequenceId</td>
+        <td> ai</td>
+      </tr>
+      <tr>
+        <td> EigerFlatfield</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Controls wheter the flatfield correction should be applied </td>
+        <td> FLATFIELD_APPLIED</td>
+        <td> FlatfieldApplied<br/>FlatfieldApplied_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+      <tr>
+        <td> EigerPhotonEnergy</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Photon energy for the acquisition </td>
+        <td> PHOTON_ENERGY</td>
+        <td> PhotonEnergy<br/>PhotonEnergy_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerThreshold</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Energy threshold for the acquisition</td>
+        <td> THRESHOLD</td>
+        <td> Threshold<br/>Threshold_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerTrigger</td>
+        <td> asynInt32</td>
+        <td> W/O</td>
+        <td> Software trigger to be used on modes INTS and INTE when ManualTrigger is set</td>
+        <td> TRIGGER</td>
+        <td> Trigger</td>
+        <td> ao</td>
+      </tr>
+      <tr>
+        <td> EigerTriggerExp</td>
+        <td> asynFloat64</td>
+        <td> R/W</td>
+        <td> Exposure to be used with the triggers on the INTE mode</td>
+        <td> TRIGGER_EXPOSURE</td>
+        <td> TriggerExposure<br/>TriggerExposure_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerNTriggers</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> Number of triggers for the acquisition</td>
+        <td> NUM_TRIGGERS</td>
+        <td> NumTriggers<br/>NumTriggers_RBV</td>
+        <td> ao<br/>ai</td>
+      </tr>
+      <tr>
+        <td> EigerManualTrigger</td>
+        <td> asynInt32</td>
+        <td> R/W</td>
+        <td> 
+            On INTS and INTE modes, controls whether triggers will be issued automatically (0)
+            or only via the Trigger PV (1).
+        </td>
+        <td> MANUAL_TRIGGER</td>
+        <td> ManualTrigger<br/>ManualTrigger_RBV</td>
+        <td> bo<br/>bi</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="Unsupported" style="text-align: left"> Unsupported standard driver parameters</h2>
+  <p> ColorMode, ReverseX, and ReverseY are not supported.</p>
+
+  <h2 id="Usage" style="text-align: left"> Usage</h2>
+  <p>
+    If any of the parameters set are out of range the detector will ignore it.
+    The _RBV value will indicate the actual value in effect.
+  </p>
+  <h2 id="Configuration"> Configuration</h2>
+  <p>
+    The Eiger driver is created with the eigerDetectorConfig command, either from C/C++ or
+    from the EPICS IOC shell.</p>
+  <pre>int eigerDetectorConfig(const char *portName, const char *hostname,
+                int maxBuffers, size_t maxMemory, int priority, int stackSize)
+  </pre>
+  <p>
+    For details on the meaning of the parameters to this function refer to the detailed
+    documentation on the eigerDetectorConfig function in the <a href="areaDetectorDoxygenHTML/eiger_detector_8cpp.html">
+      eigerDetector.cpp documentation</a> and in the documentation for the constructor for
+    the <a href="areaDetectorDoxygenHTML/classeiger_detector.html">eigerDetector class</a>
+    </p>
+  <p> There an example IOC boot directory and startup script provided with areaDetector. </p>
+  <h2 id="CSS_screen" style="text-align: left"> CSS screen</h2>
+  <p>
+    The following shows the CSS screen that is used to control the Eiger detector.
+    Note that the general purpose screen ADBase.adl can be used, but it exposes a few
+    controls that are not applicable to the Eiger, and lacks some fields that are important
+    for the Eiger.</p>
+  <p>
+    <code>eiger.opi</code> is the main screen used to control the Eiger driver.
+  </p>
+  <div style="text-align: center">
+    <h3 style="text-align: center"> eiger.opi</h3>
+    <img alt="eiger.png" src="eiger.png" />
+  </div>
+
+  <h2 id="Notes" style="text-align: left"> Notes</h2>
+    <h3 id="Downloading_Images"> Downloading images </h3>
+      <p>
+      At the moment (Eiger firmware version 1.3.0) the only way to recover the images from 
+      the detector server is by downloading the generated HDF5 files and parsing them into NDArrays 
+      for the areaDetector pipeline. The driver is multithreaded, so it is capable of downloading
+      a file while a previous one is being parsed and saved to disk at the same time. The files saved
+      to disk are exactly how they were generated by the detector.
+      </p>
+      <p>
+      There is a promise for a future streaming interface, that will probably be based on ZeroMQ.
+      </p>
+
+    <h3 id="Trigger_Modes"> Trigger modes </h3>
+    <p>
+    The Eiger has four trigger modes, namely:
+    <ul>
+      <li>INTS: Internal Series</li>
+      <li>INTE: Internal Enable</li>
+      <li>EXTS: External Series</li>
+      <li>EXTE: External Enable</li>
+    </ul>
+    
+    The Eiger driver is capable of driving the acquisition all by itself on trigger modes
+    INTS and INTE. This happens if ManualTrigger is set to 0. If ManualTrigger is 1, however,
+    the driver waits for triggers on the Trigger PV.
+    </p>
+    <p>
+    On INTS mode, each trigger generates NumImages. On INTE mode, each trigger generates 1
+    image, and NumImages is ignored. Also, on INTE, the exposure of each individual trigger can
+    be different from each other, as set by TriggerExposure.
+    </p>
+    <p>
+    On the EXTS, each trigger generates NumImages. On EXTE mode, each trigger generates 1
+    image, and NumImages is ignored. On both EXTS and EXTE, there is currently (as of firmware
+    1.3.0) no way to know when to send a disarm to finish the acquisition. Therefore, the user
+    must manually stop the acquisition after the desired number of triggers is sent.
+  </p>
+</body>
+</html>

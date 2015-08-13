@@ -11,6 +11,8 @@
 #include <epicsThread.h>
 #include <epicsTime.h>
 
+#include <fcntl.h>
+
 #define API_VERSION             "1.0.4"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
@@ -32,6 +34,7 @@
 
 #define DEFAULT_TIMEOUT_INIT    30
 #define DEFAULT_TIMEOUT_ARM     55
+#define DEFAULT_TIMEOUT_CONNECT 1
 
 #define ERR_PREFIX  "EigerApi"
 #define ERR(msg) fprintf(stderr, ERR_PREFIX "::%s: %s\n", functionName, msg)
@@ -111,9 +114,15 @@ void Eiger::deinit (void)
 int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
-    int prefixLen = idStr - pattern;
 
-    epicsSnprintf(buf, bufSize, "%.*s%d%s_master.h5", prefixLen, pattern, seqId, pattern+prefixLen+ID_LEN);
+    if(idStr)
+    {
+        int prefixLen = idStr - pattern;
+        epicsSnprintf(buf, bufSize, "%.*s%d%s_master.h5", prefixLen, pattern, seqId,
+                pattern+prefixLen+ID_LEN);
+    }
+    else
+        epicsSnprintf(buf, bufSize, "%s_master.h5", pattern);
 
     return EXIT_SUCCESS;
 }
@@ -121,9 +130,15 @@ int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bu
 int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
-    int prefixLen = idStr - pattern;
 
-    epicsSnprintf(buf, bufSize, "%.*s%d%s_data_%06d.h5", prefixLen, pattern, seqId, pattern+prefixLen+ID_LEN, n);
+    if(idStr)
+    {
+        int prefixLen = idStr - pattern;
+        epicsSnprintf(buf, bufSize, "%.*s%d%s_data_%06d.h5", prefixLen, pattern, seqId,
+                pattern+prefixLen+ID_LEN, n);
+    }
+    else
+        epicsSnprintf(buf, bufSize, "%s_data_%06d.h5", pattern, n);
 
     return EXIT_SUCCESS;
 }
@@ -145,22 +160,77 @@ Eiger::Eiger (const char *hostname) :
 
 int Eiger::initialize (void)
 {
-    return command("initialize", NULL, DEFAULT_TIMEOUT_INIT);
+    return put(SSCommand, "initialize", "", 0, NULL);
 }
 
 int Eiger::arm (int *sequenceId)
 {
-    return command("arm", sequenceId, DEFAULT_TIMEOUT_ARM);
+    const char *functionName = "arm";
+
+    request_t request;
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_PUT, sysStr[SSCommand], "arm", 0lu);
+
+    response_t response;
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    if(doRequest(&request, &response, DEFAULT_TIMEOUT_ARM))
+    {
+        ERR("[param=arm] request failed");
+        return EXIT_FAILURE;
+    }
+
+    if(response.code != 200)
+    {
+        ERR_ARGS("[param=arm] server returned error code %d", response.code);
+        return EXIT_FAILURE;
+    }
+
+    return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
-int Eiger::trigger (int timeout)
+int Eiger::trigger (int timeout, double exposure)
 {
-    return command("trigger", NULL, timeout);
+    // Trigger for INTS mode
+    if(!exposure)
+        return put(SSCommand, "trigger", "", 0, NULL, timeout);
+
+    // Tigger for INTE mode
+    // putDouble should block for the whole exposure duration, but it doesn't
+    // (Eiger's fault)
+
+    epicsTimeStamp start, end;
+
+    epicsTimeGetCurrent(&start);
+    if(putDouble(SSCommand, "trigger", exposure, NULL, timeout))
+        return EXIT_FAILURE;
+    epicsTimeGetCurrent(&end);
+
+    double diff = epicsTimeDiffInSeconds(&end, &start);
+    if(diff < exposure)
+        epicsThreadSleep(exposure - diff);
+
+    return EXIT_SUCCESS;
 }
 
 int Eiger::disarm (void)
 {
-    return command("disarm", NULL);
+    return put(SSCommand, "disarm", "", 0, NULL);
+}
+
+int Eiger::cancel (void)
+{
+    return put(SSCommand, "cancel", "", 0, NULL);
+}
+
+int Eiger::abort (void)
+{
+    return put(SSCommand, "abort", "", 0, NULL);
 }
 
 int Eiger::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
@@ -324,7 +394,7 @@ int Eiger::waitFile (const char *filename, double timeout)
         epicsTimeGetCurrent(&now);
     }while(epicsTimeDiffInSeconds(&now, &start) < timeout);
 
-    ERR_ARGS("timeout waiting for file %s", filename);
+    //ERR_ARGS("timeout waiting for file %s", filename);
     return EXIT_FAILURE;
 }
 
@@ -440,20 +510,63 @@ int Eiger::connect (void)
         return EXIT_FAILURE;
     }
 
+    setNonBlock(true);
+
     if(::connect(mSockFd, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
     {
-        char error[MAX_BUF_SIZE];
-        epicsSocketConvertErrnoToString(error, sizeof(error));
-        ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
-        return EXIT_FAILURE;
+        // Connection actually failed
+        if(errno != EINPROGRESS)
+        {
+            char error[MAX_BUF_SIZE];
+            epicsSocketConvertErrnoToString(error, sizeof(error));
+            ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+            epicsSocketDestroy(mSockFd);
+            return EXIT_FAILURE;
+        }
+        // Server didn't respond immediately, wait a little
+        else
+        {
+            fd_set set;
+            struct timeval tv;
+            int ret;
+
+            FD_ZERO(&set);
+            FD_SET(mSockFd, &set);
+            tv.tv_sec  = DEFAULT_TIMEOUT_CONNECT;
+            tv.tv_usec = 0;
+
+            ret = select(mSockFd + 1, NULL, &set, NULL, &tv);
+            if(ret <= 0)
+            {
+                const char *error = ret == 0 ? "TIMEOUT" : "select failed";
+                ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+                epicsSocketDestroy(mSockFd);
+                return EXIT_FAILURE;
+            }
+        }
     }
 
+    setNonBlock(false);
     mSockClosed = false;
-
     return EXIT_SUCCESS;
 }
 
-int Eiger::doRequest(const request_t *request, response_t *response, int timeout)
+int Eiger::setNonBlock (bool nonBlock)
+{
+#ifdef WIN32
+    unsigned long mode = nonBlock ? 1 : 0;
+    return ioctlsocket(mSockFd, FIONBIO, &mode) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+#else
+    int flags = fcntl(mSockFd, F_GETFL, 0);
+    if(flags < 0)
+        return EXIT_FAILURE;
+
+    flags = nonBlock ? flags | O_NONBLOCK : flags & ~O_NONBLOCK;
+    return fcntl(mSockFd, F_SETFL, flags) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
+}
+
+int Eiger::doRequest (const request_t *request, response_t *response, int timeout)
 {
     const char *functionName = "doRequest";
     int status = EXIT_SUCCESS;
@@ -611,37 +724,6 @@ int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
     }
 
     return paramList ? parseParamList(&response, paramList) : EXIT_SUCCESS;
-}
-
-int Eiger::command (const char *param, int *sequenceId, int timeout)
-{
-    const char *functionName = "command";
-
-    request_t request;
-    char requestBuf[MAX_MESSAGE_SIZE];
-    request.data      = requestBuf;
-    request.dataLen   = sizeof(requestBuf);
-    request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], param, 0lu);
-
-    response_t response;
-    char responseBuf[MAX_MESSAGE_SIZE];
-    response.data    = responseBuf;
-    response.dataLen = sizeof(responseBuf);
-
-    if(doRequest(&request, &response, timeout))
-    {
-        ERR_ARGS("[param=%s] request failed", param);
-        return EXIT_FAILURE;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[param=%s] server returned error code %d", param, response.code);
-        return EXIT_FAILURE;
-    }
-
-    return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
 int Eiger::parseHeader (response_t *response)
