@@ -1205,7 +1205,7 @@ asynStatus eigerDetector::eigerStatus (void)
 
     if(!status)
     {
-        setDoubleParam(ADTemperature, temp);
+        setDoubleParam(ADTemperatureActual, temp);
         setDoubleParam(EigerThTemp0,  temp);
         setDoubleParam(EigerThHumid0, humid);
         setIntegerParam(EigerLink0, !strcmp(link[0], "up"));
