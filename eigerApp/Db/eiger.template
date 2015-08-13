@@ -10,6 +10,14 @@ record(stringin, "$(P)$(R)SWVersion_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Eiger Serial Number
+record(stringin, "$(P)$(R)SerialNumber_RBV") {
+    field(DESC, "Serial Number")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SERIAL_NUMBER")
+    field(SCAN, "I/O Intr")
+}
+
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")

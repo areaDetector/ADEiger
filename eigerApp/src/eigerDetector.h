@@ -26,6 +26,7 @@
 
 // Detector Info Parameters
 #define EigerSWVersionString            "SW_VERSION"
+#define EigerSerialNumberString         "SERIAL_NUMBER"
 
 // Detector Status Parameters
 #define EigerThTemp0String              "TH_TEMP_0"
@@ -81,6 +82,7 @@ protected:
     int EigerNTriggers;
     int EigerManualTrigger;
     int EigerSWVersion;
+    int EigerSerialNumber;
     int EigerThTemp0;
     int EigerThHumid0;
     int EigerLink0;

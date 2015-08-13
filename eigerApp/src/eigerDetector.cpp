@@ -162,6 +162,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Detector Info Parameters
     createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
+    createParam(EigerSerialNumberString,  asynParamOctet,   &EigerSerialNumber);
 
     // Detector Status Parameters
     createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
@@ -214,10 +215,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= setStringParam (ADManufacturer, manufacturer);
     status |= setStringParam (ADModel, model);
 
-    // Get software (detector firmware) version
+    // Get software (detector firmware) version and serial number
     char swVersion[MAX_BUF_SIZE];
     status |= mEiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
     status |= setStringParam(EigerSWVersion, swVersion);
+
+    char serialNumber[MAX_BUF_SIZE];
+    status |= mEiger.getString(SSDetConfig, "detector_number", serialNumber, sizeof(serialNumber));
+    status |= setStringParam(EigerSerialNumber, serialNumber);
 
     // Get frame dimensions
     int maxSizeX, maxSizeY;
