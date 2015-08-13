@@ -2,42 +2,27 @@ ADEiger Releases
 ==================
 
 The latest untagged master branch can be obtained at
-https://github.com/areaDetector/ADEiger.
+https://github.com/brunoseivam/ADEiger.
 
-Tagged source code and pre-built binary releases prior to R2-0 are included
-in the areaDetector releases available via links at
-http://cars.uchicago.edu/software/epics/areaDetector.html.
-
-Tagged source code releases from R2-0 onward can be obtained at 
-https://github.com/areaDetector/ADEiger/releases.
-
-Tagged prebuilt binaries from R2-0 onward can be obtained at
-http://cars.uchicago.edu/software/pub/ADEiger.
-
-The versions of EPICS base, asyn, and other synApps modules used for each release can be obtained from 
-the EXAMPLE_RELEASE_PATHS.local, EXAMPLE_RELEASE_LIBS.local, and EXAMPLE_RELEASE_PRODS.local
-files respectively, in the configure/ directory of the appropriate release of the 
-[top-level areaDetector](https://github.com/areaDetector/areaDetector) repository.
-
+Tagged source code can be obtained at
+https://github.com/brunoseivam/ADEiger/releases.
 
 Release Notes
 =============
 
-R2-0
+R1-0
 ----
-* Moved the repository to [Github](https://github.com/areaDetector/ADEiger).
-* Re-organized the directory structure to separate the driver library from the example IOC application.
-* Increased timeout when setting threshold from 90 to 110 seconds. 
-  Needed on 6M with new camserver. Thanks to Lewis Muir.
-* Changed the code that reads the temperature and humidiy from running in a separate thread in the driver
-  to being called via the standard ReadStatus record from ADBase.template.
+* Support all trigger modes: INTS, INTE, EXTS and EXTE.
+* Redesigned with a multithreaded architecture:
+ - Downloading, saving to disk and parsing HDF5 files all occur in parallel.
+* Faster file download.
+* Eiger API and areaDetector driver decoupled.
 
-R1-9-1 and earlier
-------------------
-Release notes are part of the
-[areaDetector Release Notes](http://cars.uchicago.edu/software/epics/areaDetectorReleaseNotes.html).
-
+R0-1-pre
+--------
+* First release.
+* Supports only INTS mode.
+* Cannot interrupt long acquisitions.
 
 Future Releases
 ===============
-* Support SetEnergy camserver command?
