@@ -11,6 +11,7 @@
     <include_parent_macros>true</include_parent_macros>
     <P>13EIG1:</P>
     <R>cam1:</R>
+    <ADOPI>.</ADOPI>
   </macros>
   <boy_version>4.0.102.201503132056</boy_version>
   <show_edit_range>true</show_edit_range>
@@ -981,7 +982,7 @@ $(pv_value)</tooltip>
     <width>280</width>
     <x>0</x>
     <name>Shutter</name>
-    <y>540</y>
+    <y>535</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -1683,7 +1684,7 @@ $(pv_value)</tooltip>
       </foreground_color>
       <actions hook="false" hook_all="false">
         <action type="OPEN_DISPLAY">
-          <path>NDFileNetCDF.opi</path>
+          <path>$(ADOPI)/NDFileNetCDF.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>netCDF1:</R>
@@ -1692,7 +1693,7 @@ $(pv_value)</tooltip>
           <description>netCDF file #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDFileTIFF.opi</path>
+          <path>$(ADOPI)/NDFileTIFF.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>TIFF1:</R>
@@ -1701,7 +1702,7 @@ $(pv_value)</tooltip>
           <description>TIFF file #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDFileJPEG.opi</path>
+          <path>$(ADOPI)/NDFileJPEG.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>JPEG1:</R>
@@ -1710,7 +1711,7 @@ $(pv_value)</tooltip>
           <description>JPEG file #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDFileNexus.opi</path>
+          <path>$(ADOPI)/NDFileNexus.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Nexus1:</R>
@@ -1764,7 +1765,7 @@ $(pv_value)</tooltip>
       </foreground_color>
       <actions hook="false" hook_all="false">
         <action type="OPEN_DISPLAY">
-          <path>NDStdArrays.opi</path>
+          <path>$(ADOPI)/NDStdArrays.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>image1:</R>
@@ -1773,7 +1774,7 @@ $(pv_value)</tooltip>
           <description>Image #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDProcess.opi</path>
+          <path>$(ADOPI)/NDProcess.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Proc1:</R>
@@ -1782,7 +1783,7 @@ $(pv_value)</tooltip>
           <description>Process #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDTransform.opi</path>
+          <path>$(ADOPI)/NDTransform.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Trans1:</R>
@@ -1791,7 +1792,7 @@ $(pv_value)</tooltip>
           <description>Transform #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDColorConvert.opi</path>
+          <path>$(ADOPI)/NDColorConvert.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>CC1:</R>
@@ -1800,7 +1801,7 @@ $(pv_value)</tooltip>
           <description>Color convert #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDColorConvert.opi</path>
+          <path>$(ADOPI)/NDColorConvert.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>CC2:</R>
@@ -1809,7 +1810,7 @@ $(pv_value)</tooltip>
           <description>Color convert #2</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDOverlay.opi</path>
+          <path>$(ADOPI)/NDOverlay.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Over1:</R>
@@ -1818,7 +1819,7 @@ $(pv_value)</tooltip>
           <description>Overlay #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDOverlay8.opi</path>
+          <path>$(ADOPI)/NDOverlay8.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Over1:</R>
@@ -1835,7 +1836,7 @@ $(pv_value)</tooltip>
           <description>Overlays 1-8</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>scan_more.opi</path>
+          <path>$(ADOPI)/scan_more.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <S>scan1</S>
@@ -1890,7 +1891,7 @@ $(pv_value)</tooltip>
       </foreground_color>
       <actions hook="false" hook_all="false">
         <action type="OPEN_DISPLAY">
-          <path>NDROI.opi</path>
+          <path>$(ADOPI)/NDROI.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>ROI1:</R>
@@ -1899,7 +1900,7 @@ $(pv_value)</tooltip>
           <description>ROI #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDROI.opi</path>
+          <path>$(ADOPI)/NDROI.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>ROI2:</R>
@@ -1908,7 +1909,7 @@ $(pv_value)</tooltip>
           <description>ROI #2</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDROI.opi</path>
+          <path>$(ADOPI)/NDROI.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>ROI3:</R>
@@ -1917,7 +1918,7 @@ $(pv_value)</tooltip>
           <description>ROI #3</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDROI.opi</path>
+          <path>$(ADOPI)/NDROI.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>ROI4:</R>
@@ -1926,7 +1927,7 @@ $(pv_value)</tooltip>
           <description>ROI #4</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDROI4.opi</path>
+          <path>$(ADOPI)/NDROI4.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R1>ROI1:</R1>
@@ -1983,7 +1984,7 @@ $(pv_value)</tooltip>
       </foreground_color>
       <actions hook="false" hook_all="false">
         <action type="OPEN_DISPLAY">
-          <path>NDStats.opi</path>
+          <path>$(ADOPI)/NDStats.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Stats1:</R>
@@ -1992,7 +1993,7 @@ $(pv_value)</tooltip>
           <description>Statistics #1</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDStats.opi</path>
+          <path>$(ADOPI)/NDStats.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Stats2:</R>
@@ -2001,7 +2002,7 @@ $(pv_value)</tooltip>
           <description>Statistics #2</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDStats.opi</path>
+          <path>$(ADOPI)/NDStats.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Stats3:</R>
@@ -2010,7 +2011,7 @@ $(pv_value)</tooltip>
           <description>Statistics #3</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDStats.opi</path>
+          <path>$(ADOPI)/NDStats.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Stats4:</R>
@@ -2019,7 +2020,7 @@ $(pv_value)</tooltip>
           <description>Statistics #4</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDStats.opi</path>
+          <path>$(ADOPI)/NDStats.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R>Stats5:</R>
@@ -2028,7 +2029,7 @@ $(pv_value)</tooltip>
           <description>Statistics #5</description>
         </action>
         <action type="OPEN_DISPLAY">
-          <path>NDStats5.opi</path>
+          <path>$(ADOPI)/NDStats5.opi</path>
           <macros>
             <include_parent_macros>true</include_parent_macros>
             <R1>Stats1:</R1>
@@ -2055,7 +2056,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>147</height>
+    <height>142</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -2075,7 +2076,7 @@ $(pv_value)</tooltip>
     </background_color>
     <width>280</width>
     <x>0</x>
-    <name>Status</name>
+    <name>Detector Status</name>
     <y>394</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
@@ -5472,7 +5473,7 @@ $(pv_value)</tooltip>
     </background_color>
     <width>405</width>
     <x>279</x>
-    <name>Status</name>
+    <name>Driver Status</name>
     <y>580</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
