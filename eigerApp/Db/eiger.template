@@ -413,6 +413,22 @@ record(bi, "$(P)$(R)ReverseY_RBV")
     field(DISA, "1")
 }
 
+# Eiger State
+record(stringin, "$(P)$(R)State_RBV") {
+    field(DESC, "Operational state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STATE")
+    field(SCAN, "I/O Intr")
+}
+
+# Eiger Error Parameters
+record(stringin, "$(P)$(R)Error_RBV") {
+    field(DESC, "Parameters causing error state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ERROR")
+    field(SCAN, "I/O Intr")
+}
+
 record(ai, "$(P)$(R)Temp0_RBV")
 {
     field(DTYP, "asynFloat64")

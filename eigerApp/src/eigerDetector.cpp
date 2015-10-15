@@ -165,6 +165,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerSerialNumberString,  asynParamOctet,   &EigerSerialNumber);
 
     // Detector Status Parameters
+    createParam(EigerStateString,         asynParamOctet,   &EigerState);
+    createParam(EigerErrorString,         asynParamOctet,   &EigerError);
     createParam(EigerThTemp0String,       asynParamFloat64, &EigerThTemp0);
     createParam(EigerThHumid0String,      asynParamFloat64, &EigerThHumid0);
     createParam(EigerLink0String,         asynParamInt32,   &EigerLink0);
@@ -1199,10 +1201,18 @@ asynStatus eigerDetector::eigerStatus (void)
     double temp = 0.0;
     double humid = 0.0;
     char link[4][MAX_BUF_SIZE];
+    char state[MAX_BUF_SIZE];
+    char error[MAX_BUF_SIZE];
+
+    // Read state and error message
+    status  = mEiger.getString(SSDetStatus, "state", state, sizeof(state));
+    status |= mEiger.getString(SSDetStatus, "error", error, sizeof(error));
 
     // Read temperature and humidity
-    status  = mEiger.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
+    status |= mEiger.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
     status |= mEiger.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
+
+    // Read the status of each individual link between the head and the server
     status |= mEiger.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
     status |= mEiger.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
     status |= mEiger.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
@@ -1210,6 +1220,8 @@ asynStatus eigerDetector::eigerStatus (void)
 
     if(!status)
     {
+        setStringParam(EigerState, state);
+        setStringParam(EigerError, error);
         setDoubleParam(ADTemperatureActual, temp);
         setDoubleParam(EigerThTemp0,  temp);
         setDoubleParam(EigerThHumid0, humid);
