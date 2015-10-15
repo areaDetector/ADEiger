@@ -49,6 +49,10 @@
     "Content-Length: 0" EOL \
     "Accept: " DATA_NATIVE EOH
 
+#define REQUEST_GET_FILE\
+    "GET %s%s HTTP/1.0" EOL \
+    "Content-Length: 0" EOH
+
 #define REQUEST_PUT\
     "PUT %s%s HTTP/1.0" EOL \
     "Accept-Encoding: identity" EOL\
@@ -95,6 +99,9 @@ const char *Eiger::sysStr [SSCount] = {
     "/filewriter/api/" API_VERSION "/status/",
     "/detector/api/"   API_VERSION "/command/",
     "/data/",
+    "/monitor/api/"    API_VERSION "/config/",
+    "/monitor/api/"    API_VERSION "/status/",
+    "/monitor/api/"    API_VERSION "/images/",
 };
 
 const char *Eiger::triggerModeStr [TMCount] = {
@@ -400,97 +407,12 @@ int Eiger::waitFile (const char *filename, double timeout)
 
 int Eiger::getFile (const char *filename, char **buf, size_t *bufSize)
 {
-    const char *functionName = "getFile";
-    int status = EXIT_SUCCESS;
-    int received;
+    return getBlob(SSData, filename, buf, bufSize, DATA_HDF5);
+}
 
-    request_t request;
-    char requestBuf[MAX_MESSAGE_SIZE];
-    request.data      = requestBuf;
-    request.dataLen   = sizeof(requestBuf);
-    request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[SSData], filename);
-
-    response_t response;
-    char responseBuf[MAX_MESSAGE_SIZE];
-    response.data    = responseBuf;
-    response.dataLen = sizeof(responseBuf);
-
-    mSockMutex.lock();
-
-    if(mSockClosed)
-    {
-        if(connect())
-        {
-            ERR("failed to reconnect socket");
-            status = EXIT_FAILURE;
-            goto end;
-        }
-    }
-
-    if(send(mSockFd, request.data, request.actualLen, 0) < 0)
-    {
-        status = EXIT_FAILURE;
-        goto end;
-    }
-
-    received = recv(mSockFd, response.data, response.dataLen, 0);
-
-    if(received < 0)
-    {
-        ERR_ARGS("[file=%s] failed to receive first part", filename);
-        status = EXIT_FAILURE;
-        goto end;
-    }
-
-    if((status = parseHeader(&response)))
-    {
-        ERR_ARGS("[file=%s] underlying parseResponse failed", filename);
-        goto markClosed;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[file=%s] file not found", filename);
-        status = EXIT_FAILURE;
-        goto markClosed;
-    }
-
-    *buf = (char*)malloc(response.contentLength);
-    if(!*buf)
-    {
-        ERR_ARGS("[file=%s] malloc(%lu) failed", filename, response.contentLength);
-        status = EXIT_FAILURE;
-        goto markClosed;
-    }
-
-    *bufSize = received - response.headerLen;
-    memcpy(*buf, response.content, *bufSize);
-
-    received = recv(mSockFd, *buf + *bufSize, response.contentLength - *bufSize,
-            MSG_WAITALL);
-
-    if(received < 0)
-    {
-        ERR_ARGS("[file=%s] failed to receive second part", filename);
-        status = EXIT_FAILURE;
-        free(*buf);
-        *buf = NULL;
-        *bufSize = 0;
-    }
-
-    *bufSize = response.contentLength;
-
-markClosed:
-    if(response.reconnect)
-    {
-        close(mSockFd);
-        mSockClosed = true;
-    }
-
-end:
-    mSockMutex.unlock();
-    return status;
+int Eiger::getMonitorImage (char **buf, size_t *bufSize)
+{
+    return getBlob(SSMonImages, "monitor", buf, bufSize, DATA_TIFF);
 }
 
 // Private members
@@ -724,6 +646,103 @@ int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
     }
 
     return paramList ? parseParamList(&response, paramList) : EXIT_SUCCESS;
+}
+
+int Eiger::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
+        const char *accept)
+{
+    const char *functionName = "getBlob";
+    int status = EXIT_SUCCESS;
+    int received;
+
+    request_t request;
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_GET_FILE, sysStr[sys], name, accept);
+
+    response_t response;
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    mSockMutex.lock();
+
+    if(mSockClosed)
+    {
+        if(connect())
+        {
+            ERR("failed to reconnect socket");
+            status = EXIT_FAILURE;
+            goto end;
+        }
+    }
+
+    if(send(mSockFd, request.data, request.actualLen, 0) < 0)
+    {
+        status = EXIT_FAILURE;
+        goto end;
+    }
+
+    received = recv(mSockFd, response.data, response.dataLen, 0);
+
+    if(received < 0)
+    {
+        ERR_ARGS("[sys=%d file=%s] failed to receive first part", sys, name);
+        status = EXIT_FAILURE;
+        goto end;
+    }
+
+    if((status = parseHeader(&response)))
+    {
+        ERR_ARGS("[sys=%d file=%s] underlying parseResponse failed", sys, name);
+        goto markClosed;
+    }
+
+    if(response.code != 200)
+    {
+        if(sys != SSMonImages)
+            ERR_ARGS("[sys=%d file=%s] file not found", sys, name);
+        status = EXIT_FAILURE;
+        goto markClosed;
+    }
+
+    *buf = (char*)malloc(response.contentLength);
+    if(!*buf)
+    {
+        ERR_ARGS("[sys=%d file=%s] malloc(%lu) failed", sys, name, response.contentLength);
+        status = EXIT_FAILURE;
+        goto markClosed;
+    }
+
+    *bufSize = received - response.headerLen;
+    memcpy(*buf, response.content, *bufSize);
+
+    received = recv(mSockFd, *buf + *bufSize, response.contentLength - *bufSize,
+            MSG_WAITALL);
+
+    if(received < 0)
+    {
+        ERR_ARGS("[sys=%d file=%s] failed to receive second part", sys, name);
+        status = EXIT_FAILURE;
+        free(*buf);
+        *buf = NULL;
+        *bufSize = 0;
+    }
+
+    *bufSize = response.contentLength;
+
+markClosed:
+    if(response.reconnect)
+    {
+        close(mSockFd);
+        mSockClosed = true;
+    }
+
+end:
+    mSockMutex.unlock();
+    return status;
 }
 
 int Eiger::parseHeader (response_t *response)

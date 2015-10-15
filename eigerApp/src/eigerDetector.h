@@ -44,6 +44,10 @@
 #define EigerSequenceIdString           "SEQ_ID"
 #define EigerPendingFilesString         "PENDING_FILES"
 
+// Monitor API Parameters
+#define EigerMonitorEnableString        "MONITOR_ENABLE"
+#define EigerMonitorPeriodString        "MONITOR_PERIOD"
+
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
 {
@@ -65,6 +69,7 @@ public:
     void streamTask   (void);
     void saveTask     (void);
     void reapTask     (void);
+    void monitorTask  (void);
 
 protected:
     int EigerFWClear;
@@ -97,7 +102,9 @@ protected:
     int EigerSaveFiles;
     int EigerSequenceId;
     int EigerPendingFiles;
-    #define LAST_EIGER_PARAM EigerPendingFiles
+    int EigerMonitorEnable;
+    int EigerMonitorPeriod;
+    #define LAST_EIGER_PARAM EigerMonitorPeriod
 
 private:
     char mHostname[512];
@@ -119,8 +126,9 @@ private:
     asynStatus putBool    (sys_t sys, const char *param, bool value);
     void updateParams     (paramList_t *paramList);
 
-    // HDF5 parser
-    asynStatus parseH5File (char *buf, size_t len);
+    // File parsers
+    asynStatus parseH5File   (char *buf, size_t len);
+    asynStatus parseTiffFile (char *buf, size_t len);
 
     // Read some detector status parameters
     asynStatus eigerStatus (void);

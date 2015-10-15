@@ -20,6 +20,9 @@ typedef enum
     SSFWStatus,
     SSCommand,
     SSData,
+    SSMonConfig,
+    SSMonStatus,
+    SSMonImages,
 
     SSCount,
 } sys_t;
@@ -62,6 +65,8 @@ private:
     int get (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
     int put (sys_t sys, const char *param, const char *value, size_t len, paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
 
+    int getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize, const char *accept);
+
     int parseHeader     (response_t *response);
     int parseParamList  (const response_t *response, paramList_t *paramList);
     int parseSequenceId (const response_t *response, int *sequenceId);
@@ -97,6 +102,8 @@ public:
     int getFileSize (const char *filename, size_t *size);
     int waitFile    (const char *filename, double timeout = DEFAULT_TIMEOUT);
     int getFile     (const char *filename, char **buf, size_t *bufSize);
+
+    int getMonitorImage  (char **buf, size_t *bufSize);
 };
 
 #endif

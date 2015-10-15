@@ -25,6 +25,7 @@
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
 #define DEFAULT_QUEUE_CAPACITY  2
+#define MONITOR_MIN_PERIOD      0.1
 
 // Error message formatters
 #define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
@@ -95,6 +96,11 @@ static void reapTaskC (void *drvPvt)
     ((eigerDetector *)drvPvt)->reapTask();
 }
 
+static void monitorTaskC (void *drvPvt)
+{
+    ((eigerDetector *)drvPvt)->monitorTask();
+}
+
 /* Constructor for Eiger driver; most parameters are simply passed to
  * ADDriver::ADDriver.
  * After calling the base class constructor this method creates a thread to
@@ -119,7 +125,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     : ADDriver(portName, 1, NUM_EIGER_PARAMS, maxBuffers, maxMemory,
                0, 0,             /* No interfaces beyond ADDriver.cpp */
-               ASYN_CANBLOCK,    /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0 */
+               ASYN_CANBLOCK |   /* ASYN_CANBLOCK=1 */
+               ASYN_MULTIDEVICE, /* ASYN_MULTIDEVICE=1 */
                1,                /* autoConnect=1 */
                priority, stackSize),
     mEiger(serverHostname),
@@ -179,6 +186,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerSaveFilesString,     asynParamInt32,   &EigerSaveFiles);
     createParam(EigerSequenceIdString,    asynParamInt32,   &EigerSequenceId);
     createParam(EigerPendingFilesString,  asynParamInt32,   &EigerPendingFiles);
+
+    // Monitor API Parameters
+    createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
+    createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
 
     status = asynSuccess;
 
@@ -266,6 +277,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= setIntegerParam(EigerSaveFiles, 1);
     status |= setIntegerParam(EigerSequenceId, 0);
     status |= setIntegerParam(EigerPendingFiles, 0);
+    status |= setIntegerParam(EigerMonitorEnable, 0);
+    status |= setDoubleParam (EigerMonitorPeriod, MONITOR_MIN_PERIOD);
 
     // Read status once at startup
     eigerStatus();
@@ -282,6 +295,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // This driver expects the following parameters to always have the same value
     status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
+    status |= putInt(SSMonConfig, "buffer_size", 1);
 
     if(status)
     {
@@ -318,6 +332,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status = (epicsThreadCreate("eigerReapTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)reapTaskC, this) == NULL);
+
+    // Monitor task
+    status = (epicsThreadCreate("eigerMonitorTask", epicsThreadPriorityMedium,
+            epicsThreadGetStackSize(epicsThreadStackMedium),
+            (EPICSTHREADFUNC)monitorTaskC, this) == NULL);
 
     if(status)
     {
@@ -380,6 +399,8 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         status = eigerStatus();
     else if (function == EigerTrigger)
         mTriggerEvent.signal();
+    else if (function == EigerMonitorEnable)
+        status = putString(SSMonConfig, "mode", value ? "enabled" : "disabled");
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
@@ -435,6 +456,8 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         status = putDouble(SSDetConfig, "count_time", value);
     else if (function == ADAcquirePeriod)
         status = putDouble(SSDetConfig, "frame_time", value);
+    else if (function == EigerMonitorPeriod)
+        value = value < MONITOR_MIN_PERIOD ? MONITOR_MIN_PERIOD : value;
     else if (function < FIRST_EIGER_PARAM)
         status = ADDriver::writeFloat64(pasynUser, value);
 
@@ -779,6 +802,7 @@ void eigerDetector::downloadTask (void)
 
         file->refCount = file->stream + file->save;
 
+
         // Download the file
         if(dlEiger.getFile(file->name, &file->data, &file->len))
         {
@@ -890,6 +914,39 @@ void eigerDetector::reapTask (void)
             setIntegerParam(EigerPendingFiles, pendingFiles-1);
             unlock();
         }
+    }
+}
+
+void eigerDetector::monitorTask (void)
+{
+    Eiger eiger(mHostname);
+    const char *functionName = "monitorTask";
+
+    for(;;)
+    {
+        int enabled;
+        double period;
+
+        lock();
+        getIntegerParam(EigerMonitorEnable, &enabled);
+        getDoubleParam(EigerMonitorPeriod, &period);
+        unlock();
+
+        if(enabled)
+        {
+            char *buf = NULL;
+            size_t bufSize;
+
+            if(!eiger.getMonitorImage(&buf, &bufSize))
+            {
+                if(parseTiffFile(buf, bufSize))
+                    ERR("couldn't parse file");
+
+                free(buf);
+            }
+        }
+
+        epicsThreadSleep(period);
     }
 }
 
@@ -1190,6 +1247,79 @@ closeFile:
     H5Fclose(fId);
 end:
     return status;
+}
+
+/*
+ * Makes lots of assumptions on the file layout
+ */
+asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
+{
+    const char *functionName = "parseTiffFile";
+
+    if(*(uint32_t*)buf != 0x0002A4949)
+    {
+        ERR("wrong tiff header");
+        return asynError;
+    }
+
+    uint32_t offset     = *((uint32_t*)(buf+4));
+    uint16_t numEntries = *((uint16_t*)(buf+offset));
+
+    typedef struct
+    {
+        uint16_t id;
+        uint16_t type;
+        uint32_t count;
+        uint32_t offset;
+    }tag_t;
+
+    tag_t *tags = (tag_t*)(buf + offset + 2);
+
+    size_t width = 0, height = 0, depth = 0, dataLen = 0;
+
+    for(size_t i = 0; i < numEntries; ++i)
+    {
+        switch(tags[i].id)
+        {
+        case 256: width   = tags[i].offset; break;
+        case 257: height  = tags[i].offset; break;
+        case 258: depth   = tags[i].offset; break;
+        case 279: dataLen = tags[i].offset; break;
+        }
+    }
+
+    if(!width || !height || !depth || !dataLen)
+    {
+        ERR("missing tags");
+        return asynError;
+    }
+
+    NDDataType_t dataType;
+    switch(depth)
+    {
+
+    case 8:  dataType = NDUInt8;    break;
+    case 16: dataType = NDUInt16;   break;
+    case 32: dataType = NDUInt32;   break;
+    default:
+        ERR_ARGS("unexpected bit depth=%lu", depth);
+        return asynError;
+    }
+
+    size_t dims[2] = {width, height};
+
+    NDArray *pImage = pNDArrayPool->alloc(2, dims, dataType, 0, NULL);
+    if(!pImage)
+    {
+        ERR("couldn't allocate NDArray");
+        return asynError;
+    }
+
+    memcpy(pImage->pData, buf+8, dataLen);
+    doCallbacksGenericPointer(pImage, NDArrayData, 1);
+    pImage->release();
+
+    return asynSuccess;
 }
 
 /* This function is called periodically read the detector status (temperature,
