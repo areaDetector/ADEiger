@@ -55,7 +55,7 @@ typedef struct
     char name[MAX_BUF_SIZE];
     char *data;
     size_t len;
-    bool save, stream, failed;
+    bool save, parse, failed;
     size_t refCount;
 }file_t;
 
@@ -81,9 +81,9 @@ static void downloadTaskC (void *drvPvt)
     ((eigerDetector *)drvPvt)->downloadTask();
 }
 
-static void streamTaskC (void *drvPvt)
+static void parseTaskC (void *drvPvt)
 {
-    ((eigerDetector *)drvPvt)->streamTask();
+    ((eigerDetector *)drvPvt)->parseTask();
 }
 
 static void saveTaskC (void *drvPvt)
@@ -133,7 +133,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
-    mStreamQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
+    mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mSaveQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *))
 {
@@ -303,37 +303,32 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         return;
     }
 
-    // Control task
+    // Task creation
+
     status = (epicsThreadCreate("eigerControlTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)controlTaskC, this) == NULL);
 
-    // Poll task
     status = (epicsThreadCreate("eigerPollTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)pollTaskC, this) == NULL);
 
-    // Download task
     status = (epicsThreadCreate("eigerDownloadTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)downloadTaskC, this) == NULL);
 
-    // Stream task
-    status = (epicsThreadCreate("eigerStreamTask", epicsThreadPriorityMedium,
+    status = (epicsThreadCreate("eigerParseTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
-            (EPICSTHREADFUNC)streamTaskC, this) == NULL);
+            (EPICSTHREADFUNC)parseTaskC, this) == NULL);
 
-    // Save task
     status = (epicsThreadCreate("eigerSaveTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)saveTaskC, this) == NULL);
 
-    // Reap task
     status = (epicsThreadCreate("eigerReapTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)reapTaskC, this) == NULL);
 
-    // Monitor task
     status = (epicsThreadCreate("eigerMonitorTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)monitorTaskC, this) == NULL);
@@ -734,8 +729,8 @@ void eigerDetector::pollTask (void)
             bool isMaster = i == 0;
 
             files[i].save     = (bool)acquisition.saveFiles;
-            files[i].stream   = !isMaster;
-            files[i].refCount = files[i].save + files[i].stream;
+            files[i].parse   = !isMaster;
+            files[i].refCount = files[i].save + files[i].parse;
 
             if(isMaster)
                 Eiger::buildMasterName(acquisition.pattern, acquisition.sequenceId,
@@ -754,7 +749,7 @@ void eigerDetector::pollTask (void)
 
             if(!pollEiger.waitFile(curFile->name, 1.0))
             {
-                if(curFile->save || curFile->stream)
+                if(curFile->save || curFile->parse)
                 {
                     mDownloadQueue.send(&curFile, sizeof(curFile));
 
@@ -800,7 +795,7 @@ void eigerDetector::downloadTask (void)
 
         FLOW_ARGS("file=%s", file->name);
 
-        file->refCount = file->stream + file->save;
+        file->refCount = file->parse + file->save;
 
 
         // Download the file
@@ -812,8 +807,8 @@ void eigerDetector::downloadTask (void)
         }
         else
         {
-            if(file->stream)
-                mStreamQueue.send(&file, sizeof(file_t *));
+            if(file->parse)
+                mParseQueue.send(&file, sizeof(file_t *));
 
             if(file->save)
                 mSaveQueue.send(&file, sizeof(file_t *));
@@ -821,14 +816,14 @@ void eigerDetector::downloadTask (void)
     }
 }
 
-void eigerDetector::streamTask (void)
+void eigerDetector::parseTask (void)
 {
-    const char *functionName = "streamTask";
+    const char *functionName = "parseTask";
     file_t *file;
 
     for(;;)
     {
-        mStreamQueue.receive(&file, sizeof(file_t *));
+        mParseQueue.receive(&file, sizeof(file_t *));
 
         FLOW_ARGS("file=%s", file->name);
 

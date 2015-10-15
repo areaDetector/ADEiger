@@ -66,7 +66,7 @@ public:
     void controlTask  (void);
     void pollTask     (void);
     void downloadTask (void);
-    void streamTask   (void);
+    void parseTask    (void);
     void saveTask     (void);
     void reapTask     (void);
     void monitorTask  (void);
@@ -110,7 +110,7 @@ private:
     char mHostname[512];
     Eiger mEiger;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mPollDoneEvent;
-    epicsMessageQueue mPollQueue, mDownloadQueue, mStreamQueue, mSaveQueue,
+    epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
 
     // Wrappers to get detector parameters into asyn parameter
