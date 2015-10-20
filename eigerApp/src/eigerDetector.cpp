@@ -138,7 +138,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *))
 {
 
-    int status = asynSuccess;
     const char *functionName = "eigerDetector";
 
     strncpy(mHostname, serverHostname, sizeof(mHostname));
@@ -191,20 +190,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
     createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
 
-    status = asynSuccess;
-
-    // Set some default values for parameters
-
-    // Extract Manufacturer and Model from 'description'
-    char desc[MAX_BUF_SIZE] = "";
-    char *manufacturer, *space, *model;
-
-    if(mEiger.getString(SSDetConfig, "description", desc, sizeof(desc)))
+    // Test if the detector is initialized
+    if(mEiger.getString(SSDetConfig, "description", NULL, 0))
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s Eiger seems to be uninitialized\n"
-                "Initializing... (may take a while)\n",
-                driverName, functionName);
+        ERR("Eiger seems to be uninitialized\nInitializing... (may take a while)");
 
         if(mEiger.initialize())
         {
@@ -212,132 +201,51 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
             return;
         }
 
-        asynPrint(pasynUserSelf, ASYN_TRACE_FLOW,
-                    "%s:%s Eiger initialized\n",
-                    driverName, functionName);
-
-        status = mEiger.getString(SSDetConfig, "description", desc, sizeof(desc));
+        FLOW("Eiger initialized");
     }
 
-    // Assume 'description' is of the form 'Dectris Eiger 1M'
-    space = strchr(desc, ' ');
-    *space = '\0';
-    manufacturer = desc;
-    model = space + 1;
-
-    status |= setStringParam (ADManufacturer, manufacturer);
-    status |= setStringParam (ADModel, model);
-
-    // Get software (detector firmware) version and serial number
-    char swVersion[MAX_BUF_SIZE];
-    status |= mEiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
-    status |= setStringParam(EigerSWVersion, swVersion);
-
-    char serialNumber[MAX_BUF_SIZE];
-    status |= mEiger.getString(SSDetConfig, "detector_number", serialNumber, sizeof(serialNumber));
-    status |= setStringParam(EigerSerialNumber, serialNumber);
-
-    // Get frame dimensions
-    int maxSizeX, maxSizeY;
-    status |= mEiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
-    status |= mEiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
-
-    status |= setIntegerParam(ADMaxSizeX, maxSizeX);
-    status |= setIntegerParam(ADMaxSizeY, maxSizeY);
-    status |= setIntegerParam(ADSizeX, maxSizeX);
-    status |= setIntegerParam(ADSizeY, maxSizeY);
-    status |= setIntegerParam(NDArraySizeX, maxSizeX);
-    status |= setIntegerParam(NDArraySizeY, maxSizeY);
-
-    // Read all the following parameters into their respective asyn params
-    status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
-    status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
-    status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
-    status |= getDoubleP(SSDetConfig, "photon_energy",    EigerPhotonEnergy);
-    status |= getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
-    status |= getIntP   (SSDetConfig, "ntrigger",         EigerNTriggers);
-
-    status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
-    status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
-    status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
-
-    status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
-    status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
-    status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
-    status |= getBoolP  (SSDetConfig, "flatfield_correction_applied",
-            EigerFlatfield);
-    status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
-    status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
-
-    // Set some default values
-    status |= setIntegerParam(NDArraySize, 0);
-    status |= setIntegerParam(NDDataType,  NDUInt32);
-    status |= setIntegerParam(ADImageMode, ADImageMultiple);
-    status |= setIntegerParam(EigerArmed,  0);
-    status |= setIntegerParam(EigerSaveFiles, 1);
-    status |= setIntegerParam(EigerSequenceId, 0);
-    status |= setIntegerParam(EigerPendingFiles, 0);
-    status |= setIntegerParam(EigerMonitorEnable, 0);
-    status |= setDoubleParam (EigerMonitorPeriod, MONITOR_MIN_PERIOD);
-
-    // Read status once at startup
-    eigerStatus();
-
-    callParamCallbacks();
-
-    // Set more parameters
-
-    // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
-    status |= putBool(SSDetConfig, "auto_summation", true);
-
-    // FileWriter should always be enabled
-    status |= putString(SSFWConfig, "mode", "enabled");
-
-    // This driver expects the following parameters to always have the same value
-    status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
-    status |= putInt(SSMonConfig, "buffer_size", 1);
-
-    if(status)
+    // Set default parameters
+    if(initParams())
     {
         ERR("unable to set detector parameters");
         return;
     }
 
-    // Task creation
+    // Read status once at startup
+    eigerStatus();
 
+    // Task creation
+    int status = asynSuccess;
     status = (epicsThreadCreate("eigerControlTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)controlTaskC, this) == NULL);
 
-    status = (epicsThreadCreate("eigerPollTask", epicsThreadPriorityMedium,
+    status |= (epicsThreadCreate("eigerPollTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)pollTaskC, this) == NULL);
 
-    status = (epicsThreadCreate("eigerDownloadTask", epicsThreadPriorityMedium,
+    status |= (epicsThreadCreate("eigerDownloadTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)downloadTaskC, this) == NULL);
 
-    status = (epicsThreadCreate("eigerParseTask", epicsThreadPriorityMedium,
+    status |= (epicsThreadCreate("eigerParseTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)parseTaskC, this) == NULL);
 
-    status = (epicsThreadCreate("eigerSaveTask", epicsThreadPriorityMedium,
+    status |= (epicsThreadCreate("eigerSaveTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)saveTaskC, this) == NULL);
 
-    status = (epicsThreadCreate("eigerReapTask", epicsThreadPriorityMedium,
+    status |= (epicsThreadCreate("eigerReapTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)reapTaskC, this) == NULL);
 
-    status = (epicsThreadCreate("eigerMonitorTask", epicsThreadPriorityMedium,
+    status |= (epicsThreadCreate("eigerMonitorTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)monitorTaskC, this) == NULL);
 
     if(status)
-    {
         ERR("epicsThreadCreate failure for some task");
-        return;
-    }
 }
 
 /* Called when asyn clients call pasynInt32->write().
@@ -476,8 +384,7 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
 }
 
 /** Called when asyn clients call pasynOctet->write().
-  * This function performs actions for some parameters, including
-  * eigerBadPixelFile, ADFilePath, etc.
+  * This function performs actions for EigerFWNamePattern
   * For all parameters it sets the value in the parameter library and calls any
   * registered callbacks.
   * \param[in] pasynUser pasynUser structure that encodes the reason and address.
@@ -729,7 +636,7 @@ void eigerDetector::pollTask (void)
             bool isMaster = i == 0;
 
             files[i].save     = (bool)acquisition.saveFiles;
-            files[i].parse   = !isMaster;
+            files[i].parse    = !isMaster;
             files[i].refCount = files[i].save + files[i].parse;
 
             if(isMaster)
@@ -764,8 +671,7 @@ void eigerDetector::pollTask (void)
             lock();
             getIntegerParam(ADStatus, &adStatus);
             unlock();
-        }while((adStatus == ADStatusAcquire || ADStatus == ADStatusReadout)
-                && i < totalFiles);
+        }while(adStatus == ADStatusAcquire && i < totalFiles);
 
         // Not acquiring anymore, wait for all pending files to be reaped
         do
@@ -796,7 +702,6 @@ void eigerDetector::downloadTask (void)
         FLOW_ARGS("file=%s", file->name);
 
         file->refCount = file->parse + file->save;
-
 
         // Download the file
         if(dlEiger.getFile(file->name, &file->data, &file->len))
@@ -943,6 +848,91 @@ void eigerDetector::monitorTask (void)
 
         epicsThreadSleep(period);
     }
+}
+
+asynStatus eigerDetector::initParams (void)
+{
+    int status = asynSuccess;
+
+    // Assume 'description' is of the form 'Dectris Eiger 1M'
+    char desc[MAX_BUF_SIZE] = "";
+    char *manufacturer, *space, *model;
+    status = mEiger.getString(SSDetConfig, "description", desc, sizeof(desc));
+    space = strchr(desc, ' ');
+    *space = '\0';
+    manufacturer = desc;
+    model = space + 1;
+
+    status |= setStringParam (ADManufacturer, manufacturer);
+    status |= setStringParam (ADModel, model);
+
+    // Get software (detector firmware) version and serial number
+    char swVersion[MAX_BUF_SIZE];
+    status |= mEiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
+    status |= setStringParam(EigerSWVersion, swVersion);
+
+    char serialNumber[MAX_BUF_SIZE];
+    status |= mEiger.getString(SSDetConfig, "detector_number", serialNumber, sizeof(serialNumber));
+    status |= setStringParam(EigerSerialNumber, serialNumber);
+
+    // Get frame dimensions
+    int maxSizeX, maxSizeY;
+    status |= mEiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
+    status |= mEiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
+
+    status |= setIntegerParam(ADMaxSizeX, maxSizeX);
+    status |= setIntegerParam(ADMaxSizeY, maxSizeY);
+    status |= setIntegerParam(ADSizeX, maxSizeX);
+    status |= setIntegerParam(ADSizeY, maxSizeY);
+    status |= setIntegerParam(NDArraySizeX, maxSizeX);
+    status |= setIntegerParam(NDArraySizeY, maxSizeY);
+
+    // Read all the following parameters into their respective asyn params
+    status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
+    status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
+    status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
+    status |= getDoubleP(SSDetConfig, "photon_energy",    EigerPhotonEnergy);
+    status |= getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
+    status |= getIntP   (SSDetConfig, "ntrigger",         EigerNTriggers);
+
+    status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
+    status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
+    status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
+
+    status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
+    status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
+    status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+    status |= getBoolP  (SSDetConfig, "flatfield_correction_applied",
+            EigerFlatfield);
+    status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
+    status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
+
+    // Set some default values
+    status |= setIntegerParam(NDArraySize, 0);
+    status |= setIntegerParam(NDDataType,  NDUInt32);
+    status |= setIntegerParam(ADImageMode, ADImageMultiple);
+    status |= setIntegerParam(EigerArmed,  0);
+    status |= setIntegerParam(EigerSaveFiles, 1);
+    status |= setIntegerParam(EigerSequenceId, 0);
+    status |= setIntegerParam(EigerPendingFiles, 0);
+    status |= setIntegerParam(EigerMonitorEnable, 0);
+    status |= setDoubleParam (EigerMonitorPeriod, MONITOR_MIN_PERIOD);
+
+    callParamCallbacks();
+
+    // Set more parameters
+
+    // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
+    status |= putBool(SSDetConfig, "auto_summation", true);
+
+    // FileWriter should always be enabled
+    status |= putString(SSFWConfig, "mode", "enabled");
+
+    // This driver expects the following parameters to always have the same value
+    status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
+    status |= putInt(SSMonConfig, "buffer_size", 1);
+
+    return (asynStatus)status;
 }
 
 /* Functions named get<type>P get the detector parameter of type <type> and

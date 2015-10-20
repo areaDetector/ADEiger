@@ -113,6 +113,9 @@ private:
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
 
+    // Read all parameters from detector and set some default values
+    asynStatus initParams (void);
+
     // Wrappers to get detector parameters into asyn parameter
     asynStatus getStringP (sys_t sys, const char *param, int dest);
     asynStatus getIntP    (sys_t sys, const char *param, int dest);
