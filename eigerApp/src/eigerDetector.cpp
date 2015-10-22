@@ -63,7 +63,7 @@ static const char *driverName = "eigerDetector";
 
 static inline size_t numDataFiles (int nTriggers, int nImages, int nImagesPerFile)
 {
-    return (size_t) nTriggers*ceil(((double)nImages)/((double)nImagesPerFile));
+    return (size_t) ceil(((double)(nImages*nTriggers))/((double)nImagesPerFile));
 }
 
 static void controlTaskC (void *drvPvt)
