@@ -102,6 +102,7 @@ public:
     int getFileSize (const char *filename, size_t *size);
     int waitFile    (const char *filename, double timeout = DEFAULT_TIMEOUT);
     int getFile     (const char *filename, char **buf, size_t *bufSize);
+    int deleteFile  (const char *filename);
 
     int getMonitorImage  (char **buf, size_t *bufSize);
 };
