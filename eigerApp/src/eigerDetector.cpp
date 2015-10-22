@@ -21,6 +21,7 @@
 #include "ADDriver.h"
 #include "eigerDetector.h"
 #include "eigerApi.h"
+#include "streamApi.h"
 
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
@@ -63,7 +64,7 @@ static const char *driverName = "eigerDetector";
 
 static inline size_t numDataFiles (int nTriggers, int nImages, int nImagesPerFile)
 {
-    return (size_t) nTriggers*ceil(((double)nImages)/((double)nImagesPerFile));
+    return (size_t) ceil(((double)(nImages*nTriggers))/((double)nImagesPerFile));
 }
 
 static void controlTaskC (void *drvPvt)
@@ -99,6 +100,11 @@ static void reapTaskC (void *drvPvt)
 static void monitorTaskC (void *drvPvt)
 {
     ((eigerDetector *)drvPvt)->monitorTask();
+}
+
+static void streamTaskC (void *drvPvt)
+{
+    ((eigerDetector *)drvPvt)->streamTask();
 }
 
 /* Constructor for Eiger driver; most parameters are simply passed to
@@ -243,6 +249,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     status |= (epicsThreadCreate("eigerMonitorTask", epicsThreadPriorityMedium,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)monitorTaskC, this) == NULL);
+
+    status |= (epicsThreadCreate("eigerStreamTask", epicsThreadPriorityMedium,
+            epicsThreadGetStackSize(epicsThreadStackMedium),
+            (EPICSTHREADFUNC)streamTaskC, this) == NULL);
 
     if(status)
         ERR("epicsThreadCreate failure for some task");
@@ -847,6 +857,16 @@ void eigerDetector::monitorTask (void)
         }
 
         epicsThreadSleep(period);
+    }
+}
+
+void eigerDetector::streamTask (void)
+{
+    StreamAPI eiger(mHostname);
+
+    for(;;)
+    {
+        eiger.getMessage();
     }
 }
 

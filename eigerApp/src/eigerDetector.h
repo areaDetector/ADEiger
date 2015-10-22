@@ -70,6 +70,7 @@ public:
     void saveTask     (void);
     void reapTask     (void);
     void monitorTask  (void);
+    void streamTask   (void);
 
 protected:
     int EigerFWClear;
