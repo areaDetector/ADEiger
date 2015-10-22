@@ -55,7 +55,7 @@ typedef struct
     char name[MAX_BUF_SIZE];
     char *data;
     size_t len;
-    bool save, parse, failed;
+    bool save, parse;
     size_t refCount;
 }file_t;
 
@@ -707,7 +707,6 @@ void eigerDetector::downloadTask (void)
         if(dlEiger.getFile(file->name, &file->data, &file->len))
         {
             ERR_ARGS("underlying getFile(%s) failed", file->name);
-            file->failed = true;
             mReapQueue.send(&file, sizeof(file));
         }
         else
@@ -735,7 +734,6 @@ void eigerDetector::parseTask (void)
         if(parseH5File(file->data, file->len))
         {
             ERR_ARGS("underlying parseH5File(%s) failed", file->name);
-            file->failed = true;
         }
 
         mReapQueue.send(&file, sizeof(file));
@@ -770,17 +768,13 @@ void eigerDetector::saveTask (void)
         {
             ERR_ARGS("[file=%s] unable to open file to be written\n[%s]",
                     file->name, fullFileName);
-            file->failed = true;
             goto reap;
         }
 
         written = fwrite(file->data, 1, file->len, fhandle);
         if(written < file->len)
-        {
             ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
                     file->name, written);
-            file->failed = true;
-        }
         fclose(fhandle);
 
 reap:
@@ -1312,6 +1306,7 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
  */
 asynStatus eigerDetector::eigerStatus (void)
 {
+    const char *functionName = "eigerStatus";
     int status;
     double temp = 0.0;
     double humid = 0.0;
