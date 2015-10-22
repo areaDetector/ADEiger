@@ -448,7 +448,7 @@ void eigerDetector::report (FILE *fp, int details)
  */
 void eigerDetector::controlTask (void)
 {
-    Eiger ctrlEiger(mHostname);
+    Eiger eiger(mHostname);
     const char *functionName = "controlTask";
     acquisition_t acquisition;
 
@@ -508,7 +508,7 @@ void eigerDetector::controlTask (void)
         callParamCallbacks();
 
         unlock();
-        status = ctrlEiger.arm(&sequenceId);
+        status = eiger.arm(&sequenceId);
         lock();
 
         if(status)
@@ -578,7 +578,7 @@ void eigerDetector::controlTask (void)
                 if(doTrigger)
                 {
                     unlock();
-                    status = ctrlEiger.trigger(triggerTimeout, triggerExposure);
+                    status = eiger.trigger(triggerTimeout, triggerExposure);
                     lock();
                     ++triggers;
                 }
@@ -594,7 +594,7 @@ void eigerDetector::controlTask (void)
 
         // All triggers issued, disarm the detector and wait for pollTask
         unlock();
-        status = ctrlEiger.disarm();
+        status = eiger.disarm();
         lock();
         setIntegerParam(EigerArmed, 0);
         setStringParam(ADStatusMessage, "Waiting for files to be processed...");
@@ -617,7 +617,7 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
-    Eiger pollEiger(mHostname);
+    Eiger eiger(mHostname);
     acquisition_t acquisition;
     int adStatus, pendingFiles;
     size_t totalFiles, i;
@@ -654,7 +654,7 @@ void eigerDetector::pollTask (void)
         {
             file_t *curFile = &files[i];
 
-            if(!pollEiger.waitFile(curFile->name, 1.0))
+            if(!eiger.waitFile(curFile->name, 1.0))
             {
                 if(curFile->save || curFile->parse)
                 {
@@ -691,7 +691,7 @@ void eigerDetector::pollTask (void)
 
 void eigerDetector::downloadTask (void)
 {
-    Eiger dlEiger(mHostname);
+    Eiger eiger(mHostname);
     const char *functionName = "downloadTask";
     file_t *file;
 
@@ -704,7 +704,7 @@ void eigerDetector::downloadTask (void)
         file->refCount = file->parse + file->save;
 
         // Download the file
-        if(dlEiger.getFile(file->name, &file->data, &file->len))
+        if(eiger.getFile(file->name, &file->data, &file->len))
         {
             ERR_ARGS("underlying getFile(%s) failed", file->name);
             mReapQueue.send(&file, sizeof(file));
