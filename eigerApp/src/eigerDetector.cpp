@@ -1344,11 +1344,11 @@ asynStatus eigerDetector::eigerStatus (void)
         setIntegerParam(EigerLink1, !strcmp(link[1], "up"));
         setIntegerParam(EigerLink2, !strcmp(link[2], "up"));
         setIntegerParam(EigerLink3, !strcmp(link[3], "up"));
+        callParamCallbacks();
     }
     else
-        setIntegerParam(ADStatus, ADStatusError);
+        ERR("error updating status");
 
-    callParamCallbacks();
     return (asynStatus)status;
 }
 
