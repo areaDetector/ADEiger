@@ -3,6 +3,10 @@
 
 #include "restApi.h"
 
+// Output Parameters
+#define EigerOutputModeString           "OUTPUT_MODE"
+#define EigerProcessOutputString        "PROCESS_OUTPUT"
+
 // FileWriter Parameters
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
@@ -74,8 +78,10 @@ public:
     void streamTask   (void);
 
 protected:
+    int EigerOutputMode;
+    #define FIRST_EIGER_PARAM EigerOutputMode
+    int EigerProcessOutput;
     int EigerFWClear;
-    #define FIRST_EIGER_PARAM EigerFWClear
     int EigerFWCompression;
     int EigerFWNamePattern;
     int EigerFWNImgsPerFile;

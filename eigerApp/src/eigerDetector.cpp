@@ -41,6 +41,11 @@
 #define FLOW_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, \
     "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
 
+enum
+{
+    OUTPUT_FILEWRITER,
+    OUTPUT_STREAM,
+}output_mode_t;
 
 typedef struct
 {
@@ -149,6 +154,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Initialize sockets
     RestAPI::init();
+
+    // Output Parameters
+    createParam(EigerOutputModeString,    asynParamInt32, &EigerOutputMode);
+    createParam(EigerProcessOutputString, asynParamInt32, &EigerProcessOutput);
 
     // FileWriter Parameters
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
@@ -463,6 +472,7 @@ void eigerDetector::controlTask (void)
     acquisition_t acquisition;
 
     int status = asynSuccess;
+    int outputMode, processOutput;
     int adStatus, manualTrigger;
     int sequenceId, saveFiles, numImages, numTriggers, triggerMode;
     int numImagesPerFile, removeFiles;
@@ -507,6 +517,8 @@ void eigerDetector::controlTask (void)
         }
 
         // Latch parameters
+        getIntegerParam(EigerOutputMode,     &outputMode);
+        getIntegerParam(EigerProcessOutput,  &processOutput);
         getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
         getDoubleParam (ADAcquirePeriod,     &acquirePeriod);
         getIntegerParam(ADNumImages,         &numImages);
