@@ -51,7 +51,8 @@
 
 #define REQUEST_GET_FILE\
     "GET %s%s HTTP/1.0" EOL \
-    "Content-Length: 0" EOH
+    "Content-Length: 0" EOL \
+    "Accept: %s" EOH
 
 #define REQUEST_PUT\
     "PUT %s%s HTTP/1.0" EOL \
@@ -856,7 +857,7 @@ int RestAPI::parseParamList (const response_t *response, paramList_t *paramList)
         return EXIT_FAILURE;
     }
 
-    paramList->nparams = tokens[0].num_desc - 1;
+    paramList->nparams = tokens[0].num_desc;
 
     for(int i = 1; i <= tokens[0].num_desc; ++i)
     {
