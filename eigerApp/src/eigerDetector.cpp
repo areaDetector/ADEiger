@@ -41,12 +41,6 @@
 #define FLOW_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, \
     "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
 
-enum
-{
-    OUTPUT_FILEWRITER,
-    OUTPUT_STREAM,
-}output_mode_t;
-
 typedef struct
 {
     char pattern[MAX_BUF_SIZE];
@@ -323,6 +317,11 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mTriggerEvent.signal();
     else if (function == EigerMonitorEnable)
         status = putString(SSMonConfig, "mode", value ? "enabled" : "disabled");
+    else if (function == EigerOutputMode)
+    {
+        status = putString(SSFWConfig,     "mode", value ? "disabled" : "enabled");
+        status = putString(SSStreamConfig, "mode", value ? "enabled"  : "disabled");
+    }
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
@@ -956,9 +955,6 @@ asynStatus eigerDetector::initParams (void)
 
     // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
     status |= putBool(SSDetConfig, "auto_summation", true);
-
-    // FileWriter should always be enabled
-    status |= putString(SSFWConfig, "mode", "enabled");
 
     // This driver expects the following parameters to always have the same value
     status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
