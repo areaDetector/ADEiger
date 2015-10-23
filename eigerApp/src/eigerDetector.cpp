@@ -48,7 +48,7 @@ typedef struct
     char pattern[MAX_BUF_SIZE];
     int sequenceId;
     size_t nDataFiles;
-    bool saveFiles;
+    bool saveFiles, removeFiles;
 }acquisition_t;
 
 typedef struct
@@ -56,7 +56,7 @@ typedef struct
     char name[MAX_BUF_SIZE];
     char *data;
     size_t len;
-    bool save, parse, failed;
+    bool save, parse, remove;
     size_t refCount;
 }file_t;
 
@@ -156,6 +156,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
     createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
     createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
+    createParam(EigerFWAutoRemoveString,  asynParamInt32, &EigerFWAutoRemove);
 
     // Acquisition Metadata Parameters
     createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
@@ -458,13 +459,14 @@ void eigerDetector::report (FILE *fp, int details)
  */
 void eigerDetector::controlTask (void)
 {
-    Eiger ctrlEiger(mHostname);
+    Eiger eiger(mHostname);
     const char *functionName = "controlTask";
     acquisition_t acquisition;
 
     int status = asynSuccess;
     int adStatus, manualTrigger;
-    int sequenceId, saveFiles, numImages, numTriggers, triggerMode, numImagesPerFile;
+    int sequenceId, saveFiles, numImages, numTriggers, triggerMode;
+    int numImagesPerFile, removeFiles;
     double acquirePeriod, triggerTimeout = 0.0, triggerExposure;
 
     lock();
@@ -512,13 +514,14 @@ void eigerDetector::controlTask (void)
         getIntegerParam(EigerNTriggers,      &numTriggers);
         getIntegerParam(ADTriggerMode,       &triggerMode);
         getIntegerParam(EigerManualTrigger,  &manualTrigger);
+        getIntegerParam(EigerFWAutoRemove,   &removeFiles);
 
         // Arm the detector
         setStringParam(ADStatusMessage, "Arming...");
         callParamCallbacks();
 
         unlock();
-        status = ctrlEiger.arm(&sequenceId);
+        status = eiger.arm(&sequenceId);
         lock();
 
         if(status)
@@ -551,9 +554,10 @@ void eigerDetector::controlTask (void)
 
         // Start polling
         getStringParam(EigerFWNamePattern, sizeof(acquisition.pattern), acquisition.pattern);
-        acquisition.sequenceId = sequenceId;
-        acquisition.nDataFiles = numDataFiles(numTriggers, numImages, numImagesPerFile);
-        acquisition.saveFiles  = saveFiles;
+        acquisition.sequenceId  = sequenceId;
+        acquisition.nDataFiles  = numDataFiles(numTriggers, numImages, numImagesPerFile);
+        acquisition.saveFiles   = saveFiles;
+        acquisition.removeFiles = removeFiles;
         mPollQueue.send(&acquisition, sizeof(acquisition));
 
         // Open shutter
@@ -588,7 +592,7 @@ void eigerDetector::controlTask (void)
                 if(doTrigger)
                 {
                     unlock();
-                    status = ctrlEiger.trigger(triggerTimeout, triggerExposure);
+                    status = eiger.trigger(triggerTimeout, triggerExposure);
                     lock();
                     ++triggers;
                 }
@@ -604,7 +608,7 @@ void eigerDetector::controlTask (void)
 
         // All triggers issued, disarm the detector and wait for pollTask
         unlock();
-        status = ctrlEiger.disarm();
+        status = eiger.disarm();
         lock();
         setIntegerParam(EigerArmed, 0);
         setStringParam(ADStatusMessage, "Waiting for files to be processed...");
@@ -627,7 +631,7 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
-    Eiger pollEiger(mHostname);
+    Eiger eiger(mHostname);
     acquisition_t acquisition;
     int adStatus, pendingFiles;
     size_t totalFiles, i;
@@ -645,9 +649,10 @@ void eigerDetector::pollTask (void)
         {
             bool isMaster = i == 0;
 
-            files[i].save     = (bool)acquisition.saveFiles;
+            files[i].save     = acquisition.saveFiles;
             files[i].parse    = !isMaster;
             files[i].refCount = files[i].save + files[i].parse;
+            files[i].remove   = acquisition.removeFiles;
 
             if(isMaster)
                 Eiger::buildMasterName(acquisition.pattern, acquisition.sequenceId,
@@ -664,7 +669,7 @@ void eigerDetector::pollTask (void)
         {
             file_t *curFile = &files[i];
 
-            if(!pollEiger.waitFile(curFile->name, 1.0))
+            if(!eiger.waitFile(curFile->name, 1.0))
             {
                 if(curFile->save || curFile->parse)
                 {
@@ -675,6 +680,8 @@ void eigerDetector::pollTask (void)
                     setIntegerParam(EigerPendingFiles, pendingFiles+1);
                     unlock();
                 }
+                else if(curFile->remove)
+                    eiger.deleteFile(curFile->name);
                 ++i;
             }
 
@@ -701,7 +708,7 @@ void eigerDetector::pollTask (void)
 
 void eigerDetector::downloadTask (void)
 {
-    Eiger dlEiger(mHostname);
+    Eiger eiger(mHostname);
     const char *functionName = "downloadTask";
     file_t *file;
 
@@ -714,10 +721,9 @@ void eigerDetector::downloadTask (void)
         file->refCount = file->parse + file->save;
 
         // Download the file
-        if(dlEiger.getFile(file->name, &file->data, &file->len))
+        if(eiger.getFile(file->name, &file->data, &file->len))
         {
             ERR_ARGS("underlying getFile(%s) failed", file->name);
-            file->failed = true;
             mReapQueue.send(&file, sizeof(file));
         }
         else
@@ -727,6 +733,9 @@ void eigerDetector::downloadTask (void)
 
             if(file->save)
                 mSaveQueue.send(&file, sizeof(file_t *));
+
+            if(file->remove)
+                eiger.deleteFile(file->name);
         }
     }
 }
@@ -745,7 +754,6 @@ void eigerDetector::parseTask (void)
         if(parseH5File(file->data, file->len))
         {
             ERR_ARGS("underlying parseH5File(%s) failed", file->name);
-            file->failed = true;
         }
 
         mReapQueue.send(&file, sizeof(file));
@@ -780,17 +788,13 @@ void eigerDetector::saveTask (void)
         {
             ERR_ARGS("[file=%s] unable to open file to be written\n[%s]",
                     file->name, fullFileName);
-            file->failed = true;
             goto reap;
         }
 
         written = fwrite(file->data, 1, file->len, fhandle);
         if(written < file->len)
-        {
             ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
                     file->name, written);
-            file->failed = true;
-        }
         fclose(fhandle);
 
 reap:
@@ -1332,6 +1336,7 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
  */
 asynStatus eigerDetector::eigerStatus (void)
 {
+    const char *functionName = "eigerStatus";
     int status;
     double temp = 0.0;
     double humid = 0.0;
@@ -1364,11 +1369,11 @@ asynStatus eigerDetector::eigerStatus (void)
         setIntegerParam(EigerLink1, !strcmp(link[1], "up"));
         setIntegerParam(EigerLink2, !strcmp(link[2], "up"));
         setIntegerParam(EigerLink3, !strcmp(link[3], "up"));
+        callParamCallbacks();
     }
     else
-        setIntegerParam(ADStatus, ADStatusError);
+        ERR("error updating status");
 
-    callParamCallbacks();
     return (asynStatus)status;
 }
 

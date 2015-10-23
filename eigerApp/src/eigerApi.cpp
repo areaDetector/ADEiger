@@ -62,6 +62,9 @@
 #define REQUEST_HEAD\
     "HEAD %s%s HTTP/1.0" EOH
 
+#define REQUEST_DELETE\
+    "DELETE %s%s HTTP/1.0" EOH
+
 // Structure definitions
 
 typedef struct socket
@@ -408,6 +411,37 @@ int Eiger::waitFile (const char *filename, double timeout)
 int Eiger::getFile (const char *filename, char **buf, size_t *bufSize)
 {
     return getBlob(SSData, filename, buf, bufSize, DATA_HDF5);
+}
+
+int Eiger::deleteFile (const char *filename)
+{
+    const char *functionName = "deleteFile";
+
+    request_t request;
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_DELETE, sysStr[SSData], filename);
+
+    response_t response;
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    if(doRequest(&request, &response))
+    {
+        ERR_ARGS("[file=%s] DELETE request failed", filename);
+        return EXIT_FAILURE;
+    }
+
+    if(response.code != 204)
+    {
+        ERR_ARGS("[file=%s] DELETE returned code %d", filename, response.code);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 
 int Eiger::getMonitorImage (char **buf, size_t *bufSize)

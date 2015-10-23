@@ -8,6 +8,7 @@
 #define EigerFWCompressionString        "COMPRESSION"
 #define EigerFWNamePatternString        "NAME_PATTERN"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
+#define EigerFWAutoRemoveString         "AUTO_REMOVE"
 
 // Acquisition Metadata Parameters
 #define EigerBeamXString                "BEAM_X"
@@ -78,6 +79,7 @@ protected:
     int EigerFWCompression;
     int EigerFWNamePattern;
     int EigerFWNImgsPerFile;
+    int EigerFWAutoRemove;
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
