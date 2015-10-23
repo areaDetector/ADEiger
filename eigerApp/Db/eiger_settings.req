@@ -13,7 +13,6 @@ $(P)$(R)SaveFiles
 $(P)$(R)FlatfieldApplied
 $(P)$(R)PhotonEnergy
 $(P)$(R)ThresholdEnergy
-$(P)$(R)Wavelength
 $(P)$(R)DetDist
 $(P)$(R)BeamX
 $(P)$(R)BeamY
