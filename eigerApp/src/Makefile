@@ -6,6 +6,7 @@ include $(TOP)/configure/CONFIG
 LIBRARY_IOC = eigerDetector
 
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
+USR_INCLUDES += -I$(TOP)/eigerApp/lz4Src
 USR_INCLUDES += $(HDF5_INCLUDE)
 
 LIB_SRCS += eigerDetector.cpp
