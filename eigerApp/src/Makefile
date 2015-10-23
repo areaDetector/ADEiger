@@ -10,7 +10,7 @@ USR_INCLUDES += -I$(TOP)/eigerApp/lz4Src
 USR_INCLUDES += $(HDF5_INCLUDE)
 
 LIB_SRCS += eigerDetector.cpp
-LIB_SRCS += eigerApi.cpp
+LIB_SRCS += restApi.cpp
 
 DBD += eigerDetectorSupport.dbd
 

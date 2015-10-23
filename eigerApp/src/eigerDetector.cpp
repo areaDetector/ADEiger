@@ -20,8 +20,7 @@
 
 #include "ADDriver.h"
 #include "eigerDetector.h"
-#include "eigerApi.h"
-#include "streamApi.h"
+#include "restApi.h"
 
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
@@ -866,11 +865,8 @@ void eigerDetector::monitorTask (void)
 
 void eigerDetector::streamTask (void)
 {
-    StreamAPI eiger(mHostname);
-
     for(;;)
     {
-        eiger.getMessage();
     }
 }
 

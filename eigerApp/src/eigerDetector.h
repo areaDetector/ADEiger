@@ -1,7 +1,7 @@
 #ifndef EIGER_DETECTOR_H
 #define EIGER_DETECTOR_H
 
-#include "eigerApi.h"
+#include "restApi.h"
 
 // FileWriter Parameters
 #define EigerFWClearString              "CLEAR"
