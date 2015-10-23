@@ -111,7 +111,7 @@ protected:
 
 private:
     char mHostname[512];
-    Eiger mEiger;
+    RestAPI mApi;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;

@@ -134,7 +134,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                ASYN_MULTIDEVICE, /* ASYN_MULTIDEVICE=1 */
                1,                /* autoConnect=1 */
                priority, stackSize),
-    mEiger(serverHostname),
+    mApi(serverHostname),
     mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -148,7 +148,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     strncpy(mHostname, serverHostname, sizeof(mHostname));
 
     // Initialize sockets
-    Eiger::init();
+    RestAPI::init();
 
     // FileWriter Parameters
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
@@ -197,11 +197,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
 
     // Test if the detector is initialized
-    if(mEiger.getString(SSDetConfig, "description", NULL, 0))
+    if(mApi.getString(SSDetConfig, "description", NULL, 0))
     {
         ERR("Eiger seems to be uninitialized\nInitializing... (may take a while)");
 
-        if(mEiger.initialize())
+        if(mApi.initialize())
         {
             ERR("Eiger FAILED TO INITIALIZE");
             return;
@@ -288,7 +288,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         else if (!value && adStatus == ADStatusAcquire)
         {
             unlock();
-            mEiger.abort();
+            mApi.abort();
             lock();
             setIntegerParam(ADStatus, ADStatusAborted);
             mStopEvent.signal();
@@ -305,7 +305,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     else if (function == EigerNTriggers)
         status = putInt(SSDetConfig, "ntrigger", value);
     else if (function == ADTriggerMode)
-        status = putString(SSDetConfig, "trigger_mode", Eiger::triggerModeStr[value]);
+        status = putString(SSDetConfig, "trigger_mode", RestAPI::triggerModeStr[value]);
     else if (function == ADNumImages)
         status = putInt(SSDetConfig, "nimages", value);
     else if (function == ADReadStatus)
@@ -458,7 +458,7 @@ void eigerDetector::report (FILE *fp, int details)
  */
 void eigerDetector::controlTask (void)
 {
-    Eiger eiger(mHostname);
+    RestAPI api(mHostname);
     const char *functionName = "controlTask";
     acquisition_t acquisition;
 
@@ -520,7 +520,7 @@ void eigerDetector::controlTask (void)
         callParamCallbacks();
 
         unlock();
-        status = eiger.arm(&sequenceId);
+        status = api.arm(&sequenceId);
         lock();
 
         if(status)
@@ -591,7 +591,7 @@ void eigerDetector::controlTask (void)
                 if(doTrigger)
                 {
                     unlock();
-                    status = eiger.trigger(triggerTimeout, triggerExposure);
+                    status = api.trigger(triggerTimeout, triggerExposure);
                     lock();
                     ++triggers;
                 }
@@ -607,7 +607,7 @@ void eigerDetector::controlTask (void)
 
         // All triggers issued, disarm the detector and wait for pollTask
         unlock();
-        status = eiger.disarm();
+        status = api.disarm();
         lock();
         setIntegerParam(EigerArmed, 0);
         setStringParam(ADStatusMessage, "Waiting for files to be processed...");
@@ -630,7 +630,7 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
-    Eiger eiger(mHostname);
+    RestAPI api(mHostname);
     acquisition_t acquisition;
     int adStatus, pendingFiles;
     size_t totalFiles, i;
@@ -654,10 +654,10 @@ void eigerDetector::pollTask (void)
             files[i].remove   = acquisition.removeFiles;
 
             if(isMaster)
-                Eiger::buildMasterName(acquisition.pattern, acquisition.sequenceId,
+                RestAPI::buildMasterName(acquisition.pattern, acquisition.sequenceId,
                         files[i].name, sizeof(files[i].name));
             else
-                Eiger::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern,
+                RestAPI::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern,
                         acquisition.sequenceId, files[i].name,
                         sizeof(files[i].name));
         }
@@ -668,7 +668,7 @@ void eigerDetector::pollTask (void)
         {
             file_t *curFile = &files[i];
 
-            if(!eiger.waitFile(curFile->name, 1.0))
+            if(!api.waitFile(curFile->name, 1.0))
             {
                 if(curFile->save || curFile->parse)
                 {
@@ -680,7 +680,7 @@ void eigerDetector::pollTask (void)
                     unlock();
                 }
                 else if(curFile->remove)
-                    eiger.deleteFile(curFile->name);
+                    api.deleteFile(curFile->name);
                 ++i;
             }
 
@@ -707,7 +707,7 @@ void eigerDetector::pollTask (void)
 
 void eigerDetector::downloadTask (void)
 {
-    Eiger eiger(mHostname);
+    RestAPI api(mHostname);
     const char *functionName = "downloadTask";
     file_t *file;
 
@@ -720,7 +720,7 @@ void eigerDetector::downloadTask (void)
         file->refCount = file->parse + file->save;
 
         // Download the file
-        if(eiger.getFile(file->name, &file->data, &file->len))
+        if(api.getFile(file->name, &file->data, &file->len))
         {
             ERR_ARGS("underlying getFile(%s) failed", file->name);
             mReapQueue.send(&file, sizeof(file));
@@ -734,7 +734,7 @@ void eigerDetector::downloadTask (void)
                 mSaveQueue.send(&file, sizeof(file_t *));
 
             if(file->remove)
-                eiger.deleteFile(file->name);
+                api.deleteFile(file->name);
         }
     }
 }
@@ -832,7 +832,7 @@ void eigerDetector::reapTask (void)
 
 void eigerDetector::monitorTask (void)
 {
-    Eiger eiger(mHostname);
+    RestAPI eiger(mHostname);
     const char *functionName = "monitorTask";
 
     for(;;)
@@ -877,7 +877,7 @@ asynStatus eigerDetector::initParams (void)
     // Assume 'description' is of the form 'Dectris Eiger 1M'
     char desc[MAX_BUF_SIZE] = "";
     char *manufacturer, *space, *model;
-    status = mEiger.getString(SSDetConfig, "description", desc, sizeof(desc));
+    status = mApi.getString(SSDetConfig, "description", desc, sizeof(desc));
     space = strchr(desc, ' ');
     *space = '\0';
     manufacturer = desc;
@@ -888,17 +888,17 @@ asynStatus eigerDetector::initParams (void)
 
     // Get software (detector firmware) version and serial number
     char swVersion[MAX_BUF_SIZE];
-    status |= mEiger.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
+    status |= mApi.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
     status |= setStringParam(EigerSWVersion, swVersion);
 
     char serialNumber[MAX_BUF_SIZE];
-    status |= mEiger.getString(SSDetConfig, "detector_number", serialNumber, sizeof(serialNumber));
+    status |= mApi.getString(SSDetConfig, "detector_number", serialNumber, sizeof(serialNumber));
     status |= setStringParam(EigerSerialNumber, serialNumber);
 
     // Get frame dimensions
     int maxSizeX, maxSizeY;
-    status |= mEiger.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
-    status |= mEiger.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
+    status |= mApi.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
+    status |= mApi.getInt(SSDetConfig, "y_pixels_in_detector", &maxSizeY);
 
     status |= setIntegerParam(ADMaxSizeX, maxSizeX);
     status |= setIntegerParam(ADMaxSizeY, maxSizeY);
@@ -964,7 +964,7 @@ asynStatus eigerDetector::getStringP (sys_t sys, const char *param, int dest)
     int status;
     char value[MAX_BUF_SIZE];
 
-    status = mEiger.getString(sys, param, value, sizeof(value)) |
+    status = mApi.getString(sys, param, value, sizeof(value)) |
             setStringParam(dest, value);
     return (asynStatus)status;
 }
@@ -974,7 +974,7 @@ asynStatus eigerDetector::getIntP (sys_t sys, const char *param, int dest)
     int status;
     int value;
 
-    status = mEiger.getInt(sys, param, &value) | setIntegerParam(dest,value);
+    status = mApi.getInt(sys, param, &value) | setIntegerParam(dest,value);
     return (asynStatus)status;
 }
 
@@ -983,7 +983,7 @@ asynStatus eigerDetector::getDoubleP (sys_t sys, const char *param, int dest)
     int status;
     double value;
 
-    status = mEiger.getDouble(sys, param, &value) | setDoubleParam(dest, value);
+    status = mApi.getDouble(sys, param, &value) | setDoubleParam(dest, value);
     return (asynStatus)status;
 }
 
@@ -992,7 +992,7 @@ asynStatus eigerDetector::getBoolP (sys_t sys, const char *param, int dest)
     int status;
     bool value;
 
-    status = mEiger.getBool(sys, param, &value) | setIntegerParam(dest, (int)value);
+    status = mApi.getBool(sys, param, &value) | setIntegerParam(dest, (int)value);
     return (asynStatus)status;
 }
 
@@ -1006,7 +1006,7 @@ asynStatus eigerDetector::putString (sys_t sys, const char *param,
     const char *functionName = "putString";
     paramList_t paramList;
 
-    if(mEiger.putString(sys, param, value, &paramList))
+    if(mApi.putString(sys, param, value, &paramList))
     {
         ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
@@ -1022,7 +1022,7 @@ asynStatus eigerDetector::putInt (sys_t sys, const char *param, int value)
     const char *functionName = "putInt";
     paramList_t paramList;
 
-    if(mEiger.putInt(sys, param, value, &paramList))
+    if(mApi.putInt(sys, param, value, &paramList))
     {
         ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
@@ -1038,7 +1038,7 @@ asynStatus eigerDetector::putBool (sys_t sys, const char *param, bool value)
     const char *functionName = "putBool";
     paramList_t paramList;
 
-    if(mEiger.putBool(sys, param, value, &paramList))
+    if(mApi.putBool(sys, param, value, &paramList))
     {
         ERR("underlying eigerPutBool failed");
         return asynError;
@@ -1055,7 +1055,7 @@ asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
     const char *functionName = "putDouble";
     paramList_t paramList;
 
-    if(mEiger.putDouble(sys, param, value, &paramList))
+    if(mApi.putDouble(sys, param, value, &paramList))
     {
         ERR_ARGS("[param=%s] underlying put failed", param);
         return asynError;
@@ -1341,18 +1341,18 @@ asynStatus eigerDetector::eigerStatus (void)
     char error[MAX_BUF_SIZE];
 
     // Read state and error message
-    status  = mEiger.getString(SSDetStatus, "state", state, sizeof(state));
-    status |= mEiger.getString(SSDetStatus, "error", error, sizeof(error));
+    status  = mApi.getString(SSDetStatus, "state", state, sizeof(state));
+    status |= mApi.getString(SSDetStatus, "error", error, sizeof(error));
 
     // Read temperature and humidity
-    status |= mEiger.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
-    status |= mEiger.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
+    status |= mApi.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
+    status |= mApi.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
 
     // Read the status of each individual link between the head and the server
-    status |= mEiger.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
-    status |= mEiger.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
-    status |= mEiger.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
-    status |= mEiger.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
+    status |= mApi.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
+    status |= mApi.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
+    status |= mApi.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
+    status |= mApi.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
 
     if(!status)
     {

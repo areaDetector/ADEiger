@@ -94,7 +94,7 @@ typedef struct response
 
 // Static public members
 
-const char *Eiger::sysStr [SSCount] = {
+const char *RestAPI::sysStr [SSCount] = {
     "/detector/api/version",
     "/detector/api/"   API_VERSION "/config/",
     "/detector/api/"   API_VERSION "/status/",
@@ -107,21 +107,21 @@ const char *Eiger::sysStr [SSCount] = {
     "/monitor/api/"    API_VERSION "/images/",
 };
 
-const char *Eiger::triggerModeStr [TMCount] = {
+const char *RestAPI::triggerModeStr [TMCount] = {
     "ints", "inte", "exts", "exte"
 };
 
-int Eiger::init (void)
+int RestAPI::init (void)
 {
     return osiSockAttach();
 }
 
-void Eiger::deinit (void)
+void RestAPI::deinit (void)
 {
     osiSockRelease();
 }
 
-int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
+int RestAPI::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
 
@@ -137,7 +137,7 @@ int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bu
     return EXIT_SUCCESS;
 }
 
-int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
+int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
 
@@ -155,7 +155,7 @@ int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size
 
 // Public members
 
-Eiger::Eiger (const char *hostname) :
+RestAPI::RestAPI (const char *hostname) :
     mSockFd(0), mSockMutex(), mSockClosed(true)
 {
     strncpy(mHostname, hostname, sizeof(mHostname));
@@ -168,12 +168,12 @@ Eiger::Eiger (const char *hostname) :
     mAddress.sin_port = htons(HTTP_PORT);
 }
 
-int Eiger::initialize (void)
+int RestAPI::initialize (void)
 {
     return put(SSCommand, "initialize", "", 0, NULL);
 }
 
-int Eiger::arm (int *sequenceId)
+int RestAPI::arm (int *sequenceId)
 {
     const char *functionName = "arm";
 
@@ -204,7 +204,7 @@ int Eiger::arm (int *sequenceId)
     return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
-int Eiger::trigger (int timeout, double exposure)
+int RestAPI::trigger (int timeout, double exposure)
 {
     // Trigger for INTS mode
     if(!exposure)
@@ -228,27 +228,27 @@ int Eiger::trigger (int timeout, double exposure)
     return EXIT_SUCCESS;
 }
 
-int Eiger::disarm (void)
+int RestAPI::disarm (void)
 {
     return put(SSCommand, "disarm", "", 0, NULL);
 }
 
-int Eiger::cancel (void)
+int RestAPI::cancel (void)
 {
     return put(SSCommand, "cancel", "", 0, NULL);
 }
 
-int Eiger::abort (void)
+int RestAPI::abort (void)
 {
     return put(SSCommand, "abort", "", 0, NULL);
 }
 
-int Eiger::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
+int RestAPI::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
 {
     return get(sys, param, value, len, timeout);
 }
 
-int Eiger::getInt (sys_t sys, const char *param, int *value, int timeout)
+int RestAPI::getInt (sys_t sys, const char *param, int *value, int timeout)
 {
     const char *functionName = "getInt";
     char buf[MAX_BUF_SIZE];
@@ -265,7 +265,7 @@ int Eiger::getInt (sys_t sys, const char *param, int *value, int timeout)
     return EXIT_SUCCESS;
 }
 
-int Eiger::getDouble (sys_t sys, const char *param, double *value, int timeout)
+int RestAPI::getDouble (sys_t sys, const char *param, double *value, int timeout)
 {
     const char *functionName = "getDouble";
     char buf[MAX_BUF_SIZE];
@@ -282,7 +282,7 @@ int Eiger::getDouble (sys_t sys, const char *param, double *value, int timeout)
     return EXIT_SUCCESS;
 }
 
-int Eiger::getBool (sys_t sys, const char *param, bool *value, int timeout)
+int RestAPI::getBool (sys_t sys, const char *param, bool *value, int timeout)
 {
     char buf[MAX_BUF_SIZE];
 
@@ -294,7 +294,7 @@ int Eiger::getBool (sys_t sys, const char *param, bool *value, int timeout)
     return EXIT_SUCCESS;
 }
 
-int Eiger::putString (sys_t sys, const char *param, const char *value,
+int RestAPI::putString (sys_t sys, const char *param, const char *value,
         paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -303,7 +303,7 @@ int Eiger::putString (sys_t sys, const char *param, const char *value,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::putInt (sys_t sys, const char *param,
+int RestAPI::putInt (sys_t sys, const char *param,
         int value, paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -312,7 +312,7 @@ int Eiger::putInt (sys_t sys, const char *param,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::putDouble (sys_t sys, const char *param,
+int RestAPI::putDouble (sys_t sys, const char *param,
         double value, paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -321,7 +321,7 @@ int Eiger::putDouble (sys_t sys, const char *param,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::putBool (sys_t sys, const char *param,
+int RestAPI::putBool (sys_t sys, const char *param,
         bool value, paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -330,7 +330,7 @@ int Eiger::putBool (sys_t sys, const char *param,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::getFileSize (const char *filename, size_t *size)
+int RestAPI::getFileSize (const char *filename, size_t *size)
 {
     const char *functionName = "getFileSize";
 
@@ -363,7 +363,7 @@ int Eiger::getFileSize (const char *filename, size_t *size)
     return EXIT_SUCCESS;
 }
 
-int Eiger::waitFile (const char *filename, double timeout)
+int RestAPI::waitFile (const char *filename, double timeout)
 {
     const char *functionName = "waitFile";
 
@@ -408,12 +408,12 @@ int Eiger::waitFile (const char *filename, double timeout)
     return EXIT_FAILURE;
 }
 
-int Eiger::getFile (const char *filename, char **buf, size_t *bufSize)
+int RestAPI::getFile (const char *filename, char **buf, size_t *bufSize)
 {
     return getBlob(SSData, filename, buf, bufSize, DATA_HDF5);
 }
 
-int Eiger::deleteFile (const char *filename)
+int RestAPI::deleteFile (const char *filename)
 {
     const char *functionName = "deleteFile";
 
@@ -444,14 +444,14 @@ int Eiger::deleteFile (const char *filename)
     return EXIT_SUCCESS;
 }
 
-int Eiger::getMonitorImage (char **buf, size_t *bufSize)
+int RestAPI::getMonitorImage (char **buf, size_t *bufSize)
 {
     return getBlob(SSMonImages, "monitor", buf, bufSize, DATA_TIFF);
 }
 
 // Private members
 
-int Eiger::connect (void)
+int RestAPI::connect (void)
 {
     const char *functionName = "connect";
 
@@ -507,7 +507,7 @@ int Eiger::connect (void)
     return EXIT_SUCCESS;
 }
 
-int Eiger::setNonBlock (bool nonBlock)
+int RestAPI::setNonBlock (bool nonBlock)
 {
 #ifdef WIN32
     unsigned long mode = nonBlock ? 1 : 0;
@@ -522,7 +522,7 @@ int Eiger::setNonBlock (bool nonBlock)
 #endif
 }
 
-int Eiger::doRequest (const request_t *request, response_t *response, int timeout)
+int RestAPI::doRequest (const request_t *request, response_t *response, int timeout)
 {
     const char *functionName = "doRequest";
     int status = EXIT_SUCCESS;
@@ -582,7 +582,7 @@ end:
     return status;
 }
 
-int Eiger::get (sys_t sys, const char *param, char *value, size_t len,
+int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
         int timeout)
 {
     const char *functionName = "get";
@@ -644,7 +644,7 @@ int Eiger::get (sys_t sys, const char *param, char *value, size_t len,
     return EXIT_SUCCESS;
 }
 
-int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
+int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
         paramList_t *paramList, int timeout)
 {
     const char *functionName = "put";
@@ -682,7 +682,7 @@ int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
     return paramList ? parseParamList(&response, paramList) : EXIT_SUCCESS;
 }
 
-int Eiger::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
+int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
         const char *accept)
 {
     const char *functionName = "getBlob";
@@ -779,7 +779,7 @@ end:
     return status;
 }
 
-int Eiger::parseHeader (response_t *response)
+int RestAPI::parseHeader (response_t *response)
 {
     int scanned;
     char *data = response->data;
@@ -829,7 +829,7 @@ int Eiger::parseHeader (response_t *response)
     return EXIT_SUCCESS;
 }
 
-int Eiger::parseParamList (const response_t *response, paramList_t *paramList)
+int RestAPI::parseParamList (const response_t *response, paramList_t *paramList)
 {
     const char *functionName = "parseParamList";
 
@@ -867,7 +867,7 @@ int Eiger::parseParamList (const response_t *response, paramList_t *paramList)
     return EXIT_SUCCESS;
 }
 
-int Eiger::parseSequenceId (const response_t *response, int *sequenceId)
+int RestAPI::parseSequenceId (const response_t *response, int *sequenceId)
 {
     const char *functionName = "parseParamList";
 
