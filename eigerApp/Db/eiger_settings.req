@@ -1,3 +1,5 @@
+file "ADBase_settings.req", P=$(P), R=$(R)
+file "NDFile_settings.req", P=$(P), R=$(R)
 $(P)$(R)NumTriggers
 $(P)$(R)ManualTrigger
 $(P)$(R)TriggerExposure

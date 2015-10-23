@@ -2,6 +2,9 @@
 # Bruno Martins
 # June 2, 2015
 
+include "ADBase.template"
+include "NDFile.template"
+
 # Eiger Server software version
 record(stringin, "$(P)$(R)SWVersion_RBV") {
     field(DESC, "Software Version")
