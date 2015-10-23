@@ -58,6 +58,12 @@ typedef struct
     size_t refCount;
 }file_t;
 
+enum output_mode
+{
+    OUTPUT_FILEWRITER,
+    OUTPUT_STREAM
+};
+
 static const char *driverName = "eigerDetector";
 
 static inline size_t numDataFiles (int nTriggers, int nImages, int nImagesPerFile)
@@ -134,7 +140,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname),
-    mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
+    mStartEvent(), mStopEvent(), mTriggerEvent(), mDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -468,7 +474,6 @@ void eigerDetector::controlTask (void)
 {
     RestAPI api(mHostname);
     const char *functionName = "controlTask";
-    acquisition_t acquisition;
 
     int status = asynSuccess;
     int outputMode, processOutput;
@@ -484,7 +489,7 @@ void eigerDetector::controlTask (void)
         // Clear uncaught events
         mStopEvent.tryWait();
         mTriggerEvent.tryWait();
-        mPollDoneEvent.tryWait();
+        mDoneEvent.tryWait();
 
         // Wait for start event
         getIntegerParam(ADStatus, &adStatus);
@@ -562,13 +567,22 @@ void eigerDetector::controlTask (void)
             break;
         }
 
-        // Start polling
-        getStringParam(EigerFWNamePattern, sizeof(acquisition.pattern), acquisition.pattern);
-        acquisition.sequenceId  = sequenceId;
-        acquisition.nDataFiles  = numDataFiles(numTriggers, numImages, numImagesPerFile);
-        acquisition.saveFiles   = saveFiles;
-        acquisition.removeFiles = removeFiles;
-        mPollQueue.send(&acquisition, sizeof(acquisition));
+        // Start data acquisition
+        if(processOutput)
+        {
+            if(outputMode == OUTPUT_FILEWRITER)
+            {
+                acquisition_t acq;
+                getStringParam(EigerFWNamePattern, sizeof(acq.pattern), acq.pattern);
+                acq.sequenceId  = sequenceId;
+                acq.nDataFiles  = numDataFiles(numTriggers, numImages, numImagesPerFile);
+                acq.saveFiles   = saveFiles;
+                acq.removeFiles = removeFiles;
+                mPollQueue.send(&acq, sizeof(acq));
+            }
+            else
+                mStreamEvent.signal();
+        }
 
         // Open shutter
         setShutter(1);
@@ -625,7 +639,7 @@ void eigerDetector::controlTask (void)
         callParamCallbacks();
 
         unlock();
-        mPollDoneEvent.wait();
+        mDoneEvent.wait();
         lock();
 
         getIntegerParam(ADStatus, &adStatus);
@@ -712,7 +726,7 @@ void eigerDetector::pollTask (void)
 
         // All pending files were processed and reaped
         free(files);
-        mPollDoneEvent.signal();
+        mDoneEvent.signal();
     }
 }
 
