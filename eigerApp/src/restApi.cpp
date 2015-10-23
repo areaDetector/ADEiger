@@ -13,7 +13,7 @@
 
 #include <fcntl.h>
 
-#define API_VERSION             "1.0.4"
+#define API_VERSION             "1.5.0"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
 #define EOH                     EOL EOL     // End of Header
@@ -105,6 +105,7 @@ const char *RestAPI::sysStr [SSCount] = {
     "/monitor/api/"    API_VERSION "/config/",
     "/monitor/api/"    API_VERSION "/status/",
     "/monitor/api/"    API_VERSION "/images/",
+    "/stream/api/"     API_VERSION "/config/",
 };
 
 const char *RestAPI::triggerModeStr [TMCount] = {

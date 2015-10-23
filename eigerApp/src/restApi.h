@@ -23,6 +23,7 @@ typedef enum
     SSMonConfig,
     SSMonStatus,
     SSMonImages,
+    SSStreamConfig,
 
     SSCount,
 } sys_t;
