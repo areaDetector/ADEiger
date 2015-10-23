@@ -172,7 +172,7 @@ RestAPI::RestAPI (const char *hostname) :
 
 int RestAPI::initialize (void)
 {
-    return put(SSCommand, "initialize", "", 0, NULL);
+    return put(SSCommand, "initialize", "", 0, NULL, 120);
 }
 
 int RestAPI::arm (int *sequenceId)
