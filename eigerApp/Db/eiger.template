@@ -12,6 +12,7 @@ record(bo,"$(P)$(R)OutputMode") {
     field(DESC, "Output Mode")
     field(ZNAM, "FileWriter API")
     field(ONAM, "Stream API")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)OutputMode_RBV") {
@@ -30,6 +31,7 @@ record(bo,"$(P)$(R)ProcessOutput") {
     field(DESC, "Process Output")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)ProcessOutput_RBV") {
@@ -88,6 +90,7 @@ record(ao, "$(P)$(R)NumTriggers") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
     field(DESC, "Number of triggers per acquisition")
     field(PREC, "0")
+    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)NumTriggers_RBV")
@@ -106,6 +109,7 @@ record(bo,"$(P)$(R)ManualTrigger") {
     field(DESC, "Disable auto triggering")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)ManualTrigger_RBV") {
@@ -125,6 +129,7 @@ record(ao, "$(P)$(R)TriggerExposure")
     field(DESC, "Trigger Exposure for INTE mode")
     field(EGU,  "s")
     field(PREC, "6")
+    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)TriggerExposure_RBV")
@@ -157,6 +162,7 @@ record(bo,"$(P)$(R)FWCompression") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)FWCompression_RBV") {
@@ -171,6 +177,7 @@ record(bi,"$(P)$(R)FWCompression_RBV") {
 record(stringout, "$(P)$(R)FWNamePattern") {
     field(DTYP, "asynOctetWrite")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+    field(PINI, "YES")
 }
 
 record(stringin, "$(P)$(R)FWNamePattern_RBV") {
@@ -186,6 +193,7 @@ record(ao, "$(P)$(R)FWNImagesPerFile") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NIMAGES_PER_FILE")
     field(DESC, "Number of images per HDF5 file")
     field(PREC, "0")
+    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)FWNImagesPerFile_RBV")
@@ -204,6 +212,7 @@ record(bo,"$(P)$(R)FWAutoRemove") {
     field(DESC, "Auto remove files")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)FWAutoRemove_RBV") {
@@ -221,6 +230,7 @@ record(bo,"$(P)$(R)SaveFiles") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)SaveFiles_RBV") {
@@ -237,6 +247,7 @@ record(bo,"$(P)$(R)FlatfieldApplied") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FLATFIELD_APPLIED")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
@@ -265,6 +276,7 @@ record(ao, "$(P)$(R)PhotonEnergy")
     field(DESC, "Photon energy")
     field(EGU,  "eV")
     field(PREC, "3")
+    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)PhotonEnergy_RBV")
@@ -394,6 +406,7 @@ record(bo,"$(P)$(R)MonitorEnable") {
     field(DESC, "Enable usage of Monitor API")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)MonitorEnable_RBV") {
