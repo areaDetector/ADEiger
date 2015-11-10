@@ -10,10 +10,11 @@ USR_INCLUDES += -I$(TOP)/eigerApp/lz4Src
 USR_INCLUDES += $(HDF5_INCLUDE)
 
 LIB_SRCS += eigerDetector.cpp
-LIB_SRCS += restApi.cpp
+LIB_SRCS += restApi.cpp streamApi.cpp
 
 DBD += eigerDetectorSupport.dbd
 
+LIB_SYS_LIBS_Linux += zmq
 LIB_LIBS_Linux += hdf5_hl 
 hdf5_hl_DIR = $(HDF5_LIB)
 

@@ -21,6 +21,7 @@
 #include "ADDriver.h"
 #include "eigerDetector.h"
 #include "restApi.h"
+#include "streamApi.h"
 
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
@@ -63,6 +64,22 @@ enum output_mode
     OUTPUT_FILEWRITER,
     OUTPUT_STREAM
 };
+
+typedef struct
+{
+    size_t id;
+    eigerDetector *detector;
+    epicsMessageQueue *jobQueue, *doneQueue;
+    epicsEvent *cbEvent, *nextCbEvent;
+}stream_worker_t;
+
+typedef struct
+{
+    void *data;
+    size_t compressedSize, uncompressedSize;
+    size_t dims[2];
+    NDDataType_t type;
+}stream_job_t;
 
 static const char *driverName = "eigerDetector";
 
@@ -204,6 +221,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Monitor API Parameters
     createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
     createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
+
+    // Stream API Parameters
+    createParam(EigerStreamDroppedString,  asynParamInt32, &EigerStreamDropped);
 
     // Test if the detector is initialized
     if(mApi.getString(SSDetConfig, "description", NULL, 0))
@@ -490,6 +510,7 @@ void eigerDetector::controlTask (void)
         mStopEvent.tryWait();
         mTriggerEvent.tryWait();
         mDoneEvent.tryWait();
+        mStreamEvent.tryWait();
 
         // Wait for start event
         getIntegerParam(ADStatus, &adStatus);
@@ -501,10 +522,20 @@ void eigerDetector::controlTask (void)
         mStartEvent.wait();
         lock();
 
-        // If saving files, check if the File Path is valid
-        getIntegerParam(EigerSaveFiles, &saveFiles);
+        // Latch parameters
+        getIntegerParam(EigerOutputMode,     &outputMode);
+        getIntegerParam(EigerSaveFiles,      &saveFiles);
+        getIntegerParam(EigerProcessOutput,  &processOutput);
+        getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
+        getDoubleParam (ADAcquirePeriod,     &acquirePeriod);
+        getIntegerParam(ADNumImages,         &numImages);
+        getIntegerParam(EigerNTriggers,      &numTriggers);
+        getIntegerParam(ADTriggerMode,       &triggerMode);
+        getIntegerParam(EigerManualTrigger,  &manualTrigger);
+        getIntegerParam(EigerFWAutoRemove,   &removeFiles);
 
-        if(saveFiles)
+        // If saving files, check if the File Path is valid
+        if(processOutput && outputMode == OUTPUT_FILEWRITER && saveFiles)
         {
             int filePathExists;
             checkPath();
@@ -519,17 +550,6 @@ void eigerDetector::controlTask (void)
                 continue;
             }
         }
-
-        // Latch parameters
-        getIntegerParam(EigerOutputMode,     &outputMode);
-        getIntegerParam(EigerProcessOutput,  &processOutput);
-        getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
-        getDoubleParam (ADAcquirePeriod,     &acquirePeriod);
-        getIntegerParam(ADNumImages,         &numImages);
-        getIntegerParam(EigerNTriggers,      &numTriggers);
-        getIntegerParam(ADTriggerMode,       &triggerMode);
-        getIntegerParam(EigerManualTrigger,  &manualTrigger);
-        getIntegerParam(EigerFWAutoRemove,   &removeFiles);
 
         // Arm the detector
         setStringParam(ADStatusMessage, "Arming...");
@@ -567,7 +587,7 @@ void eigerDetector::controlTask (void)
             break;
         }
 
-        // Start data acquisition
+        // Start data acquisition thread
         if(processOutput)
         {
             if(outputMode == OUTPUT_FILEWRITER)
@@ -634,13 +654,17 @@ void eigerDetector::controlTask (void)
         unlock();
         status = api.disarm();
         lock();
+
         setIntegerParam(EigerArmed, 0);
         setStringParam(ADStatusMessage, "Waiting for files to be processed...");
         callParamCallbacks();
 
-        unlock();
-        mDoneEvent.wait();
-        lock();
+        if(processOutput)
+        {
+            unlock();
+            mDoneEvent.wait();
+            lock();
+        }
 
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusAcquire)
@@ -890,8 +914,75 @@ void eigerDetector::monitorTask (void)
 
 void eigerDetector::streamTask (void)
 {
+    const char *functionName = "streamTask";
     for(;;)
     {
+        mStreamEvent.wait();
+
+        StreamAPI api(mHostname);
+
+        stream_header_t header;
+        api.getHeader(&header);
+
+        for(;;)
+        {
+            stream_frame_t frame = {};
+            api.getFrame(&frame);
+
+            if(frame.end)
+                break;
+
+            NDArray *pArray;
+            size_t *dims = frame.shape;
+            NDDataType_t type = frame.type == stream_frame_t::UINT16 ? NDUInt16 : NDUInt32;
+
+            if(!(pArray = pNDArrayPool->alloc(2, dims, type, 0, NULL)))
+            {
+                ERR_ARGS("failed to allocate NDArray for frame %lu", frame.frame);
+                free(frame.data);
+                continue;
+            }
+
+            StreamAPI::uncompress(&frame, (char*)pArray->pData);
+            free(frame.data);
+
+            int imageCounter, arrayCallbacks;
+            lock();
+            getIntegerParam(NDArrayCounter, &imageCounter);
+            getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+            unlock();
+
+            // Put the frame number and timestamp into the buffer
+            pArray->uniqueId = imageCounter;
+
+            epicsTimeStamp startTime;
+            epicsTimeGetCurrent(&startTime);
+            pArray->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
+            updateTimeStamp(&pArray->epicsTS);
+
+            // Get any attributes that have been defined for this driver
+            this->getAttributes(pArray->pAttributeList);
+
+            // Call the NDArray callback
+            if (arrayCallbacks)
+                doCallbacksGenericPointer(pArray, NDArrayData, 0);
+
+            lock();
+            setIntegerParam(NDArrayCounter, ++imageCounter);
+            unlock();
+
+            callParamCallbacks();
+            pArray->release();
+        }
+
+        int dropped = 0;
+        mApi.getInt(SSStreamStatus, "dropped", &dropped);
+
+        lock();
+        setIntegerParam(EigerStreamDropped, dropped);
+        unlock();
+
+        mDoneEvent.signal();
     }
 }
 
@@ -971,6 +1062,7 @@ asynStatus eigerDetector::initParams (void)
     status |= putBool(SSDetConfig, "auto_summation", true);
 
     // This driver expects the following parameters to always have the same value
+    status |= putString(SSStreamConfig, "header_detail", "none");
     status |= putInt(SSFWConfig, "image_nr_start", DEFAULT_NR_START);
     status |= putInt(SSMonConfig, "buffer_size", 1);
 

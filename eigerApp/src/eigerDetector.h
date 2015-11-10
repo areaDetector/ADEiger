@@ -53,6 +53,9 @@
 #define EigerMonitorEnableString        "MONITOR_ENABLE"
 #define EigerMonitorPeriodString        "MONITOR_PERIOD"
 
+// Stream API Parameters
+#define EigerStreamDroppedString        "STREAM_DROPPED"
+
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
 {
@@ -113,7 +116,8 @@ protected:
     int EigerPendingFiles;
     int EigerMonitorEnable;
     int EigerMonitorPeriod;
-    #define LAST_EIGER_PARAM EigerMonitorPeriod
+    int EigerStreamDropped;
+    #define LAST_EIGER_PARAM EigerStreamDropped
 
 private:
     char mHostname[512];

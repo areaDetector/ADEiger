@@ -5,6 +5,14 @@
 include "ADBase.template"
 include "NDFile.template"
 
+record(ao,"$(P)$(R)AcquireTime") {
+    field(VAL, "1")
+}
+
+record(ao,"$(P)$(R)AcquirePeriod") {
+    field(VAL, "1")
+}
+
 # Output mode for the acquisition
 record(bo,"$(P)$(R)OutputMode") {
     field(DTYP, "asynInt32")
@@ -12,7 +20,6 @@ record(bo,"$(P)$(R)OutputMode") {
     field(DESC, "Output Mode")
     field(ZNAM, "FileWriter API")
     field(ONAM, "Stream API")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)OutputMode_RBV") {
@@ -31,7 +38,6 @@ record(bo,"$(P)$(R)ProcessOutput") {
     field(DESC, "Process Output")
     field(ZNAM, "No")
     field(ONAM, "Yes")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)ProcessOutput_RBV") {
@@ -90,7 +96,6 @@ record(ao, "$(P)$(R)NumTriggers") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
     field(DESC, "Number of triggers per acquisition")
     field(PREC, "0")
-    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)NumTriggers_RBV")
@@ -109,7 +114,6 @@ record(bo,"$(P)$(R)ManualTrigger") {
     field(DESC, "Disable auto triggering")
     field(ZNAM, "No")
     field(ONAM, "Yes")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)ManualTrigger_RBV") {
@@ -129,7 +133,6 @@ record(ao, "$(P)$(R)TriggerExposure")
     field(DESC, "Trigger Exposure for INTE mode")
     field(EGU,  "s")
     field(PREC, "6")
-    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)TriggerExposure_RBV")
@@ -162,7 +165,6 @@ record(bo,"$(P)$(R)FWCompression") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)FWCompression_RBV") {
@@ -177,7 +179,6 @@ record(bi,"$(P)$(R)FWCompression_RBV") {
 record(stringout, "$(P)$(R)FWNamePattern") {
     field(DTYP, "asynOctetWrite")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
-    field(PINI, "YES")
 }
 
 record(stringin, "$(P)$(R)FWNamePattern_RBV") {
@@ -193,7 +194,6 @@ record(ao, "$(P)$(R)FWNImagesPerFile") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NIMAGES_PER_FILE")
     field(DESC, "Number of images per HDF5 file")
     field(PREC, "0")
-    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)FWNImagesPerFile_RBV")
@@ -212,7 +212,6 @@ record(bo,"$(P)$(R)FWAutoRemove") {
     field(DESC, "Auto remove files")
     field(ZNAM, "No")
     field(ONAM, "Yes")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)FWAutoRemove_RBV") {
@@ -224,13 +223,22 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Stream number of dropped frames
+record(ai, "$(P)$(R)StreamDropped_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DROPPED")
+    field(DESC, "Number of dropped frames")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
 # Save files locally
 record(bo,"$(P)$(R)SaveFiles") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
     field(ZNAM, "No")
     field(ONAM, "Yes")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)SaveFiles_RBV") {
@@ -247,7 +255,6 @@ record(bo,"$(P)$(R)FlatfieldApplied") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FLATFIELD_APPLIED")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
@@ -276,7 +283,6 @@ record(ao, "$(P)$(R)PhotonEnergy")
     field(DESC, "Photon energy")
     field(EGU,  "eV")
     field(PREC, "3")
-    field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)PhotonEnergy_RBV")
@@ -302,13 +308,11 @@ record(bi, "$(P)$(R)Armed")
 # Threshold energy
 record(ao, "$(P)$(R)ThresholdEnergy")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD")
     field(DESC, "Energy threshold")
     field(EGU,  "eV")
     field(PREC, "3")
-    field(VAL,  "10.000")
 }
 
 record(ai, "$(P)$(R)ThresholdEnergy_RBV")
@@ -325,7 +329,6 @@ record(ai, "$(P)$(R)ThresholdEnergy_RBV")
 
 record(ao, "$(P)$(R)Wavelength")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
     field(PREC, "4")
@@ -335,7 +338,6 @@ record(ao, "$(P)$(R)Wavelength")
 
 record(ao, "$(P)$(R)DetDist")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DET_DIST")
     field(PREC, "3")
@@ -345,7 +347,6 @@ record(ao, "$(P)$(R)DetDist")
 
 record(ao, "$(P)$(R)BeamX")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BEAM_X")
     field(PREC, "3")
@@ -355,7 +356,6 @@ record(ao, "$(P)$(R)BeamX")
 
 record(ao, "$(P)$(R)BeamY")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BEAM_Y")
     field(PREC, "3")
@@ -406,7 +406,6 @@ record(bo,"$(P)$(R)MonitorEnable") {
     field(DESC, "Enable usage of Monitor API")
     field(ZNAM, "No")
     field(ONAM, "Yes")
-    field(PINI, "YES")
 }
 
 record(bi,"$(P)$(R)MonitorEnable_RBV") {
@@ -421,7 +420,6 @@ record(bi,"$(P)$(R)MonitorEnable_RBV") {
 # Monitor API polling period
 record(ao, "$(P)$(R)MonitorPeriod")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_PERIOD")
     field(DESC, "Polling period for Monitor API")
