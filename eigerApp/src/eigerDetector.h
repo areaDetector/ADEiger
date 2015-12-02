@@ -1,14 +1,19 @@
 #ifndef EIGER_DETECTOR_H
 #define EIGER_DETECTOR_H
 
-#include "eigerApi.h"
+#include "restApi.h"
+
+// areaDetector NDArray data source
+#define EigerDataSourceString           "DATA_SOURCE"
 
 // FileWriter Parameters
+#define EigerFWEnableString             "FW_ENABLE"
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
 #define EigerFWNamePatternString        "NAME_PATTERN"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
 #define EigerFWAutoRemoveString         "AUTO_REMOVE"
+#define EigerFWFreeString               "FW_FREE"
 
 // Acquisition Metadata Parameters
 #define EigerBeamXString                "BEAM_X"
@@ -38,6 +43,7 @@
 #define EigerLink1String                "LINK_1"
 #define EigerLink2String                "LINK_2"
 #define EigerLink3String                "LINK_3"
+#define EigerDCUBufFreeString           "DCU_BUF_FREE"
 
 // Other Parameters
 #define EigerArmedString                "ARMED"
@@ -48,6 +54,10 @@
 // Monitor API Parameters
 #define EigerMonitorEnableString        "MONITOR_ENABLE"
 #define EigerMonitorPeriodString        "MONITOR_PERIOD"
+
+// Stream API Parameters
+#define EigerStreamEnableString         "STREAM_ENABLE"
+#define EigerStreamDroppedString        "STREAM_DROPPED"
 
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
@@ -71,14 +81,18 @@ public:
     void saveTask     (void);
     void reapTask     (void);
     void monitorTask  (void);
+    void streamTask   (void);
 
 protected:
+    int EigerDataSource;
+    #define FIRST_EIGER_PARAM EigerDataSource
+    int EigerFWEnable;
     int EigerFWClear;
-    #define FIRST_EIGER_PARAM EigerFWClear
     int EigerFWCompression;
     int EigerFWNamePattern;
     int EigerFWNImgsPerFile;
     int EigerFWAutoRemove;
+    int EigerFWFree;
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
@@ -100,18 +114,22 @@ protected:
     int EigerLink1;
     int EigerLink2;
     int EigerLink3;
+    int EigerDCUBufFree;
     int EigerArmed;
     int EigerSaveFiles;
     int EigerSequenceId;
     int EigerPendingFiles;
     int EigerMonitorEnable;
     int EigerMonitorPeriod;
-    #define LAST_EIGER_PARAM EigerMonitorPeriod
+    int EigerStreamEnable;
+    int EigerStreamDropped;
+    #define LAST_EIGER_PARAM EigerStreamDropped
 
 private:
     char mHostname[512];
-    Eiger mEiger;
-    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mPollDoneEvent;
+    RestAPI mApi;
+    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
+            mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
 

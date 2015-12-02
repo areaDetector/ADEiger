@@ -1,5 +1,5 @@
-#ifndef EIGER_API_H
-#define EIGER_API_H
+#ifndef REST_API_H
+#define REST_API_H
 
 #include <epicsMutex.h>
 #include <osiSock.h>
@@ -23,6 +23,8 @@ typedef enum
     SSMonConfig,
     SSMonStatus,
     SSMonImages,
+    SSStreamConfig,
+    SSStreamStatus,
 
     SSCount,
 } sys_t;
@@ -49,7 +51,7 @@ typedef struct request  request_t;
 typedef struct response response_t;
 typedef struct socket   socket_t;
 
-class Eiger
+class RestAPI
 {
 private:
     char mHostname[MAX_HOSTNAME];
@@ -80,7 +82,7 @@ public:
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
-    Eiger (const char *hostname);
+    RestAPI (const char *hostname);
 
     int initialize (void);
     int arm        (int *sequenceId);

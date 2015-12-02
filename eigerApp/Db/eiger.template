@@ -5,6 +5,40 @@
 include "ADBase.template"
 include "NDFile.template"
 
+record(ao,"$(P)$(R)AcquireTime") {
+    field(VAL, "1")
+}
+
+record(ao,"$(P)$(R)AcquirePeriod") {
+    field(VAL, "1")
+}
+
+# Data source for the acquisition
+record(mbbo,"$(P)$(R)DataSource") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DATA_SOURCE")
+    field(DESC, "Acquisition data source")
+    field(ZRVL,"0")
+    field(ZRST,"None")
+    field(ONVL,"1")
+    field(ONST,"FileWriter")
+    field(TWVL,"2")
+    field(TWST,"Stream")
+}
+
+record(mbbi,"$(P)$(R)DataSource_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DATA_SOURCE")
+    field(DESC, "Acquisition data source")
+    field(SCAN, "I/O Intr")
+    field(ZRVL,"0")
+    field(ZRST,"None")
+    field(ONVL,"1")
+    field(ONST,"FileWriter")
+    field(TWVL,"2")
+    field(TWST,"Stream")
+}
+
 # Eiger Server software version
 record(stringin, "$(P)$(R)SWVersion_RBV") {
     field(DESC, "Software Version")
@@ -108,6 +142,24 @@ record(ao, "$(P)$(R)Trigger") {
     field(DESC, "Trigger the detector")
 }
 
+# FileWriter API enable
+record(bo,"$(P)$(R)FWEnable") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_ENABLE")
+    field(DESC, "Enable usage of FileWriter API")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)FWEnable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_ENABLE")
+    field(DESC, "Enable usage of FileWriter API")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+
 # FileWriter clear all files
 record(ao, "$(P)$(R)FWClear") {
     field(DTYP, "asynInt32")
@@ -176,6 +228,45 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
     field(DESC, "Auto remove files")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+
+# FileWriter free buffer space
+record(ai, "$(P)$(R)FWFree_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
+    field(DESC, "Free disk space")
+    field(EGU,  "kB")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
+# Stream API enable
+record(bo,"$(P)$(R)StreamEnable") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_ENABLE")
+    field(DESC, "Enable usage of Stream API")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)StreamEnable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_ENABLE")
+    field(DESC, "Enable usage of Stream API")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+
+# Stream number of dropped frames
+record(ai, "$(P)$(R)StreamDropped_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DROPPED")
+    field(DESC, "Number of dropped frames")
+    field(PREC, "0")
     field(SCAN, "I/O Intr")
 }
 
@@ -254,13 +345,11 @@ record(bi, "$(P)$(R)Armed")
 # Threshold energy
 record(ao, "$(P)$(R)ThresholdEnergy")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD")
     field(DESC, "Energy threshold")
     field(EGU,  "eV")
     field(PREC, "3")
-    field(VAL,  "10.000")
 }
 
 record(ai, "$(P)$(R)ThresholdEnergy_RBV")
@@ -277,7 +366,6 @@ record(ai, "$(P)$(R)ThresholdEnergy_RBV")
 
 record(ao, "$(P)$(R)Wavelength")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
     field(PREC, "4")
@@ -287,7 +375,6 @@ record(ao, "$(P)$(R)Wavelength")
 
 record(ao, "$(P)$(R)DetDist")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DET_DIST")
     field(PREC, "3")
@@ -297,7 +384,6 @@ record(ao, "$(P)$(R)DetDist")
 
 record(ao, "$(P)$(R)BeamX")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BEAM_X")
     field(PREC, "3")
@@ -307,7 +393,6 @@ record(ao, "$(P)$(R)BeamX")
 
 record(ao, "$(P)$(R)BeamY")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BEAM_Y")
     field(PREC, "3")
@@ -372,7 +457,6 @@ record(bi,"$(P)$(R)MonitorEnable_RBV") {
 # Monitor API polling period
 record(ao, "$(P)$(R)MonitorPeriod")
 {
-    field(PINI, "YES")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_PERIOD")
     field(DESC, "Polling period for Monitor API")
@@ -546,3 +630,12 @@ record(bi, "$(P)$(R)Link3_RBV")
     field(SCAN, "I/O Intr")
 }
 
+record(ai, "$(P)$(R)DCUBufferFree_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DCU_BUF_FREE")
+    field(EGU,  "%")
+    field(SCAN, "I/O Intr")
+    field(VAL,  "0")
+    field(PREC, "1")
+}
