@@ -13,6 +13,7 @@
 #define EigerFWNamePatternString        "NAME_PATTERN"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
 #define EigerFWAutoRemoveString         "AUTO_REMOVE"
+#define EigerFWFreeString               "FW_FREE"
 
 // Acquisition Metadata Parameters
 #define EigerBeamXString                "BEAM_X"
@@ -42,6 +43,7 @@
 #define EigerLink1String                "LINK_1"
 #define EigerLink2String                "LINK_2"
 #define EigerLink3String                "LINK_3"
+#define EigerDCUBufFreeString           "DCU_BUF_FREE"
 
 // Other Parameters
 #define EigerArmedString                "ARMED"
@@ -90,6 +92,7 @@ protected:
     int EigerFWNamePattern;
     int EigerFWNImgsPerFile;
     int EigerFWAutoRemove;
+    int EigerFWFree;
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
@@ -111,6 +114,7 @@ protected:
     int EigerLink1;
     int EigerLink2;
     int EigerLink3;
+    int EigerDCUBufFree;
     int EigerArmed;
     int EigerSaveFiles;
     int EigerSequenceId;

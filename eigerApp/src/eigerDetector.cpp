@@ -183,6 +183,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
     createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
     createParam(EigerFWAutoRemoveString,  asynParamInt32, &EigerFWAutoRemove);
+    createParam(EigerFWFreeString,        asynParamInt32, &EigerFWFree);
 
     // Acquisition Metadata Parameters
     createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
@@ -212,6 +213,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerLink1String,         asynParamInt32,   &EigerLink1);
     createParam(EigerLink2String,         asynParamInt32,   &EigerLink2);
     createParam(EigerLink3String,         asynParamInt32,   &EigerLink3);
+    createParam(EigerDCUBufFreeString,    asynParamFloat64, &EigerDCUBufFree);
 
     // Other Parameters
     createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
@@ -326,7 +328,10 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         }
     }
     else if (function == EigerFWClear)
+    {
         status = putInt(SSFWConfig, "clear", 1);
+        getIntP(SSFWStatus, "buffer_free", EigerFWFree);
+    }
     else if (function == EigerFWCompression)
         status = putBool(SSFWConfig, "compression_enabled", (bool)value);
     else if (function == EigerFWNImgsPerFile)
@@ -808,6 +813,8 @@ void eigerDetector::downloadTask (void)
 
             if(file->remove)
                 api.deleteFile(file->name);
+            else
+                getIntP(SSFWStatus, "buffer_free", EigerFWFree);
         }
     }
 }
@@ -1064,6 +1071,7 @@ asynStatus eigerDetector::initParams (void)
     status |= getBoolP  (SSFWConfig, "compression_enabled",EigerFWCompression);
     status |= getStringP(SSFWConfig, "name_pattern",       EigerFWNamePattern);
     status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
+    status |= getIntP   (SSFWStatus, "buffer_free",        EigerFWFree);
 
     status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
     status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
@@ -1494,6 +1502,7 @@ asynStatus eigerDetector::eigerStatus (void)
     char link[4][MAX_BUF_SIZE];
     char state[MAX_BUF_SIZE];
     char error[MAX_BUF_SIZE];
+    double dcuBuffer;
 
     // Read state and error message
     status  = mApi.getString(SSDetStatus, "state", state, sizeof(state));
@@ -1509,6 +1518,8 @@ asynStatus eigerDetector::eigerStatus (void)
     status |= mApi.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
     status |= mApi.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
 
+    status |= mApi.getDouble(SSDetStatus, "builder/dcu_buffer_free", &dcuBuffer);
+
     if(!status)
     {
         setStringParam(EigerState, state);
@@ -1520,6 +1531,8 @@ asynStatus eigerDetector::eigerStatus (void)
         setIntegerParam(EigerLink1, !strcmp(link[1], "up"));
         setIntegerParam(EigerLink2, !strcmp(link[2], "up"));
         setIntegerParam(EigerLink3, !strcmp(link[3], "up"));
+        setDoubleParam(EigerDCUBufFree, dcuBuffer);
+
         callParamCallbacks();
     }
     else

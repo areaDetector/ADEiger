@@ -231,6 +231,17 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# FileWriter free buffer space
+record(ai, "$(P)$(R)FWFree_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
+    field(DESC, "Free disk space")
+    field(EGU,  "kB")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
 # Stream API enable
 record(bo,"$(P)$(R)StreamEnable") {
     field(DTYP, "asynInt32")
@@ -619,3 +630,12 @@ record(bi, "$(P)$(R)Link3_RBV")
     field(SCAN, "I/O Intr")
 }
 
+record(ai, "$(P)$(R)DCUBufferFree_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DCU_BUF_FREE")
+    field(EGU,  "%")
+    field(SCAN, "I/O Intr")
+    field(VAL,  "0")
+    field(PREC, "1")
+}
