@@ -47,7 +47,7 @@ typedef struct
     char pattern[MAX_BUF_SIZE];
     int sequenceId;
     size_t nDataFiles;
-    bool saveFiles, removeFiles;
+    bool saveFiles, parseFiles, removeFiles;
 }acquisition_t;
 
 typedef struct
@@ -59,10 +59,11 @@ typedef struct
     size_t refCount;
 }file_t;
 
-enum output_mode
+enum data_source
 {
-    OUTPUT_FILEWRITER,
-    OUTPUT_STREAM
+    SOURCE_NONE,
+    SOURCE_FILEWRITER,
+    SOURCE_STREAM,
 };
 
 typedef struct
@@ -157,7 +158,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname),
-    mStartEvent(), mStopEvent(), mTriggerEvent(), mDoneEvent(),
+    mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -172,11 +173,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Initialize sockets
     RestAPI::init();
 
-    // Output Parameters
-    createParam(EigerOutputModeString,    asynParamInt32, &EigerOutputMode);
-    createParam(EigerProcessOutputString, asynParamInt32, &EigerProcessOutput);
+    // Data Source Parameter
+    createParam(EigerDataSourceString,    asynParamInt32, &EigerDataSource);
 
     // FileWriter Parameters
+    createParam(EigerFWEnableString,      asynParamInt32, &EigerFWEnable);
     createParam(EigerFWClearString,       asynParamInt32, &EigerFWClear);
     createParam(EigerFWCompressionString, asynParamInt32, &EigerFWCompression);
     createParam(EigerFWNamePatternString, asynParamOctet, &EigerFWNamePattern);
@@ -223,7 +224,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
 
     // Stream API Parameters
-    createParam(EigerStreamDroppedString,  asynParamInt32, &EigerStreamDropped);
+    createParam(EigerStreamEnableString,  asynParamInt32, &EigerStreamEnable);
+    createParam(EigerStreamDroppedString, asynParamInt32, &EigerStreamDropped);
 
     // Test if the detector is initialized
     if(mApi.getString(SSDetConfig, "description", NULL, 0))
@@ -341,13 +343,12 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         status = eigerStatus();
     else if (function == EigerTrigger)
         mTriggerEvent.signal();
+    else if (function == EigerFWEnable)
+        status = putString(SSFWConfig, "mode", value ? "enabled" : "disabled");
+    else if (function == EigerStreamEnable)
+        status = putString(SSStreamConfig, "mode", value ? "enabled" : "disabled");
     else if (function == EigerMonitorEnable)
         status = putString(SSMonConfig, "mode", value ? "enabled" : "disabled");
-    else if (function == EigerOutputMode)
-    {
-        status = putString(SSFWConfig,     "mode", value ? "disabled" : "enabled");
-        status = putString(SSStreamConfig, "mode", value ? "enabled"  : "disabled");
-    }
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
@@ -496,7 +497,7 @@ void eigerDetector::controlTask (void)
     const char *functionName = "controlTask";
 
     int status = asynSuccess;
-    int outputMode, processOutput;
+    int dataSource, fwEnable, streamEnable;
     int adStatus, manualTrigger;
     int sequenceId, saveFiles, numImages, numTriggers, triggerMode;
     int numImagesPerFile, removeFiles;
@@ -509,7 +510,7 @@ void eigerDetector::controlTask (void)
         // Clear uncaught events
         mStopEvent.tryWait();
         mTriggerEvent.tryWait();
-        mDoneEvent.tryWait();
+        mPollDoneEvent.tryWait();
         mStreamEvent.tryWait();
 
         // Wait for start event
@@ -523,9 +524,10 @@ void eigerDetector::controlTask (void)
         lock();
 
         // Latch parameters
-        getIntegerParam(EigerOutputMode,     &outputMode);
+        getIntegerParam(EigerDataSource,     &dataSource);
+        getIntegerParam(EigerFWEnable,       &fwEnable);
+        getIntegerParam(EigerStreamEnable,   &streamEnable);
         getIntegerParam(EigerSaveFiles,      &saveFiles);
-        getIntegerParam(EigerProcessOutput,  &processOutput);
         getIntegerParam(EigerFWNImgsPerFile, &numImagesPerFile);
         getDoubleParam (ADAcquirePeriod,     &acquirePeriod);
         getIntegerParam(ADNumImages,         &numImages);
@@ -534,8 +536,24 @@ void eigerDetector::controlTask (void)
         getIntegerParam(EigerManualTrigger,  &manualTrigger);
         getIntegerParam(EigerFWAutoRemove,   &removeFiles);
 
+        if(dataSource == SOURCE_FILEWRITER && !fwEnable)
+        {
+            setIntegerParam(ADAcquire, 0);
+            setIntegerParam(ADStatus, ADStatusError);
+            setStringParam(ADStatusMessage, "FileWriter API is disabled");
+            continue;
+        }
+
+        if(dataSource == SOURCE_STREAM && !streamEnable)
+        {
+            setIntegerParam(ADAcquire, 0);
+            setIntegerParam(ADStatus, ADStatusError);
+            setStringParam(ADStatusMessage, "Stream API is disabled");
+            continue;
+        }
+
         // If saving files, check if the File Path is valid
-        if(processOutput && outputMode == OUTPUT_FILEWRITER && saveFiles)
+        if(fwEnable && saveFiles)
         {
             int filePathExists;
             checkPath();
@@ -587,21 +605,27 @@ void eigerDetector::controlTask (void)
             break;
         }
 
-        // Start data acquisition thread
-        if(processOutput)
+        bool waitPoll = false, waitStream = false;
+
+        // Start FileWriter thread
+        if(dataSource == SOURCE_FILEWRITER || (fwEnable && saveFiles))
         {
-            if(outputMode == OUTPUT_FILEWRITER)
-            {
-                acquisition_t acq;
-                getStringParam(EigerFWNamePattern, sizeof(acq.pattern), acq.pattern);
-                acq.sequenceId  = sequenceId;
-                acq.nDataFiles  = numDataFiles(numTriggers, numImages, numImagesPerFile);
-                acq.saveFiles   = saveFiles;
-                acq.removeFiles = removeFiles;
-                mPollQueue.send(&acq, sizeof(acq));
-            }
-            else
-                mStreamEvent.signal();
+            acquisition_t acq;
+            getStringParam(EigerFWNamePattern, sizeof(acq.pattern), acq.pattern);
+            acq.sequenceId  = sequenceId;
+            acq.nDataFiles  = numDataFiles(numTriggers, numImages, numImagesPerFile);
+            acq.saveFiles   = saveFiles;
+            acq.parseFiles  = dataSource == SOURCE_FILEWRITER;
+            acq.removeFiles = removeFiles;
+            mPollQueue.send(&acq, sizeof(acq));
+            waitPoll = true;
+        }
+
+        // Start Stream thread
+        if(dataSource == SOURCE_STREAM)
+        {
+            mStreamEvent.signal();
+            waitStream = true;
         }
 
         // Open shutter
@@ -659,12 +683,12 @@ void eigerDetector::controlTask (void)
         setStringParam(ADStatusMessage, "Waiting for files to be processed...");
         callParamCallbacks();
 
-        if(processOutput)
-        {
-            unlock();
-            mDoneEvent.wait();
-            lock();
-        }
+        unlock();
+        if(waitPoll)
+            mPollDoneEvent.wait();
+        if(waitStream)
+            mStreamDoneEvent.wait();
+        lock();
 
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusAcquire)
@@ -698,7 +722,7 @@ void eigerDetector::pollTask (void)
             bool isMaster = i == 0;
 
             files[i].save     = acquisition.saveFiles;
-            files[i].parse    = !isMaster;
+            files[i].parse    = isMaster ? false : acquisition.parseFiles;
             files[i].refCount = files[i].save + files[i].parse;
             files[i].remove   = acquisition.removeFiles;
 
@@ -750,7 +774,7 @@ void eigerDetector::pollTask (void)
 
         // All pending files were processed and reaped
         free(files);
-        mDoneEvent.signal();
+        mPollDoneEvent.signal();
     }
 }
 
@@ -917,17 +941,28 @@ void eigerDetector::streamTask (void)
     const char *functionName = "streamTask";
     for(;;)
     {
+        asynStatus status = asynSuccess;
         mStreamEvent.wait();
 
         StreamAPI api(mHostname);
 
         stream_header_t header;
-        api.getHeader(&header);
+        if(api.getHeader(&header))
+        {
+            ERR("failed to get header packet");
+            status = asynError;
+            goto end;
+        }
 
         for(;;)
         {
             stream_frame_t frame = {};
-            api.getFrame(&frame);
+            if(api.getFrame(&frame))
+            {
+                ERR("failed to get frame packet");
+                status = asynError;
+                goto end;
+            }
 
             if(frame.end)
                 break;
@@ -975,6 +1010,7 @@ void eigerDetector::streamTask (void)
             pArray->release();
         }
 
+end:
         int dropped = 0;
         mApi.getInt(SSStreamStatus, "dropped", &dropped);
 
@@ -982,7 +1018,7 @@ void eigerDetector::streamTask (void)
         setIntegerParam(EigerStreamDropped, dropped);
         unlock();
 
-        mDoneEvent.signal();
+        mStreamDoneEvent.signal();
     }
 }
 

@@ -3,11 +3,11 @@
 
 #include "restApi.h"
 
-// Output Parameters
-#define EigerOutputModeString           "OUTPUT_MODE"
-#define EigerProcessOutputString        "PROCESS_OUTPUT"
+// areaDetector NDArray data source
+#define EigerDataSourceString           "DATA_SOURCE"
 
 // FileWriter Parameters
+#define EigerFWEnableString             "FW_ENABLE"
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
 #define EigerFWNamePatternString        "NAME_PATTERN"
@@ -54,6 +54,7 @@
 #define EigerMonitorPeriodString        "MONITOR_PERIOD"
 
 // Stream API Parameters
+#define EigerStreamEnableString         "STREAM_ENABLE"
 #define EigerStreamDroppedString        "STREAM_DROPPED"
 
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
@@ -81,9 +82,9 @@ public:
     void streamTask   (void);
 
 protected:
-    int EigerOutputMode;
-    #define FIRST_EIGER_PARAM EigerOutputMode
-    int EigerProcessOutput;
+    int EigerDataSource;
+    #define FIRST_EIGER_PARAM EigerDataSource
+    int EigerFWEnable;
     int EigerFWClear;
     int EigerFWCompression;
     int EigerFWNamePattern;
@@ -116,13 +117,15 @@ protected:
     int EigerPendingFiles;
     int EigerMonitorEnable;
     int EigerMonitorPeriod;
+    int EigerStreamEnable;
     int EigerStreamDropped;
     #define LAST_EIGER_PARAM EigerStreamDropped
 
 private:
     char mHostname[512];
     RestAPI mApi;
-    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mDoneEvent;
+    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
+            mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
 
