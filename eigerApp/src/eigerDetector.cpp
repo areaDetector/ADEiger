@@ -1038,15 +1038,6 @@ asynStatus eigerDetector::initParams (void)
     status |= setStringParam (ADManufacturer, manufacturer);
     status |= setStringParam (ADModel, model);
 
-    // Get software (detector firmware) version and serial number
-    char swVersion[MAX_BUF_SIZE];
-    status |= mApi.getString(SSDetConfig, "software_version", swVersion, sizeof(swVersion));
-    status |= setStringParam(EigerSWVersion, swVersion);
-
-    char serialNumber[MAX_BUF_SIZE];
-    status |= mApi.getString(SSDetConfig, "detector_number", serialNumber, sizeof(serialNumber));
-    status |= setStringParam(EigerSerialNumber, serialNumber);
-
     // Get frame dimensions
     int maxSizeX, maxSizeY;
     status |= mApi.getInt(SSDetConfig, "x_pixels_in_detector", &maxSizeX);
@@ -1060,6 +1051,9 @@ asynStatus eigerDetector::initParams (void)
     status |= setIntegerParam(NDArraySizeY, maxSizeY);
 
     // Read all the following parameters into their respective asyn params
+    status |= getStringP(SSDetConfig, "software_version", EigerSWVersion);
+    status |= getStringP(SSDetConfig, "detector_number",  EigerSerialNumber);
+
     status |= getDoubleP(SSDetConfig, "count_time",       ADAcquireTime);
     status |= getDoubleP(SSDetConfig, "frame_time",       ADAcquirePeriod);
     status |= getIntP   (SSDetConfig, "nimages",          ADNumImages);
@@ -1078,6 +1072,17 @@ asynStatus eigerDetector::initParams (void)
             EigerFlatfield);
     status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
+
+    // Read enabled modules
+    char mode[MAX_BUF_SIZE];
+    mApi.getString(SSMonConfig, "mode", mode, sizeof(mode));
+    status |= setIntegerParam(EigerMonitorEnable, mode[0] == 'e');
+
+    mApi.getString(SSFWConfig, "mode", mode, sizeof(mode));
+    status |= setIntegerParam(EigerFWEnable, mode[0] == 'e');
+
+    mApi.getString(SSStreamConfig, "mode", mode, sizeof(mode));
+    status |= setIntegerParam(EigerStreamEnable, mode[0] == 'e');
 
     // Set some default values
     status |= setIntegerParam(NDArraySize, 0);
