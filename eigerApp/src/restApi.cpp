@@ -114,6 +114,7 @@ const char *RestAPI::sysStr [SSCount] = {
     "/monitor/api/"    API_VERSION "/images/",
     "/stream/api/"     API_VERSION "/config/",
     "/stream/api/"     API_VERSION "/status/",
+    "/system/api/"     API_VERSION "/command/",
 };
 
 const char *RestAPI::triggerModeStr [TMCount] = {
