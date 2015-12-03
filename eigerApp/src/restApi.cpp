@@ -292,16 +292,22 @@ int RestAPI::getDouble (sys_t sys, const char *param, double *value, int timeout
     return EXIT_SUCCESS;
 }
 
-int RestAPI::getBool (sys_t sys, const char *param, bool *value, int timeout)
+int RestAPI::getBinState (sys_t sys, const char *param, bool *value,
+        const char *oneState, int timeout)
 {
     char buf[MAX_BUF_SIZE];
 
     if(get(sys, param, buf, sizeof(buf), timeout))
         return EXIT_FAILURE;
 
-    *value = buf[0] == 't';
+    *value = !strcmp(buf, oneState);
 
     return EXIT_SUCCESS;
+}
+
+int RestAPI::getBool (sys_t sys, const char *param, bool *value, int timeout)
+{
+    return getBinState (sys, param, value, "true", timeout);
 }
 
 int RestAPI::putString (sys_t sys, const char *param, const char *value,

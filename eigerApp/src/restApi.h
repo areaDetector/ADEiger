@@ -92,10 +92,11 @@ public:
     int cancel     (void);
     int abort      (void);
 
-    int getString (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
-    int getInt    (sys_t sys, const char *param, int *value,              int timeout = DEFAULT_TIMEOUT);
-    int getDouble (sys_t sys, const char *param, double *value,           int timeout = DEFAULT_TIMEOUT);
-    int getBool   (sys_t sys, const char *param, bool *value,             int timeout = DEFAULT_TIMEOUT);
+    int getString   (sys_t sys, const char *param, char *value, size_t len,           int timeout = DEFAULT_TIMEOUT);
+    int getInt      (sys_t sys, const char *param, int *value,                        int timeout = DEFAULT_TIMEOUT);
+    int getDouble   (sys_t sys, const char *param, double *value,                     int timeout = DEFAULT_TIMEOUT);
+    int getBinState (sys_t sys, const char *param, bool *value, const char *oneState, int timeout = DEFAULT_TIMEOUT);
+    int getBool     (sys_t sys, const char *param, bool *value,                       int timeout = DEFAULT_TIMEOUT);
 
     int putString (sys_t sys, const char *param, const char *value, paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
     int putInt    (sys_t sys, const char *param, int value,         paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
