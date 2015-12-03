@@ -1080,15 +1080,9 @@ asynStatus eigerDetector::initParams (void)
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
 
     // Read enabled modules
-    char mode[MAX_BUF_SIZE];
-    mApi.getString(SSMonConfig, "mode", mode, sizeof(mode));
-    status |= setIntegerParam(EigerMonitorEnable, mode[0] == 'e');
-
-    mApi.getString(SSFWConfig, "mode", mode, sizeof(mode));
-    status |= setIntegerParam(EigerFWEnable, mode[0] == 'e');
-
-    mApi.getString(SSStreamConfig, "mode", mode, sizeof(mode));
-    status |= setIntegerParam(EigerStreamEnable, mode[0] == 'e');
+    status |= getBinStateP(SSMonConfig,    "mode", "enabled", EigerMonitorEnable);
+    status |= getBinStateP(SSFWConfig,     "mode", "enabled", EigerFWEnable);
+    status |= getBinStateP(SSStreamConfig, "mode", "enabled", EigerStreamEnable);
 
     // Set some default values
     status |= setIntegerParam(NDArraySize, 0);
@@ -1145,6 +1139,16 @@ asynStatus eigerDetector::getDoubleP (sys_t sys, const char *param, int dest)
     double value;
 
     status = mApi.getDouble(sys, param, &value) | setDoubleParam(dest, value);
+    return (asynStatus)status;
+}
+
+asynStatus eigerDetector::getBinStateP (sys_t sys, const char *param,
+        const char *oneState, int dest)
+{
+    int status;
+    bool value;
+
+    status = mApi.getBinState(sys, param, &value, oneState) | setIntegerParam(dest, (int)value);
     return (asynStatus)status;
 }
 
@@ -1493,50 +1497,25 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
  */
 asynStatus eigerDetector::eigerStatus (void)
 {
-    const char *functionName = "eigerStatus";
-    int status;
-    double temp = 0.0;
-    double humid = 0.0;
-    char link[4][MAX_BUF_SIZE];
-    char state[MAX_BUF_SIZE];
-    char error[MAX_BUF_SIZE];
-    double dcuBuffer;
-
     // Read state and error message
-    status  = mApi.getString(SSDetStatus, "state", state, sizeof(state));
-    status |= mApi.getString(SSDetStatus, "error", error, sizeof(error));
+    getStringP(SSDetStatus, "state", EigerState);
+    getStringP(SSDetStatus, "error", EigerError);
 
     // Read temperature and humidity
-    status |= mApi.getDouble(SSDetStatus, "board_000/th0_temp",     &temp);
-    status |= mApi.getDouble(SSDetStatus, "board_000/th0_humidity", &humid);
+    getDoubleP(SSDetStatus, "board_000/th0_temp",     EigerThTemp0);
+    getDoubleP(SSDetStatus, "board_000/th0_temp",     ADTemperatureActual);
+    getDoubleP(SSDetStatus, "board_000/th0_humidity", EigerThHumid0);
 
     // Read the status of each individual link between the head and the server
-    status |= mApi.getString(SSDetStatus, "link_0", link[0], sizeof(link[0]));
-    status |= mApi.getString(SSDetStatus, "link_1", link[1], sizeof(link[1]));
-    status |= mApi.getString(SSDetStatus, "link_2", link[2], sizeof(link[2]));
-    status |= mApi.getString(SSDetStatus, "link_3", link[3], sizeof(link[3]));
+    getBinStateP(SSDetStatus, "link_0", "up", EigerLink0);
+    getBinStateP(SSDetStatus, "link_1", "up", EigerLink1);
+    getBinStateP(SSDetStatus, "link_2", "up", EigerLink2);
+    getBinStateP(SSDetStatus, "link_3", "up", EigerLink3);
 
-    status |= mApi.getDouble(SSDetStatus, "builder/dcu_buffer_free", &dcuBuffer);
+    // Read DCU buffer free percentage
+    getDoubleP(SSDetStatus, "builder/dcu_buffer_free", EigerDCUBufFree);
 
-    if(!status)
-    {
-        setStringParam(EigerState, state);
-        setStringParam(EigerError, error);
-        setDoubleParam(ADTemperatureActual, temp);
-        setDoubleParam(EigerThTemp0,  temp);
-        setDoubleParam(EigerThHumid0, humid);
-        setIntegerParam(EigerLink0, !strcmp(link[0], "up"));
-        setIntegerParam(EigerLink1, !strcmp(link[1], "up"));
-        setIntegerParam(EigerLink2, !strcmp(link[2], "up"));
-        setIntegerParam(EigerLink3, !strcmp(link[3], "up"));
-        setDoubleParam(EigerDCUBufFree, dcuBuffer);
-
-        callParamCallbacks();
-    }
-    else
-        ERR("error updating status");
-
-    return (asynStatus)status;
+    return asynSuccess;
 }
 
 extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
@@ -1544,7 +1523,7 @@ extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
 {
     new eigerDetector(portName, serverPort, maxBuffers, maxMemory, priority,
             stackSize);
-    return(asynSuccess);
+    return asynSuccess;
 }
 
 // Code for iocsh registration

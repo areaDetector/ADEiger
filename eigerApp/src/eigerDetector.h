@@ -137,10 +137,11 @@ private:
     asynStatus initParams (void);
 
     // Wrappers to get detector parameters into asyn parameter
-    asynStatus getStringP (sys_t sys, const char *param, int dest);
-    asynStatus getIntP    (sys_t sys, const char *param, int dest);
-    asynStatus getDoubleP (sys_t sys, const char *param, int dest);
-    asynStatus getBoolP   (sys_t sys, const char *param, int dest);
+    asynStatus getStringP   (sys_t sys, const char *param, int dest);
+    asynStatus getIntP      (sys_t sys, const char *param, int dest);
+    asynStatus getDoubleP   (sys_t sys, const char *param, int dest);
+    asynStatus getBinStateP (sys_t sys, const char *param, const char *oneState, int dest);
+    asynStatus getBoolP     (sys_t sys, const char *param, int dest);
 
     // Wrappers to set parameters and catch related parameters updates
     asynStatus putString  (sys_t sys, const char *param, const char *value);
