@@ -59,6 +59,7 @@ private:
     SOCKET mSockFd;
     epicsMutex mSockMutex;
     bool mSockClosed;
+    size_t mSockRetries;
 
     int connect (void);
     int setNonBlock (bool nonBlock);

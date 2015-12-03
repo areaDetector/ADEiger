@@ -28,6 +28,7 @@
 #define DATA_HTML               "text/html"
 
 #define HTTP_PORT               80
+#define MAX_HTTP_RETRIES        1
 #define MAX_MESSAGE_SIZE        512
 #define MAX_BUF_SIZE            256
 #define MAX_JSON_TOKENS         100
@@ -45,26 +46,31 @@
 // Requests
 
 #define REQUEST_GET\
-    "GET %s%s HTTP/1.0" EOL \
+    "GET %s%s HTTP/1.1" EOL \
+    "Host: %s" EOL\
     "Content-Length: 0" EOL \
     "Accept: " DATA_NATIVE EOH
 
 #define REQUEST_GET_FILE\
-    "GET %s%s HTTP/1.0" EOL \
+    "GET %s%s HTTP/1.1" EOL \
+    "Host: %s" EOL\
     "Content-Length: 0" EOL \
     "Accept: %s" EOH
 
 #define REQUEST_PUT\
-    "PUT %s%s HTTP/1.0" EOL \
+    "PUT %s%s HTTP/1.1" EOL \
+    "Host: %s" EOL\
     "Accept-Encoding: identity" EOL\
     "Content-Type: " DATA_NATIVE EOL \
     "Content-Length: %lu" EOH
 
 #define REQUEST_HEAD\
-    "HEAD %s%s HTTP/1.0" EOH
+    "HEAD %s%s HTTP/1.1" EOL\
+    "Host: %s" EOH
 
 #define REQUEST_DELETE\
-    "DELETE %s%s HTTP/1.0" EOH
+    "DELETE %s%s HTTP/1.1" EOL\
+    "Host: %s" EOH
 
 // Structure definitions
 
@@ -159,9 +165,10 @@ int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, si
 // Public members
 
 RestAPI::RestAPI (const char *hostname) :
-    mSockFd(0), mSockMutex(), mSockClosed(true)
+    mSockFd(0), mSockMutex(), mSockClosed(true), mSockRetries(0)
 {
     strncpy(mHostname, hostname, sizeof(mHostname));
+
     memset(&mAddress, 0, sizeof(mAddress));
 
     if(hostToIPAddr(mHostname, &mAddress.sin_addr))
@@ -185,7 +192,7 @@ int RestAPI::arm (int *sequenceId)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], "arm", 0lu);
+            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname, 0lu);
 
     response_t response;
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -342,7 +349,7 @@ int RestAPI::getFileSize (const char *filename, size_t *size)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
 
     response_t response;
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -377,7 +384,7 @@ int RestAPI::waitFile (const char *filename, double timeout)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
 
     response_t response;
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -425,7 +432,7 @@ int RestAPI::deleteFile (const char *filename)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_DELETE, sysStr[SSData], filename);
+            REQUEST_DELETE, sysStr[SSData], filename, mHostname);
 
     response_t response;
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -547,8 +554,14 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
 
     if(send(mSockFd, request->data, request->actualLen, 0) < 0)
     {
-        status = EXIT_FAILURE;
-        goto end;
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR("failed to send");
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
     recvTimeout.tv_sec = timeout;
@@ -564,15 +577,25 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         goto end;
     }
 
-    if((received = recv(mSockFd, response->data, response->dataLen, 0) < 0))
+    if((received = recv(mSockFd, response->data, response->dataLen, 0) <= 0))
     {
-        status = EXIT_FAILURE;
-        goto end;
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR("failed to recv");
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
     response->actualLen = (size_t) received;
 
-    status = parseHeader(response);
+    if((status = parseHeader(response)))
+    {
+        ERR("failed to parseHeader");
+        goto end;
+    }
 
     if(response->reconnect)
     {
@@ -581,8 +604,15 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
     }
 
 end:
+    mSockRetries = 0;
     mSockMutex.unlock();
     return status;
+
+retry:
+    close(mSockFd);
+    mSockClosed = true;
+    mSockMutex.unlock();
+    return doRequest(request, response, timeout);
 }
 
 int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
@@ -595,7 +625,7 @@ int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[sys], param);
+            REQUEST_GET, sysStr[sys], param, mHostname);
 
     response_t response;
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -654,7 +684,7 @@ int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
 
     int headerLen;
     char header[MAX_BUF_SIZE];
-    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, len);
+    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, mHostname, len);
 
     request_t request;
     char requestBuf[headerLen + len];
@@ -692,14 +722,14 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     int status = EXIT_SUCCESS;
     int received;
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET_FILE, sysStr[sys], name, accept);
+            REQUEST_GET_FILE, sysStr[sys], name, mHostname, accept);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -718,23 +748,32 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
 
     if(send(mSockFd, request.data, request.actualLen, 0) < 0)
     {
-        status = EXIT_FAILURE;
-        goto end;
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR("failed to send");
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
-    received = recv(mSockFd, response.data, response.dataLen, 0);
-
-    if(received < 0)
+    if((received = recv(mSockFd, response.data, response.dataLen, 0)) <= 0)
     {
-        ERR_ARGS("[sys=%d file=%s] failed to receive first part", sys, name);
-        status = EXIT_FAILURE;
-        goto end;
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR_ARGS("[sys=%d file=%s] failed to receive first part", sys, name);
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
     if((status = parseHeader(&response)))
     {
         ERR_ARGS("[sys=%d file=%s] underlying parseResponse failed", sys, name);
-        goto markClosed;
+        goto end;
     }
 
     if(response.code != 200)
@@ -742,7 +781,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
         if(sys != SSMonImages)
             ERR_ARGS("[sys=%d file=%s] file not found", sys, name);
         status = EXIT_FAILURE;
-        goto markClosed;
+        goto end;
     }
 
     *buf = (char*)malloc(response.contentLength);
@@ -750,7 +789,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     {
         ERR_ARGS("[sys=%d file=%s] malloc(%lu) failed", sys, name, response.contentLength);
         status = EXIT_FAILURE;
-        goto markClosed;
+        goto end;
     }
 
     *bufSize = received - response.headerLen;
@@ -759,18 +798,24 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     received = recv(mSockFd, *buf + *bufSize, response.contentLength - *bufSize,
             MSG_WAITALL);
 
-    if(received < 0)
+    if(received <= 0)
     {
-        ERR_ARGS("[sys=%d file=%s] failed to receive second part", sys, name);
-        status = EXIT_FAILURE;
         free(*buf);
         *buf = NULL;
         *bufSize = 0;
+
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR_ARGS("[sys=%d file=%s] failed to receive second part", sys, name);
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
     *bufSize = response.contentLength;
 
-markClosed:
     if(response.reconnect)
     {
         close(mSockFd);
@@ -778,8 +823,16 @@ markClosed:
     }
 
 end:
+    mSockRetries = 0;
     mSockMutex.unlock();
     return status;
+
+retry:
+    close(mSockFd);
+    mSockClosed = true;
+    mSockMutex.unlock();
+    return getBlob(sys, name, buf, bufSize, accept);
+
 }
 
 int RestAPI::parseHeader (response_t *response)
@@ -808,6 +861,7 @@ int RestAPI::parseHeader (response_t *response)
 
         if(!colon)
             return EXIT_FAILURE;
+
         *colon = '\0';
 
         if(!strcasecmp(key, "content-length"))
