@@ -37,7 +37,7 @@
 #define DEFAULT_TIMEOUT_ARM     55
 #define DEFAULT_TIMEOUT_CONNECT 1
 
-#define ERR_PREFIX  "EigerApi"
+#define ERR_PREFIX  "RestApi"
 #define ERR(msg) fprintf(stderr, ERR_PREFIX "::%s: %s\n", functionName, msg)
 
 #define ERR_ARGS(fmt,...) fprintf(stderr, ERR_PREFIX "::%s: " fmt "\n", \
