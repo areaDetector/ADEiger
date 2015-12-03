@@ -1,7 +1,9 @@
 file "ADBase_settings.req", P=$(P), R=$(R)
 file "NDFile_settings.req", P=$(P), R=$(R)
-$(P)$(R)OutputMode
-$(P)$(R)ProcessOutput
+$(P)$(R)DataSource
+$(P)$(R)FWEnable
+$(P)$(R)MonitorEnable
+$(P)$(R)StreamEnable
 $(P)$(R)NumTriggers
 $(P)$(R)ManualTrigger
 $(P)$(R)TriggerExposure
@@ -16,5 +18,4 @@ $(P)$(R)ThresholdEnergy
 $(P)$(R)DetDist
 $(P)$(R)BeamX
 $(P)$(R)BeamY
-$(P)$(R)MonitorEnable
 $(P)$(R)MonitorPeriod
