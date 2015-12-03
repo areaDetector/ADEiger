@@ -165,7 +165,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mSaveQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *))
 {
-
     const char *functionName = "eigerDetector";
 
     strncpy(mHostname, serverHostname, sizeof(mHostname));
@@ -1078,7 +1077,6 @@ asynStatus eigerDetector::initParams (void)
     status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
     status |= getBoolP  (SSDetConfig, "flatfield_correction_applied",
             EigerFlatfield);
-    status |= getDoubleP(SSDetConfig, "threshold_energy",  EigerThreshold);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
 
     // Read enabled modules
