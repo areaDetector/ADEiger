@@ -1,3 +1,5 @@
+#!../../bin/linux-x86_64/eigerDetectorApp
+
 < envPaths
 errlogInit(20000)
 
