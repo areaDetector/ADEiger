@@ -505,18 +505,12 @@ void eigerDetector::controlTask (void)
     int adStatus, manualTrigger;
     int sequenceId, saveFiles, numImages, numTriggers, triggerMode;
     int numImagesPerFile, removeFiles;
-    double acquirePeriod, triggerTimeout = 0.0, triggerExposure;
+    double acquirePeriod, triggerTimeout = 0.0, triggerExposure = 0.0;
 
     lock();
 
     for(;;)
     {
-        // Clear uncaught events
-        mStopEvent.tryWait();
-        mTriggerEvent.tryWait();
-        mPollDoneEvent.tryWait();
-        mStreamEvent.tryWait();
-
         // Wait for start event
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusIdle)
@@ -526,6 +520,12 @@ void eigerDetector::controlTask (void)
         unlock();
         mStartEvent.wait();
         lock();
+
+        // Clear uncaught events
+        mStopEvent.tryWait();
+        mTriggerEvent.tryWait();
+        mPollDoneEvent.tryWait();
+        mStreamEvent.tryWait();
 
         // Latch parameters
         getIntegerParam(EigerDataSource,     &dataSource);
@@ -657,8 +657,11 @@ void eigerDetector::controlTask (void)
                     doTrigger = mTriggerEvent.wait(0.1);
                     lock();
 
-                    getDoubleParam(EigerTriggerExp, &triggerExposure);
-                    triggerTimeout = triggerExposure + 1.0;
+                    if(triggerMode == TMInternalEnable)
+                    {
+                        getDoubleParam(EigerTriggerExp, &triggerExposure);
+                        triggerTimeout = triggerExposure + 1.0;
+                    }
                 }
 
                 if(doTrigger)
