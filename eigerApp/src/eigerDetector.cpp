@@ -1092,7 +1092,6 @@ asynStatus eigerDetector::initParams (void)
     status |= setIntegerParam(NDDataType,  NDUInt32);
     status |= setIntegerParam(ADImageMode, ADImageMultiple);
     status |= setIntegerParam(EigerArmed,  0);
-    status |= setIntegerParam(EigerSaveFiles, 1);
     status |= setIntegerParam(EigerSequenceId, 0);
     status |= setIntegerParam(EigerPendingFiles, 0);
     status |= setIntegerParam(EigerMonitorEnable, 0);
