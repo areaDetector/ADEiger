@@ -848,6 +848,9 @@ int RestAPI::parseHeader (response_t *response)
     char *data = response->data;
     char *eol;
 
+    response->contentLength = 0;
+    response->reconnect = false;
+
     scanned = sscanf(data, "%*s %d", &response->code);
     if(scanned != 1)
         return EXIT_FAILURE;
