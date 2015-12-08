@@ -188,14 +188,14 @@ int RestAPI::arm (int *sequenceId)
 {
     const char *functionName = "arm";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
             REQUEST_PUT, sysStr[SSCommand], "arm", mHostname, 0lu);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -351,14 +351,14 @@ int RestAPI::getFileSize (const char *filename, size_t *size)
 {
     const char *functionName = "getFileSize";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
             REQUEST_HEAD, sysStr[SSData], filename, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -386,14 +386,14 @@ int RestAPI::waitFile (const char *filename, double timeout)
 
     epicsTimeStamp start, now;
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
             REQUEST_HEAD, sysStr[SSData], filename, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -434,14 +434,14 @@ int RestAPI::deleteFile (const char *filename)
 {
     const char *functionName = "deleteFile";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
             REQUEST_DELETE, sysStr[SSData], filename, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -627,14 +627,14 @@ int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
 {
     const char *functionName = "get";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
             REQUEST_GET, sysStr[sys], param, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -693,13 +693,13 @@ int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
     char header[MAX_BUF_SIZE];
     headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, mHostname, len);
 
-    request_t request;
+    request_t request = {};
     char requestBuf[headerLen + len];
     request.data      = requestBuf;
     request.dataLen   = headerLen + len;
     request.actualLen = request.dataLen;
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
