@@ -4,7 +4,7 @@
 #include <epicsMutex.h>
 #include <osiSock.h>
 
-#define DEFAULT_TIMEOUT     10      // seconds
+#define DEFAULT_TIMEOUT     20      // seconds
 
 #define MAX_HOSTNAME        256
 #define MAX_CHANGED_PARAMS  32
