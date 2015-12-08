@@ -393,7 +393,6 @@ record(ao, "$(P)$(R)Wavelength")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
     field(PREC, "4")
-    field(VAL,  "1.54")
     field(EGU,  "Angstroms")
 }
 
@@ -403,7 +402,6 @@ record(ao, "$(P)$(R)DetDist")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DET_DIST")
     field(PREC, "3")
-    field(VAL,  "1000")
     field(EGU,  "m")
 }
 
@@ -413,7 +411,6 @@ record(ao, "$(P)$(R)BeamX")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BEAM_X")
     field(PREC, "3")
-    field(VAL,  "0")
     field(EGU,  "pixels")
 }
 
@@ -423,7 +420,6 @@ record(ao, "$(P)$(R)BeamY")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BEAM_Y")
     field(PREC, "3")
-    field(VAL,  "0")
     field(EGU,  "pixels")
 }
 
