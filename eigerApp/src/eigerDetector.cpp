@@ -676,7 +676,11 @@ void eigerDetector::controlTask (void)
             }
         }
         else // triggerMode == TMExternalSeries || triggerMode == TMExternalEnable
+        {
+            unlock();
             mStopEvent.wait();
+            lock();
+        }
 
         // Close shutter
         setShutter(0);
