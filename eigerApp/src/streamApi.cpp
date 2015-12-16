@@ -89,6 +89,23 @@ static int readToken (struct json_token *tokens, const char *name, size_t *value
     return STREAM_SUCCESS;
 }
 
+int StreamAPI::poll (int timeout)
+{
+    const char *functionName = "poll";
+    zmq_pollitem_t item = {};
+    item.socket = mSock;
+    item.events = ZMQ_POLLIN;
+
+    int rc = zmq_poll(&item, 1, timeout*1000);
+    if(rc < 0)
+    {
+        ERR("failed to poll socket");
+        return STREAM_ERROR;
+    }
+
+    return rc ? STREAM_SUCCESS : STREAM_TIMEOUT;
+}
+
 StreamAPI::StreamAPI (const char *hostname) : mHostname(epicsStrDup(hostname))
 {
     if(!(mCtx = zmq_ctx_new()))
@@ -113,10 +130,13 @@ StreamAPI::~StreamAPI (void)
     free(mHostname);
 }
 
-int StreamAPI::getHeader (stream_header_t *header)
+int StreamAPI::getHeader (stream_header_t *header, int timeout)
 {
     const char *functionName = "getHeader";
     int err = STREAM_SUCCESS;
+
+    if(timeout && (err = poll(timeout)))
+        return err;
 
     zmq_msg_t header_msg;
     zmq_msg_init(&header_msg);
@@ -144,10 +164,13 @@ exit:
     return err;
 }
 
-int StreamAPI::getFrame (stream_frame_t *frame)
+int StreamAPI::getFrame (stream_frame_t *frame, int timeout)
 {
     const char *functionName = "getImage";
     int err = STREAM_SUCCESS;
+
+    if(timeout && (err = poll(timeout)))
+        return err;
 
     zmq_msg_t header, shape, timestamp;
 

@@ -34,11 +34,13 @@ private:
     char *mHostname;
     void *mCtx, *mSock;
 
+    int poll       (int timeout);   // timeout in seconds
+
 public:
     StreamAPI      (const char *hostname);
     ~StreamAPI     (void);
-    int getHeader  (stream_header_t *header);
-    int getFrame   (stream_frame_t  *frame);
+    int getHeader  (stream_header_t *header, int timeout = 0);
+    int getFrame   (stream_frame_t  *frame,  int timeout = 0);
 
     static int uncompress (stream_frame_t *frame, char *data = NULL);
 
