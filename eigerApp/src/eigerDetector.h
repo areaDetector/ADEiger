@@ -132,6 +132,7 @@ private:
             mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
+    bool mPollComplete, mStreamComplete;
 
     // Read all parameters from detector and set some default values
     asynStatus initParams (void);
@@ -156,6 +157,9 @@ private:
 
     // Read some detector status parameters
     asynStatus eigerStatus (void);
+
+    // Helper that returns ADStatus == ADStatusAcquire
+    bool acquiring (void);
 };
 
 #define NUM_EIGER_PARAMS ((int)(&LAST_EIGER_PARAM - &FIRST_EIGER_PARAM + 1))

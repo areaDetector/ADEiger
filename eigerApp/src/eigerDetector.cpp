@@ -527,6 +527,10 @@ void eigerDetector::controlTask (void)
         mPollDoneEvent.tryWait();
         mStreamEvent.tryWait();
 
+        // Mark poll and stream tasks as not complete
+        mPollComplete   = false;
+        mStreamComplete = false;
+
         // Latch parameters
         getIntegerParam(EigerDataSource,     &dataSource);
         getIntegerParam(EigerFWEnable,       &fwEnable);
@@ -687,24 +691,33 @@ void eigerDetector::controlTask (void)
         // Close shutter
         setShutter(0);
 
-        // All triggers issued, disarm the detector and wait for pollTask
+        // All triggers issued, disarm the detector
         unlock();
         status = api.disarm();
         lock();
 
+        // Wait for tasks completion
         setIntegerParam(EigerArmed, 0);
         setStringParam(ADStatusMessage, "Waiting for files to be processed...");
         callParamCallbacks();
 
+        bool success = true;
         unlock();
         if(waitPoll)
+        {
             mPollDoneEvent.wait();
+            success = success && mPollComplete;
+        }
+
         if(waitStream)
+        {
             mStreamDoneEvent.wait();
+            success = success && mStreamComplete;
+        }
         lock();
 
         getIntegerParam(ADStatus, &adStatus);
-        if(adStatus == ADStatusAcquire)
+        if(adStatus == ADStatusAcquire || (adStatus == ADStatusAborted && success))
             setIntegerParam(ADStatus, ADStatusIdle);
         else if(adStatus == ADStatusAborted)
             setStringParam(ADStatusMessage, "Acquisition aborted");
@@ -786,6 +799,7 @@ void eigerDetector::pollTask (void)
 
         // All pending files were processed and reaped
         free(files);
+        mPollComplete = i == totalFiles;
         mPollDoneEvent.signal();
     }
 }
@@ -989,7 +1003,10 @@ void eigerDetector::streamTask (void)
             }
 
             if(frame.end)
+            {
+                mStreamComplete = true;
                 break;
+            }
 
             NDArray *pArray;
             size_t *dims = frame.shape;
