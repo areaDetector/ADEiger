@@ -260,23 +260,6 @@ closeHeader:
     return err;
 }
 
-int StreamAPI::getMessage (void)
-{
-    zmq_msg_t msg;
-    zmq_msg_init(&msg);
-    zmq_msg_recv(&msg, mSock, 0);
-    size_t len = zmq_msg_size(&msg);
-
-    printf("MESSAGE [len=%lu]\n", len);
-    if(len < 3000)
-        printf("%.*s\n", (int)len, (const char *)zmq_msg_data(&msg));
-    else
-        printf("BLOB\n");
-
-    zmq_msg_close(&msg);
-    return EXIT_SUCCESS;
-}
-
 int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
 {
     const char *functionName = "uncompress";

@@ -27,13 +27,11 @@ private:
     char *mHostname;
     void *mCtx, *mSock;
 
-
 public:
     StreamAPI      (const char *hostname);
     ~StreamAPI     (void);
     int getHeader  (stream_header_t *header);
     int getFrame   (stream_frame_t  *frame);
-    int getMessage (void);
 
     static int uncompress (stream_frame_t *frame, char *data = NULL);
 
