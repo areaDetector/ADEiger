@@ -635,9 +635,6 @@ void eigerDetector::controlTask (void)
             waitStream = true;
         }
 
-        // Open shutter
-        setShutter(1);
-
         // Trigger
         if(triggerMode == TMExternalSeries || triggerMode == TMExternalEnable)
             setStringParam(ADStatusMessage, "Waiting for external triggers (press Stop when done)");
@@ -671,10 +668,13 @@ void eigerDetector::controlTask (void)
 
                 if(doTrigger)
                 {
+                    setShutter(1);
                     unlock();
                     status = api.trigger(triggerTimeout, triggerExposure);
                     lock();
+                    setShutter(0);
                     ++triggers;
+
                 }
 
                 getIntegerParam(ADStatus, &adStatus);
@@ -686,9 +686,6 @@ void eigerDetector::controlTask (void)
             mStopEvent.wait();
             lock();
         }
-
-        // Close shutter
-        setShutter(0);
 
         // All triggers issued, disarm the detector
         unlock();
