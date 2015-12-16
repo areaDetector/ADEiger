@@ -527,10 +527,6 @@ void eigerDetector::controlTask (void)
         mPollDoneEvent.tryWait();
         mStreamEvent.tryWait();
 
-        // Mark poll and stream tasks as not complete
-        mPollComplete   = false;
-        mStreamComplete = false;
-
         // Latch parameters
         getIntegerParam(EigerDataSource,     &dataSource);
         getIntegerParam(EigerFWEnable,       &fwEnable);
@@ -625,6 +621,8 @@ void eigerDetector::controlTask (void)
             acq.saveFiles   = saveFiles;
             acq.parseFiles  = dataSource == SOURCE_FILEWRITER;
             acq.removeFiles = removeFiles;
+
+            mPollComplete = false;
             mPollQueue.send(&acq, sizeof(acq));
             waitPoll = true;
         }
@@ -632,6 +630,7 @@ void eigerDetector::controlTask (void)
         // Start Stream thread
         if(dataSource == SOURCE_STREAM)
         {
+            mStreamComplete = false;
             mStreamEvent.signal();
             waitStream = true;
         }
