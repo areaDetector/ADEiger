@@ -239,6 +239,16 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
             return;
         }
 
+        int sequenceId;
+        if(mApi.arm(&sequenceId))
+        {
+            ERR("Failed to arm the detector for the first time");
+            return;
+        }
+        setIntegerParam(EigerSequenceId, sequenceId);
+
+        mApi.disarm();
+
         FLOW("Eiger initialized");
     }
 
