@@ -718,7 +718,7 @@ void eigerDetector::pollTask (void)
 {
     RestAPI api(mHostname);
     acquisition_t acquisition;
-    int adStatus, pendingFiles;
+    int pendingFiles;
     size_t totalFiles, i;
     file_t *files;
 
@@ -750,7 +750,7 @@ void eigerDetector::pollTask (void)
 
         // While acquiring, wait and download every file on the list
         i = 0;
-        do
+        while(i < totalFiles)
         {
             file_t *curFile = &files[i];
 
@@ -770,10 +770,9 @@ void eigerDetector::pollTask (void)
                 ++i;
             }
 
-            lock();
-            getIntegerParam(ADStatus, &adStatus);
-            unlock();
-        }while(adStatus == ADStatusAcquire && i < totalFiles);
+            if(!acquiring())
+                break;
+        }
 
         // Not acquiring anymore, wait for all pending files to be reaped
         do
@@ -960,20 +959,33 @@ void eigerDetector::streamTask (void)
 
         StreamAPI api(mHostname);
 
-        stream_header_t header;
-        if(api.getHeader(&header))
+        int err;
+        stream_header_t header = {};
+        while((err = api.getHeader(&header, 1)))
         {
-            ERR("failed to get header packet");
-            goto end;
+            if(err == STREAM_ERROR)
+            {
+                ERR("failed to get header packet");
+                goto end;
+            }
+
+            if(!acquiring())
+                goto end;
         }
 
         for(;;)
         {
             stream_frame_t frame = {};
-            if(api.getFrame(&frame))
+            while((err = api.getFrame(&frame, 1)))
             {
-                ERR("failed to get frame packet");
-                goto end;
+                if(err == STREAM_ERROR)
+                {
+                    ERR("failed to get frame packet");
+                    goto end;
+                }
+
+                if(!acquiring())
+                    goto end;
             }
 
             if(frame.end)
@@ -1521,6 +1533,15 @@ asynStatus eigerDetector::eigerStatus (void)
     getDoubleP(SSDetStatus, "builder/dcu_buffer_free", EigerDCUBufFree);
 
     return asynSuccess;
+}
+
+bool eigerDetector::acquiring (void)
+{
+    int adStatus;
+    lock();
+    getIntegerParam(ADStatus, &adStatus);
+    unlock();
+    return adStatus == ADStatusAcquire;
 }
 
 extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
