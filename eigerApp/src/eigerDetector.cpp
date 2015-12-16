@@ -636,8 +636,10 @@ void eigerDetector::controlTask (void)
         setShutter(1);
 
         // Trigger
-        if(manualTrigger)
-            setStringParam(ADStatusMessage, "Waiting for triggers...");
+        if(triggerMode == TMExternalSeries || triggerMode == TMExternalEnable)
+            setStringParam(ADStatusMessage, "Waiting for external triggers (press Stop when done)");
+        else if(manualTrigger)
+            setStringParam(ADStatusMessage, "Waiting for manual triggers...");
         else
             setStringParam(ADStatusMessage, "Triggering...");
         callParamCallbacks();
@@ -675,7 +677,7 @@ void eigerDetector::controlTask (void)
                 getIntegerParam(ADStatus, &adStatus);
             }
         }
-        else // triggerMode == TMExternalSeries || triggerMode == TMExternalEnable
+        else // TMExternalSeries or TMExternalEnable
         {
             unlock();
             mStopEvent.wait();
