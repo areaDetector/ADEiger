@@ -956,7 +956,6 @@ void eigerDetector::streamTask (void)
     const char *functionName = "streamTask";
     for(;;)
     {
-        asynStatus status = asynSuccess;
         mStreamEvent.wait();
 
         StreamAPI api(mHostname);
@@ -965,7 +964,6 @@ void eigerDetector::streamTask (void)
         if(api.getHeader(&header))
         {
             ERR("failed to get header packet");
-            status = asynError;
             goto end;
         }
 
@@ -975,7 +973,6 @@ void eigerDetector::streamTask (void)
             if(api.getFrame(&frame))
             {
                 ERR("failed to get frame packet");
-                status = asynError;
                 goto end;
             }
 
