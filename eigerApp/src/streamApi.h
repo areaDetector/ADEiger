@@ -3,6 +3,13 @@
 
 #include <stdlib.h>
 
+enum stream_err
+{
+    STREAM_SUCCESS,
+    STREAM_TIMEOUT,
+    STREAM_ERROR,
+};
+
 typedef struct
 {
     size_t series;

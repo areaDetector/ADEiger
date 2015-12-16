@@ -26,16 +26,16 @@ static int readToken (struct json_token *tokens, const char *name, size_t *value
     if(!t)
     {
         ERR_ARGS("unable to find '%s' token", name);
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
     if(sscanf(t->ptr, "%lu", value) != 1)
     {
         ERR_ARGS("unable to parse '%s' token", name);
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
-    return EXIT_SUCCESS;
+    return STREAM_SUCCESS;
 }
 
 static int readToken (struct json_token *tokens, const char *name, char *value, size_t size)
@@ -46,18 +46,18 @@ static int readToken (struct json_token *tokens, const char *name, char *value, 
     if(!t)
     {
         ERR_ARGS("unable to find '%s' token", name);
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
     if(size < (size_t)t->len)
     {
         ERR_ARGS("destination buffer for '%s' not big enough", name);
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
     memcpy(value, t->ptr, t->len);
 
-    return EXIT_SUCCESS;
+    return STREAM_SUCCESS;
 }
 
 static int readToken (struct json_token *tokens, const char *name, size_t *values, size_t size)
@@ -68,13 +68,13 @@ static int readToken (struct json_token *tokens, const char *name, size_t *value
     if(!t)
     {
         ERR_ARGS("unable to find '%s' token", name);
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
     if(size < (size_t)t->num_desc)
     {
         ERR_ARGS("destination buffer for '%s' not big enough", name);
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
     for(size_t i = 0; i < (size_t)t->num_desc; ++i)
@@ -82,11 +82,11 @@ static int readToken (struct json_token *tokens, const char *name, size_t *value
         if(sscanf((t+i+1)->ptr, "%lu", values+i) != 1)
         {
             ERR_ARGS("unable to parse '%s[%lu]' token", name, i);
-            return EXIT_FAILURE;
+            return STREAM_ERROR;
         }
     }
 
-    return EXIT_SUCCESS;
+    return STREAM_SUCCESS;
 }
 
 StreamAPI::StreamAPI (const char *hostname) : mHostname(epicsStrDup(hostname))
@@ -116,7 +116,7 @@ StreamAPI::~StreamAPI (void)
 int StreamAPI::getHeader (stream_header_t *header)
 {
     const char *functionName = "getHeader";
-    int err = EXIT_SUCCESS;
+    int err = STREAM_SUCCESS;
 
     zmq_msg_t header_msg;
     zmq_msg_init(&header_msg);
@@ -132,7 +132,7 @@ int StreamAPI::getHeader (stream_header_t *header)
         if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
         {
             ERR("failed to parse JSON");
-            err = EXIT_FAILURE;
+            err = STREAM_ERROR;
             goto exit;
         }
 
@@ -147,7 +147,7 @@ exit:
 int StreamAPI::getFrame (stream_frame_t *frame)
 {
     const char *functionName = "getImage";
-    int err = EXIT_SUCCESS;
+    int err = STREAM_SUCCESS;
 
     zmq_msg_t header, shape, timestamp;
 
@@ -164,7 +164,7 @@ int StreamAPI::getFrame (stream_frame_t *frame)
         if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
         {
             ERR("failed to parse image header JSON");
-            err = EXIT_FAILURE;
+            err = STREAM_ERROR;
             goto closeHeader;
         }
 
@@ -202,7 +202,7 @@ int StreamAPI::getFrame (stream_frame_t *frame)
         if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
         {
             ERR("failed to parse image shape JSON");
-            err = EXIT_FAILURE;
+            err = STREAM_ERROR;
             goto closeShape;
         }
 
@@ -236,7 +236,7 @@ int StreamAPI::getFrame (stream_frame_t *frame)
         if(!frame->data)
         {
             ERR("failed to allocate data");
-            err = EXIT_FAILURE;
+            err = STREAM_ERROR;
             goto closeShape;
         }
     }
@@ -267,8 +267,8 @@ int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
     if(LZ4_decompress_fast((const char *)frame->data, dest, (int)frame->uncompressedSize) <0)
     {
         ERR("LZ4_decompress failed");
-        return EXIT_FAILURE;
+        return STREAM_ERROR;
     }
 
-    return EXIT_SUCCESS;
+    return STREAM_SUCCESS;
 }
