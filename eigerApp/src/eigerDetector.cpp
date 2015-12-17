@@ -84,11 +84,6 @@ typedef struct
 
 static const char *driverName = "eigerDetector";
 
-static inline size_t numDataFiles (int nTriggers, int nImages, int nImagesPerFile)
-{
-    return (size_t) ceil(((double)(nImages*nTriggers))/((double)nImagesPerFile));
-}
-
 static void controlTaskC (void *drvPvt)
 {
     ((eigerDetector *)drvPvt)->controlTask();
@@ -519,6 +514,7 @@ void eigerDetector::controlTask (void)
     int sequenceId, saveFiles, numImages, numTriggers, triggerMode;
     int numImagesPerFile, removeFiles;
     double acquirePeriod, triggerTimeout = 0.0, triggerExposure = 0.0;
+    int savedNumImages;
 
     lock();
 
@@ -586,6 +582,13 @@ void eigerDetector::controlTask (void)
             }
         }
 
+        savedNumImages = numImages;
+        if(triggerMode == TMInternalEnable || triggerMode == TMExternalEnable)
+        {
+            numImages = 1;
+            putInt(SSDetConfig, "nimages", numImages);
+        }
+
         // Arm the detector
         setStringParam(ADStatusMessage, "Arming...");
         callParamCallbacks();
@@ -610,18 +613,6 @@ void eigerDetector::controlTask (void)
         setIntegerParam(EigerArmed, 1);
         callParamCallbacks();
 
-        switch(triggerMode)
-        {
-        case TMInternalSeries:
-            triggerTimeout = acquirePeriod*numImages + 10.0;
-            break;
-
-        case TMInternalEnable:
-        case TMExternalEnable:
-            numImages = 1;
-            break;
-        }
-
         bool waitPoll = false, waitStream = false;
 
         // Start FileWriter thread
@@ -630,7 +621,7 @@ void eigerDetector::controlTask (void)
             acquisition_t acq;
             getStringParam(EigerFWNamePattern, sizeof(acq.pattern), acq.pattern);
             acq.sequenceId  = sequenceId;
-            acq.nDataFiles  = numDataFiles(numTriggers, numImages, numImagesPerFile);
+            acq.nDataFiles  = ceil(((double)(numImages*numTriggers))/((double)numImagesPerFile));
             acq.saveFiles   = saveFiles;
             acq.parseFiles  = dataSource == SOURCE_FILEWRITER;
             acq.removeFiles = removeFiles;
@@ -659,6 +650,12 @@ void eigerDetector::controlTask (void)
 
         if(triggerMode == TMInternalSeries || triggerMode == TMInternalEnable)
         {
+            if(triggerMode == TMInternalSeries)
+            {
+                triggerTimeout  = acquirePeriod*numImages + 10.0;
+                triggerExposure = 0.0;
+            }
+
             getIntegerParam(ADStatus, &adStatus);
 
             int triggers = 0;
@@ -671,12 +668,13 @@ void eigerDetector::controlTask (void)
                     unlock();
                     doTrigger = mTriggerEvent.wait(0.1);
                     lock();
+                }
 
-                    if(triggerMode == TMInternalEnable)
-                    {
-                        getDoubleParam(EigerTriggerExp, &triggerExposure);
-                        triggerTimeout = triggerExposure + 1.0;
-                    }
+                // triggerExposure might have changed
+                if(triggerMode == TMInternalEnable)
+                {
+                    getDoubleParam(EigerTriggerExp, &triggerExposure);
+                    triggerTimeout = triggerExposure + 1.0;
                 }
 
                 if(doTrigger)
@@ -724,6 +722,9 @@ void eigerDetector::controlTask (void)
             success = success && mStreamComplete;
         }
         lock();
+
+        if(savedNumImages != numImages)
+            putInt(SSDetConfig, "nimages", savedNumImages);
 
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusAcquire || (adStatus == ADStatusAborted && success))
