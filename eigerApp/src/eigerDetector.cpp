@@ -407,11 +407,26 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
     else if (function == EigerDetDist)
         status = putDouble(SSDetConfig, "detector_distance", value);
     else if (function == EigerPhotonEnergy)
+    {
+        setStringParam(ADStatusMessage, "Setting Photon Energy...");
+        callParamCallbacks();
         status = putDouble(SSDetConfig, "photon_energy", value);
+        setStringParam(ADStatusMessage, "Photon Energy set");
+    }
     else if (function == EigerThreshold)
+    {
+        setStringParam(ADStatusMessage, "Setting Threshold Energy...");
+        callParamCallbacks();
         status = putDouble(SSDetConfig, "threshold_energy", value);
+        setStringParam(ADStatusMessage, "Threshold Energy set");
+    }
     else if (function == EigerWavelength)
+    {
+        setStringParam(ADStatusMessage, "Setting Wavelength...");
+        callParamCallbacks();
         status = putDouble(SSDetConfig, "wavelength", value);
+        setStringParam(ADStatusMessage, "Wavelength set");
+    }
     else if (function == ADAcquireTime)
         status = putDouble(SSDetConfig, "count_time", value);
     else if (function == ADAcquirePeriod)
