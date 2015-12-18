@@ -2,7 +2,8 @@
 # Run "gnumake clean uninstall install" in the application
 # top directory each time this file is changed.
 
-AREADETECTOR=/Users/diego/epics/areaDetector
+AREADETECTOR=/home/bmartins/workspace/areaDetector
 
 -include $(AREADETECTOR)/configure/RELEASE_PATHS.local
 -include $(AREADETECTOR)/configure/RELEASE_PRODS.local
+-include $(AREADETECTOR)/configure/RELEASE_LIBS.local
