@@ -2914,8 +2914,8 @@ $(pv_value)</tooltip>
     <background_color>
       <color red="255" green="255" blue="255" />
     </background_color>
-    <width>500</width>
-    <x>300</x>
+    <width>1088</width>
+    <x>0</x>
     <name>Label_3</name>
     <y>5</y>
     <foreground_color>
