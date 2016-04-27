@@ -1,10 +1,10 @@
-#ifndef EIGER_API_H
-#define EIGER_API_H
+#ifndef REST_API_H
+#define REST_API_H
 
 #include <epicsMutex.h>
 #include <osiSock.h>
 
-#define DEFAULT_TIMEOUT     10      // seconds
+#define DEFAULT_TIMEOUT     20      // seconds
 
 #define MAX_HOSTNAME        256
 #define MAX_CHANGED_PARAMS  32
@@ -20,6 +20,12 @@ typedef enum
     SSFWStatus,
     SSCommand,
     SSData,
+    SSMonConfig,
+    SSMonStatus,
+    SSMonImages,
+    SSStreamConfig,
+    SSStreamStatus,
+    SSSysCommand,
 
     SSCount,
 } sys_t;
@@ -46,7 +52,7 @@ typedef struct request  request_t;
 typedef struct response response_t;
 typedef struct socket   socket_t;
 
-class Eiger
+class RestAPI
 {
 private:
     char mHostname[MAX_HOSTNAME];
@@ -54,6 +60,7 @@ private:
     SOCKET mSockFd;
     epicsMutex mSockMutex;
     bool mSockClosed;
+    size_t mSockRetries;
 
     int connect (void);
     int setNonBlock (bool nonBlock);
@@ -61,6 +68,8 @@ private:
     int doRequest (const request_t *request, response_t *response, int timeout = DEFAULT_TIMEOUT);
     int get (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
     int put (sys_t sys, const char *param, const char *value, size_t len, paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
+
+    int getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize, const char *accept);
 
     int parseHeader     (response_t *response);
     int parseParamList  (const response_t *response, paramList_t *paramList);
@@ -75,7 +84,7 @@ public:
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
-    Eiger (const char *hostname);
+    RestAPI (const char *hostname);
 
     int initialize (void);
     int arm        (int *sequenceId);
@@ -84,10 +93,11 @@ public:
     int cancel     (void);
     int abort      (void);
 
-    int getString (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
-    int getInt    (sys_t sys, const char *param, int *value,              int timeout = DEFAULT_TIMEOUT);
-    int getDouble (sys_t sys, const char *param, double *value,           int timeout = DEFAULT_TIMEOUT);
-    int getBool   (sys_t sys, const char *param, bool *value,             int timeout = DEFAULT_TIMEOUT);
+    int getString   (sys_t sys, const char *param, char *value, size_t len,           int timeout = DEFAULT_TIMEOUT);
+    int getInt      (sys_t sys, const char *param, int *value,                        int timeout = DEFAULT_TIMEOUT);
+    int getDouble   (sys_t sys, const char *param, double *value,                     int timeout = DEFAULT_TIMEOUT);
+    int getBinState (sys_t sys, const char *param, bool *value, const char *oneState, int timeout = DEFAULT_TIMEOUT);
+    int getBool     (sys_t sys, const char *param, bool *value,                       int timeout = DEFAULT_TIMEOUT);
 
     int putString (sys_t sys, const char *param, const char *value, paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
     int putInt    (sys_t sys, const char *param, int value,         paramList_t *paramList, int timeout = DEFAULT_TIMEOUT);
@@ -97,6 +107,9 @@ public:
     int getFileSize (const char *filename, size_t *size);
     int waitFile    (const char *filename, double timeout = DEFAULT_TIMEOUT);
     int getFile     (const char *filename, char **buf, size_t *bufSize);
+    int deleteFile  (const char *filename);
+
+    int getMonitorImage  (char **buf, size_t *bufSize);
 };
 
 #endif

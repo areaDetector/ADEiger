@@ -10,9 +10,21 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-0
+----
+
+Depends on Eiger firmware 1.5.0+
+
+* Added support for auto removing files on detector disk
+* Added support for ZeroMQ streaming interface.
+* Added support for Monitor interface.
+* Added macro prefix to paths to other areaDetector screens on OPI.
+* Added parameters to track FileWriter disk usage and DCU buffer usage.
+* Several fixes and improvements.
+
 R1-0
 ----
-* Support all trigger modes: INTS, INTE, EXTS and EXTE.
+* Supports all trigger modes: INTS, INTE, EXTS and EXTE.
 * Redesigned with a multithreaded architecture:
  - Downloading, saving to disk and parsing HDF5 files all occur in parallel.
 * Faster file download.

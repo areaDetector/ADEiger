@@ -1,13 +1,19 @@
 #ifndef EIGER_DETECTOR_H
 #define EIGER_DETECTOR_H
 
-#include "eigerApi.h"
+#include "restApi.h"
+
+// areaDetector NDArray data source
+#define EigerDataSourceString           "DATA_SOURCE"
 
 // FileWriter Parameters
+#define EigerFWEnableString             "FW_ENABLE"
 #define EigerFWClearString              "CLEAR"
 #define EigerFWCompressionString        "COMPRESSION"
 #define EigerFWNamePatternString        "NAME_PATTERN"
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
+#define EigerFWAutoRemoveString         "AUTO_REMOVE"
+#define EigerFWFreeString               "FW_FREE"
 
 // Acquisition Metadata Parameters
 #define EigerBeamXString                "BEAM_X"
@@ -29,18 +35,29 @@
 #define EigerSerialNumberString         "SERIAL_NUMBER"
 
 // Detector Status Parameters
+#define EigerStateString                "STATE"
+#define EigerErrorString                "ERROR"
 #define EigerThTemp0String              "TH_TEMP_0"
 #define EigerThHumid0String             "TH_HUMID_0"
 #define EigerLink0String                "LINK_0"
 #define EigerLink1String                "LINK_1"
 #define EigerLink2String                "LINK_2"
 #define EigerLink3String                "LINK_3"
+#define EigerDCUBufFreeString           "DCU_BUF_FREE"
 
 // Other Parameters
 #define EigerArmedString                "ARMED"
 #define EigerSaveFilesString            "SAVE_FILES"
 #define EigerSequenceIdString           "SEQ_ID"
 #define EigerPendingFilesString         "PENDING_FILES"
+
+// Monitor API Parameters
+#define EigerMonitorEnableString        "MONITOR_ENABLE"
+#define EigerMonitorPeriodString        "MONITOR_PERIOD"
+
+// Stream API Parameters
+#define EigerStreamEnableString         "STREAM_ENABLE"
+#define EigerStreamDroppedString        "STREAM_DROPPED"
 
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
@@ -60,16 +77,22 @@ public:
     void controlTask  (void);
     void pollTask     (void);
     void downloadTask (void);
-    void streamTask   (void);
+    void parseTask    (void);
     void saveTask     (void);
     void reapTask     (void);
+    void monitorTask  (void);
+    void streamTask   (void);
 
 protected:
+    int EigerDataSource;
+    #define FIRST_EIGER_PARAM EigerDataSource
+    int EigerFWEnable;
     int EigerFWClear;
-    #define FIRST_EIGER_PARAM EigerFWClear
     int EigerFWCompression;
     int EigerFWNamePattern;
     int EigerFWNImgsPerFile;
+    int EigerFWAutoRemove;
+    int EigerFWFree;
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
@@ -83,30 +106,43 @@ protected:
     int EigerManualTrigger;
     int EigerSWVersion;
     int EigerSerialNumber;
+    int EigerState;
+    int EigerError;
     int EigerThTemp0;
     int EigerThHumid0;
     int EigerLink0;
     int EigerLink1;
     int EigerLink2;
     int EigerLink3;
+    int EigerDCUBufFree;
     int EigerArmed;
     int EigerSaveFiles;
     int EigerSequenceId;
     int EigerPendingFiles;
-    #define LAST_EIGER_PARAM EigerPendingFiles
+    int EigerMonitorEnable;
+    int EigerMonitorPeriod;
+    int EigerStreamEnable;
+    int EigerStreamDropped;
+    #define LAST_EIGER_PARAM EigerStreamDropped
 
 private:
     char mHostname[512];
-    Eiger mEiger;
-    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mPollDoneEvent;
-    epicsMessageQueue mPollQueue, mDownloadQueue, mStreamQueue, mSaveQueue,
+    RestAPI mApi;
+    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
+            mPollDoneEvent;
+    epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
+    bool mPollComplete, mStreamComplete;
+
+    // Read all parameters from detector and set some default values
+    asynStatus initParams (void);
 
     // Wrappers to get detector parameters into asyn parameter
-    asynStatus getStringP (sys_t sys, const char *param, int dest);
-    asynStatus getIntP    (sys_t sys, const char *param, int dest);
-    asynStatus getDoubleP (sys_t sys, const char *param, int dest);
-    asynStatus getBoolP   (sys_t sys, const char *param, int dest);
+    asynStatus getStringP   (sys_t sys, const char *param, int dest);
+    asynStatus getIntP      (sys_t sys, const char *param, int dest);
+    asynStatus getDoubleP   (sys_t sys, const char *param, int dest);
+    asynStatus getBinStateP (sys_t sys, const char *param, const char *oneState, int dest);
+    asynStatus getBoolP     (sys_t sys, const char *param, int dest);
 
     // Wrappers to set parameters and catch related parameters updates
     asynStatus putString  (sys_t sys, const char *param, const char *value);
@@ -115,11 +151,15 @@ private:
     asynStatus putBool    (sys_t sys, const char *param, bool value);
     void updateParams     (paramList_t *paramList);
 
-    // HDF5 parser
-    asynStatus parseH5File (char *buf, size_t len);
+    // File parsers
+    asynStatus parseH5File   (char *buf, size_t len);
+    asynStatus parseTiffFile (char *buf, size_t len);
 
     // Read some detector status parameters
     asynStatus eigerStatus (void);
+
+    // Helper that returns ADStatus == ADStatusAcquire
+    bool acquiring (void);
 };
 
 #define NUM_EIGER_PARAMS ((int)(&LAST_EIGER_PARAM - &FIRST_EIGER_PARAM + 1))

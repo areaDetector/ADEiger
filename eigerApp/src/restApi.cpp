@@ -1,4 +1,4 @@
-#include "eigerApi.h"
+#include "restApi.h"
 
 #include <stdexcept>
 
@@ -13,7 +13,7 @@
 
 #include <fcntl.h>
 
-#define API_VERSION             "1.0.4"
+#define API_VERSION             "1.5.0"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
 #define EOH                     EOL EOL     // End of Header
@@ -28,15 +28,16 @@
 #define DATA_HTML               "text/html"
 
 #define HTTP_PORT               80
+#define MAX_HTTP_RETRIES        1
 #define MAX_MESSAGE_SIZE        512
 #define MAX_BUF_SIZE            256
 #define MAX_JSON_TOKENS         100
 
-#define DEFAULT_TIMEOUT_INIT    30
-#define DEFAULT_TIMEOUT_ARM     55
+#define DEFAULT_TIMEOUT_INIT    240
+#define DEFAULT_TIMEOUT_ARM     120
 #define DEFAULT_TIMEOUT_CONNECT 1
 
-#define ERR_PREFIX  "EigerApi"
+#define ERR_PREFIX  "RestApi"
 #define ERR(msg) fprintf(stderr, ERR_PREFIX "::%s: %s\n", functionName, msg)
 
 #define ERR_ARGS(fmt,...) fprintf(stderr, ERR_PREFIX "::%s: " fmt "\n", \
@@ -45,18 +46,31 @@
 // Requests
 
 #define REQUEST_GET\
-    "GET %s%s HTTP/1.0" EOL \
+    "GET %s%s HTTP/1.1" EOL \
+    "Host: %s" EOL\
     "Content-Length: 0" EOL \
     "Accept: " DATA_NATIVE EOH
 
+#define REQUEST_GET_FILE\
+    "GET %s%s HTTP/1.1" EOL \
+    "Host: %s" EOL\
+    "Content-Length: 0" EOL \
+    "Accept: %s" EOH
+
 #define REQUEST_PUT\
-    "PUT %s%s HTTP/1.0" EOL \
+    "PUT %s%s HTTP/1.1" EOL \
+    "Host: %s" EOL\
     "Accept-Encoding: identity" EOL\
     "Content-Type: " DATA_NATIVE EOL \
     "Content-Length: %lu" EOH
 
 #define REQUEST_HEAD\
-    "HEAD %s%s HTTP/1.0" EOH
+    "HEAD %s%s HTTP/1.1" EOL\
+    "Host: %s" EOH
+
+#define REQUEST_DELETE\
+    "DELETE %s%s HTTP/1.1" EOL\
+    "Host: %s" EOH
 
 // Structure definitions
 
@@ -87,7 +101,7 @@ typedef struct response
 
 // Static public members
 
-const char *Eiger::sysStr [SSCount] = {
+const char *RestAPI::sysStr [SSCount] = {
     "/detector/api/version",
     "/detector/api/"   API_VERSION "/config/",
     "/detector/api/"   API_VERSION "/status/",
@@ -95,23 +109,29 @@ const char *Eiger::sysStr [SSCount] = {
     "/filewriter/api/" API_VERSION "/status/",
     "/detector/api/"   API_VERSION "/command/",
     "/data/",
+    "/monitor/api/"    API_VERSION "/config/",
+    "/monitor/api/"    API_VERSION "/status/",
+    "/monitor/api/"    API_VERSION "/images/",
+    "/stream/api/"     API_VERSION "/config/",
+    "/stream/api/"     API_VERSION "/status/",
+    "/system/api/"     API_VERSION "/command/",
 };
 
-const char *Eiger::triggerModeStr [TMCount] = {
+const char *RestAPI::triggerModeStr [TMCount] = {
     "ints", "inte", "exts", "exte"
 };
 
-int Eiger::init (void)
+int RestAPI::init (void)
 {
     return osiSockAttach();
 }
 
-void Eiger::deinit (void)
+void RestAPI::deinit (void)
 {
     osiSockRelease();
 }
 
-int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
+int RestAPI::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
 
@@ -127,7 +147,7 @@ int Eiger::buildMasterName (const char *pattern, int seqId, char *buf, size_t bu
     return EXIT_SUCCESS;
 }
 
-int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
+int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, size_t bufSize)
 {
     const char *idStr = strstr(pattern, ID_STR);
 
@@ -145,10 +165,11 @@ int Eiger::buildDataName (int n, const char *pattern, int seqId, char *buf, size
 
 // Public members
 
-Eiger::Eiger (const char *hostname) :
-    mSockFd(0), mSockMutex(), mSockClosed(true)
+RestAPI::RestAPI (const char *hostname) :
+    mSockFd(0), mSockMutex(), mSockClosed(true), mSockRetries(0)
 {
     strncpy(mHostname, hostname, sizeof(mHostname));
+
     memset(&mAddress, 0, sizeof(mAddress));
 
     if(hostToIPAddr(mHostname, &mAddress.sin_addr))
@@ -158,23 +179,23 @@ Eiger::Eiger (const char *hostname) :
     mAddress.sin_port = htons(HTTP_PORT);
 }
 
-int Eiger::initialize (void)
+int RestAPI::initialize (void)
 {
-    return put(SSCommand, "initialize", "", 0, NULL);
+    return put(SSCommand, "initialize", "", 0, NULL, DEFAULT_TIMEOUT_INIT);
 }
 
-int Eiger::arm (int *sequenceId)
+int RestAPI::arm (int *sequenceId)
 {
     const char *functionName = "arm";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], "arm", 0lu);
+            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname, 0lu);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -194,7 +215,7 @@ int Eiger::arm (int *sequenceId)
     return sequenceId ? parseSequenceId(&response, sequenceId) : EXIT_SUCCESS;
 }
 
-int Eiger::trigger (int timeout, double exposure)
+int RestAPI::trigger (int timeout, double exposure)
 {
     // Trigger for INTS mode
     if(!exposure)
@@ -218,27 +239,27 @@ int Eiger::trigger (int timeout, double exposure)
     return EXIT_SUCCESS;
 }
 
-int Eiger::disarm (void)
+int RestAPI::disarm (void)
 {
     return put(SSCommand, "disarm", "", 0, NULL);
 }
 
-int Eiger::cancel (void)
+int RestAPI::cancel (void)
 {
     return put(SSCommand, "cancel", "", 0, NULL);
 }
 
-int Eiger::abort (void)
+int RestAPI::abort (void)
 {
     return put(SSCommand, "abort", "", 0, NULL);
 }
 
-int Eiger::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
+int RestAPI::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
 {
     return get(sys, param, value, len, timeout);
 }
 
-int Eiger::getInt (sys_t sys, const char *param, int *value, int timeout)
+int RestAPI::getInt (sys_t sys, const char *param, int *value, int timeout)
 {
     const char *functionName = "getInt";
     char buf[MAX_BUF_SIZE];
@@ -255,7 +276,7 @@ int Eiger::getInt (sys_t sys, const char *param, int *value, int timeout)
     return EXIT_SUCCESS;
 }
 
-int Eiger::getDouble (sys_t sys, const char *param, double *value, int timeout)
+int RestAPI::getDouble (sys_t sys, const char *param, double *value, int timeout)
 {
     const char *functionName = "getDouble";
     char buf[MAX_BUF_SIZE];
@@ -272,19 +293,25 @@ int Eiger::getDouble (sys_t sys, const char *param, double *value, int timeout)
     return EXIT_SUCCESS;
 }
 
-int Eiger::getBool (sys_t sys, const char *param, bool *value, int timeout)
+int RestAPI::getBinState (sys_t sys, const char *param, bool *value,
+        const char *oneState, int timeout)
 {
     char buf[MAX_BUF_SIZE];
 
     if(get(sys, param, buf, sizeof(buf), timeout))
         return EXIT_FAILURE;
 
-    *value = buf[0] == 't';
+    *value = !strcmp(buf, oneState);
 
     return EXIT_SUCCESS;
 }
 
-int Eiger::putString (sys_t sys, const char *param, const char *value,
+int RestAPI::getBool (sys_t sys, const char *param, bool *value, int timeout)
+{
+    return getBinState (sys, param, value, "true", timeout);
+}
+
+int RestAPI::putString (sys_t sys, const char *param, const char *value,
         paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -293,7 +320,7 @@ int Eiger::putString (sys_t sys, const char *param, const char *value,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::putInt (sys_t sys, const char *param,
+int RestAPI::putInt (sys_t sys, const char *param,
         int value, paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -302,7 +329,7 @@ int Eiger::putInt (sys_t sys, const char *param,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::putDouble (sys_t sys, const char *param,
+int RestAPI::putDouble (sys_t sys, const char *param,
         double value, paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -311,7 +338,7 @@ int Eiger::putDouble (sys_t sys, const char *param,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::putBool (sys_t sys, const char *param,
+int RestAPI::putBool (sys_t sys, const char *param,
         bool value, paramList_t *paramList, int timeout)
 {
     char buf[MAX_BUF_SIZE];
@@ -320,18 +347,18 @@ int Eiger::putBool (sys_t sys, const char *param,
     return put(sys, param, buf, bufLen, paramList, timeout);
 }
 
-int Eiger::getFileSize (const char *filename, size_t *size)
+int RestAPI::getFileSize (const char *filename, size_t *size)
 {
     const char *functionName = "getFileSize";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -353,20 +380,20 @@ int Eiger::getFileSize (const char *filename, size_t *size)
     return EXIT_SUCCESS;
 }
 
-int Eiger::waitFile (const char *filename, double timeout)
+int RestAPI::waitFile (const char *filename, double timeout)
 {
     const char *functionName = "waitFile";
 
     epicsTimeStamp start, now;
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -398,104 +425,50 @@ int Eiger::waitFile (const char *filename, double timeout)
     return EXIT_FAILURE;
 }
 
-int Eiger::getFile (const char *filename, char **buf, size_t *bufSize)
+int RestAPI::getFile (const char *filename, char **buf, size_t *bufSize)
 {
-    const char *functionName = "getFile";
-    int status = EXIT_SUCCESS;
-    int received;
+    return getBlob(SSData, filename, buf, bufSize, DATA_HDF5);
+}
 
-    request_t request;
+int RestAPI::deleteFile (const char *filename)
+{
+    const char *functionName = "deleteFile";
+
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[SSData], filename);
+            REQUEST_DELETE, sysStr[SSData], filename, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
 
-    mSockMutex.lock();
-
-    if(mSockClosed)
+    if(doRequest(&request, &response))
     {
-        if(connect())
-        {
-            ERR("failed to reconnect socket");
-            status = EXIT_FAILURE;
-            goto end;
-        }
+        ERR_ARGS("[file=%s] DELETE request failed", filename);
+        return EXIT_FAILURE;
     }
 
-    if(send(mSockFd, request.data, request.actualLen, 0) < 0)
+    if(response.code != 204)
     {
-        status = EXIT_FAILURE;
-        goto end;
+        ERR_ARGS("[file=%s] DELETE returned code %d", filename, response.code);
+        return EXIT_FAILURE;
     }
 
-    received = recv(mSockFd, response.data, response.dataLen, 0);
+    return EXIT_SUCCESS;
+}
 
-    if(received < 0)
-    {
-        ERR_ARGS("[file=%s] failed to receive first part", filename);
-        status = EXIT_FAILURE;
-        goto end;
-    }
-
-    if((status = parseHeader(&response)))
-    {
-        ERR_ARGS("[file=%s] underlying parseResponse failed", filename);
-        goto markClosed;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[file=%s] file not found", filename);
-        status = EXIT_FAILURE;
-        goto markClosed;
-    }
-
-    *buf = (char*)malloc(response.contentLength);
-    if(!*buf)
-    {
-        ERR_ARGS("[file=%s] malloc(%lu) failed", filename, response.contentLength);
-        status = EXIT_FAILURE;
-        goto markClosed;
-    }
-
-    *bufSize = received - response.headerLen;
-    memcpy(*buf, response.content, *bufSize);
-
-    received = recv(mSockFd, *buf + *bufSize, response.contentLength - *bufSize,
-            MSG_WAITALL);
-
-    if(received < 0)
-    {
-        ERR_ARGS("[file=%s] failed to receive second part", filename);
-        status = EXIT_FAILURE;
-        free(*buf);
-        *buf = NULL;
-        *bufSize = 0;
-    }
-
-    *bufSize = response.contentLength;
-
-markClosed:
-    if(response.reconnect)
-    {
-        close(mSockFd);
-        mSockClosed = true;
-    }
-
-end:
-    mSockMutex.unlock();
-    return status;
+int RestAPI::getMonitorImage (char **buf, size_t *bufSize)
+{
+    return getBlob(SSMonImages, "monitor", buf, bufSize, DATA_TIFF);
 }
 
 // Private members
 
-int Eiger::connect (void)
+int RestAPI::connect (void)
 {
     const char *functionName = "connect";
 
@@ -551,7 +524,7 @@ int Eiger::connect (void)
     return EXIT_SUCCESS;
 }
 
-int Eiger::setNonBlock (bool nonBlock)
+int RestAPI::setNonBlock (bool nonBlock)
 {
 #ifdef WIN32
     unsigned long mode = nonBlock ? 1 : 0;
@@ -566,7 +539,7 @@ int Eiger::setNonBlock (bool nonBlock)
 #endif
 }
 
-int Eiger::doRequest (const request_t *request, response_t *response, int timeout)
+int RestAPI::doRequest (const request_t *request, response_t *response, int timeout)
 {
     const char *functionName = "doRequest";
     int status = EXIT_SUCCESS;
@@ -588,8 +561,14 @@ int Eiger::doRequest (const request_t *request, response_t *response, int timeou
 
     if(send(mSockFd, request->data, request->actualLen, 0) < 0)
     {
-        status = EXIT_FAILURE;
-        goto end;
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR("failed to send");
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
     recvTimeout.tv_sec = timeout;
@@ -605,15 +584,25 @@ int Eiger::doRequest (const request_t *request, response_t *response, int timeou
         goto end;
     }
 
-    if((received = recv(mSockFd, response->data, response->dataLen, 0) < 0))
+    if((received = recv(mSockFd, response->data, response->dataLen, 0) <= 0))
     {
-        status = EXIT_FAILURE;
-        goto end;
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR("failed to recv");
+            status = EXIT_FAILURE;
+            goto end;
+        }
     }
 
     response->actualLen = (size_t) received;
 
-    status = parseHeader(response);
+    if((status = parseHeader(response)))
+    {
+        ERR("failed to parseHeader");
+        goto end;
+    }
 
     if(response->reconnect)
     {
@@ -622,23 +611,30 @@ int Eiger::doRequest (const request_t *request, response_t *response, int timeou
     }
 
 end:
+    mSockRetries = 0;
     mSockMutex.unlock();
     return status;
+
+retry:
+    close(mSockFd);
+    mSockClosed = true;
+    mSockMutex.unlock();
+    return doRequest(request, response, timeout);
 }
 
-int Eiger::get (sys_t sys, const char *param, char *value, size_t len,
+int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
         int timeout)
 {
     const char *functionName = "get";
 
-    request_t request;
+    request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[sys], param);
+            REQUEST_GET, sysStr[sys], param, mHostname);
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -688,22 +684,22 @@ int Eiger::get (sys_t sys, const char *param, char *value, size_t len,
     return EXIT_SUCCESS;
 }
 
-int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
+int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
         paramList_t *paramList, int timeout)
 {
     const char *functionName = "put";
 
     int headerLen;
     char header[MAX_BUF_SIZE];
-    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, len);
+    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, mHostname, len);
 
-    request_t request;
+    request_t request = {};
     char requestBuf[headerLen + len];
     request.data      = requestBuf;
     request.dataLen   = headerLen + len;
     request.actualLen = request.dataLen;
 
-    response_t response;
+    response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
@@ -726,11 +722,134 @@ int Eiger::put (sys_t sys, const char *param, const char *value, size_t len,
     return paramList ? parseParamList(&response, paramList) : EXIT_SUCCESS;
 }
 
-int Eiger::parseHeader (response_t *response)
+int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
+        const char *accept)
+{
+    const char *functionName = "getBlob";
+    int status = EXIT_SUCCESS;
+    int received;
+
+    request_t request = {};
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_GET_FILE, sysStr[sys], name, mHostname, accept);
+
+    response_t response = {};
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    mSockMutex.lock();
+
+    if(mSockClosed)
+    {
+        if(connect())
+        {
+            ERR("failed to reconnect socket");
+            status = EXIT_FAILURE;
+            goto end;
+        }
+    }
+
+    if(send(mSockFd, request.data, request.actualLen, 0) < 0)
+    {
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR("failed to send");
+            status = EXIT_FAILURE;
+            goto end;
+        }
+    }
+
+    if((received = recv(mSockFd, response.data, response.dataLen, 0)) <= 0)
+    {
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR_ARGS("[sys=%d file=%s] failed to receive first part", sys, name);
+            status = EXIT_FAILURE;
+            goto end;
+        }
+    }
+
+    if((status = parseHeader(&response)))
+    {
+        ERR_ARGS("[sys=%d file=%s] underlying parseResponse failed", sys, name);
+        goto end;
+    }
+
+    if(response.code != 200)
+    {
+        if(sys != SSMonImages)
+            ERR_ARGS("[sys=%d file=%s] file not found", sys, name);
+        status = EXIT_FAILURE;
+        goto end;
+    }
+
+    *buf = (char*)malloc(response.contentLength);
+    if(!*buf)
+    {
+        ERR_ARGS("[sys=%d file=%s] malloc(%lu) failed", sys, name, response.contentLength);
+        status = EXIT_FAILURE;
+        goto end;
+    }
+
+    *bufSize = received - response.headerLen;
+    memcpy(*buf, response.content, *bufSize);
+
+    received = recv(mSockFd, *buf + *bufSize, response.contentLength - *bufSize,
+            MSG_WAITALL);
+
+    if(received <= 0)
+    {
+        free(*buf);
+        *buf = NULL;
+        *bufSize = 0;
+
+        if(mSockRetries++ < MAX_HTTP_RETRIES)
+            goto retry;
+        else
+        {
+            ERR_ARGS("[sys=%d file=%s] failed to receive second part", sys, name);
+            status = EXIT_FAILURE;
+            goto end;
+        }
+    }
+
+    *bufSize = response.contentLength;
+
+    if(response.reconnect)
+    {
+        close(mSockFd);
+        mSockClosed = true;
+    }
+
+end:
+    mSockRetries = 0;
+    mSockMutex.unlock();
+    return status;
+
+retry:
+    close(mSockFd);
+    mSockClosed = true;
+    mSockMutex.unlock();
+    return getBlob(sys, name, buf, bufSize, accept);
+
+}
+
+int RestAPI::parseHeader (response_t *response)
 {
     int scanned;
     char *data = response->data;
     char *eol;
+
+    response->contentLength = 0;
+    response->reconnect = false;
 
     scanned = sscanf(data, "%*s %d", &response->code);
     if(scanned != 1)
@@ -752,6 +871,7 @@ int Eiger::parseHeader (response_t *response)
 
         if(!colon)
             return EXIT_FAILURE;
+
         *colon = '\0';
 
         if(!strcasecmp(key, "content-length"))
@@ -776,7 +896,7 @@ int Eiger::parseHeader (response_t *response)
     return EXIT_SUCCESS;
 }
 
-int Eiger::parseParamList (const response_t *response, paramList_t *paramList)
+int RestAPI::parseParamList (const response_t *response, paramList_t *paramList)
 {
     const char *functionName = "parseParamList";
 
@@ -802,7 +922,7 @@ int Eiger::parseParamList (const response_t *response, paramList_t *paramList)
         return EXIT_FAILURE;
     }
 
-    paramList->nparams = tokens[0].num_desc - 1;
+    paramList->nparams = tokens[0].num_desc;
 
     for(int i = 1; i <= tokens[0].num_desc; ++i)
     {
@@ -814,7 +934,7 @@ int Eiger::parseParamList (const response_t *response, paramList_t *paramList)
     return EXIT_SUCCESS;
 }
 
-int Eiger::parseSequenceId (const response_t *response, int *sequenceId)
+int RestAPI::parseSequenceId (const response_t *response, int *sequenceId)
 {
     const char *functionName = "parseParamList";
 
