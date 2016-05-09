@@ -12,7 +12,7 @@ Additional information:
 Notes:
 ------
 
-* Depends on the Eiger having the firmware 1.5.0 or newer.
+* Depends on the Eiger having the firmware 1.6.2 or newer.
 * Currently this was only tested on Linux 64-bit machines.
 
 How to install:

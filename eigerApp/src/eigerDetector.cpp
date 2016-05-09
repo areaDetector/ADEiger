@@ -185,6 +185,18 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerDetDistString,       asynParamFloat64, &EigerDetDist);
     createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
 
+    // MX Parameters
+    createParam(EigerChiStartString,      asynParamFloat64, &EigerChiStart);
+    createParam(EigerChiIncrString,       asynParamFloat64, &EigerChiIncr);
+    createParam(EigerKappaStartString,    asynParamFloat64, &EigerKappaStart);
+    createParam(EigerKappaIncrString,     asynParamFloat64, &EigerKappaIncr);
+    createParam(EigerOmegaStartString,    asynParamFloat64, &EigerOmegaStart);
+    createParam(EigerOmegaIncrString,     asynParamFloat64, &EigerOmegaIncr);
+    createParam(EigerPhiStartString,      asynParamFloat64, &EigerPhiStart);
+    createParam(EigerPhiIncrString,       asynParamFloat64, &EigerPhiIncr);
+    createParam(EigerTwoThetaStartString, asynParamFloat64, &EigerTwoThetaStart);
+    createParam(EigerTwoThetaIncrString,  asynParamFloat64, &EigerTwoThetaIncr);
+
     // Acquisition Parameters
     createParam(EigerFlatfieldString,     asynParamInt32,   &EigerFlatfield);
     createParam(EigerPhotonEnergyString,  asynParamFloat64, &EigerPhotonEnergy);
@@ -406,6 +418,28 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         status = putDouble(SSDetConfig, "beam_center_y", value);
     else if (function == EigerDetDist)
         status = putDouble(SSDetConfig, "detector_distance", value);
+
+    // MX Parameters:
+    else if (function == EigerChiStart)
+        status = putDouble(SSDetConfig, "chi_start", value);
+    else if (function == EigerChiIncr)
+        status = putDouble(SSDetConfig, "chi_increment", value);
+    else if (function == EigerKappaStart)
+        status = putDouble(SSDetConfig, "kappa_start", value);
+    else if (function == EigerKappaIncr)
+        status = putDouble(SSDetConfig, "kappa_increment", value);
+    else if (function == EigerOmegaStart)
+        status = putDouble(SSDetConfig, "omega_start", value);
+    else if (function == EigerOmegaIncr)
+        status = putDouble(SSDetConfig, "omega_increment", value);
+    else if (function == EigerPhiStart)
+        status = putDouble(SSDetConfig, "phi_start", value);
+    else if (function == EigerPhiIncr)
+        status = putDouble(SSDetConfig, "phi_increment", value);
+    else if (function == EigerTwoThetaStart)
+        status = putDouble(SSDetConfig, "two_theta_start", value);
+    else if (function == EigerTwoThetaIncr)
+        status = putDouble(SSDetConfig, "two_theta_increment", value);
     else if (function == EigerPhotonEnergy)
     {
         setStringParam(ADStatusMessage, "Setting Photon Energy...");
@@ -1135,6 +1169,19 @@ asynStatus eigerDetector::initParams (void)
     status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
     status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
     status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+
+    // Read MX Parameters
+    status |= getDoubleP(SSDetConfig, "chi_start",           EigerChiStart);
+    status |= getDoubleP(SSDetConfig, "chi_increment",       EigerChiIncr);
+    status |= getDoubleP(SSDetConfig, "kappa_start",         EigerKappaStart);
+    status |= getDoubleP(SSDetConfig, "kappa_increment",     EigerKappaIncr);
+    status |= getDoubleP(SSDetConfig, "omega_start",         EigerOmegaStart);
+    status |= getDoubleP(SSDetConfig, "omega_increment",     EigerOmegaIncr);
+    status |= getDoubleP(SSDetConfig, "phi_start",           EigerPhiStart);
+    status |= getDoubleP(SSDetConfig, "phi_increment",       EigerPhiIncr);
+    status |= getDoubleP(SSDetConfig, "two_theta_start",     EigerTwoThetaStart);
+    status |= getDoubleP(SSDetConfig, "two_theta_increment", EigerTwoThetaIncr);
+
     status |= getBoolP  (SSDetConfig, "flatfield_correction_applied",
             EigerFlatfield);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
@@ -1302,12 +1349,37 @@ void eigerDetector::updateParams(paramList_t *paramList)
             getIntP (SSDetConfig, "nimages", ADNumImages);
         else if(!strcmp(paramList->params[i], "photon_energy"))
             getDoubleP(SSDetConfig, "photon_energy", EigerPhotonEnergy);
+
+        // Metadata Parameters
         else if(!strcmp(paramList->params[i], "beam_center_x"))
             getDoubleP(SSDetConfig, "beam_center_x", EigerBeamX);
         else if(!strcmp(paramList->params[i], "beam_center_y"))
             getDoubleP(SSDetConfig, "beam_center_y", EigerBeamY);
         else if(!strcmp(paramList->params[i], "detector_distance"))
             getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+
+        // MX Parameters
+        else if(!strcmp(paramList->params[i], "chi_start"))
+            getDoubleP(SSDetConfig, "chi_start", EigerChiStart);
+        else if(!strcmp(paramList->params[i], "chi_increment"))
+            getDoubleP(SSDetConfig, "chi_increment", EigerChiIncr);
+        else if(!strcmp(paramList->params[i], "kappa_start"))
+            getDoubleP(SSDetConfig, "kappa_start", EigerKappaStart);
+        else if(!strcmp(paramList->params[i], "kappa_increment"))
+            getDoubleP(SSDetConfig, "kappa_increment", EigerKappaIncr);
+        else if(!strcmp(paramList->params[i], "omega_start"))
+            getDoubleP(SSDetConfig, "omega_start", EigerOmegaStart);
+        else if(!strcmp(paramList->params[i], "omega_increment"))
+            getDoubleP(SSDetConfig, "omega_increment", EigerOmegaIncr);
+        else if(!strcmp(paramList->params[i], "phi_start"))
+            getDoubleP(SSDetConfig, "phi_start", EigerPhiStart);
+        else if(!strcmp(paramList->params[i], "phi_increment"))
+            getDoubleP(SSDetConfig, "phi_increment", EigerPhiIncr);
+        else if(!strcmp(paramList->params[i], "two_theta_start"))
+            getDoubleP(SSDetConfig, "two_theta_start", EigerTwoThetaStart);
+        else if(!strcmp(paramList->params[i], "two_theta_increment"))
+            getDoubleP(SSDetConfig, "two_theta_increment", EigerTwoThetaIncr);
+
         else if(!strcmp(paramList->params[i], "threshold_energy"))
             getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
         else if(!strcmp(paramList->params[i], "wavelength"))

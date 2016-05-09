@@ -21,6 +21,18 @@
 #define EigerDetDistString              "DET_DIST"
 #define EigerWavelengthString           "WAVELENGTH"
 
+// MX Parameters (firmware 1.6.2 onwards)
+#define EigerChiStartString             "CHI_START"
+#define EigerChiIncrString              "CHI_INCR"
+#define EigerKappaStartString           "KAPPA_START"
+#define EigerKappaIncrString            "KAPPA_INCR"
+#define EigerOmegaStartString           "OMEGA_START"
+#define EigerOmegaIncrString            "OMEGA_INCR"
+#define EigerPhiStartString             "PHI_START"
+#define EigerPhiIncrString              "PHI_INCR"
+#define EigerTwoThetaStartString        "TWO_THETA_START"
+#define EigerTwoThetaIncrString         "TWO_THETA_INCR"
+
 // Acquisition Parameters
 #define EigerFlatfieldString            "FLATFIELD_APPLIED"
 #define EigerPhotonEnergyString         "PHOTON_ENERGY"
@@ -97,6 +109,16 @@ protected:
     int EigerBeamY;
     int EigerDetDist;
     int EigerWavelength;
+    int EigerChiStart;
+    int EigerChiIncr;
+    int EigerKappaStart;
+    int EigerKappaIncr;
+    int EigerOmegaStart;
+    int EigerOmegaIncr;
+    int EigerPhiStart;
+    int EigerPhiIncr;
+    int EigerTwoThetaStart;
+    int EigerTwoThetaIncr;
     int EigerFlatfield;
     int EigerPhotonEnergy;
     int EigerThreshold;

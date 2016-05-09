@@ -459,6 +459,188 @@ record(ai, "$(P)$(R)BeamY_RBV")
     field(SCAN, "I/O Intr")
 }
 
+# MX Parameters
+
+record(ao, "$(P)$(R)ChiStart")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CHI_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)ChiStart_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CHI_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)ChiIncr")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CHI_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)ChiIncr_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CHI_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)KappaStart")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))KAPPA_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)KappaStart_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))KAPPA_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)KappaIncr")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))KAPPA_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)KappaIncr_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))KAPPA_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)OmegaStart")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))OMEGA_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)OmegaStart_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))OMEGA_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)OmegaIncr")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))OMEGA_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)OmegaIncr_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))OMEGA_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)PhiStart")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHI_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)PhiStart_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHI_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)PhiIncr")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHI_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)PhiIncr_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHI_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)TwoThetaStart")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TWO_THETA_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)TwoThetaStart_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TWO_THETA_START")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)TwoThetaIncr")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TWO_THETA_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
+record(ai, "$(P)$(R)TwoThetaIncr_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TWO_THETA_INCR")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+    field(SCAN, "I/O Intr")
+}
+
 # Monitor API enable
 record(bo,"$(P)$(R)MonitorEnable") {
     field(PINI, "YES")

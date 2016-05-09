@@ -10,6 +10,13 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-1
+----
+
+Depends on Eiger firmware 1.6.2+
+
+* Added all MX parameters (Chi, Kappa, Omega, Phi, Two Theta)
+
 R2-0
 ----
 
