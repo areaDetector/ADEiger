@@ -15,6 +15,8 @@
 #include <iocsh.h>
 #include <math.h>
 
+#include <limits>
+
 #include <hdf5.h>
 #include <hdf5_hl.h>
 
@@ -444,21 +446,21 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
     {
         setStringParam(ADStatusMessage, "Setting Photon Energy...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "photon_energy", value);
+        status = putDouble(SSDetConfig, "photon_energy", value, true);
         setStringParam(ADStatusMessage, "Photon Energy set");
     }
     else if (function == EigerThreshold)
     {
         setStringParam(ADStatusMessage, "Setting Threshold Energy...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "threshold_energy", value);
+        status = putDouble(SSDetConfig, "threshold_energy", value, true);
         setStringParam(ADStatusMessage, "Threshold Energy set");
     }
     else if (function == EigerWavelength)
     {
         setStringParam(ADStatusMessage, "Setting Wavelength...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "wavelength", value);
+        status = putDouble(SSDetConfig, "wavelength", value, true);
         setStringParam(ADStatusMessage, "Wavelength set");
     }
     else if (function == ADAcquireTime)
@@ -1321,10 +1323,26 @@ asynStatus eigerDetector::putBool (sys_t sys, const char *param, bool value)
 }
 
 asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
-        double value)
+        double value, bool preCheck)
 {
     const char *functionName = "putDouble";
     paramList_t paramList;
+
+    if(preCheck)
+    {
+        double currentValue;
+        if(mApi.getDouble(sys, param, &currentValue))
+        {
+            ERR_ARGS("[param=%s] preCheck: underlying get failed", param);
+            return asynError;
+        }
+
+        if(fabs(currentValue - value) < std::numeric_limits<double>::epsilon())
+        {
+            FLOW_ARGS("[param = %s] new value == current value", param);
+            return asynSuccess;
+        }
+    }
 
     if(mApi.putDouble(sys, param, value, &paramList))
     {
