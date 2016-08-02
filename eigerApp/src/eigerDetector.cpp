@@ -30,6 +30,10 @@
 #define DEFAULT_QUEUE_CAPACITY  2
 #define MONITOR_MIN_PERIOD      0.1
 
+#define MX_PARAM_EPSILON        0.0001
+#define ENERGY_EPSILON          0.05
+#define WAVELENGTH_EPSILON      0.0005
+
 // Error message formatters
 #define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
     driverName, functionName, msg)
@@ -423,44 +427,44 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
 
     // MX Parameters:
     else if (function == EigerChiStart)
-        status = putDouble(SSDetConfig, "chi_start", value);
+        status = putDouble(SSDetConfig, "chi_start", value, MX_PARAM_EPSILON);
     else if (function == EigerChiIncr)
-        status = putDouble(SSDetConfig, "chi_increment", value);
+        status = putDouble(SSDetConfig, "chi_increment", value, MX_PARAM_EPSILON);
     else if (function == EigerKappaStart)
-        status = putDouble(SSDetConfig, "kappa_start", value);
+        status = putDouble(SSDetConfig, "kappa_start", value, MX_PARAM_EPSILON);
     else if (function == EigerKappaIncr)
-        status = putDouble(SSDetConfig, "kappa_increment", value);
+        status = putDouble(SSDetConfig, "kappa_increment", value, MX_PARAM_EPSILON);
     else if (function == EigerOmegaStart)
-        status = putDouble(SSDetConfig, "omega_start", value);
+        status = putDouble(SSDetConfig, "omega_start", value, MX_PARAM_EPSILON);
     else if (function == EigerOmegaIncr)
-        status = putDouble(SSDetConfig, "omega_increment", value);
+        status = putDouble(SSDetConfig, "omega_increment", value, MX_PARAM_EPSILON);
     else if (function == EigerPhiStart)
-        status = putDouble(SSDetConfig, "phi_start", value);
+        status = putDouble(SSDetConfig, "phi_start", value, MX_PARAM_EPSILON);
     else if (function == EigerPhiIncr)
-        status = putDouble(SSDetConfig, "phi_increment", value);
+        status = putDouble(SSDetConfig, "phi_increment", value, MX_PARAM_EPSILON);
     else if (function == EigerTwoThetaStart)
-        status = putDouble(SSDetConfig, "two_theta_start", value);
+        status = putDouble(SSDetConfig, "two_theta_start", value, MX_PARAM_EPSILON);
     else if (function == EigerTwoThetaIncr)
-        status = putDouble(SSDetConfig, "two_theta_increment", value);
+        status = putDouble(SSDetConfig, "two_theta_increment", value, MX_PARAM_EPSILON);
     else if (function == EigerPhotonEnergy)
     {
         setStringParam(ADStatusMessage, "Setting Photon Energy...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "photon_energy", value, true);
+        status = putDouble(SSDetConfig, "photon_energy", value, ENERGY_EPSILON);
         setStringParam(ADStatusMessage, "Photon Energy set");
     }
     else if (function == EigerThreshold)
     {
         setStringParam(ADStatusMessage, "Setting Threshold Energy...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "threshold_energy", value, true);
+        status = putDouble(SSDetConfig, "threshold_energy", value, ENERGY_EPSILON);
         setStringParam(ADStatusMessage, "Threshold Energy set");
     }
     else if (function == EigerWavelength)
     {
         setStringParam(ADStatusMessage, "Setting Wavelength...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "wavelength", value, true);
+        status = putDouble(SSDetConfig, "wavelength", value, WAVELENGTH_EPSILON);
         setStringParam(ADStatusMessage, "Wavelength set");
     }
     else if (function == ADAcquireTime)
@@ -1323,12 +1327,12 @@ asynStatus eigerDetector::putBool (sys_t sys, const char *param, bool value)
 }
 
 asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
-        double value, bool preCheck)
+        double value, double epsilon)
 {
     const char *functionName = "putDouble";
     paramList_t paramList;
 
-    if(preCheck)
+    if(epsilon)
     {
         double currentValue;
         if(mApi.getDouble(sys, param, &currentValue))
@@ -1337,7 +1341,7 @@ asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
             return asynError;
         }
 
-        if(fabs(currentValue - value) < std::numeric_limits<double>::epsilon())
+        if(fabs(currentValue - value) < epsilon)
         {
             FLOW_ARGS("[param = %s] new value == current value", param);
             return asynSuccess;

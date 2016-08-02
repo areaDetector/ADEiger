@@ -169,7 +169,7 @@ private:
     // Wrappers to set parameters and catch related parameters updates
     asynStatus putString  (sys_t sys, const char *param, const char *value);
     asynStatus putInt     (sys_t sys, const char *param, int value);
-    asynStatus putDouble  (sys_t sys, const char *param, double value, bool preCheck = false);
+    asynStatus putDouble  (sys_t sys, const char *param, double value, double epsilon = 0.0);
     asynStatus putBool    (sys_t sys, const char *param, bool value);
     void updateParams     (paramList_t *paramList);
 
