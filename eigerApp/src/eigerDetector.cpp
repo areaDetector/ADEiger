@@ -190,7 +190,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerBeamYString,         asynParamFloat64, &EigerBeamY);
     createParam(EigerDetDistString,       asynParamFloat64, &EigerDetDist);
     createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
-    createParam(EigerBitDepthString,      asynParamInt32,   &EigerBitDepth);
     createParam(EigerCountCutoffString,   asynParamInt32,   &EigerCountCutoff);
 
     // Detector Metadata Parameters
@@ -1211,7 +1210,6 @@ asynStatus eigerDetector::initParams (void)
 
     status |= getDoubleP(SSDetConfig, "sensor_thickness", EigerSensorThickness);
     status |= getStringP(SSDetConfig, "sensor_material",  EigerSensorMaterial);
-    status |= getIntP   (SSDetConfig, "bit_depth_image",  EigerBitDepth);
     status |= getIntP   (SSDetConfig, "countrate_correction_count_cutoff",
             EigerCountCutoff);
     status |= getBoolP  (SSDetConfig, "pixel_mask_applied", EigerPixMaskApplied);
@@ -1441,8 +1439,6 @@ void eigerDetector::updateParams(paramList_t *paramList)
             getDoubleP(SSDetConfig, "beam_center_y", EigerBeamY);
         else if(!strcmp(paramList->params[i], "detector_distance"))
             getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
-        else if(!strcmp(paramList->params[i], "bit_depth_image"))
-            getIntP   (SSDetConfig, "bit_depth_image", EigerBitDepth);
         else if(!strcmp(paramList->params[i], "countrate_correction_count_cutoff"))
             getIntP   (SSDetConfig, "countrate_correction_count_cutoff",
                 EigerCountCutoff);

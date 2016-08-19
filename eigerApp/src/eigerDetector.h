@@ -20,7 +20,6 @@
 #define EigerBeamYString                "BEAM_Y"
 #define EigerDetDistString              "DET_DIST"
 #define EigerWavelengthString           "WAVELENGTH"
-#define EigerBitDepthString             "BIT_DEPTH"
 #define EigerCountCutoffString          "COUNT_CUTOFF"
 
 // Detector Metadata Parameters
@@ -132,7 +131,6 @@ protected:
     int EigerBeamY;
     int EigerDetDist;
     int EigerWavelength;
-    int EigerBitDepth;
     int EigerCountCutoff;
     int EigerDescription;
     int EigerSensorThickness;

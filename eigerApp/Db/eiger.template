@@ -284,15 +284,6 @@ record(stringin, "$(P)$(R)SensorMaterial_RBV")
     field(SCAN, "I/O Intr")
 }
 
-record(ai, "$(P)$(R)BitDepth_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BIT_DEPTH")
-    field(DESC, "Bit Depth")
-    field(EGU,  "bit")
-    field(SCAN, "I/O Intr")
-}
-
 record(ai, "$(P)$(R)CountCutoff_RBV")
 {
     field(DTYP, "asynInt32")
