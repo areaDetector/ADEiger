@@ -20,6 +20,17 @@
 #define EigerBeamYString                "BEAM_Y"
 #define EigerDetDistString              "DET_DIST"
 #define EigerWavelengthString           "WAVELENGTH"
+#define EigerBitDepthString             "BIT_DEPTH"
+#define EigerCountCutoffString          "COUNT_CUTOFF"
+
+// Detector Metadata Parameters
+#define EigerSWVersionString            "SW_VERSION"
+#define EigerSerialNumberString         "SERIAL_NUMBER"
+#define EigerDescriptionString          "DESCRIPTION"
+#define EigerSensorThicknessString      "SENSOR_THICKNESS"
+#define EigerSensorMaterialString       "SENSOR_MATERIAL"
+#define EigerXPixelSizeString           "X_PIXEL_SIZE"
+#define EigerYPixelSizeString           "Y_PIXEL_SIZE"
 
 // MX Parameters (firmware 1.6.2 onwards)
 #define EigerChiStartString             "CHI_START"
@@ -41,10 +52,10 @@
 #define EigerTriggerExpString           "TRIGGER_EXPOSURE"
 #define EigerNTriggersString            "NUM_TRIGGERS"
 #define EigerManualTriggerString        "MANUAL_TRIGGER"
-
-// Detector Info Parameters
-#define EigerSWVersionString            "SW_VERSION"
-#define EigerSerialNumberString         "SERIAL_NUMBER"
+#define EigerCompressionAlgoString      "COMPRESSION_ALGO"
+// ROI Mode is only available on Eiger 9M and 16M
+#define EigerROIModeString              "ROI_MODE"
+#define EigerPixMaskAppliedString       "PIXEL_MASK_APPLIED"
 
 // Detector Status Parameters
 #define EigerStateString                "STATE"
@@ -95,6 +106,18 @@ public:
     void monitorTask  (void);
     void streamTask   (void);
 
+    enum roi_mode
+    {
+        ROI_MODE_DISABLED,
+        ROI_MODE_4M,
+    };
+
+    enum compression_algo
+    {
+        COMP_ALGO_LZ4,
+        COMP_ALGO_BSLZ4
+    };
+
 protected:
     int EigerDataSource;
     #define FIRST_EIGER_PARAM EigerDataSource
@@ -109,6 +132,13 @@ protected:
     int EigerBeamY;
     int EigerDetDist;
     int EigerWavelength;
+    int EigerBitDepth;
+    int EigerCountCutoff;
+    int EigerDescription;
+    int EigerSensorThickness;
+    int EigerSensorMaterial;
+    int EigerXPixelSize;
+    int EigerYPixelSize;
     int EigerChiStart;
     int EigerChiIncr;
     int EigerKappaStart;
@@ -126,6 +156,9 @@ protected:
     int EigerTriggerExp;
     int EigerNTriggers;
     int EigerManualTrigger;
+    int EigerCompressionAlgo;
+    int EigerROIMode;
+    int EigerPixMaskApplied;
     int EigerSWVersion;
     int EigerSerialNumber;
     int EigerState;

@@ -139,7 +139,7 @@
       the FWNFilesPerImage PV.
     </p>
     <p>
-      For example, if TriggerMode is <b>External Enable</b>, NumImages is 60, NumTriggers is 2, FWNImagesPerFIle is 100,
+      For example, if TriggerMode is <b>External Enable</b>, NumImages is 60, NumTriggers is 2, FWNImagesPerFile is 100,
       Sequence ID for the acquisition is 1 and FWNamePattern is "series_$id", a total of three files will be generated:
       series_1_master.h5, series_1_data_000001.h5 (with 100 images) and series_1_data_000002.h5 (with 20 images).
     </p>
@@ -303,7 +303,7 @@
           <th> EPICS record type</th>
         </tr>
         <tr>
-          <td align="center" colspan="8"> <b>Version information</b> </td>
+          <td align="center" colspan="8"> <b>Detector Metadata</b> </td>
         </tr>
         <tr>
           <td> EigerSerialNumber</td>
@@ -324,6 +324,55 @@
           <td> SW_VERSION</td>
           <td> SWVersion_RBV</td>
           <td> stringin</td>
+        </tr><tr>
+          <td> EigerDescription</td>
+          <td> detector/config/description</td>
+          <td> asynOctet</td>
+          <td> R/O</td>
+          <td> Detector's manufacturer and model</td>
+          <td> DESCRIPTION</td>
+          <td> Description_RBV</td>
+          <td> stringin</td>
+        </tr>
+        <tr>
+          <td> EigerSensorMaterial</td>
+          <td> detector/config/sensor_material</td>
+          <td> asynOctet</td>
+          <td> R/O</td>
+          <td> Detector's sensor material</td>
+          <td> SENSOR_MATERIAL</td>
+          <td> SensorMaterial_RBV</td>
+          <td> stringin</td>
+        </tr>
+        <tr>
+          <td> EigerSensorThickness</td>
+          <td> detector/config/sensor_thickness</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's sensor thickness, in meters</td>
+          <td> SENSOR_THICKNESS</td>
+          <td> SensorThickness_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td> EigerXPixelSize</td>
+          <td> detector/config/x_pixel_size</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's pixel size in the X direction, in meters</td>
+          <td> X_PIXEL_SIZE</td>
+          <td> XPixelSize_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td> EigerYPixelSize</td>
+          <td> detector/config/y_pixel_size</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's pixel size in the Y direction, in meters</td>
+          <td> Y_PIXEL_SIZE</td>
+          <td> YPixelSize_RBV</td>
+          <td> ai</td>
         </tr>
         <tr>
           <td align="center" colspan="8"> <b>Status parameters</b> </td>
@@ -579,7 +628,32 @@
           <td> Wavelength<br/>Wavelength_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
-        
+        <tr>
+          <td> EigerBitDepth</td>
+          <td> detector/config/bit_depth_image</td>
+          <td> asynInt32</td>
+          <td> R/O</td>
+          <td> 
+             Pixel bit depth. It is set to 16 bits when the acquisition frequency
+             is less than 50Hz, otherwise it is 32 bits.
+          </td>
+          <td> BIT_DEPTH</td>
+          <td> BitDepth_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td> EigerCountCutoff</td>
+          <td> detector/config/countrate_correction_count_cutoff</td>
+          <td> asynInt32</td>
+          <td> R/O</td>
+          <td> 
+             Number of counts after which the detector will cutoff due to the 
+             count rate correction.
+          </td>
+          <td> COUNT_CUTOFF</td>
+          <td> CountCutoff_RBV</td>
+          <td> ai</td>
+        </tr>
         <tr>
           <td align="center" colspan="8"> <b>Acquisition MX metadata</b> </td>
         </tr>
@@ -804,6 +878,40 @@
           <td> MANUAL_TRIGGER</td>
           <td> ManualTrigger<br/>ManualTrigger_RBV</td>
           <td> bo<br/>bi</td>
+        </tr>
+        <tr>
+          <td> EigerCompressionAlgo</td>
+          <td> detector/config/compression</td>
+          <td> asynInt32</td>
+          <td> R/W</td>
+          <td> 
+            Compression algorithm to use when compression is enabled. Options
+            are:
+            <ul>
+              <li> lz4</li>
+              <li> bslz4 (bitshuffle lz4)</li>
+            </ul>
+          </td>
+          <td> COMPRESSION_ALGO</td>
+          <td> CompressionAlgo<br/>CompressionAlgo_RBV</td>
+          <td> mbbo<br/>mbbi</td>
+        </tr>
+        <tr>
+          <td> EigerROIMode</td>
+          <td> detector/config/roi_mode</td>
+          <td> asynInt32</td>
+          <td> R/W</td>
+          <td> 
+            Which ROI mode to use. <b>Only supported on Eiger 9M and 16M.</b> 
+            Options are:
+            <ul>
+              <li> Disabled</li>
+              <li> 4M</li>
+            </ul>
+          </td>
+          <td> ROI_MODE</td>
+          <td> ROIMode<br/>ROIMode_RBV</td>
+          <td> mbbo<br/>mbbi</td>
         </tr>
       </tbody>
     </table>

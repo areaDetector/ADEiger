@@ -258,6 +258,120 @@ record(ai, "$(P)$(R)FWFree_RBV")
     field(SCAN, "I/O Intr")
 }
 
+record(stringin, "$(P)$(R)Description_RBV")
+{
+    field(DTYP, "asynOctet")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DESCRIPTION")
+    field(DESC, "Detector Description")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)SensorThickness_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SENSOR_THICKNESS")
+    field(DESC, "Sensor Thickness")
+    field(EGU,  "m")
+    field(PREC, "3")
+    field(SCAN, "I/O Intr")
+}
+
+record(stringin, "$(P)$(R)SensorMaterial_RBV")
+{
+    field(DTYP, "asynOctet")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SENSOR_MATERIAL")
+    field(DESC, "Sensor Material")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)BitDepth_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BIT_DEPTH")
+    field(DESC, "Bit Depth")
+    field(EGU,  "bit")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)CountCutoff_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COUNT_CUTOFF")
+    field(DESC, "Rate Correct Cutoff")
+    field(EGU,  "count")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)XPixelSize_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))X_PIXEL_SIZE")
+    field(DESC, "X Pixel Size")
+    field(EGU,  "m")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)YPixelSize_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))Y_PIXEL_SIZE")
+    field(DESC, "Y Pixel Size")
+    field(EGU,  "m")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+# ROI Mode
+record(mbbo,"$(P)$(R)ROIMode") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
+    field(DESC, "ROI Mode")
+    field(VAL,  "0")
+    field(ZRST, "Disabled")
+    field(ZRVL, "0")
+    field(ONST, "4M")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)ROIMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
+    field(DESC, "ROI Mode")
+    field(VAL,  "0")
+    field(ZRST, "Disabled")
+    field(ZRVL, "0")
+    field(ONST, "4M")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
+}
+
+# Compression algorithm selection
+record(mbbo,"$(P)$(R)CompAlgo") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMP_ALGO")
+    field(DESC, "Compression Algorithm")
+    field(VAL,  "0")
+    field(ZRST, "LZ4")
+    field(ZRVL, "0")
+    field(ONST, "BS LZ4")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)CompAlgo_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMP_ALGO")
+    field(DESC, "Compression Algorithm")
+    field(VAL,  "0")
+    field(ZRST, "LZ4")
+    field(ZRVL, "0")
+    field(ONST, "BS LZ4")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
+}
+
 # Stream API enable
 record(bo,"$(P)$(R)StreamEnable") {
     field(PINI, "YES")
