@@ -36,6 +36,7 @@
 #define EigerChiIncrString              "CHI_INCR"
 #define EigerKappaStartString           "KAPPA_START"
 #define EigerKappaIncrString            "KAPPA_INCR"
+#define EigerOmegaString                "OMEGA"
 #define EigerOmegaStartString           "OMEGA_START"
 #define EigerOmegaIncrString            "OMEGA_INCR"
 #define EigerPhiStartString             "PHI_START"
@@ -141,6 +142,7 @@ protected:
     int EigerChiIncr;
     int EigerKappaStart;
     int EigerKappaIncr;
+    int EigerOmega;
     int EigerOmegaStart;
     int EigerOmegaIncr;
     int EigerPhiStart;
@@ -186,6 +188,7 @@ private:
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
     bool mPollComplete, mStreamComplete;
+    unsigned int mFrameNumber;
 
     // Read all parameters from detector and set some default values
     asynStatus initParams (void);

@@ -164,7 +164,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mSaveQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
-    mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *))
+    mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *)),
+    mFrameNumber(0)
 {
     const char *functionName = "eigerDetector";
 
@@ -206,6 +207,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerChiIncrString,       asynParamFloat64, &EigerChiIncr);
     createParam(EigerKappaStartString,    asynParamFloat64, &EigerKappaStart);
     createParam(EigerKappaIncrString,     asynParamFloat64, &EigerKappaIncr);
+    createParam(EigerOmegaString,         asynParamFloat64, &EigerOmega);
     createParam(EigerOmegaStartString,    asynParamFloat64, &EigerOmegaStart);
     createParam(EigerOmegaIncrString,     asynParamFloat64, &EigerOmegaIncr);
     createParam(EigerPhiStartString,      asynParamFloat64, &EigerPhiStart);
@@ -701,6 +703,7 @@ void eigerDetector::controlTask (void)
         setIntegerParam(EigerArmed, 1);
         callParamCallbacks();
 
+        mFrameNumber = 0;
         bool waitPoll = false, waitStream = false;
 
         // Start FileWriter thread
@@ -1069,6 +1072,10 @@ void eigerDetector::streamTask (void)
     {
         mStreamEvent.wait();
 
+        double omegaStart, omegaIncr;
+        getDoubleParam(EigerOmegaStart, &omegaStart);
+        getDoubleParam(EigerOmegaIncr, &omegaIncr);
+
         StreamAPI api(mHostname);
 
         int err;
@@ -1133,6 +1140,10 @@ void eigerDetector::streamTask (void)
             epicsTimeGetCurrent(&startTime);
             pArray->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
             updateTimeStamp(&pArray->epicsTS);
+
+            // Update Omega angle for this frame
+            setDoubleParam(EigerOmega, omegaStart+omegaIncr*mFrameNumber);
+            ++mFrameNumber;
 
             // Get any attributes that have been defined for this driver
             this->getAttributes(pArray->pAttributeList);
@@ -1508,6 +1519,10 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
 
     epicsTimeStamp startTime;
 
+    double omegaStart, omegaIncr;
+    getDoubleParam(EigerOmegaStart, &omegaStart);
+    getDoubleParam(EigerOmegaIncr, &omegaIncr);
+
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
     // Open h5 file from memory
@@ -1622,6 +1637,10 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         epicsTimeGetCurrent(&startTime);
         pImage->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
         updateTimeStamp(&pImage->epicsTS);
+
+        // Update the omega angle for this frame
+        setIntegerParam(EigerOmega, omegaStart + omegaIncr*mFrameNumber);
+        ++mFrameNumber;
 
         // Get any attributes that have been defined for this driver
         this->getAttributes(pImage->pAttributeList);
