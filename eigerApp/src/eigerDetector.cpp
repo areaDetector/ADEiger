@@ -196,7 +196,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Detector Metadata Parameters
     createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
     createParam(EigerSerialNumberString,  asynParamOctet,   &EigerSerialNumber);
-    createParam(EigerDescriptionString,   asynParamFloat64, &EigerDescription);
+    createParam(EigerDescriptionString,   asynParamOctet,   &EigerDescription);
     createParam(EigerSensorThicknessString,asynParamFloat64,&EigerSensorThickness);
     createParam(EigerSensorMaterialString, asynParamOctet,  &EigerSensorMaterial);
     createParam(EigerXPixelSizeString,    asynParamFloat64, &EigerXPixelSize);

@@ -339,10 +339,10 @@ record(mbbi,"$(P)$(R)ROIMode_RBV") {
 }
 
 # Compression algorithm selection
-record(mbbo,"$(P)$(R)CompAlgo") {
+record(mbbo,"$(P)$(R)CompressionAlgo") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMP_ALGO")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
     field(DESC, "Compression Algorithm")
     field(VAL,  "0")
     field(ZRST, "LZ4")
@@ -351,9 +351,9 @@ record(mbbo,"$(P)$(R)CompAlgo") {
     field(ONVL, "1")
 }
 
-record(mbbi,"$(P)$(R)CompAlgo_RBV") {
+record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMP_ALGO")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
     field(DESC, "Compression Algorithm")
     field(VAL,  "0")
     field(ZRST, "LZ4")
