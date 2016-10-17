@@ -6,7 +6,7 @@
   <show_grid>true</show_grid>
   <auto_zoom_to_fit_all>false</auto_zoom_to_fit_all>
   <scripts />
-  <height>800</height>
+  <height>808</height>
   <macros>
     <include_parent_macros>true</include_parent_macros>
     <P>13EIG1:</P>
@@ -946,7 +946,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>683</x>
     <name>Shutter</name>
-    <y>498</y>
+    <y>545</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -2020,7 +2020,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>287</height>
+    <height>334</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -2094,7 +2094,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>130</x>
       <name>asyn Port</name>
-      <y>33</y>
+      <y>40</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2134,7 +2134,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>33</y>
+      <y>40</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2186,7 +2186,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>130</x>
       <name>asyn Port</name>
-      <y>63</y>
+      <y>70</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2226,7 +2226,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>63</y>
+      <y>70</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2266,7 +2266,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>93</y>
+      <y>100</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2320,7 +2320,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>130</x>
       <data_type>0</data_type>
-      <y>93</y>
+      <y>100</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -2374,7 +2374,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>225</x>
       <data_type>0</data_type>
-      <y>93</y>
+      <y>100</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -2428,7 +2428,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>161</x>
       <data_type>0</data_type>
-      <y>93</y>
+      <y>100</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -2482,7 +2482,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>192</x>
       <data_type>0</data_type>
-      <y>93</y>
+      <y>100</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -2524,7 +2524,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>130</x>
       <name>Combo</name>
-      <y>-3</y>
+      <y>4</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2576,7 +2576,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>130</x>
       <name>asyn Port_2</name>
-      <y>123</y>
+      <y>130</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2616,7 +2616,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_7</name>
-      <y>123</y>
+      <y>130</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2668,7 +2668,7 @@ $(pv_value)</tooltip>
       <width>245</width>
       <x>0</x>
       <name>asyn Port_3</name>
-      <y>225</y>
+      <y>260</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2706,9 +2706,9 @@ $(pv_value)</tooltip>
         <color red="255" green="255" blue="255" />
       </background_color>
       <width>115</width>
-      <x>0</x>
+      <x>65</x>
       <name>Label_8</name>
-      <y>200</y>
+      <y>235</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2748,7 +2748,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_7</name>
-      <y>153</y>
+      <y>160</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2800,7 +2800,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>130</x>
       <name>asyn Port_2</name>
-      <y>153</y>
+      <y>160</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2840,7 +2840,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>3</y>
+      <y>10</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -2899,7 +2899,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>481</height>
+    <height>511</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -3423,7 +3423,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>183</y>
+      <y>215</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3763,7 +3763,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>183</y>
+      <y>215</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -3953,7 +3953,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>215</y>
+      <y>247</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4005,7 +4005,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>213</y>
+      <y>245</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4045,7 +4045,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>245</y>
+      <y>277</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4097,7 +4097,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>243</y>
+      <y>275</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4139,7 +4139,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>237</y>
+      <y>269</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4181,7 +4181,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>207</y>
+      <y>239</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4223,7 +4223,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>177</y>
+      <y>209</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4263,7 +4263,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>273</y>
+      <y>305</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4305,7 +4305,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>267</y>
+      <y>299</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4357,7 +4357,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>273</y>
+      <y>305</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4397,7 +4397,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>303</y>
+      <y>335</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4439,7 +4439,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>297</y>
+      <y>329</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4491,7 +4491,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>303</y>
+      <y>335</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4531,7 +4531,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>363</y>
+      <y>395</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4588,7 +4588,7 @@ $(pv_value)</tooltip>
       <password_input>false</password_input>
       <width>115</width>
       <x>125</x>
-      <y>360</y>
+      <y>392</y>
       <maximum>1.7976931348623157E308</maximum>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -4641,7 +4641,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_1</name>
-      <y>363</y>
+      <y>395</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4681,7 +4681,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_4</name>
-      <y>393</y>
+      <y>425</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4728,7 +4728,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>173</x>
       <name>Check Box</name>
-      <y>393</y>
+      <y>425</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -4782,7 +4782,7 @@ $(pv_value)</tooltip>
       <width>20</width>
       <x>298</x>
       <data_type>0</data_type>
-      <y>393</y>
+      <y>425</y>
       <foreground_color>
         <color red="192" green="192" blue="192" />
       </foreground_color>
@@ -4822,7 +4822,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Action Button</name>
-      <y>420</y>
+      <y>452</y>
       <style>1</style>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -4871,7 +4871,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Action Button</name>
-      <y>420</y>
+      <y>452</y>
       <style>1</style>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -4920,7 +4920,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>Action Button</name>
-      <y>420</y>
+      <y>452</y>
       <style>1</style>
       <foreground_color>
         <color red="0" green="0" blue="0" />
@@ -4981,7 +4981,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>250</x>
       <name>asyn Port_2</name>
-      <y>333</y>
+      <y>365</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -5023,7 +5023,7 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>125</x>
       <name>Combo</name>
-      <y>327</y>
+      <y>359</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -5063,7 +5063,141 @@ $(pv_value)</tooltip>
       <width>115</width>
       <x>0</x>
       <name>Label_5</name>
-      <y>333</y>
+      <y>365</y>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <alarm_pulsing>false</alarm_pulsing>
+      <precision>0</precision>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <horizontal_alignment>0</horizontal_alignment>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>-70f0e3a0:157d4271a86:-7f54</wuid>
+      <transparent>false</transparent>
+      <pv_value />
+      <auto_size>false</auto_size>
+      <text>######</text>
+      <rotation_angle>0.0</rotation_angle>
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <show_units>true</show_units>
+      <height>20</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)ROIMode_RBV</pv_name>
+      <vertical_alignment>1</vertical_alignment>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <precision_from_pv>true</precision_from_pv>
+      <widget_type>Text Update</widget_type>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <wrap_words>false</wrap_words>
+      <format_type>0</format_type>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>115</width>
+      <x>250</x>
+      <name>asyn Port_2</name>
+      <y>185</y>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
+      <border_style>0</border_style>
+      <tooltip></tooltip>
+      <horizontal_alignment>2</horizontal_alignment>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>-70f0e3a0:157d4271a86:-7f53</wuid>
+      <transparent>true</transparent>
+      <auto_size>false</auto_size>
+      <text>ROI Mode</text>
+      <scripts />
+      <height>20</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <visible>true</visible>
+      <vertical_alignment>1</vertical_alignment>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>Label</widget_type>
+      <wrap_words>false</wrap_words>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>115</width>
+      <x>0</x>
+      <name>Label_5</name>
+      <y>185</y>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <actions hook="false" hook_all="false" />
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0">Default</opifont.name>
+      </font>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.combo" version="1.0.0">
+      <border_style>0</border_style>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <alarm_pulsing>false</alarm_pulsing>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <rules />
+      <enabled>true</enabled>
+      <wuid>-70f0e3a0:157d4271a86:-7f52</wuid>
+      <pv_value />
+      <scripts />
+      <border_alarm_sensitive>true</border_alarm_sensitive>
+      <height>31</height>
+      <border_width>1</border_width>
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>false</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <items_from_pv>true</items_from_pv>
+      <visible>true</visible>
+      <pv_name>$(P)$(R)ROIMode</pv_name>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <widget_type>Combo</widget_type>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="255" green="255" blue="255" />
+      </background_color>
+      <width>115</width>
+      <x>125</x>
+      <name>Combo</name>
+      <y>179</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -5082,7 +5216,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>276</height>
+    <height>283</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -6126,7 +6260,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>95</height>
+    <height>115</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -6147,7 +6281,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>683</x>
     <name>Monitor</name>
-    <y>310</y>
+    <y>317</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -6458,7 +6592,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>95</height>
+    <height>115</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -6479,7 +6613,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>683</x>
     <name>Stream</name>
-    <y>404</y>
+    <y>431</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -6753,7 +6887,7 @@ $(pv_value)</tooltip>
     <width>280</width>
     <x>0</x>
     <name>Metadata</name>
-    <y>690</y>
+    <y>737</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -6823,7 +6957,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <lock_children>false</lock_children>
     <scripts />
-    <height>246</height>
+    <height>263</height>
     <border_width>1</border_width>
     <scale_options>
       <width_scalable>true</width_scalable>
@@ -6844,7 +6978,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>279</x>
     <name>Acquisition Status</name>
-    <y>515</y>
+    <y>545</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
@@ -7563,7 +7697,7 @@ $(pv_value)</tooltip>
       <width>366</width>
       <x>0</x>
       <name>asyn Port</name>
-      <y>190</y>
+      <y>200</y>
       <foreground_color>
         <color red="0" green="0" blue="0" />
       </foreground_color>
@@ -7603,7 +7737,7 @@ $(pv_value)</tooltip>
     <width>405</width>
     <x>683</x>
     <name>Attributes File</name>
-    <y>690</y>
+    <y>737</y>
     <foreground_color>
       <color red="192" green="192" blue="192" />
     </foreground_color>
