@@ -167,8 +167,8 @@
     <h3 id="Using_Monitor">Using Monitor</h3>
     <p>
       The Monitor module is activated when MonitorEnable is set to Yes. Data will be available whenever the monitor
-      module buffer is full (has one image available). This driver polls the detector at a rate set by MonitorPeriod
-      to know when data is available. Once downloaded, the TIFF image is parsed into areaDetector's NDArray on
+      module buffer is full (has one image available). This driver waits MonitorTimeout ms for data to be available.
+      There is a rate-limit of 10Hz. Once downloaded, the TIFF image is parsed into areaDetector's NDArray on
       NDArrayAddr 1 (therefore, an independent NDArray stream).
     </p>
 
@@ -573,13 +573,13 @@
           <td> bo<br>bi</td>
         </tr>
         <tr>
-          <td> EigerMonitorPeriod</td>
+          <td> EigerMonitorTimeout</td>
           <td></td>
-          <td> asynFloat64</td>
+          <td> asynInt32</td>
           <td> R/W</td>
-          <td> Time between queries on the Monitor interface for new images</td>
-          <td> MONITOR_PERIOD</td>
-          <td> MonitorPeriod<br>MonitorPeriod_RBV</td>
+          <td> Timeout for queries on the Monitor interface for new images</td>
+          <td> MONITOR_TIMEOUT</td>
+          <td> MonitorTimeout<br>MonitorTimeout_RBV</td>
           <td> ao<br>ai</td>
         </tr>
         <tr>

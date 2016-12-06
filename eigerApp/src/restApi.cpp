@@ -461,9 +461,11 @@ int RestAPI::deleteFile (const char *filename)
     return EXIT_SUCCESS;
 }
 
-int RestAPI::getMonitorImage (char **buf, size_t *bufSize)
+int RestAPI::getMonitorImage (char **buf, size_t *bufSize, size_t timeout)
 {
-    return getBlob(SSMonImages, "monitor", buf, bufSize, DATA_TIFF);
+    char param[MAX_BUF_SIZE];
+    epicsSnprintf(param, sizeof(param), "monitor?timeout=%lu", timeout);
+    return getBlob(SSMonImages, param, buf, bufSize, DATA_TIFF);
 }
 
 // Private members

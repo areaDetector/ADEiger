@@ -76,7 +76,7 @@
 
 // Monitor API Parameters
 #define EigerMonitorEnableString        "MONITOR_ENABLE"
-#define EigerMonitorPeriodString        "MONITOR_PERIOD"
+#define EigerMonitorTimeoutString       "MONITOR_TIMEOUT"
 
 // Stream API Parameters
 #define EigerStreamEnableString         "STREAM_ENABLE"
@@ -175,7 +175,7 @@ protected:
     int EigerSequenceId;
     int EigerPendingFiles;
     int EigerMonitorEnable;
-    int EigerMonitorPeriod;
+    int EigerMonitorTimeout;
     int EigerStreamEnable;
     int EigerStreamDropped;
     #define LAST_EIGER_PARAM EigerStreamDropped

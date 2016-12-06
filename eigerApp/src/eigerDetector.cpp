@@ -28,7 +28,6 @@
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
 #define DEFAULT_QUEUE_CAPACITY  2
-#define MONITOR_MIN_PERIOD      0.1
 
 #define MX_PARAM_EPSILON        0.0001
 #define ENERGY_EPSILON          0.05
@@ -246,7 +245,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Monitor API Parameters
     createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
-    createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
+    createParam(EigerMonitorTimeoutString,asynParamInt32,   &EigerMonitorTimeout);
 
     // Stream API Parameters
     createParam(EigerStreamEnableString,  asynParamInt32, &EigerStreamEnable);
@@ -506,8 +505,8 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         status = putDouble(SSDetConfig, "count_time", value);
     else if (function == ADAcquirePeriod)
         status = putDouble(SSDetConfig, "frame_time", value);
-    else if (function == EigerMonitorPeriod)
-        value = value < MONITOR_MIN_PERIOD ? MONITOR_MIN_PERIOD : value;
+    else if (function == EigerMonitorTimeout)
+        value = value < 0 ? 0 : value;
     else if (function < FIRST_EIGER_PARAM)
         status = ADDriver::writeFloat64(pasynUser, value);
 
@@ -1039,12 +1038,11 @@ void eigerDetector::monitorTask (void)
 
     for(;;)
     {
-        int enabled;
-        double period;
+        int enabled, timeout;
 
         lock();
         getIntegerParam(EigerMonitorEnable, &enabled);
-        getDoubleParam(EigerMonitorPeriod, &period);
+        getIntegerParam(EigerMonitorTimeout, &timeout);
         unlock();
 
         if(enabled)
@@ -1052,7 +1050,7 @@ void eigerDetector::monitorTask (void)
             char *buf = NULL;
             size_t bufSize;
 
-            if(!eiger.getMonitorImage(&buf, &bufSize))
+            if(!eiger.getMonitorImage(&buf, &bufSize, (size_t) timeout))
             {
                 if(parseTiffFile(buf, bufSize))
                     ERR("couldn't parse file");
@@ -1061,7 +1059,7 @@ void eigerDetector::monitorTask (void)
             }
         }
 
-        epicsThreadSleep(period);
+        epicsThreadSleep(0.1); // Rate limit to 10Hz
     }
 }
 
@@ -1275,7 +1273,7 @@ asynStatus eigerDetector::initParams (void)
     status |= setIntegerParam(EigerSequenceId, 0);
     status |= setIntegerParam(EigerPendingFiles, 0);
     status |= setIntegerParam(EigerMonitorEnable, 0);
-    status |= setDoubleParam (EigerMonitorPeriod, MONITOR_MIN_PERIOD);
+    status |= setIntegerParam(EigerMonitorTimeout, 500);
 
     callParamCallbacks();
 

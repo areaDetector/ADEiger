@@ -766,23 +766,23 @@ record(bi,"$(P)$(R)MonitorEnable_RBV") {
 }
 
 # Monitor API polling period
-record(ao, "$(P)$(R)MonitorPeriod")
+record(ao, "$(P)$(R)MonitorTimeout")
 {
     field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_PERIOD")
-    field(DESC, "Polling period for Monitor API")
-    field(EGU,  "s")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_TIMEOUT")
+    field(DESC, "Timeout for Monitor API")
+    field(EGU,  "ms")
     field(PREC, "1")
-    field(VAL,  "0.1")
+    field(VAL,  "500")
 }
 
-record(ai, "$(P)$(R)MonitorPeriod_RBV")
+record(ai, "$(P)$(R)MonitorTimeout_RBV")
 {
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_PERIOD")
-    field(DESC, "Polling period for Monitor API")
-    field(EGU,  "s")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_TIMEOUT")
+    field(DESC, "Timeout for Monitor API")
+    field(EGU,  "ms")
     field(PREC, "1")
     field(SCAN, "I/O Intr")
 }

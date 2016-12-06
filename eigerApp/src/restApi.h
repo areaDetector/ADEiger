@@ -109,7 +109,7 @@ public:
     int getFile     (const char *filename, char **buf, size_t *bufSize);
     int deleteFile  (const char *filename);
 
-    int getMonitorImage  (char **buf, size_t *bufSize);
+    int getMonitorImage  (char **buf, size_t *bufSize, size_t timeout = 500);
 };
 
 #endif
