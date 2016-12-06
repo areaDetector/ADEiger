@@ -15,6 +15,8 @@
 #include <iocsh.h>
 #include <math.h>
 
+#include <limits>
+
 #include <hdf5.h>
 #include <hdf5_hl.h>
 
@@ -26,7 +28,10 @@
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
 #define DEFAULT_QUEUE_CAPACITY  2
-#define MONITOR_MIN_PERIOD      0.1
+
+#define MX_PARAM_EPSILON        0.0001
+#define ENERGY_EPSILON          0.05
+#define WAVELENGTH_EPSILON      0.0005
 
 // Error message formatters
 #define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
@@ -41,6 +46,13 @@
 
 #define FLOW_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, \
     "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
+
+enum data_source
+{
+    SOURCE_NONE,
+    SOURCE_FILEWRITER,
+    SOURCE_STREAM,
+};
 
 typedef struct
 {
@@ -58,13 +70,6 @@ typedef struct
     bool save, parse, remove;
     size_t refCount;
 }file_t;
-
-enum data_source
-{
-    SOURCE_NONE,
-    SOURCE_FILEWRITER,
-    SOURCE_STREAM,
-};
 
 typedef struct
 {
@@ -158,7 +163,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mSaveQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
-    mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *))
+    mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *)),
+    mFrameNumber(0)
 {
     const char *functionName = "eigerDetector";
 
@@ -184,6 +190,29 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerBeamYString,         asynParamFloat64, &EigerBeamY);
     createParam(EigerDetDistString,       asynParamFloat64, &EigerDetDist);
     createParam(EigerWavelengthString,    asynParamFloat64, &EigerWavelength);
+    createParam(EigerCountCutoffString,   asynParamInt32,   &EigerCountCutoff);
+
+    // Detector Metadata Parameters
+    createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
+    createParam(EigerSerialNumberString,  asynParamOctet,   &EigerSerialNumber);
+    createParam(EigerDescriptionString,   asynParamOctet,   &EigerDescription);
+    createParam(EigerSensorThicknessString,asynParamFloat64,&EigerSensorThickness);
+    createParam(EigerSensorMaterialString, asynParamOctet,  &EigerSensorMaterial);
+    createParam(EigerXPixelSizeString,    asynParamFloat64, &EigerXPixelSize);
+    createParam(EigerYPixelSizeString,    asynParamFloat64, &EigerYPixelSize);
+
+    // MX Parameters
+    createParam(EigerChiStartString,      asynParamFloat64, &EigerChiStart);
+    createParam(EigerChiIncrString,       asynParamFloat64, &EigerChiIncr);
+    createParam(EigerKappaStartString,    asynParamFloat64, &EigerKappaStart);
+    createParam(EigerKappaIncrString,     asynParamFloat64, &EigerKappaIncr);
+    createParam(EigerOmegaString,         asynParamFloat64, &EigerOmega);
+    createParam(EigerOmegaStartString,    asynParamFloat64, &EigerOmegaStart);
+    createParam(EigerOmegaIncrString,     asynParamFloat64, &EigerOmegaIncr);
+    createParam(EigerPhiStartString,      asynParamFloat64, &EigerPhiStart);
+    createParam(EigerPhiIncrString,       asynParamFloat64, &EigerPhiIncr);
+    createParam(EigerTwoThetaStartString, asynParamFloat64, &EigerTwoThetaStart);
+    createParam(EigerTwoThetaIncrString,  asynParamFloat64, &EigerTwoThetaIncr);
 
     // Acquisition Parameters
     createParam(EigerFlatfieldString,     asynParamInt32,   &EigerFlatfield);
@@ -193,10 +222,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerTriggerExpString,    asynParamFloat64, &EigerTriggerExp);
     createParam(EigerNTriggersString,     asynParamInt32,   &EigerNTriggers);
     createParam(EigerManualTriggerString, asynParamInt32,   &EigerManualTrigger);
-
-    // Detector Info Parameters
-    createParam(EigerSWVersionString,     asynParamOctet,   &EigerSWVersion);
-    createParam(EigerSerialNumberString,  asynParamOctet,   &EigerSerialNumber);
+    createParam(EigerCompressionAlgoString, asynParamInt32, &EigerCompressionAlgo);
+    createParam(EigerROIModeString,       asynParamInt32,   &EigerROIMode);
+    createParam(EigerPixMaskAppliedString, asynParamInt32,  &EigerPixMaskApplied);
 
     // Detector Status Parameters
     createParam(EigerStateString,         asynParamOctet,   &EigerState);
@@ -217,7 +245,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Monitor API Parameters
     createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
-    createParam(EigerMonitorPeriodString, asynParamFloat64, &EigerMonitorPeriod);
+    createParam(EigerMonitorTimeoutString,asynParamInt32,   &EigerMonitorTimeout);
 
     // Stream API Parameters
     createParam(EigerStreamEnableString,  asynParamInt32, &EigerStreamEnable);
@@ -361,6 +389,30 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         status = putString(SSStreamConfig, "mode", value ? "enabled" : "disabled");
     else if (function == EigerMonitorEnable)
         status = putString(SSMonConfig, "mode", value ? "enabled" : "disabled");
+    else if (function == EigerROIMode)
+    {
+        const char *string_value = "disabled";
+        switch(value)
+        {
+        case ROI_MODE_DISABLED: string_value = "disabled"; break;
+        case ROI_MODE_4M:       string_value = "4M";       break;
+        default:
+            ERR_ARGS("Invalid ROI mode %d, using '%s'", value, string_value);
+        }
+        status = putString(SSDetConfig, "roi_mode", string_value);
+    }
+    else if (function == EigerCompressionAlgo)
+    {
+        const char *string_value = "lz4";
+        switch(value)
+        {
+        case COMP_ALGO_LZ4:   string_value = "lz4";   break;
+        case COMP_ALGO_BSLZ4: string_value = "bslz4"; break;
+        default:
+            ERR_ARGS("Invalid compression algorithm %d, using '%s'", value, string_value);
+        }
+        status = putString(SSDetConfig, "compression", string_value);
+    }
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
@@ -406,33 +458,55 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         status = putDouble(SSDetConfig, "beam_center_y", value);
     else if (function == EigerDetDist)
         status = putDouble(SSDetConfig, "detector_distance", value);
+
+    // MX Parameters:
+    else if (function == EigerChiStart)
+        status = putDouble(SSDetConfig, "chi_start", value, MX_PARAM_EPSILON);
+    else if (function == EigerChiIncr)
+        status = putDouble(SSDetConfig, "chi_increment", value, MX_PARAM_EPSILON);
+    else if (function == EigerKappaStart)
+        status = putDouble(SSDetConfig, "kappa_start", value, MX_PARAM_EPSILON);
+    else if (function == EigerKappaIncr)
+        status = putDouble(SSDetConfig, "kappa_increment", value, MX_PARAM_EPSILON);
+    else if (function == EigerOmegaStart)
+        status = putDouble(SSDetConfig, "omega_start", value, MX_PARAM_EPSILON);
+    else if (function == EigerOmegaIncr)
+        status = putDouble(SSDetConfig, "omega_increment", value, MX_PARAM_EPSILON);
+    else if (function == EigerPhiStart)
+        status = putDouble(SSDetConfig, "phi_start", value, MX_PARAM_EPSILON);
+    else if (function == EigerPhiIncr)
+        status = putDouble(SSDetConfig, "phi_increment", value, MX_PARAM_EPSILON);
+    else if (function == EigerTwoThetaStart)
+        status = putDouble(SSDetConfig, "two_theta_start", value, MX_PARAM_EPSILON);
+    else if (function == EigerTwoThetaIncr)
+        status = putDouble(SSDetConfig, "two_theta_increment", value, MX_PARAM_EPSILON);
     else if (function == EigerPhotonEnergy)
     {
         setStringParam(ADStatusMessage, "Setting Photon Energy...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "photon_energy", value);
+        status = putDouble(SSDetConfig, "photon_energy", value, ENERGY_EPSILON);
         setStringParam(ADStatusMessage, "Photon Energy set");
     }
     else if (function == EigerThreshold)
     {
         setStringParam(ADStatusMessage, "Setting Threshold Energy...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "threshold_energy", value);
+        status = putDouble(SSDetConfig, "threshold_energy", value, ENERGY_EPSILON);
         setStringParam(ADStatusMessage, "Threshold Energy set");
     }
     else if (function == EigerWavelength)
     {
         setStringParam(ADStatusMessage, "Setting Wavelength...");
         callParamCallbacks();
-        status = putDouble(SSDetConfig, "wavelength", value);
+        status = putDouble(SSDetConfig, "wavelength", value, WAVELENGTH_EPSILON);
         setStringParam(ADStatusMessage, "Wavelength set");
     }
     else if (function == ADAcquireTime)
         status = putDouble(SSDetConfig, "count_time", value);
     else if (function == ADAcquirePeriod)
         status = putDouble(SSDetConfig, "frame_time", value);
-    else if (function == EigerMonitorPeriod)
-        value = value < MONITOR_MIN_PERIOD ? MONITOR_MIN_PERIOD : value;
+    else if (function == EigerMonitorTimeout)
+        value = value < 0 ? 0 : value;
     else if (function < FIRST_EIGER_PARAM)
         status = ADDriver::writeFloat64(pasynUser, value);
 
@@ -628,6 +702,7 @@ void eigerDetector::controlTask (void)
         setIntegerParam(EigerArmed, 1);
         callParamCallbacks();
 
+        mFrameNumber = 0;
         bool waitPoll = false, waitStream = false;
 
         // Start FileWriter thread
@@ -963,12 +1038,11 @@ void eigerDetector::monitorTask (void)
 
     for(;;)
     {
-        int enabled;
-        double period;
+        int enabled, timeout;
 
         lock();
         getIntegerParam(EigerMonitorEnable, &enabled);
-        getDoubleParam(EigerMonitorPeriod, &period);
+        getIntegerParam(EigerMonitorTimeout, &timeout);
         unlock();
 
         if(enabled)
@@ -976,7 +1050,7 @@ void eigerDetector::monitorTask (void)
             char *buf = NULL;
             size_t bufSize;
 
-            if(!eiger.getMonitorImage(&buf, &bufSize))
+            if(!eiger.getMonitorImage(&buf, &bufSize, (size_t) timeout))
             {
                 if(parseTiffFile(buf, bufSize))
                     ERR("couldn't parse file");
@@ -985,7 +1059,7 @@ void eigerDetector::monitorTask (void)
             }
         }
 
-        epicsThreadSleep(period);
+        epicsThreadSleep(0.1); // Rate limit to 10Hz
     }
 }
 
@@ -995,6 +1069,10 @@ void eigerDetector::streamTask (void)
     for(;;)
     {
         mStreamEvent.wait();
+
+        double omegaStart, omegaIncr;
+        getDoubleParam(EigerOmegaStart, &omegaStart);
+        getDoubleParam(EigerOmegaIncr, &omegaIncr);
 
         StreamAPI api(mHostname);
 
@@ -1061,6 +1139,10 @@ void eigerDetector::streamTask (void)
             pArray->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
             updateTimeStamp(&pArray->epicsTS);
 
+            // Update Omega angle for this frame
+            setDoubleParam(EigerOmega, omegaStart+omegaIncr*mFrameNumber);
+            ++mFrameNumber;
+
             // Get any attributes that have been defined for this driver
             this->getAttributes(pArray->pAttributeList);
 
@@ -1092,10 +1174,13 @@ asynStatus eigerDetector::initParams (void)
 {
     int status = asynSuccess;
 
-    // Assume 'description' is of the form 'Dectris Eiger 1M'
+    // Assume 'description' is of the form 'Dectris Eiger xxM'
     char desc[MAX_BUF_SIZE] = "";
     char *manufacturer, *space, *model;
     status = mApi.getString(SSDetConfig, "description", desc, sizeof(desc));
+
+    status |= setStringParam (EigerDescription, desc);
+
     space = strchr(desc, ' ');
     *space = '\0';
     manufacturer = desc;
@@ -1132,9 +1217,30 @@ asynStatus eigerDetector::initParams (void)
     status |= getIntP   (SSFWConfig, "nimages_per_file",   EigerFWNImgsPerFile);
     status |= getIntP   (SSFWStatus, "buffer_free",        EigerFWFree);
 
+    status |= getDoubleP(SSDetConfig, "sensor_thickness", EigerSensorThickness);
+    status |= getStringP(SSDetConfig, "sensor_material",  EigerSensorMaterial);
+    status |= getIntP   (SSDetConfig, "countrate_correction_count_cutoff",
+            EigerCountCutoff);
+    status |= getBoolP  (SSDetConfig, "pixel_mask_applied", EigerPixMaskApplied);
+    status |= getDoubleP(SSDetConfig, "x_pixel_size",     EigerXPixelSize);
+    status |= getDoubleP(SSDetConfig, "y_pixel_size",     EigerYPixelSize);
+
     status |= getDoubleP(SSDetConfig, "beam_center_x",     EigerBeamX);
     status |= getDoubleP(SSDetConfig, "beam_center_y",     EigerBeamY);
     status |= getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+
+    // Read MX Parameters
+    status |= getDoubleP(SSDetConfig, "chi_start",           EigerChiStart);
+    status |= getDoubleP(SSDetConfig, "chi_increment",       EigerChiIncr);
+    status |= getDoubleP(SSDetConfig, "kappa_start",         EigerKappaStart);
+    status |= getDoubleP(SSDetConfig, "kappa_increment",     EigerKappaIncr);
+    status |= getDoubleP(SSDetConfig, "omega_start",         EigerOmegaStart);
+    status |= getDoubleP(SSDetConfig, "omega_increment",     EigerOmegaIncr);
+    status |= getDoubleP(SSDetConfig, "phi_start",           EigerPhiStart);
+    status |= getDoubleP(SSDetConfig, "phi_increment",       EigerPhiIncr);
+    status |= getDoubleP(SSDetConfig, "two_theta_start",     EigerTwoThetaStart);
+    status |= getDoubleP(SSDetConfig, "two_theta_increment", EigerTwoThetaIncr);
+
     status |= getBoolP  (SSDetConfig, "flatfield_correction_applied",
             EigerFlatfield);
     status |= getDoubleP(SSDetConfig, "wavelength",        EigerWavelength);
@@ -1144,6 +1250,21 @@ asynStatus eigerDetector::initParams (void)
     status |= getBinStateP(SSFWConfig,     "mode", "enabled", EigerFWEnable);
     status |= getBinStateP(SSStreamConfig, "mode", "enabled", EigerStreamEnable);
 
+    // Read enums
+    char roiMode[MAX_BUF_SIZE];
+    status |= mApi.getString(SSDetConfig, "roi_mode", roiMode, sizeof(roiMode));
+    if(!strcmp(roiMode, "disabled"))
+        setIntegerParam(EigerROIMode, ROI_MODE_DISABLED);
+    else if(!strcmp(roiMode, "4M"))
+        setIntegerParam(EigerROIMode, ROI_MODE_4M);
+
+    char compAlgo[MAX_BUF_SIZE];
+    status |= mApi.getString(SSDetConfig, "compression", compAlgo, sizeof(compAlgo));
+    if(!strcmp(compAlgo, "lz4"))
+        setIntegerParam(EigerCompressionAlgo, COMP_ALGO_LZ4);
+    else if(!strcmp(compAlgo, "bslz4"))
+        setIntegerParam(EigerCompressionAlgo, COMP_ALGO_BSLZ4);
+
     // Set some default values
     status |= setIntegerParam(NDArraySize, 0);
     status |= setIntegerParam(NDDataType,  NDUInt32);
@@ -1152,7 +1273,7 @@ asynStatus eigerDetector::initParams (void)
     status |= setIntegerParam(EigerSequenceId, 0);
     status |= setIntegerParam(EigerPendingFiles, 0);
     status |= setIntegerParam(EigerMonitorEnable, 0);
-    status |= setDoubleParam (EigerMonitorPeriod, MONITOR_MIN_PERIOD);
+    status |= setIntegerParam(EigerMonitorTimeout, 500);
 
     callParamCallbacks();
 
@@ -1274,10 +1395,26 @@ asynStatus eigerDetector::putBool (sys_t sys, const char *param, bool value)
 }
 
 asynStatus eigerDetector::putDouble (sys_t sys, const char *param,
-        double value)
+        double value, double epsilon)
 {
     const char *functionName = "putDouble";
     paramList_t paramList;
+
+    if(epsilon)
+    {
+        double currentValue;
+        if(mApi.getDouble(sys, param, &currentValue))
+        {
+            ERR_ARGS("[param=%s] preCheck: underlying get failed", param);
+            return asynError;
+        }
+
+        if(fabs(currentValue - value) < epsilon)
+        {
+            FLOW_ARGS("[param = %s] new value == current value", param);
+            return asynSuccess;
+        }
+    }
 
     if(mApi.putDouble(sys, param, value, &paramList))
     {
@@ -1302,16 +1439,65 @@ void eigerDetector::updateParams(paramList_t *paramList)
             getIntP (SSDetConfig, "nimages", ADNumImages);
         else if(!strcmp(paramList->params[i], "photon_energy"))
             getDoubleP(SSDetConfig, "photon_energy", EigerPhotonEnergy);
+        else if(!strcmp(paramList->params[i], "pixel_mask_applied"))
+            getBoolP(SSDetConfig, "pixel_mask_applied", EigerPixMaskApplied);
+        // Metadata Parameters
         else if(!strcmp(paramList->params[i], "beam_center_x"))
             getDoubleP(SSDetConfig, "beam_center_x", EigerBeamX);
         else if(!strcmp(paramList->params[i], "beam_center_y"))
             getDoubleP(SSDetConfig, "beam_center_y", EigerBeamY);
         else if(!strcmp(paramList->params[i], "detector_distance"))
             getDoubleP(SSDetConfig, "detector_distance", EigerDetDist);
+        else if(!strcmp(paramList->params[i], "countrate_correction_count_cutoff"))
+            getIntP   (SSDetConfig, "countrate_correction_count_cutoff",
+                EigerCountCutoff);
+
+        // MX Parameters
+        else if(!strcmp(paramList->params[i], "chi_start"))
+            getDoubleP(SSDetConfig, "chi_start", EigerChiStart);
+        else if(!strcmp(paramList->params[i], "chi_increment"))
+            getDoubleP(SSDetConfig, "chi_increment", EigerChiIncr);
+        else if(!strcmp(paramList->params[i], "kappa_start"))
+            getDoubleP(SSDetConfig, "kappa_start", EigerKappaStart);
+        else if(!strcmp(paramList->params[i], "kappa_increment"))
+            getDoubleP(SSDetConfig, "kappa_increment", EigerKappaIncr);
+        else if(!strcmp(paramList->params[i], "omega_start"))
+            getDoubleP(SSDetConfig, "omega_start", EigerOmegaStart);
+        else if(!strcmp(paramList->params[i], "omega_increment"))
+            getDoubleP(SSDetConfig, "omega_increment", EigerOmegaIncr);
+        else if(!strcmp(paramList->params[i], "phi_start"))
+            getDoubleP(SSDetConfig, "phi_start", EigerPhiStart);
+        else if(!strcmp(paramList->params[i], "phi_increment"))
+            getDoubleP(SSDetConfig, "phi_increment", EigerPhiIncr);
+        else if(!strcmp(paramList->params[i], "two_theta_start"))
+            getDoubleP(SSDetConfig, "two_theta_start", EigerTwoThetaStart);
+        else if(!strcmp(paramList->params[i], "two_theta_increment"))
+            getDoubleP(SSDetConfig, "two_theta_increment", EigerTwoThetaIncr);
+
         else if(!strcmp(paramList->params[i], "threshold_energy"))
             getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
         else if(!strcmp(paramList->params[i], "wavelength"))
             getDoubleP(SSDetConfig, "wavelength", EigerWavelength);
+
+        // Enum params
+        else if(!strcmp(paramList->params[i], "roi_mode"))
+        {
+            char roiMode[MAX_BUF_SIZE];
+            mApi.getString(SSDetConfig, "roi_mode", roiMode, sizeof(roiMode));
+            if(!strcmp(roiMode, "disabled"))
+                setIntegerParam(EigerROIMode, ROI_MODE_DISABLED);
+            else if(!strcmp(roiMode, "4M"))
+                setIntegerParam(EigerROIMode, ROI_MODE_4M);
+        }
+        else if(!strcmp(paramList->params[i], "compression"))
+        {
+            char compAlgo[MAX_BUF_SIZE];
+            mApi.getString(SSDetConfig, "compression", compAlgo, sizeof(compAlgo));
+            if(!strcmp(compAlgo, "lz4"))
+                setIntegerParam(EigerCompressionAlgo, COMP_ALGO_LZ4);
+            else if(!strcmp(compAlgo, "bslz4"))
+                setIntegerParam(EigerCompressionAlgo, COMP_ALGO_BSLZ4);
+        }
     }
 }
 
@@ -1330,6 +1516,10 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     NDDataType_t ndType;
 
     epicsTimeStamp startTime;
+
+    double omegaStart, omegaIncr;
+    getDoubleParam(EigerOmegaStart, &omegaStart);
+    getDoubleParam(EigerOmegaIncr, &omegaIncr);
 
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
@@ -1445,6 +1635,10 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         epicsTimeGetCurrent(&startTime);
         pImage->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
         updateTimeStamp(&pImage->epicsTS);
+
+        // Update the omega angle for this frame
+        setDoubleParam(EigerOmega, omegaStart + omegaIncr*mFrameNumber);
+        ++mFrameNumber;
 
         // Get any attributes that have been defined for this driver
         this->getAttributes(pImage->pAttributeList);

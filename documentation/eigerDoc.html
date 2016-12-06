@@ -38,7 +38,7 @@
     <p>
       This is an <a href="http://www.aps.anl.gov/epics">EPICS</a> <a href="areaDetector.html">
       areaDetector</a> driver for the Eiger detector from <a href="http://www.dectris.com">Dectris</a>.
-      It has been tested on the Eiger 1M, 4M and 16M with the firmware version 1.5.0. The driver
+      It has been tested on the Eiger 1M, 4M and 16M with the firmware version 1.6.2+. The driver
       communicates with the detector via its SIMPLON REST interface, so no library from Dectris is required.
       The images can pulled from the detector as HDF5 files, as a ZeroMQ stream or both. The files can be
       both saved to disk and passed to the areaDetector pipeline at the same time.
@@ -139,7 +139,7 @@
       the FWNFilesPerImage PV.
     </p>
     <p>
-      For example, if TriggerMode is <b>External Enable</b>, NumImages is 60, NumTriggers is 2, FWNImagesPerFIle is 100,
+      For example, if TriggerMode is <b>External Enable</b>, NumImages is 60, NumTriggers is 2, FWNImagesPerFile is 100,
       Sequence ID for the acquisition is 1 and FWNamePattern is "series_$id", a total of three files will be generated:
       series_1_master.h5, series_1_data_000001.h5 (with 100 images) and series_1_data_000002.h5 (with 20 images).
     </p>
@@ -167,8 +167,8 @@
     <h3 id="Using_Monitor">Using Monitor</h3>
     <p>
       The Monitor module is activated when MonitorEnable is set to Yes. Data will be available whenever the monitor
-      module buffer is full (has one image available). This driver polls the detector at a rate set by MonitorPeriod
-      to know when data is available. Once downloaded, the TIFF image is parsed into areaDetector's NDArray on
+      module buffer is full (has one image available). This driver waits MonitorTimeout ms for data to be available.
+      There is a rate-limit of 10Hz. Once downloaded, the TIFF image is parsed into areaDetector's NDArray on
       NDArrayAddr 1 (therefore, an independent NDArray stream).
     </p>
 
@@ -303,7 +303,7 @@
           <th> EPICS record type</th>
         </tr>
         <tr>
-          <td align="center" colspan="8"> <b>Version information</b> </td>
+          <td align="center" colspan="8"> <b>Detector Metadata</b> </td>
         </tr>
         <tr>
           <td> EigerSerialNumber</td>
@@ -324,6 +324,55 @@
           <td> SW_VERSION</td>
           <td> SWVersion_RBV</td>
           <td> stringin</td>
+        </tr><tr>
+          <td> EigerDescription</td>
+          <td> detector/config/description</td>
+          <td> asynOctet</td>
+          <td> R/O</td>
+          <td> Detector's manufacturer and model</td>
+          <td> DESCRIPTION</td>
+          <td> Description_RBV</td>
+          <td> stringin</td>
+        </tr>
+        <tr>
+          <td> EigerSensorMaterial</td>
+          <td> detector/config/sensor_material</td>
+          <td> asynOctet</td>
+          <td> R/O</td>
+          <td> Detector's sensor material</td>
+          <td> SENSOR_MATERIAL</td>
+          <td> SensorMaterial_RBV</td>
+          <td> stringin</td>
+        </tr>
+        <tr>
+          <td> EigerSensorThickness</td>
+          <td> detector/config/sensor_thickness</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's sensor thickness, in meters</td>
+          <td> SENSOR_THICKNESS</td>
+          <td> SensorThickness_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td> EigerXPixelSize</td>
+          <td> detector/config/x_pixel_size</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's pixel size in the X direction, in meters</td>
+          <td> X_PIXEL_SIZE</td>
+          <td> XPixelSize_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td> EigerYPixelSize</td>
+          <td> detector/config/y_pixel_size</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's pixel size in the Y direction, in meters</td>
+          <td> Y_PIXEL_SIZE</td>
+          <td> YPixelSize_RBV</td>
+          <td> ai</td>
         </tr>
         <tr>
           <td align="center" colspan="8"> <b>Status parameters</b> </td>
@@ -524,13 +573,13 @@
           <td> bo<br>bi</td>
         </tr>
         <tr>
-          <td> EigerMonitorPeriod</td>
+          <td> EigerMonitorTimeout</td>
           <td></td>
-          <td> asynFloat64</td>
+          <td> asynInt32</td>
           <td> R/W</td>
-          <td> Time between queries on the Monitor interface for new images</td>
-          <td> MONITOR_PERIOD</td>
-          <td> MonitorPeriod<br>MonitorPeriod_RBV</td>
+          <td> Timeout for queries on the Monitor interface for new images</td>
+          <td> MONITOR_TIMEOUT</td>
+          <td> MonitorTimeout<br>MonitorTimeout_RBV</td>
           <td> ao<br>ai</td>
         </tr>
         <tr>
@@ -579,6 +628,123 @@
           <td> Wavelength<br/>Wavelength_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
+        <tr>
+          <td> EigerCountCutoff</td>
+          <td> detector/config/countrate_correction_count_cutoff</td>
+          <td> asynInt32</td>
+          <td> R/O</td>
+          <td> 
+             Number of counts after which the detector will cutoff due to the 
+             count rate correction.
+          </td>
+          <td> COUNT_CUTOFF</td>
+          <td> CountCutoff_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td align="center" colspan="8"> <b>Acquisition MX metadata</b> </td>
+        </tr>
+        <tr>
+          <td> EigerChiStart</td>
+          <td> detector/config/chi_start</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Start value of the Chi angle </td>
+          <td> CHI_START</td>
+          <td> ChiStart<br/>ChiStart_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerChiIncr</td>
+          <td> detector/config/chi_increment</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Chi angle increment per frame </td>
+          <td> CHI_INCR</td>
+          <td> ChiIncr<br/>ChiIncr_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerKappaStart</td>
+          <td> detector/config/kappa_start</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Start value of the Kappa angle </td>
+          <td> KAPPA_START</td>
+          <td> KappaStart<br/>KappaStart_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerKappaIncr</td>
+          <td> detector/config/kappa_increment</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Kappa angle increment per frame </td>
+          <td> KAPPA_INCR</td>
+          <td> KappaIncr<br/>KappaIncr_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerOmegaStart</td>
+          <td> detector/config/omega_start</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Start value of the Omega angle </td>
+          <td> OMEGA_START</td>
+          <td> OmegaStart<br/>OmegaStart_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerOmegaIncr</td>
+          <td> detector/config/omega_increment</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Omega angle increment per frame </td>
+          <td> OMEGA_INCR</td>
+          <td> OmegaIncr<br/>OmegaIncr_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerPhiStart</td>
+          <td> detector/config/phi_start</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Start value of the Phi angle </td>
+          <td> PHI_START</td>
+          <td> PhiStart<br/>PhiStart_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerPhiIncr</td>
+          <td> detector/config/phi_increment</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Phi angle increment per frame </td>
+          <td> PHI_INCR</td>
+          <td> PhiIncr<br/>PhiIncr_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerTwoThetaStart</td>
+          <td> detector/config/two_theta_start</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> Start value of the TwoTheta angle </td>
+          <td> TWO_THETA_START</td>
+          <td> TwoThetaStart<br/>TwoThetaStart_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        <tr>
+          <td> EigerTwoThetaIncr</td>
+          <td> detector/config/two_theta_increment</td>
+          <td> asynFloat64</td>
+          <td> R/W</td>
+          <td> TwoTheta angle increment per frame </td>
+          <td> TWO_THETA_INCR</td>
+          <td> TwoThetaIncr<br/>TwoThetaIncr_RBV</td>
+          <td> ao<br/>ai</td>
+        </tr>
+        
         <tr>
           <td align="center" colspan="8"> <b>Acquisition control</b> </td>
         </tr>
@@ -700,6 +866,40 @@
           <td> ManualTrigger<br/>ManualTrigger_RBV</td>
           <td> bo<br/>bi</td>
         </tr>
+        <tr>
+          <td> EigerCompressionAlgo</td>
+          <td> detector/config/compression</td>
+          <td> asynInt32</td>
+          <td> R/W</td>
+          <td> 
+            Compression algorithm to use when compression is enabled. Options
+            are:
+            <ul>
+              <li> lz4</li>
+              <li> bslz4 (bitshuffle lz4)</li>
+            </ul>
+          </td>
+          <td> COMPRESSION_ALGO</td>
+          <td> CompressionAlgo<br/>CompressionAlgo_RBV</td>
+          <td> mbbo<br/>mbbi</td>
+        </tr>
+        <tr>
+          <td> EigerROIMode</td>
+          <td> detector/config/roi_mode</td>
+          <td> asynInt32</td>
+          <td> R/W</td>
+          <td> 
+            Which ROI mode to use. <b>Only supported on Eiger 9M and 16M.</b> 
+            Options are:
+            <ul>
+              <li> Disabled</li>
+              <li> 4M</li>
+            </ul>
+          </td>
+          <td> ROI_MODE</td>
+          <td> ROIMode<br/>ROIMode_RBV</td>
+          <td> mbbo<br/>mbbi</td>
+        </tr>
       </tbody>
     </table>
 
@@ -727,11 +927,22 @@
       controls that are not applicable to the Eiger, and lacks some fields that are important
       for the Eiger.</p>
     <p>
-      <code>eiger.opi</code> is the main screen used to control the Eiger driver.
+      <code>eigerDetector.opi</code> is the main screen used to control the Eiger driver.
     </p>
     <div style="text-align: center">
-      <h3 style="text-align: center"> eiger.opi</h3>
+      <h3 style="text-align: center"> eigerDetector.opi</h3>
       <img alt="eiger.png" src="eiger.png" />
+    </div>
+    
+    <p>
+      This is the metadata ancillary screen.
+    <p>
+    <p>
+      <code>eigerAncillary.opi</code> is used to configure metadata information.
+    </p>
+    <div style="text-align: center">
+      <h3 style="text-align: center"> eigerAncillary.opi</h3>
+      <img alt="eigerMetadata.png" src="eigerMetadata.png" />
     </div>
 
   <h2 id="Known_Issues" style="text-align: left"> Known Issues</h2>

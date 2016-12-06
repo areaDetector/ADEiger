@@ -20,6 +20,29 @@
 #define EigerBeamYString                "BEAM_Y"
 #define EigerDetDistString              "DET_DIST"
 #define EigerWavelengthString           "WAVELENGTH"
+#define EigerCountCutoffString          "COUNT_CUTOFF"
+
+// Detector Metadata Parameters
+#define EigerSWVersionString            "SW_VERSION"
+#define EigerSerialNumberString         "SERIAL_NUMBER"
+#define EigerDescriptionString          "DESCRIPTION"
+#define EigerSensorThicknessString      "SENSOR_THICKNESS"
+#define EigerSensorMaterialString       "SENSOR_MATERIAL"
+#define EigerXPixelSizeString           "X_PIXEL_SIZE"
+#define EigerYPixelSizeString           "Y_PIXEL_SIZE"
+
+// MX Parameters (firmware 1.6.2 onwards)
+#define EigerChiStartString             "CHI_START"
+#define EigerChiIncrString              "CHI_INCR"
+#define EigerKappaStartString           "KAPPA_START"
+#define EigerKappaIncrString            "KAPPA_INCR"
+#define EigerOmegaString                "OMEGA"
+#define EigerOmegaStartString           "OMEGA_START"
+#define EigerOmegaIncrString            "OMEGA_INCR"
+#define EigerPhiStartString             "PHI_START"
+#define EigerPhiIncrString              "PHI_INCR"
+#define EigerTwoThetaStartString        "TWO_THETA_START"
+#define EigerTwoThetaIncrString         "TWO_THETA_INCR"
 
 // Acquisition Parameters
 #define EigerFlatfieldString            "FLATFIELD_APPLIED"
@@ -29,10 +52,10 @@
 #define EigerTriggerExpString           "TRIGGER_EXPOSURE"
 #define EigerNTriggersString            "NUM_TRIGGERS"
 #define EigerManualTriggerString        "MANUAL_TRIGGER"
-
-// Detector Info Parameters
-#define EigerSWVersionString            "SW_VERSION"
-#define EigerSerialNumberString         "SERIAL_NUMBER"
+#define EigerCompressionAlgoString      "COMPRESSION_ALGO"
+// ROI Mode is only available on Eiger 9M and 16M
+#define EigerROIModeString              "ROI_MODE"
+#define EigerPixMaskAppliedString       "PIXEL_MASK_APPLIED"
 
 // Detector Status Parameters
 #define EigerStateString                "STATE"
@@ -53,7 +76,7 @@
 
 // Monitor API Parameters
 #define EigerMonitorEnableString        "MONITOR_ENABLE"
-#define EigerMonitorPeriodString        "MONITOR_PERIOD"
+#define EigerMonitorTimeoutString       "MONITOR_TIMEOUT"
 
 // Stream API Parameters
 #define EigerStreamEnableString         "STREAM_ENABLE"
@@ -83,6 +106,18 @@ public:
     void monitorTask  (void);
     void streamTask   (void);
 
+    enum roi_mode
+    {
+        ROI_MODE_DISABLED,
+        ROI_MODE_4M,
+    };
+
+    enum compression_algo
+    {
+        COMP_ALGO_LZ4,
+        COMP_ALGO_BSLZ4
+    };
+
 protected:
     int EigerDataSource;
     #define FIRST_EIGER_PARAM EigerDataSource
@@ -97,6 +132,23 @@ protected:
     int EigerBeamY;
     int EigerDetDist;
     int EigerWavelength;
+    int EigerCountCutoff;
+    int EigerDescription;
+    int EigerSensorThickness;
+    int EigerSensorMaterial;
+    int EigerXPixelSize;
+    int EigerYPixelSize;
+    int EigerChiStart;
+    int EigerChiIncr;
+    int EigerKappaStart;
+    int EigerKappaIncr;
+    int EigerOmega;
+    int EigerOmegaStart;
+    int EigerOmegaIncr;
+    int EigerPhiStart;
+    int EigerPhiIncr;
+    int EigerTwoThetaStart;
+    int EigerTwoThetaIncr;
     int EigerFlatfield;
     int EigerPhotonEnergy;
     int EigerThreshold;
@@ -104,6 +156,9 @@ protected:
     int EigerTriggerExp;
     int EigerNTriggers;
     int EigerManualTrigger;
+    int EigerCompressionAlgo;
+    int EigerROIMode;
+    int EigerPixMaskApplied;
     int EigerSWVersion;
     int EigerSerialNumber;
     int EigerState;
@@ -120,7 +175,7 @@ protected:
     int EigerSequenceId;
     int EigerPendingFiles;
     int EigerMonitorEnable;
-    int EigerMonitorPeriod;
+    int EigerMonitorTimeout;
     int EigerStreamEnable;
     int EigerStreamDropped;
     #define LAST_EIGER_PARAM EigerStreamDropped
@@ -133,6 +188,7 @@ private:
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
     bool mPollComplete, mStreamComplete;
+    unsigned int mFrameNumber;
 
     // Read all parameters from detector and set some default values
     asynStatus initParams (void);
@@ -147,7 +203,7 @@ private:
     // Wrappers to set parameters and catch related parameters updates
     asynStatus putString  (sys_t sys, const char *param, const char *value);
     asynStatus putInt     (sys_t sys, const char *param, int value);
-    asynStatus putDouble  (sys_t sys, const char *param, double value);
+    asynStatus putDouble  (sys_t sys, const char *param, double value, double epsilon = 0.0);
     asynStatus putBool    (sys_t sys, const char *param, bool value);
     void updateParams     (paramList_t *paramList);
 

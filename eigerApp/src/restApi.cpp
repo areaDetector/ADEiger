@@ -461,9 +461,11 @@ int RestAPI::deleteFile (const char *filename)
     return EXIT_SUCCESS;
 }
 
-int RestAPI::getMonitorImage (char **buf, size_t *bufSize)
+int RestAPI::getMonitorImage (char **buf, size_t *bufSize, size_t timeout)
 {
-    return getBlob(SSMonImages, "monitor", buf, bufSize, DATA_TIFF);
+    char param[MAX_BUF_SIZE];
+    epicsSnprintf(param, sizeof(param), "monitor?timeout=%lu", timeout);
+    return getBlob(SSMonImages, param, buf, bufSize, DATA_TIFF);
 }
 
 // Private members
@@ -728,6 +730,8 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     const char *functionName = "getBlob";
     int status = EXIT_SUCCESS;
     int received;
+    size_t remaining;
+    char *bufp;
 
     request_t request = {};
     char requestBuf[MAX_MESSAGE_SIZE];
@@ -753,6 +757,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
         }
     }
 
+    // Send the request
     if(send(mSockFd, request.data, request.actualLen, 0) < 0)
     {
         if(mSockRetries++ < MAX_HTTP_RETRIES)
@@ -765,6 +770,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
         }
     }
 
+    // Receive the first part of the response (header and some content)
     if((received = recv(mSockFd, response.data, response.dataLen, 0)) <= 0)
     {
         if(mSockRetries++ < MAX_HTTP_RETRIES)
@@ -791,6 +797,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
         goto end;
     }
 
+    // Create the receive buffer and copy over what we already received
     *buf = (char*)malloc(response.contentLength);
     if(!*buf)
     {
@@ -799,26 +806,36 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
         goto end;
     }
 
+    // Assume that we got the whole header
     *bufSize = received - response.headerLen;
     memcpy(*buf, response.content, *bufSize);
 
-    received = recv(mSockFd, *buf + *bufSize, response.contentLength - *bufSize,
-            MSG_WAITALL);
+    // Get the rest of the content (MSG_WAITALL can fail!)
+    remaining = response.contentLength - *bufSize;
+    bufp = *buf + *bufSize;
 
-    if(received <= 0)
+    while(remaining)
     {
-        free(*buf);
-        *buf = NULL;
-        *bufSize = 0;
+        received = recv(mSockFd, bufp, remaining, MSG_WAITALL);
 
-        if(mSockRetries++ < MAX_HTTP_RETRIES)
-            goto retry;
-        else
+        if(received <= 0)
         {
-            ERR_ARGS("[sys=%d file=%s] failed to receive second part", sys, name);
-            status = EXIT_FAILURE;
-            goto end;
+            free(*buf);
+            *buf = NULL;
+            *bufSize = 0;
+
+            if(mSockRetries++ < MAX_HTTP_RETRIES)
+                goto retry;
+            else
+            {
+                ERR_ARGS("[sys=%d file=%s] failed to receive second part", sys, name);
+                status = EXIT_FAILURE;
+                goto end;
+            }
         }
+
+        remaining -= received;
+        bufp += received;
     }
 
     *bufSize = response.contentLength;
@@ -839,7 +856,6 @@ retry:
     mSockClosed = true;
     mSockMutex.unlock();
     return getBlob(sys, name, buf, bufSize, accept);
-
 }
 
 int RestAPI::parseHeader (response_t *response)
