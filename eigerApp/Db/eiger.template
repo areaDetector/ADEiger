@@ -260,7 +260,7 @@ record(ai, "$(P)$(R)FWFree_RBV")
 
 record(stringin, "$(P)$(R)Description_RBV")
 {
-    field(DTYP, "asynOctet")
+    field(DTYP, "asynOctetRead")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DESCRIPTION")
     field(DESC, "Detector Description")
     field(SCAN, "I/O Intr")
