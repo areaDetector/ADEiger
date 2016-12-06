@@ -25,6 +25,23 @@ How to install:
   - ZeroMQ 4 is required
 * Run `make` inside `ADEiger`.
 
+HDF5 Plugins:
+-------------
+
+If you want ADEiger to decode compressed data produced by the detector, you will have to have a couple of decompression
+plugins compiled and on the path:
+
+* Bitshuffle:
+
+Available [here](https://github.com/kiyo-masui/bitshuffle).
+
+* LZ4:
+
+Deprecated version available [here](https://github.com/michaelrissi/HDF5Plugin.git).
+New version available [here](https://github.com/nexusformat/HDF5-External-Filter-Plugins).
+
+Once they are compiled, add their paths to the environment variable `HDF5_PLUGIN_PATH`, separated by a colon.
+
 How to run:
 -----------
 
