@@ -16,6 +16,20 @@ R2-1
 Depends on Eiger firmware 1.6.2+
 
 * Added all MX parameters (Chi, Kappa, Omega, Phi, Two Theta)
+* Speeds up acquisition by avoiding resending the same energy setting if it hasn't changed.
+* Fix a bug that caused the driver to fail to download huge images.
+* Use monitor timeout instead of polling.
+* Added the following parameters to the driver:
+ - Omega (tracks the Omega angle for every frame)
+ - Countrate Correction Count Cutoff (`detector/config/countrate_correction_count_cutoff`)
+ - Sensor Thickness (`detector/config/sensor_thickness`)
+ - Sensor Material (`detector/config/sensor_material`)
+ - X Pixel Size (`detector/config/x_pixel_size`)
+ - Y Pixel Size (`detector/config/y_pixel_size`)
+ - Description (`detector/config/description`)
+ - ROI Mode (`detector/config/roi_mode`)
+ - Compression Algorithm (`detector/config/compression`)
+ - Pixel Mask Applied (`detector/config/pixel_mask_applied`)
 
 R2-0
 ----
