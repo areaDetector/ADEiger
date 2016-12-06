@@ -1639,7 +1639,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         updateTimeStamp(&pImage->epicsTS);
 
         // Update the omega angle for this frame
-        setIntegerParam(EigerOmega, omegaStart + omegaIncr*mFrameNumber);
+        setDoubleParam(EigerOmega, omegaStart + omegaIncr*mFrameNumber);
         ++mFrameNumber;
 
         // Get any attributes that have been defined for this driver
