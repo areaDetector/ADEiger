@@ -92,6 +92,7 @@ public:
     int disarm     (void);
     int cancel     (void);
     int abort      (void);
+    int statusUpdate (void);
 
     int getString   (sys_t sys, const char *param, char *value, size_t len,           int timeout = DEFAULT_TIMEOUT);
     int getInt      (sys_t sys, const char *param, int *value,                        int timeout = DEFAULT_TIMEOUT);

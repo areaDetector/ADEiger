@@ -10,6 +10,13 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-2
+----
+
+* Fixes status not updating
+* Fixes incorrect SensorMaterial_RBV DTYP in database file
+* Fixes incorrect SensorMaterial_RBV display in OPI
+
 R2-1
 ----
 

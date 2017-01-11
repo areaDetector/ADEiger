@@ -254,6 +254,11 @@ int RestAPI::abort (void)
     return put(SSCommand, "abort", "", 0, NULL);
 }
 
+int RestAPI::statusUpdate (void)
+{
+    return put(SSCommand, "status_update", "", 0, NULL);
+}
+
 int RestAPI::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
 {
     return get(sys, param, value, len, timeout);

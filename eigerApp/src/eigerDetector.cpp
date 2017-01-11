@@ -1750,6 +1750,9 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
  */
 asynStatus eigerDetector::eigerStatus (void)
 {
+    // Request a status update
+    mApi.statusUpdate();
+
     // Read state and error message
     getStringP(SSDetStatus, "state", EigerState);
     getStringP(SSDetStatus, "error", EigerError);
