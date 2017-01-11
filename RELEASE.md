@@ -13,6 +13,7 @@ Release Notes
 R2-2
 ----
 
+* Added MEDM screens, courtesy of Vesna Samardzic-Boban (Australian Synchrotron) and Zachary Brown (CHESS)
 * Fixes status not updating
 * Fixes incorrect SensorMaterial_RBV DTYP in database file
 * Fixes incorrect SensorMaterial_RBV display in OPI
