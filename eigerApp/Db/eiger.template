@@ -278,7 +278,7 @@ record(ai, "$(P)$(R)SensorThickness_RBV")
 
 record(stringin, "$(P)$(R)SensorMaterial_RBV")
 {
-    field(DTYP, "asynOctet")
+    field(DTYP, "asynOctetRead")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SENSOR_MATERIAL")
     field(DESC, "Sensor Material")
     field(SCAN, "I/O Intr")
