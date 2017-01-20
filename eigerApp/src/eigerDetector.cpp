@@ -717,6 +717,7 @@ void eigerDetector::controlTask (void)
             acq.removeFiles = removeFiles;
 
             mPollComplete = false;
+            mPollStop = false;
             mPollQueue.send(&acq, sizeof(acq));
             waitPoll = true;
         }
@@ -802,6 +803,14 @@ void eigerDetector::controlTask (void)
         unlock();
         if(waitPoll)
         {
+            // Wait FileWriter to go out of the "acquire" state
+            bool fwAcquire = true;
+            while(fwAcquire)
+                mApi.getBinState(SSFWStatus, "state", &fwAcquire, "acquire");
+            epicsThreadSleep(0.1);
+
+            mPollStop = true;
+
             mPollDoneEvent.wait();
             success = success && mPollComplete;
         }
@@ -863,7 +872,7 @@ void eigerDetector::pollTask (void)
 
         // While acquiring, wait and download every file on the list
         i = 0;
-        while(i < totalFiles)
+        while(i < totalFiles && !mPollStop)
         {
             file_t *curFile = &files[i];
 
@@ -882,9 +891,6 @@ void eigerDetector::pollTask (void)
                     api.deleteFile(curFile->name);
                 ++i;
             }
-
-            if(!acquiring())
-                break;
         }
 
         // Not acquiring anymore, wait for all pending files to be reaped

@@ -187,7 +187,7 @@ private:
             mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
-    bool mPollComplete, mStreamComplete;
+    bool mPollStop, mPollComplete, mStreamComplete;
     unsigned int mFrameNumber;
 
     // Read all parameters from detector and set some default values
