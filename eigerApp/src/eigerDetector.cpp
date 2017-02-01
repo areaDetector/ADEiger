@@ -158,7 +158,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname),
-    mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
+    mStartEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -359,7 +359,6 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
             mApi.abort();
             lock();
             setIntegerParam(ADStatus, ADStatusAborted);
-            mStopEvent.signal();
         }
     }
     else if (function == EigerFWClear)
@@ -612,7 +611,7 @@ void eigerDetector::controlTask (void)
         // Wait for start event
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusIdle)
-            setStringParam(ADStatusMessage, "Waiting for acquire command");
+            setStringParam(ADStatusMessage, "Ready");
         callParamCallbacks();
 
         unlock();
@@ -620,7 +619,6 @@ void eigerDetector::controlTask (void)
         lock();
 
         // Clear uncaught events
-        mStopEvent.tryWait();
         mTriggerEvent.tryWait();
         mPollDoneEvent.tryWait();
         mStreamEvent.tryWait();
@@ -679,7 +677,7 @@ void eigerDetector::controlTask (void)
         }
 
         // Arm the detector
-        setStringParam(ADStatusMessage, "Arming...");
+        setStringParam(ADStatusMessage, "Arming");
         callParamCallbacks();
 
         unlock();
@@ -696,8 +694,8 @@ void eigerDetector::controlTask (void)
         }
 
         // Set status parameters
-        setIntegerParam(ADStatus,        ADStatusAcquire);
-        setStringParam (ADStatusMessage, "Detector armed");
+        setIntegerParam(ADStatus, ADStatusAcquire);
+        setStringParam (ADStatusMessage, "Armed");
         setIntegerParam(EigerSequenceId, sequenceId);
         setIntegerParam(EigerArmed, 1);
         callParamCallbacks();
@@ -732,11 +730,11 @@ void eigerDetector::controlTask (void)
 
         // Trigger
         if(triggerMode == TMExternalSeries || triggerMode == TMExternalEnable)
-            setStringParam(ADStatusMessage, "Waiting for external triggers (press Stop when done)");
+            setStringParam(ADStatusMessage, "Waiting for external triggers");
         else if(manualTrigger)
-            setStringParam(ADStatusMessage, "Waiting for manual triggers...");
+            setStringParam(ADStatusMessage, "Waiting for manual triggers");
         else
-            setStringParam(ADStatusMessage, "Triggering...");
+            setStringParam(ADStatusMessage, "Triggering");
         callParamCallbacks();
 
         if(triggerMode == TMInternalSeries || triggerMode == TMInternalEnable)
@@ -785,7 +783,8 @@ void eigerDetector::controlTask (void)
         else // TMExternalSeries or TMExternalEnable
         {
             unlock();
-            mStopEvent.wait();
+            // Wait collection (blocks until collection is done)
+            api.wait(); // Available since 1.6.3, will be gone in 1.7 ...
             lock();
         }
 
@@ -796,7 +795,7 @@ void eigerDetector::controlTask (void)
 
         // Wait for tasks completion
         setIntegerParam(EigerArmed, 0);
-        setStringParam(ADStatusMessage, "Waiting for files to be processed...");
+        setStringParam(ADStatusMessage, "Processing files");
         callParamCallbacks();
 
         bool success = true;
@@ -809,8 +808,8 @@ void eigerDetector::controlTask (void)
                 mApi.getBinState(SSFWStatus, "state", &fwAcquire, "acquire");
             epicsThreadSleep(0.1);
 
+            // Request polling task to stop
             mPollStop = true;
-
             mPollDoneEvent.wait();
             success = success && mPollComplete;
         }
