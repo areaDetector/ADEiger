@@ -557,6 +557,7 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
     int status = EXIT_SUCCESS;
     int received, ret;
     struct timeval recvTimeout;
+    struct timeval *pRecvTimeout = NULL;
     fd_set fds;
 
     mSockMutex.lock();
@@ -583,7 +584,6 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         }
     }
 
-    struct timeval *pRecvTimeout = NULL;
     if(timeout >= 0)
     {
         recvTimeout.tv_sec = timeout;
