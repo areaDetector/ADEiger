@@ -254,6 +254,11 @@ int RestAPI::abort (void)
     return put(SSCommand, "abort", "", 0, NULL);
 }
 
+int RestAPI::wait (void)
+{
+    return put(SSCommand, "wait", "", 0, NULL, -1);
+}
+
 int RestAPI::statusUpdate (void)
 {
     return put(SSCommand, "status_update", "", 0, NULL);
@@ -578,12 +583,17 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         }
     }
 
-    recvTimeout.tv_sec = timeout;
-    recvTimeout.tv_usec = 0;
-    FD_ZERO(&fds);
-    FD_SET(mSockFd, &fds);
+    struct timeval *pRecvTimeout = NULL;
+    if(timeout >= 0)
+    {
+        recvTimeout.tv_sec = timeout;
+        recvTimeout.tv_usec = 0;
+        FD_ZERO(&fds);
+        FD_SET(mSockFd, &fds);
+        pRecvTimeout = &recvTimeout;
+    }
 
-    ret = select(mSockFd+1, &fds, NULL, NULL, &recvTimeout);
+    ret = select(mSockFd+1, &fds, NULL, NULL, pRecvTimeout);
     if(ret <= 0)
     {
         ERR(ret ? "select() failed" : "timed out");
