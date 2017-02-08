@@ -338,6 +338,17 @@ record(mbbi,"$(P)$(R)ROIMode_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Dead time between frames
+record(ai, "$(P)$(R)DeadTime_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DEAD_TIME")
+    field(DESC, "Dead time")
+    field(EGU,  "s")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
 # Compression algorithm selection
 record(mbbo,"$(P)$(R)CompressionAlgo") {
     field(PINI, "YES")

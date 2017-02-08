@@ -56,6 +56,7 @@
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigerROIModeString              "ROI_MODE"
 #define EigerPixMaskAppliedString       "PIXEL_MASK_APPLIED"
+#define EigerDeadTimeString             "DEAD_TIME"
 
 // Detector Status Parameters
 #define EigerStateString                "STATE"
@@ -159,6 +160,7 @@ protected:
     int EigerCompressionAlgo;
     int EigerROIMode;
     int EigerPixMaskApplied;
+    int EigerDeadTime;
     int EigerSWVersion;
     int EigerSerialNumber;
     int EigerState;

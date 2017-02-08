@@ -101,12 +101,6 @@
       image is given by the TriggerExposure PV and can change between triggers in the same acquisition. This mode is
       experimental as of firmware 1.5.0. See Known Issues.
     </p>
-    <p>
-      On <b>External Series</b> and <b>External Enable</b> modes there is currently (as of firmware 1.5.0) no way of
-      knowing if the detector is done receiving triggers and needs a disarm. Therefore, the acquisition must be stopped
-      (Acquire=0) manually.
-    </p>
-
   <h2 id="Manual_Trigger">Manual Trigger</h2>
   <p>
     On <b>Internal Series</b> and <b>Internal Enable</b> modes, if the ManualTrigger PV is set to YES, the triggers are
@@ -180,7 +174,7 @@
   </p>
   <h2 id="StandardNotes" style="text-align: left">Implementation of standard driver parameters</h2>
     <p>
-      The following table describes how the Andor driver implements some of the standard
+      The following table describes how the Eiger driver implements some of the standard
       driver parameters.
     </p>
     <table border="1" cellpadding="2" cellspacing="2" style="text-align: left">
@@ -372,6 +366,17 @@
           <td> Detector's pixel size in the Y direction, in meters</td>
           <td> Y_PIXEL_SIZE</td>
           <td> YPixelSize_RBV</td>
+          <td> ai</td>
+        </tr>
+        <tr>
+          <td> EigerDeadTime</td>
+          <td> detector/config/detector_readout_time</td>
+          <td> asynFloat64</td>
+          <td> R/O</td>
+          <td> Detector's readout time (dead time) between frames. Changes
+               with different Threshold Energies.</td>
+          <td> DEAD_TIME</td>
+          <td> DeadTime_RBV</td>
           <td> ai</td>
         </tr>
         <tr>

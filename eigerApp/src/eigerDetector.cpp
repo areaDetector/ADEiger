@@ -225,6 +225,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerCompressionAlgoString, asynParamInt32, &EigerCompressionAlgo);
     createParam(EigerROIModeString,       asynParamInt32,   &EigerROIMode);
     createParam(EigerPixMaskAppliedString, asynParamInt32,  &EigerPixMaskApplied);
+    createParam(EigerDeadTimeString,      asynParamFloat64, &EigerDeadTime);
 
     // Detector Status Parameters
     createParam(EigerStateString,         asynParamOctet,   &EigerState);
@@ -1227,6 +1228,7 @@ asynStatus eigerDetector::initParams (void)
     status |= getIntP   (SSDetConfig, "countrate_correction_count_cutoff",
             EigerCountCutoff);
     status |= getBoolP  (SSDetConfig, "pixel_mask_applied", EigerPixMaskApplied);
+    status |= getDoubleP(SSDetConfig, "detector_readout_time", EigerDeadTime);
     status |= getDoubleP(SSDetConfig, "x_pixel_size",     EigerXPixelSize);
     status |= getDoubleP(SSDetConfig, "y_pixel_size",     EigerYPixelSize);
 
@@ -1481,6 +1483,8 @@ void eigerDetector::updateParams(paramList_t *paramList)
 
         else if(!strcmp(paramList->params[i], "threshold_energy"))
             getDoubleP(SSDetConfig, "threshold_energy", EigerThreshold);
+        else if(!strcmp(paramList->params[i], "detector_readout_time"))
+            getDoubleP(SSDetConfig, "detector_readout_time", EigerDeadTime);
         else if(!strcmp(paramList->params[i], "wavelength"))
             getDoubleP(SSDetConfig, "wavelength", EigerWavelength);
 

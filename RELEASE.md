@@ -13,10 +13,14 @@ Release Notes
 R2-2
 ----
 
+Depends on Eiger firmware 1.6.4+
+
 * Added MEDM screens, courtesy of Vesna Samardzic-Boban (Australian Synchrotron) and Zachary Brown (CHESS)
-* Fixes status not updating
-* Fixes incorrect SensorMaterial_RBV DTYP in database file
-* Fixes incorrect SensorMaterial_RBV display in OPI
+* Fix status not updating
+* Fix incorrect SensorMaterial_RBV DTYP in database file
+* Fix incorrect SensorMaterial_RBV display in OPI
+* Use undocummented `wait` command when using external triggers. No need to press 'Stop' when done anymore.
+* Added Dead Time parameter (`detector/config/detector_readout_time`)
 
 R2-1
 ----
