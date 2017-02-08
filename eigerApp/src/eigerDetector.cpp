@@ -607,6 +607,7 @@ void eigerDetector::controlTask (void)
     int numImagesPerFile, removeFiles;
     double acquirePeriod, triggerTimeout = 0.0, triggerExposure = 0.0;
     int savedNumImages;
+    int compression, compressionAlgo;
 
     lock();
 
@@ -639,22 +640,17 @@ void eigerDetector::controlTask (void)
         getIntegerParam(ADTriggerMode,       &triggerMode);
         getIntegerParam(EigerManualTrigger,  &manualTrigger);
         getIntegerParam(EigerFWAutoRemove,   &removeFiles);
+        getIntegerParam(EigerFWCompression,  &compression);
+        getIntegerParam(EigerCompressionAlgo, &compressionAlgo);
 
+        const char *err = NULL;
         if(dataSource == SOURCE_FILEWRITER && !fwEnable)
-        {
-            setIntegerParam(ADAcquire, 0);
-            setIntegerParam(ADStatus, ADStatusError);
-            setStringParam(ADStatusMessage, "FileWriter API is disabled");
-            continue;
-        }
-
-        if(dataSource == SOURCE_STREAM && !streamEnable)
-        {
-            setIntegerParam(ADAcquire, 0);
-            setIntegerParam(ADStatus, ADStatusError);
-            setStringParam(ADStatusMessage, "Stream API is disabled");
-            continue;
-        }
+            err = "FileWriter API is disabled";
+        else if(dataSource == SOURCE_STREAM && !streamEnable)
+            err = "Stream API is disabled";
+        else if(dataSource != SOURCE_NONE && compression &&
+                compressionAlgo == COMP_ALGO_BSLZ4)
+            err = "Driver can't decode BSLZ4";
 
         // If saving files, check if the File Path is valid
         if(fwEnable && saveFiles)
@@ -665,12 +661,16 @@ void eigerDetector::controlTask (void)
 
             if(!filePathExists)
             {
-                ERR("invalid local file path");
-                setIntegerParam(ADAcquire, 0);
-                setIntegerParam(ADStatus, ADStatusError);
-                setStringParam(ADStatusMessage, "Invalid file path");
-                continue;
+                err = "Invalid file path";
+                ERR(err);
             }
+        }
+
+        if(err) {
+            setIntegerParam(ADAcquire, 0);
+            setIntegerParam(ADStatus, ADStatusError);
+            setStringParam(ADStatusMessage, err);
+            continue;
         }
 
         savedNumImages = numImages;

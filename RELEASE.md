@@ -20,6 +20,7 @@ Depends on Eiger firmware 1.6.4+
 * Fix incorrect SensorMaterial_RBV DTYP in database file
 * Fix incorrect SensorMaterial_RBV display in OPI
 * Use undocummented `wait` command when using external triggers. No need to press 'Stop' (set Acquire to 0) when done anymore.
+* Prevent using FileWriter or Stream as a Data Source when the selected compression algorithm is Bit Shuffle LZ4.
 * Added the following parameters to the driver:
  - Dead Time (`detector/config/detector_readout_time`)
  - FileWriter State (`filewriter/status/state`)
