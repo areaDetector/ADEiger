@@ -184,6 +184,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     createParam(EigerFWNImgsPerFileString,asynParamInt32, &EigerFWNImgsPerFile);
     createParam(EigerFWAutoRemoveString,  asynParamInt32, &EigerFWAutoRemove);
     createParam(EigerFWFreeString,        asynParamInt32, &EigerFWFree);
+    createParam(EigerFWStateString,       asynParamOctet, &EigerFWState);
 
     // Acquisition Metadata Parameters
     createParam(EigerBeamXString,         asynParamFloat64, &EigerBeamX);
@@ -247,10 +248,12 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Monitor API Parameters
     createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
     createParam(EigerMonitorTimeoutString,asynParamInt32,   &EigerMonitorTimeout);
+    createParam(EigerMonitorStateString,  asynParamOctet,   &EigerMonitorState);
 
     // Stream API Parameters
     createParam(EigerStreamEnableString,  asynParamInt32, &EigerStreamEnable);
     createParam(EigerStreamDroppedString, asynParamInt32, &EigerStreamDropped);
+    createParam(EigerStreamStateString,   asynParamOctet, &EigerStreamState);
 
     // Test if the detector is initialized
     if(mApi.getString(SSDetConfig, "description", NULL, 0))
@@ -1779,6 +1782,11 @@ asynStatus eigerDetector::eigerStatus (void)
 
     // Read DCU buffer free percentage
     getDoubleP(SSDetStatus, "builder/dcu_buffer_free", EigerDCUBufFree);
+
+    // Read state of the different modules
+    getStringP(SSFWStatus, "state", EigerFWState);
+    getStringP(SSMonStatus, "state", EigerMonitorState);
+    getStringP(SSStreamStatus, "state", EigerStreamState);
 
     return asynSuccess;
 }

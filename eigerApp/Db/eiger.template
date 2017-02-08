@@ -258,6 +258,14 @@ record(ai, "$(P)$(R)FWFree_RBV")
     field(SCAN, "I/O Intr")
 }
 
+# FileWriter State
+record(stringin, "$(P)$(R)FWState_RBV") {
+    field(DESC, "FileWriter operational state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_STATE")
+    field(SCAN, "I/O Intr")
+}
+
 record(stringin, "$(P)$(R)Description_RBV")
 {
     field(DTYP, "asynOctetRead")
@@ -401,6 +409,14 @@ record(ai, "$(P)$(R)StreamDropped_RBV")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DROPPED")
     field(DESC, "Number of dropped frames")
     field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
+# Stream State
+record(stringin, "$(P)$(R)StreamState_RBV") {
+    field(DESC, "Stream operational state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_STATE")
     field(SCAN, "I/O Intr")
 }
 
@@ -795,6 +811,14 @@ record(ai, "$(P)$(R)MonitorTimeout_RBV")
     field(DESC, "Timeout for Monitor API")
     field(EGU,  "ms")
     field(PREC, "1")
+    field(SCAN, "I/O Intr")
+}
+
+# Monitor State
+record(stringin, "$(P)$(R)MonitorState_RBV") {
+    field(DESC, "Monitor operational state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_STATE")
     field(SCAN, "I/O Intr")
 }
 

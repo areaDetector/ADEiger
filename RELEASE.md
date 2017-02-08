@@ -19,8 +19,12 @@ Depends on Eiger firmware 1.6.4+
 * Fix status not updating
 * Fix incorrect SensorMaterial_RBV DTYP in database file
 * Fix incorrect SensorMaterial_RBV display in OPI
-* Use undocummented `wait` command when using external triggers. No need to press 'Stop' when done anymore.
-* Added Dead Time parameter (`detector/config/detector_readout_time`)
+* Use undocummented `wait` command when using external triggers. No need to press 'Stop' (set Acquire to 0) when done anymore.
+* Added the following parameters to the driver:
+ - Dead Time (`detector/config/detector_readout_time`)
+ - FileWriter State (`filewriter/status/state`)
+ - Monitor State (`monitor/status/state`)
+ - Stream State (`stream/status/state`)
 
 R2-1
 ----

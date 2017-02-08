@@ -14,6 +14,7 @@
 #define EigerFWNImgsPerFileString       "NIMAGES_PER_FILE"
 #define EigerFWAutoRemoveString         "AUTO_REMOVE"
 #define EigerFWFreeString               "FW_FREE"
+#define EigerFWStateString              "FW_STATE"
 
 // Acquisition Metadata Parameters
 #define EigerBeamXString                "BEAM_X"
@@ -78,10 +79,12 @@
 // Monitor API Parameters
 #define EigerMonitorEnableString        "MONITOR_ENABLE"
 #define EigerMonitorTimeoutString       "MONITOR_TIMEOUT"
+#define EigerMonitorStateString         "MONITOR_STATE"
 
 // Stream API Parameters
 #define EigerStreamEnableString         "STREAM_ENABLE"
 #define EigerStreamDroppedString        "STREAM_DROPPED"
+#define EigerStreamStateString          "STREAM_STATE"
 
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
@@ -129,6 +132,7 @@ protected:
     int EigerFWNImgsPerFile;
     int EigerFWAutoRemove;
     int EigerFWFree;
+    int EigerFWState;
     int EigerBeamX;
     int EigerBeamY;
     int EigerDetDist;
@@ -178,9 +182,11 @@ protected:
     int EigerPendingFiles;
     int EigerMonitorEnable;
     int EigerMonitorTimeout;
+    int EigerMonitorState;
     int EigerStreamEnable;
     int EigerStreamDropped;
-    #define LAST_EIGER_PARAM EigerStreamDropped
+    int EigerStreamState;
+    #define LAST_EIGER_PARAM EigerStreamState
 
 private:
     char mHostname[512];
