@@ -191,7 +191,7 @@ protected:
 private:
     char mHostname[512];
     RestAPI mApi;
-    epicsEvent mStartEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
+    epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
             mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;

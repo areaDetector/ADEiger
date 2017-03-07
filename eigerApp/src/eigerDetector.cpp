@@ -158,7 +158,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname),
-    mStartEvent(), mTriggerEvent(), mPollDoneEvent(),
+    mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -363,6 +363,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
             mApi.abort();
             lock();
             setIntegerParam(ADStatus, ADStatusAborted);
+            mStopEvent.signal();
         }
     }
     else if (function == EigerFWClear)
@@ -624,6 +625,7 @@ void eigerDetector::controlTask (void)
         lock();
 
         // Clear uncaught events
+        mStopEvent.tryWait();
         mTriggerEvent.tryWait();
         mPollDoneEvent.tryWait();
         mStreamEvent.tryWait();
@@ -734,7 +736,7 @@ void eigerDetector::controlTask (void)
 
         // Trigger
         if(triggerMode == TMExternalSeries || triggerMode == TMExternalEnable)
-            setStringParam(ADStatusMessage, "Waiting for external triggers");
+            setStringParam(ADStatusMessage, "Waiting for external triggers (press Stop when done)");
         else if(manualTrigger)
             setStringParam(ADStatusMessage, "Waiting for manual triggers");
         else
@@ -787,8 +789,7 @@ void eigerDetector::controlTask (void)
         else // TMExternalSeries or TMExternalEnable
         {
             unlock();
-            // Wait collection (blocks until collection is done)
-            api.wait(); // Available since 1.6.3, will be gone in 1.7 ...
+            mStopEvent.wait();
             lock();
         }
 
@@ -814,6 +815,7 @@ void eigerDetector::controlTask (void)
 
             // Request polling task to stop
             mPollStop = true;
+
             mPollDoneEvent.wait();
             success = success && mPollComplete;
         }
