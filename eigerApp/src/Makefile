@@ -25,8 +25,6 @@ endif
 ifdef HDF5_LIB
   hdf5_hl_DIR   += $(HDF5_LIB)
   LIB_LIBS      += hdf5_hl
-else
-  LIB_SYS_LIBS  += hdf5_hl
 endif
 
 include $(ADCORE)/ADApp/commonLibraryMakefile

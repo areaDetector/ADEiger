@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<components arch="linux-x86_64">
+    <ADEiger.eigerDetector ADDR="0" P="EIGERDETECTOR" R=":CAM:" PORT="EIG.CAM" SERVER="127.0.0.1" TIMEOUT="1"/>
+</components>

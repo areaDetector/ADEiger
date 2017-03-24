@@ -19,7 +19,7 @@ CHECK_RELEASE = YES
 # Set this when you only want to compile this application
 #   for a subset of the cross-compiled target architectures
 #   that Base is built for.
-#CROSS_COMPILER_TARGET_ARCHS = vxWorks-68040
+CROSS_COMPILER_TARGET_ARCHS =
 
 # To install files into a location other than $(TOP) define
 #   INSTALL_LOCATION here.
@@ -42,6 +42,10 @@ ifdef T_A
 endif
 
 # If zeromq is not installed as a system library, set its path here
-#ZMQ = /home/bmartins/workspace/zmq
-#ZMQ_LIB = $(ZMQ)/lib
-#ZMQ_INCLUDE = -I$(ZMQ)/include
+ZMQ = /dls_sw/prod/tools/RHEL6-x86_64/zeromq/3-2-4/prefix
+ZMQ_LIB = $(ZMQ)/lib
+ZMQ_INCLUDE = -I$(ZMQ)/include
+
+HDF5          = /dls_sw/prod/tools/RHEL6-x86_64/hdf5/1-10-1/prefix
+HDF5_LIB      = $(HDF5)/lib
+HDF5_INCLUDE  = -I$(HDF5)/include
