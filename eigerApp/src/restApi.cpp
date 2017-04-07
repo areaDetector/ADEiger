@@ -538,17 +538,12 @@ int RestAPI::connect (void)
 
 int RestAPI::setNonBlock (bool nonBlock)
 {
-#ifdef WIN32
-    unsigned long mode = nonBlock ? 1 : 0;
-    return ioctlsocket(mSockFd, FIONBIO, &mode) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
-#else
     int flags = fcntl(mSockFd, F_GETFL, 0);
     if(flags < 0)
         return EXIT_FAILURE;
 
     flags = nonBlock ? flags | O_NONBLOCK : flags & ~O_NONBLOCK;
     return fcntl(mSockFd, F_SETFL, flags) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
-#endif
 }
 
 int RestAPI::doRequest (const request_t *request, response_t *response, int timeout)

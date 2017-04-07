@@ -135,13 +135,23 @@
     <p>
       For example, if TriggerMode is <b>External Enable</b>, NumImages is 60, NumTriggers is 2, FWNImagesPerFile is 100,
       Sequence ID for the acquisition is 1 and FWNamePattern is "series_$id", a total of three files will be generated:
-      series_1_master.h5, series_1_data_000001.h5 (with 100 images) and series_1_data_000002.h5 (with 20 images).
+      <ul>
+        <li>series_1_master.h5</li>
+        <li>series_1_data_000001.h5 (with 100 images)</li>
+        <li>series_1_data_000002.h5 (with 20 images)</li>
+      </ul>
     </p>
     <p>
       The generated files will be downloaded either if DataSource is set to FileWriter or if SaveFiles is set to Yes.
       Files are downloaded as soon as they are available. To determine if a file is available the driver polls the
       detector at a nominal rate of 10Hz. While a file is being processed the next file available is downloaded in
       parallel. All files will remain on the detector disk unless FWAutoRemove is set to Yes.
+    </p>
+    <p>
+      When saving files to disk (SaveFiles = Yes) it is possible to set the file's owner, its group and its access 
+      permissions with FileOwner, FileOwnerGrp and FilePerms PVs. To be able to set arbitrary owners the IOC executable
+      requires CAP_SETUID and CAP_SETGID capabilities, which can be given with the command:
+      <pre>sudo setcap cap_setuid,cap_setgid+ep eigerDetectorApp</pre>
     </p>
     <p>
       All files on the detector disk can be deleted at once by processing the FWClear PV.
@@ -526,7 +536,7 @@
           <td></td>
           <td> asynInt32</td>
           <td> R/W</td>
-          <td> Controls wheter downloaded files should be removed from the detector disk </td>
+          <td> Controls whether downloaded files should be removed from the detector disk </td>
           <td> AUTO_REMOVE</td>
           <td> FWAutoRemove<br/>FWAutoRemove_RBV</td>
           <td> bo<br/>bi</td>
@@ -812,10 +822,42 @@
           <td></td>
           <td> asynInt32</td>
           <td> R/W</td>
-          <td> Controls wheter acquired files should be saved locally to disk </td>
+          <td> Controls whether acquired files should be saved locally to disk </td>
           <td> SAVE_FILES</td>
           <td> SaveFiles<br/>SaveFiles_RBV</td>
           <td> bo<br/>bi</td>
+        </tr>
+        <tr>
+          <td> EigerFileOwner</td>
+          <td></td>
+          <td> asynOctet</td>
+          <td> R/W</td>
+          <td> Controls the owner of the file saved to disk. Requires the IOC
+               to have the CAP_SETUID capability. </td>
+          <td> FILE_OWNER</td>
+          <td> FileOwner<br/>FileOwner_RBV</td>
+          <td> stringout<br/>stringin</td>
+        </tr>
+        <tr>
+          <td> EigerFileOwnerGroup</td>
+          <td></td>
+          <td> asynOctet</td>
+          <td> R/W</td>
+          <td> Controls the owner group of the file saved to disk. Requires the 
+               IOC to have the CAP_SETGID capability. </td>
+          <td> FILE_OWNER_GROUP</td>
+          <td> FileOwnerGrp<br/>FileOwnerGrp_RBV</td>
+          <td> stringout<br/>stringin</td>
+        </tr>
+        <tr>
+          <td> EigerFilePerms</td>
+          <td></td>
+          <td> asynInt32</td>
+          <td> R/W</td>
+          <td> Controls the permissions for the files saved to disk </td>
+          <td> FILE_PERMISSIONS</td>
+          <td> FilePerms</td>
+          <td> ao</td>
         </tr>
         <tr>
           <td> EigerSequenceId</td>
@@ -832,7 +874,7 @@
           <td> detector/config/flatfield_correction_applied</td>
           <td> asynInt32</td>
           <td> R/W</td>
-          <td> Controls wheter the flatfield correction should be applied </td>
+          <td> Controls whether the flatfield correction should be applied </td>
           <td> FLATFIELD_APPLIED</td>
           <td> FlatfieldApplied<br/>FlatfieldApplied_RBV</td>
           <td> bo<br/>bi</td>

@@ -72,9 +72,14 @@
 
 // Other Parameters
 #define EigerArmedString                "ARMED"
-#define EigerSaveFilesString            "SAVE_FILES"
 #define EigerSequenceIdString           "SEQ_ID"
 #define EigerPendingFilesString         "PENDING_FILES"
+
+// File Saving Parameters
+#define EigerSaveFilesString            "SAVE_FILES"
+#define EigerFileOwnerString            "FILE_OWNER"
+#define EigerFileOwnerGroupString       "FILE_OWNER_GROUP"
+#define EigerFilePermsString            "FILE_PERMISSIONS"
 
 // Monitor API Parameters
 #define EigerMonitorEnableString        "MONITOR_ENABLE"
@@ -177,9 +182,12 @@ protected:
     int EigerLink3;
     int EigerDCUBufFree;
     int EigerArmed;
-    int EigerSaveFiles;
     int EigerSequenceId;
     int EigerPendingFiles;
+    int EigerSaveFiles;
+    int EigerFileOwner;
+    int EigerFileOwnerGroup;
+    int EigerFilePerms;
     int EigerMonitorEnable;
     int EigerMonitorTimeout;
     int EigerMonitorState;
@@ -197,6 +205,7 @@ private:
             mReapQueue;
     bool mPollStop, mPollComplete, mStreamComplete;
     unsigned int mFrameNumber;
+    uid_t mFsUid, mFsGid;
 
     // Read all parameters from detector and set some default values
     asynStatus initParams (void);

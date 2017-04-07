@@ -14,6 +14,11 @@
 #include <epicsMessageQueue.h>
 #include <iocsh.h>
 #include <math.h>
+#include <sys/fsuid.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <grp.h>
+#include <fcntl.h>
 
 #include <limits>
 
@@ -60,6 +65,7 @@ typedef struct
     int sequenceId;
     size_t nDataFiles;
     bool saveFiles, parseFiles, removeFiles;
+    mode_t filePerms;
 }acquisition_t;
 
 typedef struct
@@ -69,6 +75,8 @@ typedef struct
     size_t len;
     bool save, parse, remove;
     size_t refCount;
+    uid_t uid, gid;
+    mode_t perms;
 }file_t;
 
 typedef struct
@@ -164,9 +172,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mSaveQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *)),
-    mFrameNumber(0)
+    mFrameNumber(0), mFsUid(getuid()), mFsGid(getgid())
 {
     const char *functionName = "eigerDetector";
+
+    umask(0111); // Disallow exec bit
 
     strncpy(mHostname, serverHostname, sizeof(mHostname));
 
@@ -241,9 +251,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Other Parameters
     createParam(EigerArmedString,         asynParamInt32,   &EigerArmed);
-    createParam(EigerSaveFilesString,     asynParamInt32,   &EigerSaveFiles);
     createParam(EigerSequenceIdString,    asynParamInt32,   &EigerSequenceId);
     createParam(EigerPendingFilesString,  asynParamInt32,   &EigerPendingFiles);
+
+    // File saving options
+    createParam(EigerSaveFilesString,     asynParamInt32,   &EigerSaveFiles);
+    createParam(EigerFileOwnerString,     asynParamOctet,   &EigerFileOwner);
+    createParam(EigerFileOwnerGroupString,asynParamOctet,   &EigerFileOwnerGroup);
+    createParam(EigerFilePermsString,     asynParamInt32,   &EigerFilePerms);
 
     // Monitor API Parameters
     createParam(EigerMonitorEnableString, asynParamInt32,   &EigerMonitorEnable);
@@ -417,6 +432,8 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         }
         status = putString(SSDetConfig, "compression", string_value);
     }
+    else if (function == EigerFilePerms)
+        value = value & 0666; // Clear exec bits
     else if(function < FIRST_EIGER_PARAM)
         status = ADDriver::writeInt32(pasynUser, value);
 
@@ -550,6 +567,46 @@ asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
 
     if (function == EigerFWNamePattern)
         status = putString(SSFWConfig, "name_pattern", value);
+    else if (function == EigerFileOwner)
+    {
+        if(!strlen(value))
+        {
+            mFsUid = getuid();
+            value = getpwuid(mFsUid)->pw_name;
+        }
+        else
+        {
+            struct passwd *pwd = getpwnam(value);
+
+            if(pwd) {
+                mFsUid = pwd->pw_uid;
+                printf("%s uid=%u\n", value, mFsUid);
+            } else {
+                ERR_ARGS("couldn't get uid for user '%s'", value);
+                status = asynError;
+            }
+        }
+    }
+    else if (function == EigerFileOwnerGroup)
+    {
+        if(!strlen(value))
+        {
+            mFsGid = getgid();
+            value = getgrgid(mFsGid)->gr_name;
+        }
+        else
+        {
+            struct group *grp = getgrnam(value);
+
+            if(grp) {
+                mFsGid = grp->gr_gid;
+                printf("%s gid=%u\n", value, mFsGid);
+            } else {
+                ERR_ARGS("couldn't get gid for group '%s'", value);
+                status = asynError;
+            }
+        }
+    }
     else if (function < FIRST_EIGER_PARAM)
         status = ADDriver::writeOctet(pasynUser, value, nChars, nActual);
 
@@ -609,6 +666,7 @@ void eigerDetector::controlTask (void)
     double acquirePeriod, triggerTimeout = 0.0, triggerExposure = 0.0;
     int savedNumImages;
     int compression, compressionAlgo;
+    int filePerms;
 
     lock();
 
@@ -644,6 +702,7 @@ void eigerDetector::controlTask (void)
         getIntegerParam(EigerFWAutoRemove,   &removeFiles);
         getIntegerParam(EigerFWCompression,  &compression);
         getIntegerParam(EigerCompressionAlgo, &compressionAlgo);
+        getIntegerParam(EigerFilePerms,      &filePerms);
 
         const char *err = NULL;
         if(dataSource == SOURCE_FILEWRITER && !fwEnable)
@@ -719,6 +778,7 @@ void eigerDetector::controlTask (void)
             acq.saveFiles   = saveFiles;
             acq.parseFiles  = dataSource == SOURCE_FILEWRITER;
             acq.removeFiles = removeFiles;
+            acq.filePerms   = (mode_t) filePerms;
 
             mPollComplete = false;
             mPollStop = false;
@@ -865,6 +925,9 @@ void eigerDetector::pollTask (void)
             files[i].parse    = isMaster ? false : acquisition.parseFiles;
             files[i].refCount = files[i].save + files[i].parse;
             files[i].remove   = acquisition.removeFiles;
+            files[i].uid      = mFsUid;
+            files[i].gid      = mFsGid;
+            files[i].perms    = acquisition.filePerms;
 
             if(isMaster)
                 RestAPI::buildMasterName(acquisition.pattern, acquisition.sequenceId,
@@ -976,15 +1039,35 @@ void eigerDetector::saveTask (void)
     const char *functionName = "saveTask";
     char fullFileName[MAX_FILENAME_LEN];
     file_t *file;
+    uid_t currentFsUid = getuid();
+    uid_t currentFsGid = getgid();
 
     for(;;)
     {
-        FILE *fhandle = NULL;
+        int fd;
         size_t written = 0;
 
         mSaveQueue.receive(&file, sizeof(file_t *));
 
         FLOW_ARGS("file=%s", file->name);
+
+        if(file->uid != currentFsUid) {
+            (void)setfsuid(file->uid);
+            currentFsUid = (uid_t)setfsuid(file->uid);
+
+            if(currentFsUid != file->uid) {
+                ERR_ARGS("[file=%s] failed to set uid", file->name);
+            }
+        }
+
+        if(file->gid != currentFsGid) {
+            (void)setfsgid(file->gid);
+            currentFsGid = (uid_t)setfsgid(file->gid);
+
+            if(currentFsGid != file->gid) {
+                ERR_ARGS("[file=%s] failed to set gid", file->name);
+            }
+        }
 
         lock();
         setStringParam(NDFileName, file->name);
@@ -994,19 +1077,20 @@ void eigerDetector::saveTask (void)
         callParamCallbacks();
         unlock();
 
-        fhandle = fopen(fullFileName, "wb");
-        if(!fhandle)
+        fd = open(fullFileName, O_WRONLY | O_CREAT, file->perms);
+        if(fd < 0)
         {
             ERR_ARGS("[file=%s] unable to open file to be written\n[%s]",
                     file->name, fullFileName);
+            perror("open");
             goto reap;
         }
 
-        written = fwrite(file->data, 1, file->len, fhandle);
+        written = write(fd, file->data, file->len);
         if(written < file->len)
             ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
                     file->name, written);
-        fclose(fhandle);
+        close(fd);
 
 reap:
         mReapQueue.send(&file, sizeof(file));
@@ -1286,6 +1370,9 @@ asynStatus eigerDetector::initParams (void)
     status |= setIntegerParam(EigerPendingFiles, 0);
     status |= setIntegerParam(EigerMonitorEnable, 0);
     status |= setIntegerParam(EigerMonitorTimeout, 500);
+    status |= setStringParam(EigerFileOwner, "");
+    status |= setStringParam(EigerFileOwnerGroup, "");
+    status |= setIntegerParam(EigerFilePerms, 0644);
 
     callParamCallbacks();
 
