@@ -176,8 +176,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 {
     const char *functionName = "eigerDetector";
 
-    umask(0111); // Disallow exec bit
-
     strncpy(mHostname, serverHostname, sizeof(mHostname));
 
     // Initialize sockets
@@ -1084,6 +1082,13 @@ void eigerDetector::saveTask (void)
                     file->name, fullFileName);
             perror("open");
             goto reap;
+        }
+
+        if(fchmod(fd, file->perms) < 0)
+        {
+            ERR_ARGS("[file=%s] failed to set permissions %o", file->name,
+                    file->perms);
+            perror("fchmod");
         }
 
         written = write(fd, file->data, file->len);
