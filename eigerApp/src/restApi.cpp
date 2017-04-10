@@ -76,11 +76,10 @@
 
 typedef struct socket
 {
-    char host[256];
-    struct sockaddr_in addr;
     SOCKET fd;
     epicsMutex mutex;
     bool closed;
+    size_t retries;
 } socket_t;
 
 typedef struct request
@@ -165,8 +164,8 @@ int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, si
 
 // Public members
 
-RestAPI::RestAPI (const char *hostname) :
-    mSockFd(0), mSockMutex(), mSockClosed(true), mSockRetries(0)
+RestAPI::RestAPI (const char *hostname, size_t numSockets) :
+    mNumSockets(numSockets), mSockets(new socket_t[numSockets])
 {
     strncpy(mHostname, hostname, sizeof(mHostname));
 
@@ -177,6 +176,13 @@ RestAPI::RestAPI (const char *hostname) :
 
     mAddress.sin_family = AF_INET;
     mAddress.sin_port = htons(HTTP_PORT);
+
+    for(size_t i = 0; i < mNumSockets; ++i)
+    {
+        mSockets[i].closed = true;
+        mSockets[i].fd = -1;
+        mSockets[i].retries = 0;
+    }
 }
 
 int RestAPI::initialize (void)
@@ -480,24 +486,24 @@ int RestAPI::getMonitorImage (char **buf, size_t *bufSize, size_t timeout)
 
 // Private members
 
-int RestAPI::connect (void)
+int RestAPI::connect (socket_t *s)
 {
     const char *functionName = "connect";
 
-    if(!mSockClosed)
+    if(!s->closed)
         return EXIT_SUCCESS;
 
-    mSockFd = epicsSocketCreate(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    s->fd = epicsSocketCreate(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    if(mSockFd == INVALID_SOCKET)
+    if(s->fd == INVALID_SOCKET)
     {
         ERR("couldn't create socket");
         return EXIT_FAILURE;
     }
 
-    setNonBlock(true);
+    setNonBlock(s, true);
 
-    if(::connect(mSockFd, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
+    if(::connect(s->fd, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
     {
         // Connection actually failed
         if(errno != EINPROGRESS)
@@ -505,7 +511,7 @@ int RestAPI::connect (void)
             char error[MAX_BUF_SIZE];
             epicsSocketConvertErrnoToString(error, sizeof(error));
             ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
-            epicsSocketDestroy(mSockFd);
+            epicsSocketDestroy(s->fd);
             return EXIT_FAILURE;
         }
         // Server didn't respond immediately, wait a little
@@ -516,34 +522,34 @@ int RestAPI::connect (void)
             int ret;
 
             FD_ZERO(&set);
-            FD_SET(mSockFd, &set);
+            FD_SET(s->fd, &set);
             tv.tv_sec  = DEFAULT_TIMEOUT_CONNECT;
             tv.tv_usec = 0;
 
-            ret = select(mSockFd + 1, NULL, &set, NULL, &tv);
+            ret = select(s->fd + 1, NULL, &set, NULL, &tv);
             if(ret <= 0)
             {
                 const char *error = ret == 0 ? "TIMEOUT" : "select failed";
                 ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
-                epicsSocketDestroy(mSockFd);
+                epicsSocketDestroy(s->fd);
                 return EXIT_FAILURE;
             }
         }
     }
 
-    setNonBlock(false);
-    mSockClosed = false;
+    setNonBlock(s, false);
+    s->closed = false;
     return EXIT_SUCCESS;
 }
 
-int RestAPI::setNonBlock (bool nonBlock)
+int RestAPI::setNonBlock (socket_t *s, bool nonBlock)
 {
-    int flags = fcntl(mSockFd, F_GETFL, 0);
+    int flags = fcntl(s->fd, F_GETFL, 0);
     if(flags < 0)
         return EXIT_FAILURE;
 
     flags = nonBlock ? flags | O_NONBLOCK : flags & ~O_NONBLOCK;
-    return fcntl(mSockFd, F_SETFL, flags) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+    return fcntl(s->fd, F_SETFL, flags) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 int RestAPI::doRequest (const request_t *request, response_t *response, int timeout)
@@ -555,11 +561,26 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
     struct timeval *pRecvTimeout = NULL;
     fd_set fds;
 
-    mSockMutex.lock();
+    socket_t *s = NULL;
+    bool gotSocket = false;
 
-    if(mSockClosed)
+    for(size_t i = 0; i < mNumSockets && !gotSocket; ++i)
     {
-        if(connect())
+        s = &mSockets[i];
+        if(s->mutex.tryLock())
+            gotSocket = true;
+    }
+
+    if(!gotSocket)
+    {
+        ERR("no available socket");
+        status = EXIT_FAILURE;
+        goto end;
+    }
+
+    if(s->closed)
+    {
+        if(connect(s))
         {
             ERR("failed to reconnect socket");
             status = EXIT_FAILURE;
@@ -567,9 +588,9 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         }
     }
 
-    if(send(mSockFd, request->data, request->actualLen, 0) < 0)
+    if(send(s->fd, request->data, request->actualLen, 0) < 0)
     {
-        if(mSockRetries++ < MAX_HTTP_RETRIES)
+        if(s->retries++ < MAX_HTTP_RETRIES)
             goto retry;
         else
         {
@@ -584,11 +605,11 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         recvTimeout.tv_sec = timeout;
         recvTimeout.tv_usec = 0;
         FD_ZERO(&fds);
-        FD_SET(mSockFd, &fds);
+        FD_SET(s->fd, &fds);
         pRecvTimeout = &recvTimeout;
     }
 
-    ret = select(mSockFd+1, &fds, NULL, NULL, pRecvTimeout);
+    ret = select(s->fd+1, &fds, NULL, NULL, pRecvTimeout);
     if(ret <= 0)
     {
         ERR(ret ? "select() failed" : "timed out");
@@ -596,9 +617,9 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         goto end;
     }
 
-    if((received = recv(mSockFd, response->data, response->dataLen, 0) <= 0))
+    if((received = recv(s->fd, response->data, response->dataLen, 0) <= 0))
     {
-        if(mSockRetries++ < MAX_HTTP_RETRIES)
+        if(s->retries++ < MAX_HTTP_RETRIES)
             goto retry;
         else
         {
@@ -618,19 +639,19 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
 
     if(response->reconnect)
     {
-        close(mSockFd);
-        mSockClosed = true;
+        close(s->fd);
+        s->closed = true;
     }
 
 end:
-    mSockRetries = 0;
-    mSockMutex.unlock();
+    s->retries = 0;
+    s->mutex.unlock();
     return status;
 
 retry:
-    close(mSockFd);
-    mSockClosed = true;
-    mSockMutex.unlock();
+    close(s->fd);
+    s->closed = true;
+    s->mutex.unlock();
     return doRequest(request, response, timeout);
 }
 
@@ -755,11 +776,26 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     response.data    = responseBuf;
     response.dataLen = sizeof(responseBuf);
 
-    mSockMutex.lock();
+    socket_t *s = NULL;
+    bool gotSocket = false;
 
-    if(mSockClosed)
+    for(size_t i = 0; i < mNumSockets && !gotSocket; ++i)
     {
-        if(connect())
+        s = &mSockets[i];
+        if(s->mutex.tryLock())
+            gotSocket = true;
+    }
+
+    if(!gotSocket)
+    {
+        ERR("no available socket");
+        status = EXIT_FAILURE;
+        goto end;
+    }
+
+    if(s->closed)
+    {
+        if(connect(s))
         {
             ERR("failed to reconnect socket");
             status = EXIT_FAILURE;
@@ -768,9 +804,9 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     }
 
     // Send the request
-    if(send(mSockFd, request.data, request.actualLen, 0) < 0)
+    if(send(s->fd, request.data, request.actualLen, 0) < 0)
     {
-        if(mSockRetries++ < MAX_HTTP_RETRIES)
+        if(s->retries++ < MAX_HTTP_RETRIES)
             goto retry;
         else
         {
@@ -781,9 +817,9 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     }
 
     // Receive the first part of the response (header and some content)
-    if((received = recv(mSockFd, response.data, response.dataLen, 0)) <= 0)
+    if((received = recv(s->fd, response.data, response.dataLen, 0)) <= 0)
     {
-        if(mSockRetries++ < MAX_HTTP_RETRIES)
+        if(s->retries++ < MAX_HTTP_RETRIES)
             goto retry;
         else
         {
@@ -826,7 +862,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
 
     while(remaining)
     {
-        received = recv(mSockFd, bufp, remaining, MSG_WAITALL);
+        received = recv(s->fd, bufp, remaining, MSG_WAITALL);
 
         if(received <= 0)
         {
@@ -834,7 +870,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
             *buf = NULL;
             *bufSize = 0;
 
-            if(mSockRetries++ < MAX_HTTP_RETRIES)
+            if(s->retries++ < MAX_HTTP_RETRIES)
                 goto retry;
             else
             {
@@ -852,19 +888,19 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
 
     if(response.reconnect)
     {
-        close(mSockFd);
-        mSockClosed = true;
+        close(s->fd);
+        s->closed = true;
     }
 
 end:
-    mSockRetries = 0;
-    mSockMutex.unlock();
+    s->retries = 0;
+    s->mutex.unlock();
     return status;
 
 retry:
-    close(mSockFd);
-    mSockClosed = true;
-    mSockMutex.unlock();
+    close(s->fd);
+    s->closed = true;
+    s->mutex.unlock();
     return getBlob(sys, name, buf, bufSize, accept);
 }
 

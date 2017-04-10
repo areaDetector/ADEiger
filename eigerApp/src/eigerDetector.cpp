@@ -653,7 +653,6 @@ void eigerDetector::report (FILE *fp, int details)
  */
 void eigerDetector::controlTask (void)
 {
-    RestAPI api(mHostname);
     const char *functionName = "controlTask";
 
     int status = asynSuccess;
@@ -744,7 +743,7 @@ void eigerDetector::controlTask (void)
         callParamCallbacks();
 
         unlock();
-        status = api.arm(&sequenceId);
+        status = mApi.arm(&sequenceId);
         lock();
 
         if(status)
@@ -834,7 +833,7 @@ void eigerDetector::controlTask (void)
                 {
                     setShutter(1);
                     unlock();
-                    status = api.trigger(triggerTimeout, triggerExposure);
+                    status = mApi.trigger(triggerTimeout, triggerExposure);
                     lock();
                     setShutter(0);
                     ++triggers;
@@ -853,7 +852,7 @@ void eigerDetector::controlTask (void)
 
         // All triggers issued, disarm the detector
         unlock();
-        status = api.disarm();
+        status = mApi.disarm();
         lock();
 
         // Wait for tasks completion
@@ -901,7 +900,6 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
-    RestAPI api(mHostname);
     acquisition_t acquisition;
     int pendingFiles;
     size_t totalFiles, i;
@@ -942,7 +940,7 @@ void eigerDetector::pollTask (void)
         {
             file_t *curFile = &files[i];
 
-            if(!api.waitFile(curFile->name, 1.0))
+            if(!mApi.waitFile(curFile->name, 1.0))
             {
                 if(curFile->save || curFile->parse)
                 {
@@ -954,7 +952,7 @@ void eigerDetector::pollTask (void)
                     unlock();
                 }
                 else if(curFile->remove)
-                    api.deleteFile(curFile->name);
+                    mApi.deleteFile(curFile->name);
                 ++i;
             }
         }
@@ -978,7 +976,6 @@ void eigerDetector::pollTask (void)
 
 void eigerDetector::downloadTask (void)
 {
-    RestAPI api(mHostname);
     const char *functionName = "downloadTask";
     file_t *file;
 
@@ -991,7 +988,7 @@ void eigerDetector::downloadTask (void)
         file->refCount = file->parse + file->save;
 
         // Download the file
-        if(api.getFile(file->name, &file->data, &file->len))
+        if(mApi.getFile(file->name, &file->data, &file->len))
         {
             ERR_ARGS("underlying getFile(%s) failed", file->name);
             mReapQueue.send(&file, sizeof(file));
@@ -1005,7 +1002,7 @@ void eigerDetector::downloadTask (void)
                 mSaveQueue.send(&file, sizeof(file_t *));
 
             if(file->remove)
-                api.deleteFile(file->name);
+                mApi.deleteFile(file->name);
             else
                 getIntP(SSFWStatus, "buffer_free", EigerFWFree);
         }
@@ -1133,7 +1130,6 @@ void eigerDetector::reapTask (void)
 
 void eigerDetector::monitorTask (void)
 {
-    RestAPI eiger(mHostname);
     const char *functionName = "monitorTask";
 
     for(;;)
@@ -1150,7 +1146,7 @@ void eigerDetector::monitorTask (void)
             char *buf = NULL;
             size_t bufSize;
 
-            if(!eiger.getMonitorImage(&buf, &bufSize, (size_t) timeout))
+            if(!mApi.getMonitorImage(&buf, &bufSize, (size_t) timeout))
             {
                 if(parseTiffFile(buf, bufSize))
                     ERR("couldn't parse file");

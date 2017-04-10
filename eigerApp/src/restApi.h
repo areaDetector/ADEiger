@@ -57,13 +57,11 @@ class RestAPI
 private:
     char mHostname[MAX_HOSTNAME];
     struct sockaddr_in mAddress;
-    SOCKET mSockFd;
-    epicsMutex mSockMutex;
-    bool mSockClosed;
-    size_t mSockRetries;
+    size_t mNumSockets;
+    socket_t *mSockets;
 
-    int connect (void);
-    int setNonBlock (bool nonBlock);
+    int connect (socket_t *s);
+    int setNonBlock (socket_t *s, bool nonBlock);
 
     int doRequest (const request_t *request, response_t *response, int timeout = DEFAULT_TIMEOUT);
     int get (sys_t sys, const char *param, char *value, size_t len, int timeout = DEFAULT_TIMEOUT);
@@ -84,7 +82,7 @@ public:
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
-    RestAPI (const char *hostname);
+    RestAPI (const char *hostname, size_t numSockets=5);
 
     int initialize (void);
     int arm        (int *sequenceId);
