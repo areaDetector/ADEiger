@@ -1,12 +1,12 @@
 #ifndef REST_API_H
 #define REST_API_H
 
+#include <string>
 #include <epicsMutex.h>
 #include <osiSock.h>
 
 #define DEFAULT_TIMEOUT     20      // seconds
 
-#define MAX_HOSTNAME        256
 #define MAX_CHANGED_PARAMS  32
 #define MAX_PARAM_NAME      64
 
@@ -55,7 +55,8 @@ typedef struct socket   socket_t;
 class RestAPI
 {
 private:
-    char mHostname[MAX_HOSTNAME];
+    std::string mHostname;
+    int mPort;
     struct sockaddr_in mAddress;
     size_t mNumSockets;
     socket_t *mSockets;
@@ -82,7 +83,7 @@ public:
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
-    RestAPI (const char *hostname, size_t numSockets=5);
+    RestAPI (std::string const & hostname, int port = 80, size_t numSockets=5);
 
     int initialize (void);
     int arm        (int *sequenceId);

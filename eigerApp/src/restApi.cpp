@@ -27,7 +27,6 @@
 #define DATA_HDF5               "application/hdf5"
 #define DATA_HTML               "text/html"
 
-#define HTTP_PORT               80
 #define MAX_HTTP_RETRIES        1
 #define MAX_MESSAGE_SIZE        512
 #define MAX_BUF_SIZE            256
@@ -164,18 +163,17 @@ int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, si
 
 // Public members
 
-RestAPI::RestAPI (const char *hostname, size_t numSockets) :
-    mNumSockets(numSockets), mSockets(new socket_t[numSockets])
+RestAPI::RestAPI (std::string const & hostname, int port, size_t numSockets) :
+    mHostname(hostname), mPort(port), mNumSockets(numSockets),
+    mSockets(new socket_t[numSockets])
 {
-    strncpy(mHostname, hostname, sizeof(mHostname));
-
     memset(&mAddress, 0, sizeof(mAddress));
 
-    if(hostToIPAddr(mHostname, &mAddress.sin_addr))
+    if(hostToIPAddr(mHostname.c_str(), &mAddress.sin_addr))
         throw std::runtime_error("invalid hostname");
 
     mAddress.sin_family = AF_INET;
-    mAddress.sin_port = htons(HTTP_PORT);
+    mAddress.sin_port = htons(port);
 
     for(size_t i = 0; i < mNumSockets; ++i)
     {
@@ -199,7 +197,7 @@ int RestAPI::arm (int *sequenceId)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname, 0lu);
+            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname.c_str(), 0lu);
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -372,7 +370,7 @@ int RestAPI::getFileSize (const char *filename, size_t *size)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -407,7 +405,7 @@ int RestAPI::waitFile (const char *filename, double timeout)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -455,7 +453,7 @@ int RestAPI::deleteFile (const char *filename)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_DELETE, sysStr[SSData], filename, mHostname);
+            REQUEST_DELETE, sysStr[SSData], filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -510,7 +508,8 @@ int RestAPI::connect (socket_t *s)
         {
             char error[MAX_BUF_SIZE];
             epicsSocketConvertErrnoToString(error, sizeof(error));
-            ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+            ERR_ARGS("failed to connect to %s:%d [%s]", mHostname.c_str(),
+                    mPort, error);
             epicsSocketDestroy(s->fd);
             return EXIT_FAILURE;
         }
@@ -530,7 +529,8 @@ int RestAPI::connect (socket_t *s)
             if(ret <= 0)
             {
                 const char *error = ret == 0 ? "TIMEOUT" : "select failed";
-                ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+                ERR_ARGS("failed to connect to %s:%d [%s]", mHostname.c_str(),
+                        mPort, error);
                 epicsSocketDestroy(s->fd);
                 return EXIT_FAILURE;
             }
@@ -665,7 +665,7 @@ int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[sys], param, mHostname);
+            REQUEST_GET, sysStr[sys], param, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -724,7 +724,8 @@ int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
 
     int headerLen;
     char header[MAX_BUF_SIZE];
-    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, mHostname, len);
+    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys],
+            param, mHostname.c_str(), len);
 
     request_t request = {};
     char requestBuf[headerLen + len];
@@ -769,7 +770,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET_FILE, sysStr[sys], name, mHostname, accept);
+            REQUEST_GET_FILE, sysStr[sys], name, mHostname.c_str(), accept);
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
