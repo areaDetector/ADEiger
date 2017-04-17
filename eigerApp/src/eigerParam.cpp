@@ -742,6 +742,9 @@ int EigerParam::put (bool value, int timeout)
         return EXIT_SUCCESS;
     }
 
+    if(mType == EIGER_P_UNINIT && fetch())
+        return EXIT_FAILURE;
+
     if(mType != EIGER_P_BOOL && mType != EIGER_P_ENUM)
         return EXIT_FAILURE;
 
@@ -777,6 +780,9 @@ int EigerParam::put (int value, int timeout)
     FLOW_ARGS("%d", value);
     if(mRemote)
     {
+        if(mType == EIGER_P_UNINIT && fetch())
+            return EXIT_FAILURE;
+
         if(mType != EIGER_P_BOOL && mType != EIGER_P_INT &&
            mType != EIGER_P_UINT && mType != EIGER_P_ENUM)
         {
@@ -837,6 +843,9 @@ int EigerParam::put (double value, int timeout)
 
     if(mRemote)
     {
+        if(mType == EIGER_P_UNINIT && fetch())
+            return EXIT_FAILURE;
+
         if(mType != EIGER_P_DOUBLE)
             return EXIT_FAILURE;
 
@@ -875,6 +884,9 @@ int EigerParam::put (string const & value, int timeout)
         setParam(value);
         return EXIT_SUCCESS;
     }
+
+    if(mType == EIGER_P_UNINIT && fetch())
+        return EXIT_FAILURE;
 
     if(mType != EIGER_P_STRING && mType != EIGER_P_ENUM)
         return EXIT_FAILURE;
