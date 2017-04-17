@@ -182,6 +182,16 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     const char *functionName = "eigerDetector";
     strncpy(mHostname, serverHostname, sizeof(mHostname));
 
+    // Generate subSystemMap
+    mSubSystemMap.insert(std::make_pair("DS", SSDetStatus));
+    mSubSystemMap.insert(std::make_pair("DC", SSDetConfig));
+    mSubSystemMap.insert(std::make_pair("FS", SSFWStatus));
+    mSubSystemMap.insert(std::make_pair("FC", SSFWConfig));
+    mSubSystemMap.insert(std::make_pair("MS", SSMonStatus));
+    mSubSystemMap.insert(std::make_pair("MC", SSMonConfig));
+    mSubSystemMap.insert(std::make_pair("SS", SSStreamStatus));
+    mSubSystemMap.insert(std::make_pair("SC", SSStreamConfig));
+
     // Initialize sockets
     RestAPI::init();
 
@@ -202,7 +212,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFirstParam     = mDataSource->getIndex();
 
     mFWAutoRemove   = mParams.create(EigFWAutoRemoveStr,   asynParamInt32);
-    mOmega          = mParams.create(EigOmegaStr,          asynParamFloat64);
     mTrigger        = mParams.create(EigTriggerStr,        asynParamInt32);
     mTriggerExp     = mParams.create(EigTriggerExpStr,     asynParamFloat64);
     mManualTrigger  = mParams.create(EigManualTriggerStr,  asynParamInt32);
@@ -217,30 +226,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Metadata
     mDescription     = mParams.create(EigDescriptionStr,     asynParamOctet,   SSDetConfig, "description");
-    mSensorThickness = mParams.create(EigSensorThicknessStr, asynParamFloat64, SSDetConfig, "sensor_thickness");
-    mSensorMaterial  = mParams.create(EigSensorMaterialStr,  asynParamOctet,   SSDetConfig, "sensor_material");
-    mXPixelSize      = mParams.create(EigXPixelSizeStr,      asynParamFloat64, SSDetConfig, "x_pixel_size");
-    mYPixelSize      = mParams.create(EigYPixelSizeStr,      asynParamFloat64, SSDetConfig, "y_pixel_size");
-    mDeadTime        = mParams.create(EigDeadTimeStr,        asynParamFloat64, SSDetConfig, "detector_readout_time");
-    mCountCutoff     = mParams.create(EigCountCutoffStr,     asynParamInt32,   SSDetConfig, "countrate_correction_count_cutoff");
-
-    // MX Parameters
-    mBeamX         = mParams.create(EigBeamXStr,         asynParamFloat64, SSDetConfig, "beam_center_x");
-    mBeamY         = mParams.create(EigBeamYStr,         asynParamFloat64, SSDetConfig, "beam_center_y");
-    mDetDist       = mParams.create(EigDetDistStr,       asynParamFloat64, SSDetConfig, "detector_distance");
-    mChiStart      = mParams.create(EigChiStartStr,      asynParamFloat64, SSDetConfig, "chi_start");
-    mChiIncr       = mParams.create(EigChiIncrStr,       asynParamFloat64, SSDetConfig, "chi_increment");
-    mKappaStart    = mParams.create(EigKappaStartStr,    asynParamFloat64, SSDetConfig, "kappa_start");
-    mKappaIncr     = mParams.create(EigKappaIncrStr,     asynParamFloat64, SSDetConfig, "kappa_increment");
-    mOmegaStart    = mParams.create(EigOmegaStartStr,    asynParamFloat64, SSDetConfig, "omega_start");
-    mOmegaIncr     = mParams.create(EigOmegaIncrStr,     asynParamFloat64, SSDetConfig, "omega_increment");
-    mPhiStart      = mParams.create(EigPhiStartStr,      asynParamFloat64, SSDetConfig, "phi_start");
-    mPhiIncr       = mParams.create(EigPhiIncrStr,       asynParamFloat64, SSDetConfig, "phi_increment");
-    mTwoThetaStart = mParams.create(EigTwoThetaStartStr, asynParamFloat64, SSDetConfig, "two_theta_start");
-    mTwoThetaIncr  = mParams.create(EigTwoThetaIncrStr,  asynParamFloat64, SSDetConfig, "two_theta_increment");
-
-    for(int i = mChiStart->getIndex(); i <= mTwoThetaIncr->getIndex(); ++i)
-        mParams.getByIndex(i)->setEpsilon(MX_PARAM_EPSILON);
 
     // Acquisition
     mWavelength       = mParams.create(EigWavelengthStr,      asynParamFloat64, SSDetConfig, "wavelength");
@@ -249,11 +234,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mPhotonEnergy->setEpsilon(ENERGY_EPSILON);
     mThreshold        = mParams.create(EigThresholdStr,       asynParamFloat64, SSDetConfig, "threshold_energy");
     mThreshold->setEpsilon(ENERGY_EPSILON);
-    mFlatfield        = mParams.create(EigFlatfieldStr,       asynParamInt32,   SSDetConfig, "flatfield_correction_applied");
     mNTriggers        = mParams.create(EigNTriggersStr,       asynParamInt32,   SSDetConfig, "ntrigger");
     mCompressionAlgo  = mParams.create(EigCompressionAlgoStr, asynParamInt32,   SSDetConfig, "compression");
     mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
-    mPixMaskApplied   = mParams.create(EigPixMaskAppliedStr,  asynParamInt32,   SSDetConfig, "pixel_mask_applied");
     mAutoSummation    = mParams.create(EigAutoSummationStr,   asynParamInt32,   SSDetConfig, "auto_summation");
 
     // Detector Status Parameters
@@ -1145,10 +1128,6 @@ void eigerDetector::streamTask (void)
     {
         mStreamEvent.wait();
 
-        double omegaStart, omegaIncr;
-        mOmegaStart->get(omegaStart);
-        mOmegaIncr->get(omegaIncr);
-
         StreamAPI api(mHostname);
 
         int err;
@@ -1215,7 +1194,6 @@ void eigerDetector::streamTask (void)
             updateTimeStamp(&pArray->epicsTS);
 
             // Update Omega angle for this frame
-            mOmega->put(omegaStart+omegaIncr*mFrameNumber);
             ++mFrameNumber;
 
             // Get any attributes that have been defined for this driver
@@ -1311,10 +1289,6 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     NDDataType_t ndType;
 
     epicsTimeStamp startTime;
-
-    double omegaStart, omegaIncr;
-    mOmegaStart->get(omegaStart);
-    mOmegaStart->get(omegaIncr);
 
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
@@ -1432,7 +1406,6 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         updateTimeStamp(&pImage->epicsTS);
 
         // Update the omega angle for this frame
-        mOmega->put(omegaStart + omegaIncr*mFrameNumber);
         ++mFrameNumber;
 
         // Get any attributes that have been defined for this driver
@@ -1591,8 +1564,61 @@ bool eigerDetector::acquiring (void)
 
 asynStatus eigerDetector::drvUserCreate(asynUser *pasynUser, const char *drvInfo,
         const char **pptypeName, size_t *psize) {
+    const char *functionName = "drvUserCreate";
     /*printf("drvUserCreate(pasynUser=%p, drvInfo=%s, pptypeName=%p, psize=%p)\n",
             pasynUser, drvInfo, pptypeName, psize);*/
+    int index;
+
+    if(findParam(drvInfo, &index) && strlen(drvInfo) > 8 && !strncmp(drvInfo, "EIG_", 4))
+    {
+        /* Parameters are of the format
+         *  EIG_XYZ_name
+         *
+         * Where:
+         *   X is one of 'D': Detector
+         *               'F': FileWriter
+         *               'M': Monitor
+         *               'S': Stream
+         *
+         *   Y is one of 'C': Config
+         *               'S': Status
+         *
+         *   Z is one of 'I': asynInt32
+         *               'D': asynFloat64
+         *               'S': asynOctet
+         */
+
+        string subSystemStr(drvInfo+4, 2);
+        map<string, sys_t>::const_iterator subSystemIt;
+        asynParamType asynType;
+
+        subSystemIt = mSubSystemMap.find(subSystemStr);
+
+        if(subSystemIt == mSubSystemMap.end())
+        {
+            ERR_ARGS("[%s] couldn't match %s to any subsystem", drvInfo,
+                    subSystemStr.c_str());
+            return asynError;
+        }
+
+        switch(drvInfo[6])
+        {
+        case 'I':   asynType = asynParamInt32;      break;
+        case 'D':   asynType = asynParamFloat64;    break;
+        case 'S':   asynType = asynParamOctet;      break;
+        default:
+            ERR_ARGS("[%s] couldn't match %c to an asyn type", drvInfo,  drvInfo[6]);
+            return asynError;
+        }
+
+        string paramName(drvInfo+8);
+
+        EigerParam *p = mParams.create(drvInfo, asynType, subSystemIt->second, paramName);
+        if(!p)
+            return asynError;
+
+        p->fetch();
+    }
     return ADDriver::drvUserCreate(pasynUser, drvInfo, pptypeName, psize);
 }
 

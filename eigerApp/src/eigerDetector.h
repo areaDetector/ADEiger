@@ -22,35 +22,16 @@
 #define EigFWImgNumStartStr        "FW_IMG_NUM_START"
 
 // Acquisition Metadata Parameters
-#define EigBeamXStr                "BEAM_X"
-#define EigBeamYStr                "BEAM_Y"
-#define EigDetDistStr              "DET_DIST"
 #define EigWavelengthStr           "WAVELENGTH"
-#define EigCountCutoffStr          "COUNT_CUTOFF"
 #define EigAutoSummationStr        "AUTO_SUMMATION"
 
 // Detector Metadata Parameters
 #define EigDescriptionStr          "DESCRIPTION"
-#define EigSensorThicknessStr      "SENSOR_THICKNESS"
-#define EigSensorMaterialStr       "SENSOR_MATERIAL"
-#define EigXPixelSizeStr           "X_PIXEL_SIZE"
-#define EigYPixelSizeStr           "Y_PIXEL_SIZE"
 
 // MX Parameters (firmware 1.6.2 onwards)
-#define EigChiStartStr             "CHI_START"
-#define EigChiIncrStr              "CHI_INCR"
-#define EigKappaStartStr           "KAPPA_START"
-#define EigKappaIncrStr            "KAPPA_INCR"
 #define EigOmegaStr                "OMEGA"
-#define EigOmegaStartStr           "OMEGA_START"
-#define EigOmegaIncrStr            "OMEGA_INCR"
-#define EigPhiStartStr             "PHI_START"
-#define EigPhiIncrStr              "PHI_INCR"
-#define EigTwoThetaStartStr        "TWO_THETA_START"
-#define EigTwoThetaIncrStr         "TWO_THETA_INCR"
 
 // Acquisition Parameters
-#define EigFlatfieldStr            "FLATFIELD_APPLIED"
 #define EigPhotonEnergyStr         "PHOTON_ENERGY"
 #define EigThresholdStr            "THRESHOLD"
 #define EigTriggerStr              "TRIGGER"
@@ -60,8 +41,6 @@
 #define EigCompressionAlgoStr      "COMPRESSION_ALGO"
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigROIModeStr              "ROI_MODE"
-#define EigPixMaskAppliedStr       "PIXEL_MASK_APPLIED"
-#define EigDeadTimeStr             "DEAD_TIME"
 
 // Detector Status Parameters
 #define EigStateStr                "STATE"
@@ -139,7 +118,6 @@ protected:
     // Driver-only parameters
     EigerParam *mDataSource;
     EigerParam *mFWAutoRemove;
-    EigerParam *mOmega;
     EigerParam *mTrigger;
     EigerParam *mTriggerExp;
     EigerParam *mManualTrigger;
@@ -154,37 +132,14 @@ protected:
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
-    EigerParam *mSensorThickness;
-    EigerParam *mSensorMaterial;
-    EigerParam *mXPixelSize;
-    EigerParam *mYPixelSize;
-    EigerParam *mDeadTime;
-    EigerParam *mCountCutoff;
-
-    // Eiger parameters: MX
-    EigerParam *mBeamX;
-    EigerParam *mBeamY;
-    EigerParam *mDetDist;
-    EigerParam *mChiStart;
-    EigerParam *mChiIncr;
-    EigerParam *mKappaStart;
-    EigerParam *mKappaIncr;
-    EigerParam *mOmegaStart;
-    EigerParam *mOmegaIncr;
-    EigerParam *mPhiStart;
-    EigerParam *mPhiIncr;
-    EigerParam *mTwoThetaStart;
-    EigerParam *mTwoThetaIncr;
 
     // Eiger parameters: acquisition
     EigerParam *mWavelength;
     EigerParam *mPhotonEnergy;
     EigerParam *mThreshold;
-    EigerParam *mFlatfield;
     EigerParam *mNTriggers;
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
-    EigerParam *mPixMaskApplied;
     EigerParam *mAutoSummation;
 
     // Eiger parameters: status
@@ -246,6 +201,7 @@ private:
     uid_t mFsUid, mFsGid;
     EigerParamSet mParams;
     int mFirstParam;
+    std::map<std::string, sys_t> mSubSystemMap;
 
     // Read all parameters from detector and set some default values
     asynStatus initParams (void);
