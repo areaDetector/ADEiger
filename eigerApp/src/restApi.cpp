@@ -13,7 +13,7 @@
 
 #include <fcntl.h>
 
-#define API_VERSION             "1.5.0"
+#define API_VERSION             "1.6.0"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
 #define EOH                     EOL EOL     // End of Header
@@ -27,7 +27,6 @@
 #define DATA_HDF5               "application/hdf5"
 #define DATA_HTML               "text/html"
 
-#define HTTP_PORT               80
 #define MAX_HTTP_RETRIES        1
 #define MAX_MESSAGE_SIZE        512
 #define MAX_BUF_SIZE            256
@@ -72,6 +71,8 @@
     "DELETE %s%s HTTP/1.1" EOL\
     "Host: %s" EOH
 
+using std::string;
+
 // Structure definitions
 
 typedef struct socket
@@ -106,6 +107,7 @@ const char *RestAPI::sysStr [SSCount] = {
     "/detector/api/"   API_VERSION "/status/",
     "/filewriter/api/" API_VERSION "/config/",
     "/filewriter/api/" API_VERSION "/status/",
+    "/filewriter/api/" API_VERSION "/command/",
     "/detector/api/"   API_VERSION "/command/",
     "/data/",
     "/monitor/api/"    API_VERSION "/config/",
@@ -114,10 +116,6 @@ const char *RestAPI::sysStr [SSCount] = {
     "/stream/api/"     API_VERSION "/config/",
     "/stream/api/"     API_VERSION "/status/",
     "/system/api/"     API_VERSION "/command/",
-};
-
-const char *RestAPI::triggerModeStr [TMCount] = {
-    "ints", "inte", "exts", "exte"
 };
 
 int RestAPI::init (void)
@@ -164,18 +162,17 @@ int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, si
 
 // Public members
 
-RestAPI::RestAPI (const char *hostname, size_t numSockets) :
-    mNumSockets(numSockets), mSockets(new socket_t[numSockets])
+RestAPI::RestAPI (string const & hostname, int port, size_t numSockets) :
+    mHostname(hostname), mPort(port), mNumSockets(numSockets),
+    mSockets(new socket_t[numSockets])
 {
-    strncpy(mHostname, hostname, sizeof(mHostname));
-
     memset(&mAddress, 0, sizeof(mAddress));
 
-    if(hostToIPAddr(mHostname, &mAddress.sin_addr))
+    if(hostToIPAddr(mHostname.c_str(), &mAddress.sin_addr))
         throw std::runtime_error("invalid hostname");
 
     mAddress.sin_family = AF_INET;
-    mAddress.sin_port = htons(HTTP_PORT);
+    mAddress.sin_port = htons(port);
 
     for(size_t i = 0; i < mNumSockets; ++i)
     {
@@ -187,7 +184,7 @@ RestAPI::RestAPI (const char *hostname, size_t numSockets) :
 
 int RestAPI::initialize (void)
 {
-    return put(SSCommand, "initialize", "", 0, NULL, DEFAULT_TIMEOUT_INIT);
+    return put(SSCommand, "initialize", "", NULL, DEFAULT_TIMEOUT_INIT);
 }
 
 int RestAPI::arm (int *sequenceId)
@@ -199,7 +196,7 @@ int RestAPI::arm (int *sequenceId)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname, 0lu);
+            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname.c_str(), 0lu);
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -225,16 +222,17 @@ int RestAPI::trigger (int timeout, double exposure)
 {
     // Trigger for INTS mode
     if(!exposure)
-        return put(SSCommand, "trigger", "", 0, NULL, timeout);
+        return put(SSCommand, "trigger", "", NULL, timeout);
 
     // Tigger for INTE mode
     // putDouble should block for the whole exposure duration, but it doesn't
     // (Eiger's fault)
+    char exposureStr[MAX_BUF_SIZE];
+    epicsSnprintf(exposureStr, sizeof(exposureStr), "%lf", exposure);
 
     epicsTimeStamp start, end;
-
     epicsTimeGetCurrent(&start);
-    if(putDouble(SSCommand, "trigger", exposure, NULL, timeout))
+    if(put(SSCommand, "trigger", exposureStr, NULL, timeout))
         return EXIT_FAILURE;
     epicsTimeGetCurrent(&end);
 
@@ -247,120 +245,27 @@ int RestAPI::trigger (int timeout, double exposure)
 
 int RestAPI::disarm (void)
 {
-    return put(SSCommand, "disarm", "", 0, NULL);
+    return put(SSCommand, "disarm");
 }
 
 int RestAPI::cancel (void)
 {
-    return put(SSCommand, "cancel", "", 0, NULL);
+    return put(SSCommand, "cancel");
 }
 
 int RestAPI::abort (void)
 {
-    return put(SSCommand, "abort", "", 0, NULL);
+    return put(SSCommand, "abort");
 }
 
 int RestAPI::wait (void)
 {
-    return put(SSCommand, "wait", "", 0, NULL, -1);
+    return put(SSCommand, "wait", "", NULL, -1);
 }
 
 int RestAPI::statusUpdate (void)
 {
-    return put(SSCommand, "status_update", "", 0, NULL);
-}
-
-int RestAPI::getString (sys_t sys, const char *param, char *value, size_t len, int timeout)
-{
-    return get(sys, param, value, len, timeout);
-}
-
-int RestAPI::getInt (sys_t sys, const char *param, int *value, int timeout)
-{
-    const char *functionName = "getInt";
-    char buf[MAX_BUF_SIZE];
-
-    if(get(sys, param, buf, sizeof(buf), timeout))
-        return EXIT_FAILURE;
-
-    if(sscanf(buf, "%d", value) != 1)
-    {
-        ERR_ARGS("[param=%s] couldn't parse '%s' as integer", param, buf);
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-int RestAPI::getDouble (sys_t sys, const char *param, double *value, int timeout)
-{
-    const char *functionName = "getDouble";
-    char buf[MAX_BUF_SIZE];
-
-    if(get(sys, param, buf, sizeof(buf), timeout))
-        return EXIT_FAILURE;
-
-    if(sscanf(buf, "%lf", value) != 1)
-    {
-        ERR_ARGS("[param=%s] couldn't parse '%s' as double", param, buf);
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-int RestAPI::getBinState (sys_t sys, const char *param, bool *value,
-        const char *oneState, int timeout)
-{
-    char buf[MAX_BUF_SIZE];
-
-    if(get(sys, param, buf, sizeof(buf), timeout))
-        return EXIT_FAILURE;
-
-    *value = !strcmp(buf, oneState);
-
-    return EXIT_SUCCESS;
-}
-
-int RestAPI::getBool (sys_t sys, const char *param, bool *value, int timeout)
-{
-    return getBinState (sys, param, value, "true", timeout);
-}
-
-int RestAPI::putString (sys_t sys, const char *param, const char *value,
-        paramList_t *paramList, int timeout)
-{
-    char buf[MAX_BUF_SIZE];
-    size_t bufLen = sprintf(buf, "{\"value\": \"%s\"}", value);
-
-    return put(sys, param, buf, bufLen, paramList, timeout);
-}
-
-int RestAPI::putInt (sys_t sys, const char *param,
-        int value, paramList_t *paramList, int timeout)
-{
-    char buf[MAX_BUF_SIZE];
-    size_t bufLen = sprintf(buf, "{\"value\": %d}", value);
-
-    return put(sys, param, buf, bufLen, paramList, timeout);
-}
-
-int RestAPI::putDouble (sys_t sys, const char *param,
-        double value, paramList_t *paramList, int timeout)
-{
-    char buf[MAX_BUF_SIZE];
-    size_t bufLen = sprintf(buf, "{\"value\": %lf}", value);
-
-    return put(sys, param, buf, bufLen, paramList, timeout);
-}
-
-int RestAPI::putBool (sys_t sys, const char *param,
-        bool value, paramList_t *paramList, int timeout)
-{
-    char buf[MAX_BUF_SIZE];
-    size_t bufLen = sprintf(buf, "{\"value\": %s}", value ? "true" : "false");
-
-    return put(sys, param, buf, bufLen, paramList, timeout);
+    return put(SSCommand, "status_update");
 }
 
 int RestAPI::getFileSize (const char *filename, size_t *size)
@@ -372,7 +277,7 @@ int RestAPI::getFileSize (const char *filename, size_t *size)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -407,7 +312,7 @@ int RestAPI::waitFile (const char *filename, double timeout)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename, mHostname);
+            REQUEST_HEAD, sysStr[SSData], filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -455,7 +360,7 @@ int RestAPI::deleteFile (const char *filename)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_DELETE, sysStr[SSData], filename, mHostname);
+            REQUEST_DELETE, sysStr[SSData], filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -510,7 +415,8 @@ int RestAPI::connect (socket_t *s)
         {
             char error[MAX_BUF_SIZE];
             epicsSocketConvertErrnoToString(error, sizeof(error));
-            ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+            ERR_ARGS("failed to connect to %s:%d [%s]", mHostname.c_str(),
+                    mPort, error);
             epicsSocketDestroy(s->fd);
             return EXIT_FAILURE;
         }
@@ -530,7 +436,8 @@ int RestAPI::connect (socket_t *s)
             if(ret <= 0)
             {
                 const char *error = ret == 0 ? "TIMEOUT" : "select failed";
-                ERR_ARGS("failed to connect to %s:%d [%s]", mHostname, HTTP_PORT, error);
+                ERR_ARGS("failed to connect to %s:%d [%s]", mHostname.c_str(),
+                        mPort, error);
                 epicsSocketDestroy(s->fd);
                 return EXIT_FAILURE;
             }
@@ -595,6 +502,7 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         else
         {
             ERR("failed to send");
+            s->closed = true;
             status = EXIT_FAILURE;
             goto end;
         }
@@ -655,81 +563,26 @@ retry:
     return doRequest(request, response, timeout);
 }
 
-int RestAPI::get (sys_t sys, const char *param, char *value, size_t len,
-        int timeout)
-{
-    const char *functionName = "get";
-
-    request_t request = {};
-    char requestBuf[MAX_MESSAGE_SIZE];
-    request.data      = requestBuf;
-    request.dataLen   = sizeof(requestBuf);
-    request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[sys], param, mHostname);
-
-    response_t response = {};
-    char responseBuf[MAX_MESSAGE_SIZE];
-    response.data    = responseBuf;
-    response.dataLen = sizeof(responseBuf);
-
-    if(doRequest(&request, &response, timeout))
-    {
-        ERR_ARGS("[param=%s] request failed", param);
-        return EXIT_FAILURE;
-    }
-
-    if(response.code != 200)
-    {
-        ERR_ARGS("[param=%s] server returned error code %d", param, response.code);
-        return EXIT_FAILURE;
-    }
-
-    if(!value)
-        return EXIT_SUCCESS;
-
-    struct json_token tokens[MAX_JSON_TOKENS];
-    struct json_token *valueToken;
-
-    int err = parse_json(response.content, response.contentLength, tokens, MAX_JSON_TOKENS);
-    if(err < 0)
-    {
-        ERR_ARGS("[param=%s] unable to parse json response\n[%.*s]", param,
-                (int)response.contentLength, response.content);
-        return EXIT_FAILURE;
-    }
-
-    valueToken = find_json_token(tokens, "value");
-    if(valueToken == NULL)
-    {
-        ERR_ARGS("[param=%s] unable to find 'value' json field", param);
-        return EXIT_FAILURE;
-    }
-
-    if((size_t)valueToken->len > ((size_t)(len + 1)))
-    {
-        ERR_ARGS("[param=%s] destination buffer is too short", param);
-        return EXIT_FAILURE;
-    }
-
-    memcpy((void*)value, (void*)valueToken->ptr, valueToken->len);
-    value[valueToken->len] = '\0';
-
-    return EXIT_SUCCESS;
-}
-
-int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
-        paramList_t *paramList, int timeout)
+int RestAPI::put (sys_t sys, string const & param, string const & value,
+        string * reply, int timeout)
 {
     const char *functionName = "put";
 
+    int valueLen = 0;
+    char valueBuf[MAX_BUF_SIZE] = "";
+    if(!value.empty())
+        valueLen = epicsSnprintf(valueBuf, sizeof(valueBuf), "{\"value\": %s}",
+                value.c_str());
+
     int headerLen;
     char header[MAX_BUF_SIZE];
-    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys], param, mHostname, len);
+    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys],
+            param.c_str(), mHostname.c_str(), (size_t)valueLen);
 
     request_t request = {};
-    char requestBuf[headerLen + len];
+    char requestBuf[headerLen + valueLen];
     request.data      = requestBuf;
-    request.dataLen   = headerLen + len;
+    request.dataLen   = headerLen + valueLen;
     request.actualLen = request.dataLen;
 
     response_t response = {};
@@ -738,21 +591,57 @@ int RestAPI::put (sys_t sys, const char *param, const char *value, size_t len,
     response.dataLen = sizeof(responseBuf);
 
     memcpy(request.data, header, headerLen);
-    memcpy(request.data + headerLen, value,  len);
+    memcpy(request.data + headerLen, valueBuf, valueLen);
 
     if(doRequest(&request, &response, timeout))
     {
-        ERR_ARGS("[param=%s] request failed", param);
+        ERR_ARGS("[param=%s] request failed", param.c_str());
         return EXIT_FAILURE;
     }
 
     if(response.code != 200)
     {
-        ERR_ARGS("[param=%s] server returned error code %d", param, response.code);
+        ERR_ARGS("[param=%s] server returned error code %d",
+                param.c_str(), response.code);
         return EXIT_FAILURE;
     }
 
-    return paramList ? parseParamList(&response, paramList) : EXIT_SUCCESS;
+    if(reply)
+        *reply = string(response.content, response.contentLength);
+    return EXIT_SUCCESS;
+}
+
+int RestAPI::get (sys_t sys, string const & param, string & value, int timeout)
+{
+    const char *functionName = "get";
+
+    request_t request = {};
+    char requestBuf[MAX_MESSAGE_SIZE];
+    request.data      = requestBuf;
+    request.dataLen   = sizeof(requestBuf);
+    request.actualLen = epicsSnprintf(request.data, request.dataLen,
+            REQUEST_GET, sysStr[sys], param.c_str(), mHostname.c_str());
+
+    response_t response = {};
+    char responseBuf[MAX_MESSAGE_SIZE];
+    response.data    = responseBuf;
+    response.dataLen = sizeof(responseBuf);
+
+    if(doRequest(&request, &response, timeout))
+    {
+        ERR_ARGS("[param=%s] request failed", param.c_str());
+        return EXIT_FAILURE;
+    }
+
+    if(response.code != 200)
+    {
+        ERR_ARGS("[param=%s] server returned error code %d",
+                param.c_str(), response.code);
+        return EXIT_FAILURE;
+    }
+
+    value = string(response.content, response.contentLength);
+    return EXIT_SUCCESS;
 }
 
 int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
@@ -769,7 +658,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET_FILE, sysStr[sys], name, mHostname, accept);
+            REQUEST_GET_FILE, sysStr[sys], name, mHostname.c_str(), accept);
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -954,44 +843,6 @@ int RestAPI::parseHeader (response_t *response)
 
     response->content = data + EOL_LEN;
     response->headerLen = response->content - response->data;
-
-    return EXIT_SUCCESS;
-}
-
-int RestAPI::parseParamList (const response_t *response, paramList_t *paramList)
-{
-    const char *functionName = "parseParamList";
-
-    if(!response->contentLength)
-    {
-        paramList->nparams = 0;
-        return EXIT_SUCCESS;
-    }
-
-    struct json_token tokens[MAX_JSON_TOKENS];
-    int err = parse_json(response->content, response->contentLength, tokens,
-            MAX_JSON_TOKENS);
-
-    if(err < 0)
-    {
-        ERR("unable to parse response json");
-        return EXIT_FAILURE;
-    }
-
-    if(tokens[0].type != JSON_TYPE_ARRAY)
-    {
-        ERR("unexpected token type");
-        return EXIT_FAILURE;
-    }
-
-    paramList->nparams = tokens[0].num_desc;
-
-    for(int i = 1; i <= tokens[0].num_desc; ++i)
-    {
-        // Assume destination is always big enough
-        memcpy(paramList->params[i-1], tokens[i].ptr, tokens[i].len);
-        paramList->params[i-1][tokens[i].len] = '\0';
-    }
 
     return EXIT_SUCCESS;
 }
