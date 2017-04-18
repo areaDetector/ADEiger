@@ -502,6 +502,7 @@ int RestAPI::doRequest (const request_t *request, response_t *response, int time
         else
         {
             ERR("failed to send");
+            s->closed = true;
             status = EXIT_FAILURE;
             goto end;
         }
