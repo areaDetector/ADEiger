@@ -330,6 +330,11 @@ EigerParam::EigerParam (EigerParamSet *set, string const & asynName,
             throw std::runtime_error(mAsynName);
         }
     }
+    else if(ss == SSCommand || ss == SSFWCommand || ss == SSSysCommand)
+    {
+        mType = EIGER_P_COMMAND;
+        mAccessMode = EIGER_ACC_WO;
+    }
 }
 
 void EigerParam::setEpsilon (double epsilon)
@@ -503,7 +508,7 @@ int EigerParam::baseFetch (string & rawValue, int timeout)
 int EigerParam::fetch (bool & value, int timeout)
 {
     const char *functionName = "fetch<bool>";
-    if(mRemote)
+    if(mRemote && mType != EIGER_P_COMMAND)
     {
         string rawValue;
         if(baseFetch(rawValue))
@@ -554,7 +559,7 @@ int EigerParam::fetch (bool & value, int timeout)
 int EigerParam::fetch (int & value, int timeout)
 {
     const char *functionName = "fetch<int>";
-    if(mRemote)
+    if(mRemote && mType != EIGER_P_COMMAND)
     {
         string rawValue;
         if(baseFetch(rawValue))
@@ -607,7 +612,7 @@ int EigerParam::fetch (int & value, int timeout)
 int EigerParam::fetch (double & value, int timeout)
 {
     const char *functionName = "fetch<double>";
-    if(mRemote)
+    if(mRemote && mType != EIGER_P_COMMAND)
     {
         if(mType != EIGER_P_DOUBLE && mType != EIGER_P_UNINIT)
         {
@@ -643,7 +648,7 @@ int EigerParam::fetch (string & value, int timeout)
 {
     const char *functionName = "fetch<string>";
 
-    if(mRemote)
+    if(mRemote && mType != EIGER_P_COMMAND)
     {
         if(mType != EIGER_P_STRING && mType != EIGER_P_ENUM &&
            mType != EIGER_P_UNINIT)

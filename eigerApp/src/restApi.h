@@ -2,7 +2,6 @@
 #define REST_API_H
 
 #include <string>
-#include <vector>
 #include <epicsMutex.h>
 #include <osiSock.h>
 
@@ -66,6 +65,9 @@ public:
 
     RestAPI (std::string const & hostname, int port = 80, size_t numSockets=5);
 
+    int get (sys_t sys, std::string const & param, std::string & value, int timeout = DEFAULT_TIMEOUT);
+    int put (sys_t sys, std::string const & param, std::string const & value = "", std::string * reply = NULL, int timeout = DEFAULT_TIMEOUT);
+
     int initialize (void);
     int arm        (int *sequenceId);
     int trigger    (int timeout, double exposure = 0.0);
@@ -74,9 +76,6 @@ public:
     int abort      (void);
     int wait       (void);
     int statusUpdate (void);
-
-    int get (sys_t sys, std::string const & param, std::string & value, int timeout = DEFAULT_TIMEOUT);
-    int put (sys_t sys, std::string const & param, std::string const & value = "", std::string * reply = NULL, int timeout = DEFAULT_TIMEOUT);
 
     int getFileSize (const char *filename, size_t *size);
     int waitFile    (const char *filename, double timeout = DEFAULT_TIMEOUT);
