@@ -108,7 +108,7 @@ public:
 
     // Fetch the current value from the detector, update underlying asyn parameter
     // and return the value
-    int fetch (int timeout = DEFAULT_TIMEOUT);
+    int fetch (void);
     int fetch (bool & value,        int timeout = DEFAULT_TIMEOUT);
     int fetch (int & value,         int timeout = DEFAULT_TIMEOUT);
     int fetch (double & value,      int timeout = DEFAULT_TIMEOUT);

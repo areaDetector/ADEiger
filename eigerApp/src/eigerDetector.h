@@ -182,10 +182,6 @@ protected:
     EigerParam *mFirmwareVersion;
     EigerParam *mSerialNumber;
     EigerParam *mTemperatureActual;
-    EigerParam *mMaxSizeX;
-    EigerParam *mMaxSizeY;
-    EigerParam *mSizeX;
-    EigerParam *mSizeY;
     EigerParam *mNDArraySizeX;
     EigerParam *mNDArraySizeY;
 

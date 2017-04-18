@@ -672,24 +672,24 @@ int EigerParam::fetch (string & value, int timeout)
     return get(value);
 }
 
-int EigerParam::fetch (int timeout)
+int EigerParam::fetch (void)
 {
     switch(mAsynType)
     {
     case asynParamInt32:
     {
         int dummy;
-        return fetch(dummy, timeout);
+        return fetch(dummy);
     }
     case asynParamFloat64:
     {
         double dummy;
-        return fetch(dummy, timeout);
+        return fetch(dummy);
     }
     case asynParamOctet:
     {
         string dummy;
-        return fetch(dummy, timeout);
+        return fetch(dummy);
     }
 
     default:

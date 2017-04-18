@@ -21,8 +21,7 @@ eigerDetectorConfig("$(PORT)", "$(EIGERIP)", 0, 0)
 dbLoadRecords("$(ADEIGER)/db/eiger.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 
 # Debug
-# dbpf $(PREFIX)cam1:PoolUsedMem.SCAN Passive
-# asynSetTraceMask("$(PORT)", 0, 0x11)
+#asynSetTraceMask("$(PORT)", 0, 0x11)
 
 # Create a standard arrays plugin
 NDStdArraysConfigure("Image1", 5, 0, "$(PORT)", 0, 0)
@@ -36,6 +35,9 @@ dbLoadRecords("$(ADCORE)/db/NDStdArrays.template", "P=$(PREFIX),R=image2:,PORT=I
 set_requestfile_path("$(ADEIGER)/eigerApp/Db")
 
 iocInit()
+
+# Avoid deluge of messages when debugging
+#dbpf $(PREFIX)cam1:PoolUsedMem.SCAN Passive
 
 # save things every thirty seconds
 create_monitor_set("auto_settings.req", 30, "P=$(PREFIX)")

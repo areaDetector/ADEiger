@@ -299,19 +299,37 @@
           <td>ADTemperatureActual</td>
           <td> $(P)$(R)TemperatureActual</td>
           <td>detector/status/board_000/th0_temp</td>
-          <td> Reads the actual temperature of the detector.</td>
+          <td>Reads the actual temperature of the detector.</td>
         </tr>
         <tr>
-          <td>ADSizeX<br>ADMaxSizeX<br>NDArraySizeX</td>
-          <td>$(P)$(R)SizeX_RBV<br>$(P)$(R)MaxSizeX_RBV<br>$(P)$(R)ArraySizeX_RBV</td>
+          <td>ADMaxSizeX</td>
+          <td>$(P)$(R)MaxSizeX_RBV</td>
+          <td></td>
+          <td>Detector sensor size in the X direction.</td>
+        </tr>
+        <tr>
+          <td>ADMaxSizeY</td>
+          <td>$(P)$(R)MaxSizeY_RBV</td>
+          <td></td>
+          <td>Detector sensor size in the Y direction.</td>
+        </tr>
+        <tr>
+          <td>NDArraySizeX</td>
+          <td>$(P)$(R)ArraySizeX_RBV</td>
           <td>detector/config/x_pixels_in_detector</td>
-          <td>Reads the detector sensor size in the X direction.</td>
+          <td>
+            Current detector sensor size in the X direction. This can change 
+            depending on the ROI Mode selected.
+          </td>
         </tr>
         <tr>
-          <td>ADSizeY<br>ADMaxSizeY<br>NDArraySizeY</td>
-          <td>$(P)$(R)SizeY_RBV<br>$(P)$(R)MaxSizeY_RBV<br>$(P)$(R)ArraySizeY_RBV</td>
+          <td>NDArraySizeY</td>
+          <td>$(P)$(R)ArraySizeY_RBV</td>
           <td>detector/config/y_pixels_in_detector</td>
-          <td>Reads the detector sensor size in the Y direction.</td>
+          <td>
+            Current detector sensor size in the Y direction. This can change 
+            depending on the ROI Mode selected.
+          </td>
         </tr>
         <tr>
           <td>ADManufacturer<br>ADModel</td>

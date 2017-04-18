@@ -195,9 +195,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Initialize sockets
     RestAPI::init();
 
-    // Write version to appropriate parameter
-    setStringParam(NDDriverVersion, "R2-2");
-
     // Work around weird ordering
     vector<string> modeEnum;
     modeEnum.reserve(2);
@@ -288,13 +285,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "software_version");
     mSerialNumber      = mParams.create(ADSerialNumberString,      asynParamOctet,   SSDetConfig, "detector_number");
     mTemperatureActual = mParams.create(ADTemperatureActualString, asynParamFloat64, SSDetStatus, "board_000/th0_temp");
-
-    mMaxSizeX     = mParams.create(ADMaxSizeXString,   asynParamInt32, SSDetConfig, "x_pixels_in_detector");
-    mMaxSizeY     = mParams.create(ADMaxSizeYString,   asynParamInt32, SSDetConfig, "y_pixels_in_detector");
-    mSizeX        = mParams.create(ADSizeXString,      asynParamInt32, SSDetConfig, "x_pixels_in_detector");
-    mSizeY        = mParams.create(ADSizeYString,      asynParamInt32, SSDetConfig, "y_pixels_in_detector");
-    mNDArraySizeX = mParams.create(NDArraySizeXString, asynParamInt32, SSDetConfig, "x_pixels_in_detector");
-    mNDArraySizeY = mParams.create(NDArraySizeYString, asynParamInt32, SSDetConfig, "y_pixels_in_detector");
+    mNDArraySizeX      = mParams.create(NDArraySizeXString,        asynParamInt32,   SSDetConfig, "x_pixels_in_detector");
+    mNDArraySizeY      = mParams.create(NDArraySizeYString,        asynParamInt32,   SSDetConfig, "y_pixels_in_detector");
 
     // Test if the detector is initialized
     if(mDescription->fetch())
@@ -1231,7 +1223,27 @@ asynStatus eigerDetector::initParams (void)
 {
     int status = asynSuccess;
 
+    // Write version to appropriate parameter
+    setStringParam(NDDriverVersion, "R2-2");
+
     mParams.fetchAll();
+
+    // Get the sensor size without ROI
+    string roiMode;
+    int maxSizeX, maxSizeY;
+    mROIMode->get(roiMode);
+
+    if(roiMode != "disabled")
+        mROIMode->put("disabled");
+
+    mNDArraySizeX->get(maxSizeX);
+    mNDArraySizeY->get(maxSizeY);
+
+    if(roiMode != "disabled")
+        mROIMode->put(roiMode);
+
+    setIntegerParam(ADMaxSizeX, maxSizeX);
+    setIntegerParam(ADMaxSizeY, maxSizeY);
 
     string description;
     status |= mDescription->get(description);
@@ -1242,15 +1254,6 @@ asynStatus eigerDetector::initParams (void)
 
     status |= setStringParam (ADManufacturer, manufacturer);
     status |= setStringParam (ADModel, model);
-
-    // Get frame dimensions
-    int maxSizeX, maxSizeY;
-    status |= mMaxSizeX->get(maxSizeX);
-    status |= mMaxSizeY->get(maxSizeY);
-    status |= setIntegerParam(ADSizeX, maxSizeX);
-    status |= setIntegerParam(ADSizeY, maxSizeY);
-    status |= setIntegerParam(NDArraySizeX, maxSizeX);
-    status |= setIntegerParam(NDArraySizeY, maxSizeY);
 
     // Set some default values
     status |= setIntegerParam(NDArraySize, 0);
@@ -1266,10 +1269,6 @@ asynStatus eigerDetector::initParams (void)
     mFileOwnerGroup->put("");
     mFilePerms->put(0644);
 
-    callParamCallbacks();
-
-    // Set more parameters
-
     // Auto Summation should always be true (SIMPLON API Reference v1.3.0)
     mAutoSummation->put(true);
 
@@ -1277,6 +1276,8 @@ asynStatus eigerDetector::initParams (void)
     mStreamHdrDetail->put("none");
     mFWImgNumStart->put(DEFAULT_NR_START);
     mMonitorBufSize->put(1);
+
+    callParamCallbacks();
 
     return (asynStatus)status;
 }
