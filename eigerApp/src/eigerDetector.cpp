@@ -192,9 +192,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mSubSystemMap.insert(std::make_pair("SS", SSStreamStatus));
     mSubSystemMap.insert(std::make_pair("SC", SSStreamConfig));
 
-    // Initialize sockets
-    RestAPI::init();
-
     // Work around weird ordering
     vector<string> modeEnum;
     modeEnum.reserve(2);

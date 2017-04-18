@@ -52,14 +52,9 @@ private:
 
     int getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize, const char *accept);
 
-    int parseHeader     (response_t *response);
-    int parseSequenceId (const response_t *response, int *sequenceId);
-
 public:
     static const char *sysStr [SSCount];
 
-    static int init    (void);
-    static void deinit (void);
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 

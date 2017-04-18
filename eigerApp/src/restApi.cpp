@@ -118,14 +118,105 @@ const char *RestAPI::sysStr [SSCount] = {
     "/system/api/"     API_VERSION "/command/",
 };
 
-int RestAPI::init (void)
+
+static int parseHeader (response_t *response)
 {
-    return osiSockAttach();
+    int scanned;
+    char *data = response->data;
+    char *eol;
+
+    response->contentLength = 0;
+    response->reconnect = false;
+
+    scanned = sscanf(data, "%*s %d", &response->code);
+    if(scanned != 1)
+        return EXIT_FAILURE;
+
+    data = strstr(data, EOL);
+    if(!data)
+        return EXIT_FAILURE;
+
+    data += EOL_LEN;
+
+    eol = strstr(data, EOL);
+    while(eol && data != eol)
+    {
+        char *key, *colon;
+
+        key   = data;
+        colon = strchr(data, ':');
+
+        if(!colon)
+            return EXIT_FAILURE;
+
+        *colon = '\0';
+
+        if(!strcasecmp(key, "content-length"))
+            sscanf(colon + 1, "%lu", &response->contentLength);
+        else if(!strcasecmp(key, "connection"))
+        {
+            char value[MAX_BUF_SIZE];
+            sscanf(colon + 1, "%s", value);
+            response->reconnect = !strcasecmp(value, "close");
+        }
+
+        data = eol + EOL_LEN;
+        eol = strstr(data, EOL);
+    }
+
+    if(!eol)
+        return EXIT_FAILURE;
+
+    response->content = data + EOL_LEN;
+    response->headerLen = response->content - response->data;
+
+    return EXIT_SUCCESS;
 }
 
-void RestAPI::deinit (void)
+static int parseSequenceId (const response_t *response, int *sequenceId)
 {
-    osiSockRelease();
+    const char *functionName = "parseParamList";
+
+    if(!response->contentLength)
+    {
+        ERR("no content to parse");
+        return EXIT_FAILURE;
+    }
+
+    struct json_token tokens[MAX_JSON_TOKENS];
+    int err = parse_json(response->content, response->contentLength, tokens,
+            MAX_JSON_TOKENS);
+
+    if(err < 0)
+    {
+        ERR("unable to parse response json");
+        return EXIT_FAILURE;
+    }
+
+    if(tokens[0].type != JSON_TYPE_OBJECT)
+    {
+        ERR("unexpected token type");
+        return EXIT_FAILURE;
+    }
+
+    struct json_token *seqIdToken = find_json_token(tokens, "sequence id");
+    if(!seqIdToken)
+    {
+        seqIdToken = find_json_token(tokens, "series id");
+        if(!seqIdToken)
+        {
+            ERR("unable to find 'series id' or 'sequence id' token");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if(sscanf(seqIdToken->ptr, "%d", sequenceId) != 1)
+    {
+        ERR("unable to parse 'sequence_id' token");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 
 int RestAPI::buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize)
@@ -791,105 +882,5 @@ retry:
     s->closed = true;
     s->mutex.unlock();
     return getBlob(sys, name, buf, bufSize, accept);
-}
-
-int RestAPI::parseHeader (response_t *response)
-{
-    int scanned;
-    char *data = response->data;
-    char *eol;
-
-    response->contentLength = 0;
-    response->reconnect = false;
-
-    scanned = sscanf(data, "%*s %d", &response->code);
-    if(scanned != 1)
-        return EXIT_FAILURE;
-
-    data = strstr(data, EOL);
-    if(!data)
-        return EXIT_FAILURE;
-
-    data += EOL_LEN;
-
-    eol = strstr(data, EOL);
-    while(eol && data != eol)
-    {
-        char *key, *colon;
-
-        key   = data;
-        colon = strchr(data, ':');
-
-        if(!colon)
-            return EXIT_FAILURE;
-
-        *colon = '\0';
-
-        if(!strcasecmp(key, "content-length"))
-            sscanf(colon + 1, "%lu", &response->contentLength);
-        else if(!strcasecmp(key, "connection"))
-        {
-            char value[MAX_BUF_SIZE];
-            sscanf(colon + 1, "%s", value);
-            response->reconnect = !strcasecmp(value, "close");
-        }
-
-        data = eol + EOL_LEN;
-        eol = strstr(data, EOL);
-    }
-
-    if(!eol)
-        return EXIT_FAILURE;
-
-    response->content = data + EOL_LEN;
-    response->headerLen = response->content - response->data;
-
-    return EXIT_SUCCESS;
-}
-
-int RestAPI::parseSequenceId (const response_t *response, int *sequenceId)
-{
-    const char *functionName = "parseParamList";
-
-    if(!response->contentLength)
-    {
-        ERR("no content to parse");
-        return EXIT_FAILURE;
-    }
-
-    struct json_token tokens[MAX_JSON_TOKENS];
-    int err = parse_json(response->content, response->contentLength, tokens,
-            MAX_JSON_TOKENS);
-
-    if(err < 0)
-    {
-        ERR("unable to parse response json");
-        return EXIT_FAILURE;
-    }
-
-    if(tokens[0].type != JSON_TYPE_OBJECT)
-    {
-        ERR("unexpected token type");
-        return EXIT_FAILURE;
-    }
-
-    struct json_token *seqIdToken = find_json_token(tokens, "sequence id");
-    if(!seqIdToken)
-    {
-        seqIdToken = find_json_token(tokens, "series id");
-        if(!seqIdToken)
-        {
-            ERR("unable to find 'series id' or 'sequence id' token");
-            return EXIT_FAILURE;
-        }
-    }
-
-    if(sscanf(seqIdToken->ptr, "%d", sequenceId) != 1)
-    {
-        ERR("unable to parse 'sequence_id' token");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
 }
 
