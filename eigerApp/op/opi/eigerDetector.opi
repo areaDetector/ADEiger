@@ -286,7 +286,7 @@ $(pv_value)</tooltip>
       <name>asyn Port</name>
       <precision>0</precision>
       <precision_from_pv>true</precision_from_pv>
-      <pv_name>$(P)$(R)SWVersion_RBV</pv_name>
+      <pv_name>$(P)$(R)FirmwareVersion_RBV</pv_name>
       <pv_value />
       <rotation_angle>0.0</rotation_angle>
       <rules />

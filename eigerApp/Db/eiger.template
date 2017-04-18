@@ -41,22 +41,6 @@ record(mbbi,"$(P)$(R)DataSource_RBV") {
     field(TWST, "Stream")
 }
 
-# Eiger Server software version
-record(stringin, "$(P)$(R)SWVersion_RBV") {
-    field(DESC, "Software Version")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SW_VERSION")
-    field(SCAN, "I/O Intr")
-}
-
-# Eiger Serial Number
-record(stringin, "$(P)$(R)SerialNumber_RBV") {
-    field(DESC, "Serial Number")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SERIAL_NUMBER")
-    field(SCAN, "I/O Intr")
-}
-
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")
@@ -478,7 +462,7 @@ record(ao,"$(P)$(R)FilePerms") {
 record(bo,"$(P)$(R)FlatfieldApplied") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIGER_DCI_flatfield_correction_applied")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
     field(VAL,  "1")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
@@ -486,7 +470,7 @@ record(bo,"$(P)$(R)FlatfieldApplied") {
 
 record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIGER_DCI_flatfield_correction_applied")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
     field(SCAN, "I/O Intr")
