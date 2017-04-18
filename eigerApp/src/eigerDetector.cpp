@@ -195,6 +195,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Initialize sockets
     RestAPI::init();
 
+    // Write version to appropriate parameter
+    setStringParam(NDDriverVersion, "R2-2");
+
     // Work around weird ordering
     vector<string> modeEnum;
     modeEnum.reserve(2);
