@@ -699,7 +699,7 @@ void eigerDetector::controlTask (void)
         epicsTimeGetCurrent(&armStart);
         status = mApi.arm(&sequenceId);
         epicsTimeGetCurrent(&armEnd);
-        FLOW_ARGS("arming time %f\n", epicsTimeDiffInSeconds(&armEnd, &armStart));
+        FLOW_ARGS("arming time %f", epicsTimeDiffInSeconds(&armEnd, &armStart));
         lock();
 
         if(status)
@@ -899,7 +899,7 @@ void eigerDetector::pollTask (void)
         {
             file_t *curFile = &files[i];
 
-            FLOW_ARGS("waiting for %s\n", curFile->name);
+            FLOW_ARGS("file=%s", curFile->name);
             if(!mApi.waitFile(curFile->name, 1.0))
             {
                 if(curFile->save || curFile->parse)
@@ -1005,24 +1005,28 @@ void eigerDetector::saveTask (void)
 
         mSaveQueue.receive(&file, sizeof(file_t *));
 
-        FLOW_ARGS("file=%s", file->name);
+        FLOW_ARGS("file=%s uid=%d gid=%d", file->name, file->uid, file->gid);
 
-        if(file->uid != currentFsUid) {
-            (void)setfsuid(file->uid);
+        if(file->uid != currentFsUid)
+        {
+            FLOW_ARGS("setting FS UID to %d", file->uid);
+            setfsuid(file->uid);
             currentFsUid = (uid_t)setfsuid(file->uid);
 
-            if(currentFsUid != file->uid) {
+            if(currentFsUid != file->uid)
                 ERR_ARGS("[file=%s] failed to set uid", file->name);
-            }
+
         }
 
-        if(file->gid != currentFsGid) {
-            (void)setfsgid(file->gid);
+        if(file->gid != currentFsGid)
+        {
+            FLOW_ARGS("setting FS GID to %d", file->gid);
+            setfsgid(file->gid);
             currentFsGid = (uid_t)setfsgid(file->gid);
 
-            if(currentFsGid != file->gid) {
+            if(currentFsGid != file->gid)
                 ERR_ARGS("[file=%s] failed to set gid", file->name);
-            }
+
         }
 
         lock();
