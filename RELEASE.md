@@ -14,7 +14,11 @@ R2-2
 ----
 
 Depends on Eiger firmware 1.6.4+
+Depends on ADCore R2-6+
 
+* Major rewrite of how the driver accesses detector parameters:
+ - Value limits are enforced by the driver before being sent to the detector
+* New parameters can be accessed only with a template file, see documentation
 * Added MEDM screens, courtesy of Vesna Samardzic-Boban (Australian Synchrotron) and Zachary Brown (CHESS)
 * Fix status not updating
 * Fix incorrect SensorMaterial_RBV DTYP in database file

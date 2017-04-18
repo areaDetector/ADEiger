@@ -38,13 +38,13 @@
     <p>
       This is an <a href="http://www.aps.anl.gov/epics">EPICS</a> <a href="areaDetector.html">
       areaDetector</a> driver for the Eiger detector from <a href="http://www.dectris.com">Dectris</a>.
-      It has been tested on the Eiger 1M, 4M and 16M with the firmware version 1.6.2+. The driver
+      It has been tested on the Eiger 1M, 4M and 16M with the firmware version 1.6.4+. The driver
       communicates with the detector via its SIMPLON REST interface, so no library from Dectris is required.
       The images can pulled from the detector as HDF5 files, as a ZeroMQ stream or both. The files can be
       both saved to disk and passed to the areaDetector pipeline at the same time.
     </p>
     <p> All trigger modes are supported, although Internal Enable mode seems to not be working
-      properly. See Known Issues.</p>
+      properly. See <a href="#Internal_Enable_Mode">Known Issues</a>.</p>
     <p>
       This driver inherits from <a href="areaDetectorDoc.html#ADDriver">ADDriver</a>.
       It implements many of the parameters in <a href="areaDetectorDoxygenHTML/asyn_n_d_array_driver_8h.html">
@@ -59,9 +59,9 @@
       Sometimes it does, however, refer to those parameters as they are named in Dectris' documentation.
     </p>
     <p>
-      The SIMPLON API provides ways to query parameter limits, valid values for enums, error conditions, etc,
-      but those features are not currently in use. Setting a parameter will immediately push its value to the
-      detector and it can reject the update if the value is outside of the acceptable range.
+      The SIMPLON API provides ways to query parameter limits, valid values for enums, error conditions, etc. 
+      The driver will clamp values to their minumum or maximum value if they are outside the acceptable range. 
+      Setting a parameter will immediately push its value to the detector.
     </p>
     <p>
       This driver was built upon a multithreaded architecture. A combination of threads is used to simultaneously
@@ -77,6 +77,43 @@
       <li>filewriter/config/image_nr_start = 1</li>
       <li>monitor/config/buffer_size = 1</li>
     </ul>
+
+  <h2 id="Accessing_New_Parameters">Accessing New Parameters</h2>
+    <p>
+      Some parameters are not relevant to the driver operation and as such are not exposed initially by the driver as
+      PVs. However, there is a mechanism to access other parameters not created automatically by the driver by simply
+      instantiating new records with the appropriate <code>drvInfo</code> string. Some of the PVs are created this
+      way. For example, the PV XPixelSize_RBV has the following <code>drvInfo</code>:
+      
+      <pre>EIG_DCD_x_pixel_size</pre>
+      
+      For those parameters, the first four characters must be <code>EIG_</code>. Then the fifth character must be one of:
+      <ul>
+        <li><code>D</code>: Detector subsystem</li>
+        <li><code>M</code>: Monitor subsystem</li>
+        <li><code>F</code>: FileWriter subsystem</li>
+        <li><code>S</code>: Stream subsystem</li>
+      </ul>
+      
+      The sixth character determines if the parameter is a configuration or a status parameter:
+      <ul>
+        <li><code>C</code>: Configuration</li>
+        <li><code>S</code>: Status</li>
+      </ul>
+      
+      The seventh character determines which asyn parameter type to use:
+      <ul>
+        <li><code>I</code>: Integer (<code>asynParamInt32</code>)</li>
+        <li><code>D</code>: Double (<code>asynParamFloat64</code>)</li>
+        <li><code>S</code>: String (<code>asynParamOctet</code>)</li>
+      </ul>
+      
+      The eighth character must be a <code>_</code>, and the remaining characters are the parameter's name according to
+      the SIMPLON API Manual. Hence, for this example, this PV will be accessing the parameter:
+      
+      <pre>detector/api/&lt;version&gt;/config/x_pixel_size</pre>
+    </p>
+    
 
   <h2 id="Trigger_Modes">Trigger Modes</h2>
     <p>
@@ -176,7 +213,7 @@
       NDArrayAddr 1 (therefore, an independent NDArray stream).
     </p>
 
-  <h2 id="Chrystallography_Parameters">Chrystallography Parameters</h2>
+  <h2 id="Crystallography_Parameters">Chrystallography Parameters</h2>
   <p>
     A few parameters are available as metadata for the acquisition. These values are stored on the master file and
     sent as metadata in ZeroMQ stream, but otherwise don't affect the acquisition, with the exception of the Wavelength
@@ -282,6 +319,18 @@
           <td>detector/config/description</td>
           <td>Reads the detector manufacturer (Dectris) and model (Eiger xx M).</td>
         </tr>
+        <tr>
+          <td> ADSerialNumber</td>
+          <td> $(P)$(R)SerialNumber_RBV</td>
+          <td> detector/config/detector_number</td>
+          <td> Detector serial number</td>
+        </tr>
+        <tr>
+          <td> ADFirmwareVersion</td>
+          <td> $(P)$(R)FirmwareVersion_RBV </td>
+          <td> detector/config/software_version</td>
+          <td> Detector firmware version</td>
+        </tr>
       </tbody>
     </table>
   <h2 id="Driver_parameters" style="text-align: left">Eiger specific parameters</h2>
@@ -310,25 +359,6 @@
           <td align="center" colspan="8"> <b>Detector Metadata</b> </td>
         </tr>
         <tr>
-          <td> EigerSerialNumber</td>
-          <td> detector/config/detector_number</td>
-          <td> asynOctet</td>
-          <td> R/O</td>
-          <td> Detector serial number</td>
-          <td> SERIAL_NUMBER</td>
-          <td> SerialNumber_RBV</td>
-          <td> stringin</td>
-        </tr>
-        <tr>
-          <td> EigerSWVersion</td>
-          <td> detector/config/software_version</td>
-          <td> asynOctet</td>
-          <td> R/O</td>
-          <td> Detector firmware version</td>
-          <td> SW_VERSION</td>
-          <td> SWVersion_RBV</td>
-          <td> stringin</td>
-        </tr><tr>
           <td> EigerDescription</td>
           <td> detector/config/description</td>
           <td> asynOctet</td>
@@ -344,7 +374,7 @@
           <td> asynOctet</td>
           <td> R/O</td>
           <td> Detector's sensor material</td>
-          <td> SENSOR_MATERIAL</td>
+          <td> EIG_DCD_sensor_material</td>
           <td> SensorMaterial_RBV</td>
           <td> stringin</td>
         </tr>
@@ -354,7 +384,7 @@
           <td> asynFloat64</td>
           <td> R/O</td>
           <td> Detector's sensor thickness, in meters</td>
-          <td> SENSOR_THICKNESS</td>
+          <td> EIG_DCD_sensor_thickness</td>
           <td> SensorThickness_RBV</td>
           <td> ai</td>
         </tr>
@@ -364,7 +394,7 @@
           <td> asynFloat64</td>
           <td> R/O</td>
           <td> Detector's pixel size in the X direction, in meters</td>
-          <td> X_PIXEL_SIZE</td>
+          <td> EIG_DCD_x_pixel_size</td>
           <td> XPixelSize_RBV</td>
           <td> ai</td>
         </tr>
@@ -374,7 +404,7 @@
           <td> asynFloat64</td>
           <td> R/O</td>
           <td> Detector's pixel size in the Y direction, in meters</td>
-          <td> Y_PIXEL_SIZE</td>
+          <td> EIG_DCD_y_pixel_size</td>
           <td> YPixelSize_RBV</td>
           <td> ai</td>
         </tr>
@@ -385,7 +415,7 @@
           <td> R/O</td>
           <td> Detector's readout time (dead time) between frames. Changes
                with different Threshold Energies.</td>
-          <td> DEAD_TIME</td>
+          <td> EIG_DCD_detector_readout_time</td>
           <td> DeadTime_RBV</td>
           <td> ai</td>
         </tr>
@@ -635,7 +665,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> X position of the beam </td>
-          <td> BEAM_X</td>
+          <td> EIG_DCD_beam_center_x</td>
           <td> BeamX<br/>BeamX_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -645,7 +675,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Y position of the beam </td>
-          <td> BEAM_Y</td>
+          <td> EIG_DCD_beam_center_y</td>
           <td> BeamY<br/>BeamY_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -655,7 +685,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Detector distance </td>
-          <td> DET_DIST</td>
+          <td> EIG_DCD_detector_distance</td>
           <td> DetDist<br/>DetDist_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -681,7 +711,7 @@
              Number of counts after which the detector will cutoff due to the 
              count rate correction.
           </td>
-          <td> COUNT_CUTOFF</td>
+          <td> EIG_DCI_countrate_correction_count_cutoff</td>
           <td> CountCutoff_RBV</td>
           <td> ai</td>
         </tr>
@@ -694,7 +724,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Start value of the Chi angle </td>
-          <td> CHI_START</td>
+          <td> EIG_DCD_chi_start</td>
           <td> ChiStart<br/>ChiStart_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -704,7 +734,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Chi angle increment per frame </td>
-          <td> CHI_INCR</td>
+          <td> EIG_DCD_chi_increment</td>
           <td> ChiIncr<br/>ChiIncr_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -714,7 +744,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Start value of the Kappa angle </td>
-          <td> KAPPA_START</td>
+          <td> EIG_DCD_kappa_start</td>
           <td> KappaStart<br/>KappaStart_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -724,7 +754,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Kappa angle increment per frame </td>
-          <td> KAPPA_INCR</td>
+          <td> EIG_DCD_kappa_increment</td>
           <td> KappaIncr<br/>KappaIncr_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -734,7 +764,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Start value of the Omega angle </td>
-          <td> OMEGA_START</td>
+          <td> EIG_DCD_omega_start</td>
           <td> OmegaStart<br/>OmegaStart_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -744,7 +774,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Omega angle increment per frame </td>
-          <td> OMEGA_INCR</td>
+          <td> EIG_DCD_omega_increment</td>
           <td> OmegaIncr<br/>OmegaIncr_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -754,7 +784,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Start value of the Phi angle </td>
-          <td> PHI_START</td>
+          <td> EIG_DCD_phi_start</td>
           <td> PhiStart<br/>PhiStart_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -764,7 +794,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Phi angle increment per frame </td>
-          <td> PHI_INCR</td>
+          <td> EIG_DCD_phi_increment</td>
           <td> PhiIncr<br/>PhiIncr_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -774,7 +804,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> Start value of the TwoTheta angle </td>
-          <td> TWO_THETA_START</td>
+          <td> EIG_DCD_two_theta_start</td>
           <td> TwoThetaStart<br/>TwoThetaStart_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -784,7 +814,7 @@
           <td> asynFloat64</td>
           <td> R/W</td>
           <td> TwoTheta angle increment per frame </td>
-          <td> TWO_THETA_INCR</td>
+          <td> EIG_DCD_two_theta_increment</td>
           <td> TwoThetaIncr<br/>TwoThetaIncr_RBV</td>
           <td> ao<br/>ai</td>
         </tr>
@@ -875,7 +905,7 @@
           <td> asynInt32</td>
           <td> R/W</td>
           <td> Controls whether the flatfield correction should be applied </td>
-          <td> FLATFIELD_APPLIED</td>
+          <td> EIG_DCI_flatfield_correction_applied</td>
           <td> FlatfieldApplied<br/>FlatfieldApplied_RBV</td>
           <td> bo<br/>bi</td>
         </tr>
