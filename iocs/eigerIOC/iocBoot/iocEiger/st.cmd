@@ -13,12 +13,16 @@ epicsEnvSet("XSIZE",  "1030")
 epicsEnvSet("YSIZE",  "1065")
 epicsEnvSet("NCHANS", "2048")
 epicsEnvSet("CBUFFS", "500")
-epicsEnvSet("EIGERIP", "130.199.221.165")
+epicsEnvSet("EIGERIP", "10.42.42.20")
 epicsEnvSet("EPICS_DB_INCLUDE_PATH", "$(ADCORE)/db")
 epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "5000000")
 
 eigerDetectorConfig("$(PORT)", "$(EIGERIP)", 0, 0)
 dbLoadRecords("$(ADEIGER)/db/eiger.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
+
+# Debug
+# dbpf $(PREFIX)cam1:PoolUsedMem.SCAN Passive
+# asynSetTraceMask("$(PORT)", 0, 0x11)
 
 # Create a standard arrays plugin
 NDStdArraysConfigure("Image1", 5, 0, "$(PORT)", 0, 0)
@@ -30,9 +34,6 @@ dbLoadRecords("$(ADCORE)/db/NDStdArrays.template", "P=$(PREFIX),R=image2:,PORT=I
 # Load all other plugins using commonPlugins.cmd
 < $(ADCORE)/iocBoot/commonPlugins.cmd
 set_requestfile_path("$(ADEIGER)/eigerApp/Db")
-
-#asynSetTraceMask("$(PORT)",0,255)
-#asynSetTraceMask("$(PORT)",0,3)
 
 iocInit()
 
