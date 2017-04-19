@@ -194,7 +194,6 @@ private:
             mReapQueue;
     bool mPollStop, mPollComplete, mStreamComplete;
     unsigned int mFrameNumber;
-    uid_t mFsUid, mFsGid;
     EigerParamSet mParams;
     int mFirstParam;
     std::map<std::string, sys_t> mSubSystemMap;
@@ -211,6 +210,9 @@ private:
 
     // Helper that returns ADStatus == ADStatusAcquire
     bool acquiring (void);
+
+    asynStatus setFileOwner (const char *name);
+    asynStatus setFileOwnerGroup (const char *name);
 };
 
 #endif
