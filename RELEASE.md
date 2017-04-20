@@ -25,13 +25,13 @@ Depends on ADCore R2-6+
 * Fix incorrect SensorMaterial_RBV display in OPI
 * Prevent using FileWriter or Stream as a Data Source when the selected compression algorithm is Bit Shuffle LZ4.
 * Added PV's to set owner, group and permissions on downloaded files.
- - This depends on the IOC executable having the appropriate `CAP_SETUID` and `CAP_SETGID` capabilities set.
+    * This depends on the IOC executable having the appropriate `CAP_SETUID` and `CAP_SETGID` capabilities set.
 * Extra header data in the streaming interface is now ignored if `header_detail` is other than "none". 
 * Added the following parameters to the driver:
- - Dead Time (`detector/config/detector_readout_time`)
- - FileWriter State (`filewriter/status/state`)
- - Monitor State (`monitor/status/state`)
- - Stream State (`stream/status/state`)
+    * Dead Time (`detector/config/detector_readout_time`)
+    * FileWriter State (`filewriter/status/state`)
+    * Monitor State (`monitor/status/state`)
+    * Stream State (`stream/status/state`)
 
 R2-1
 ----
@@ -43,16 +43,16 @@ Depends on Eiger firmware 1.6.2+
 * Fix a bug that caused the driver to fail to download huge images.
 * Use monitor timeout instead of polling.
 * Added the following parameters to the driver:
- - Omega (tracks the Omega angle for every frame)
- - Countrate Correction Count Cutoff (`detector/config/countrate_correction_count_cutoff`)
- - Sensor Thickness (`detector/config/sensor_thickness`)
- - Sensor Material (`detector/config/sensor_material`)
- - X Pixel Size (`detector/config/x_pixel_size`)
- - Y Pixel Size (`detector/config/y_pixel_size`)
- - Description (`detector/config/description`)
- - ROI Mode (`detector/config/roi_mode`)
- - Compression Algorithm (`detector/config/compression`)
- - Pixel Mask Applied (`detector/config/pixel_mask_applied`)
+    * Omega (tracks the Omega angle for every frame)
+    * Countrate Correction Count Cutoff (`detector/config/countrate_correction_count_cutoff`)
+    * Sensor Thickness (`detector/config/sensor_thickness`)
+    * Sensor Material (`detector/config/sensor_material`)
+    * X Pixel Size (`detector/config/x_pixel_size`)
+    * Y Pixel Size (`detector/config/y_pixel_size`)
+    * Description (`detector/config/description`)
+    * ROI Mode (`detector/config/roi_mode`)
+    * Compression Algorithm (`detector/config/compression`)
+    * Pixel Mask Applied (`detector/config/pixel_mask_applied`)
 
 R2-0
 ----
@@ -70,7 +70,7 @@ R1-0
 ----
 * Supports all trigger modes: INTS, INTE, EXTS and EXTE.
 * Redesigned with a multithreaded architecture:
- - Downloading, saving to disk and parsing HDF5 files all occur in parallel.
+    * Downloading, saving to disk and parsing HDF5 files all occur in parallel.
 * Faster file download.
 * Eiger API and areaDetector driver decoupled.
 
@@ -79,6 +79,3 @@ R0-1-pre
 * First release.
 * Supports only INTS mode.
 * Cannot interrupt long acquisitions.
-
-Future Releases
-===============
