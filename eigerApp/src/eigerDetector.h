@@ -74,7 +74,6 @@
 #define EigStreamEnableStr         "STREAM_ENABLE"
 #define EigStreamDroppedStr        "STREAM_DROPPED"
 #define EigStreamStateStr          "STREAM_STATE"
-#define EigStreamHdrDetailStr      "STREAM_HDR_DETAIL"
 
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
@@ -170,7 +169,6 @@ protected:
 
     // Eiger parameters: streaming interface
     EigerParam *mStreamEnable;
-    EigerParam *mStreamHdrDetail;
     EigerParam *mStreamDropped;
     EigerParam *mStreamState;
 

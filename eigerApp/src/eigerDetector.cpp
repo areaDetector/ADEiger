@@ -268,7 +268,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Stream API Parameters
     mStreamEnable     = mParams.create(EigStreamEnableStr,    asynParamInt32, SSStreamConfig, "mode");
     mStreamEnable->setEnumValues(modeEnum);
-    mStreamHdrDetail  = mParams.create(EigStreamHdrDetailStr, asynParamOctet, SSStreamConfig, "header_detail");
     mStreamState      = mParams.create(EigStreamStateStr,     asynParamOctet, SSStreamStatus, "state");
     mStreamDropped    = mParams.create(EigStreamDroppedStr,   asynParamInt32, SSStreamStatus, "dropped");
 
@@ -1206,7 +1205,6 @@ asynStatus eigerDetector::initParams (void)
     mAutoSummation->put(true);
 
     // This driver expects the following parameters to always have the same value
-    mStreamHdrDetail->put("none");
     mFWImgNumStart->put(DEFAULT_NR_START);
     mMonitorBufSize->put(1);
 

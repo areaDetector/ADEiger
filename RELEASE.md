@@ -26,6 +26,7 @@ Depends on ADCore R2-6+
 * Prevent using FileWriter or Stream as a Data Source when the selected compression algorithm is Bit Shuffle LZ4.
 * Added PV's to set owner, group and permissions on downloaded files.
  - This depends on the IOC executable having the appropriate `CAP_SETUID` and `CAP_SETGID` capabilities set.
+* Extra header data in the streaming interface is now ignored if `header_detail` is other than "none". 
 * Added the following parameters to the driver:
  - Dead Time (`detector/config/detector_readout_time`)
  - FileWriter State (`filewriter/status/state`)
