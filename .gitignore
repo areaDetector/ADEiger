@@ -4,6 +4,8 @@ include
 db
 dbd
 iocs/
+data/
+venv*/
 *_BAK.adl
 documentation.html
 envPaths*
@@ -16,4 +18,6 @@ O.*/
 .cproject
 .project
 .settings
+
 .idea/
+cmake-build*/
