@@ -2,6 +2,16 @@
 # Bruno Martins
 # June 2, 2015
 
+# Macros:
+#% macro, P, Device Prefix
+#% macro, R, Device Suffix
+#% macro, PORT, Asyn Port name
+#% macro, TIMEOUT, Timeout
+#% macro, ADDR, Asyn Port address
+
+# This associates the template with an edm screen
+# % gui, $(PORT), edmtab, eigerDetector.edl, P=$(P),R=$(R)
+
 include "ADBase.template"
 include "NDFile.template"
 

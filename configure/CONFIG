@@ -15,6 +15,7 @@ endif
 
 CONFIG = $(RULES)/configure
 include $(CONFIG)/CONFIG
+-include $(CONFIG)/CONFIG.Dls
 
 # Override the Base definition:
 INSTALL_LOCATION = $(TOP)
