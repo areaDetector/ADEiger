@@ -12,6 +12,9 @@ $(P)$(R)FWNamePattern
 $(P)$(R)FWNImagesPerFile
 $(P)$(R)FWAutoRemove
 $(P)$(R)SaveFiles
+$(P)$(R)FileOwner
+$(P)$(R)FileOwnerGrp
+$(P)$(R)FilePerms
 $(P)$(R)FlatfieldApplied
 $(P)$(R)PhotonEnergy
 $(P)$(R)ThresholdEnergy

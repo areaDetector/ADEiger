@@ -18,6 +18,8 @@
 #define ERR_ARGS(fmt,...) fprintf(stderr, ERR_PREFIX "::%s: "fmt"\n", \
         functionName, __VA_ARGS__)
 
+using std::string;
+
 static int readToken (struct json_token *tokens, const char *name, size_t *value)
 {
     const char *functionName = "readToken";
@@ -89,6 +91,21 @@ static int readToken (struct json_token *tokens, const char *name, size_t *value
     return STREAM_SUCCESS;
 }
 
+static int readToken (struct json_token *tokens, const char *name, string & value)
+{
+    const char *functionName = "readToken<string>";
+
+    struct json_token *t = find_json_token(tokens, name);
+    if(!t)
+    {
+        ERR_ARGS("unable to find '%s' token", name);
+        return STREAM_ERROR;
+    }
+
+    value = string(t->ptr, t->len);
+    return STREAM_SUCCESS;
+}
+
 int StreamAPI::poll (int timeout)
 {
     const char *functionName = "poll";
@@ -144,6 +161,8 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
 
     if(header)
     {
+        string headerDetail;
+        size_t skip = 0;
         size_t size = zmq_msg_size(&header_msg);
         const char *data = (const char*) zmq_msg_data(&header_msg);
 
@@ -156,7 +175,19 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
             goto exit;
         }
 
-        err = readToken(tokens, "series", &header->series);
+        if((err = readToken(tokens, "series", &header->series)))
+            goto exit;
+
+        if((err = readToken(tokens, "header_detail", headerDetail)))
+            goto exit;
+
+        if(headerDetail == "basic")
+            skip = 1;
+        else if(headerDetail == "all")
+            skip = 7;
+
+        for(size_t i = 0; i < skip; ++i)
+            getHeader(NULL, timeout);
     }
 
 exit:

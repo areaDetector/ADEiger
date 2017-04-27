@@ -12,7 +12,8 @@ Additional information:
 Notes:
 ------
 
-* Depends on the Eiger having the firmware 1.6.2 or newer.
+* Depends on the Eiger having the firmware 1.6.4 or newer.
+* Depends on ADCore R2-6 or newer.
 * Currently this was only tested on Linux 64-bit machines.
 * ADEiger is currently incompatible with ADSupport's hdf5 because ADEiger depends on hdf5_hl.
 
@@ -48,6 +49,6 @@ How to run:
 
 * Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC:
   - If there is no `envPaths`, run `make envPaths` there.
-  - Fix the IP address in `st.cmd`.
+  - Change the IP address in `st.cmd`.
   - Run `./st.cmd`.
-* There is a CSS screen under `areaDetector/ADEiger/eigerApp/op/opi`, just use it with Controls System Studio.
+* There is a CS-Studio screen under `areaDetector/ADEiger/eigerApp/op/opi`, just use it with Controls System Studio.

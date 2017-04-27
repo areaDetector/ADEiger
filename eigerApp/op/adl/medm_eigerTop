@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+. ~/.bashrc
+
+#edit
+#medm /beamline/epics/support/areaDetector-R2-4/ADEiger/eigerApp/op/adl/eigerTop.adl &
+
+#run
+medm -x -macro "P=3EIG1:,R=cam1:" /beamline/epics/support/areaDetector-R2-4/ADEiger/eigerApp/op/adl/eigerTop.adl &
+
