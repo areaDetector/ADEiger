@@ -1220,7 +1220,7 @@ asynStatus eigerDetector::initParams (void)
     int status = asynSuccess;
 
     // Write version to appropriate parameter
-    setStringParam(NDDriverVersion, "R2-2");
+    setStringParam(NDDriverVersion, "R2-2-1");
 
     mParams.fetchAll();
 

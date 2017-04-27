@@ -10,6 +10,12 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-2-1
+------
+
+* Fix file owner/group not being set.
+
+
 R2-2
 ----
 
