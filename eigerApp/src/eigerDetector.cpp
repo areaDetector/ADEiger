@@ -79,6 +79,7 @@ typedef struct
     size_t len;
     bool save, parse, remove;
     size_t refCount;
+    uid_t uid, gid;
     mode_t perms;
 }file_t;
 
@@ -175,7 +176,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mParseQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mSaveQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
     mReapQueue(DEFAULT_QUEUE_CAPACITY*2, sizeof(file_t *)),
-    mFrameNumber(0), mParams(this, &mApi, pasynUserSelf)
+    mFrameNumber(0), mFsUid(getuid()), mFsGid(getgid()),
+    mParams(this, &mApi, pasynUserSelf)
 {
     const char *functionName = "eigerDetector";
     strncpy(mHostname, serverHostname, sizeof(mHostname));
@@ -508,9 +510,45 @@ asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
     EigerParam *p;
 
     if (function == mFileOwner->getIndex())
-        status = setFileOwner(value);
+    {
+        if(!strlen(value))
+        {
+            mFsUid = getuid();
+            mFileOwner->put(getpwuid(mFsUid)->pw_name);
+        }
+        else
+        {
+            struct passwd *pwd = getpwnam(value);
+
+            if(pwd) {
+                mFsUid = pwd->pw_uid;
+                mFileOwner->put(value);
+            } else {
+                ERR_ARGS("couldn't get uid for user '%s'", value);
+                status = asynError;
+            }
+        }
+    }
     else if (function == mFileOwnerGroup->getIndex())
-        status = setFileOwnerGroup(value);
+    {
+        if(!strlen(value))
+        {
+            mFsGid = getgid();
+            mFileOwnerGroup->put(getgrgid(mFsGid)->gr_name);
+        }
+        else
+        {
+            struct group *grp = getgrnam(value);
+
+            if(grp) {
+                mFsGid = grp->gr_gid;
+                mFileOwnerGroup->put(value);
+            } else {
+                ERR_ARGS("couldn't get gid for group '%s'", value);
+                status = asynError;
+            }
+        }
+    }
     else if((p = mParams.getByIndex(function)))
         status = (asynStatus) p->put(value);
     else if (function < mFirstParam)
@@ -833,6 +871,8 @@ void eigerDetector::pollTask (void)
             files[i].parse    = isMaster ? false : acquisition.parseFiles;
             files[i].refCount = files[i].save + files[i].parse;
             files[i].remove   = acquisition.removeFiles;
+            files[i].uid      = mFsUid;
+            files[i].gid      = mFsGid;
             files[i].perms    = acquisition.filePerms;
 
             if(isMaster)
@@ -946,6 +986,8 @@ void eigerDetector::saveTask (void)
     const char *functionName = "saveTask";
     char fullFileName[MAX_FILENAME_LEN];
     file_t *file;
+    uid_t currentFsUid = getuid();
+    uid_t currentFsGid = getgid();
 
     for(;;)
     {
@@ -954,7 +996,29 @@ void eigerDetector::saveTask (void)
 
         mSaveQueue.receive(&file, sizeof(file_t *));
 
-        FLOW_ARGS("file=%s", file->name);
+        FLOW_ARGS("file=%s uid=%d gid=%d", file->name, file->uid, file->gid);
+
+        if(file->uid != currentFsUid)
+        {
+            FLOW_ARGS("setting FS UID to %d", file->uid);
+            setfsuid(file->uid);
+            currentFsUid = (uid_t)setfsuid(file->uid);
+
+            if(currentFsUid != file->uid)
+                ERR_ARGS("[file=%s] failed to set uid", file->name);
+
+        }
+
+        if(file->gid != currentFsGid)
+        {
+            FLOW_ARGS("setting FS GID to %d", file->gid);
+            setfsgid(file->gid);
+            currentFsGid = (uid_t)setfsgid(file->gid);
+
+            if(currentFsGid != file->gid)
+                ERR_ARGS("[file=%s] failed to set gid", file->name);
+
+        }
 
         lock();
         setStringParam(NDFileName, file->name);
@@ -1499,109 +1563,6 @@ bool eigerDetector::acquiring (void)
     getIntegerParam(ADStatus, &adStatus);
     unlock();
     return adStatus == ADStatusAcquire;
-}
-
-asynStatus eigerDetector::setFileOwner (const char *name)
-{
-    const char *functionName = "setFileOwner";
-    const char *actualName = name;
-    uid_t uid;
-
-    if(!strlen(name))
-    {
-        uid = getuid();
-        actualName = getpwuid(uid)->pw_name;
-    }
-    else
-    {
-        struct passwd *pwd = getpwnam(name);
-
-        if(!pwd)
-        {
-            char err_msg[MAX_BUF_SIZE];
-            epicsSnprintf(err_msg, sizeof(err_msg),
-                    "Couldn't get uid for user '%s'", name);
-
-            ERR(err_msg);
-            setStringParam(ADStatusMessage, err_msg);
-            callParamCallbacks();
-            return asynError;
-        }
-
-        uid = pwd->pw_uid;
-    }
-
-    FLOW_ARGS("setting FS UID to %s(%d)", actualName, (int)uid);
-
-    setfsuid(uid);
-    uid_t old_uid = (uid_t)setfsuid(uid);
-
-    if(old_uid != uid)
-    {
-        char err_msg[MAX_BUF_SIZE];
-        epicsSnprintf(err_msg, sizeof(err_msg),
-                "Failed to set fsuid: %s(%d)", actualName, (int)uid);
-
-        ERR(err_msg);
-        setStringParam(ADStatusMessage, err_msg);
-        callParamCallbacks();
-        return asynError;
-    }
-
-    mFileOwner->put(actualName);
-    return asynSuccess;
-}
-
-asynStatus eigerDetector::setFileOwnerGroup (const char *name)
-{
-    const char *functionName = "setFileOwnerGrp";
-    const char *actualName = name;
-    uid_t gid;
-
-    if(!strlen(name))
-    {
-        gid = getgid();
-        actualName = getgrgid(gid)->gr_name;
-    }
-    else
-    {
-        struct group *grp = getgrnam(name);
-
-        if(!grp)
-        {
-            char err_msg[MAX_BUF_SIZE];
-            epicsSnprintf(err_msg, sizeof(err_msg),
-                    "Couldn't get gid for group '%s'", name);
-
-            ERR(err_msg);
-            setStringParam(ADStatusMessage, err_msg);
-            callParamCallbacks();
-            return asynError;
-
-        }
-
-        gid = grp->gr_gid;
-    }
-
-    FLOW_ARGS("setting FS GID to %s(%d)", actualName, (int)gid);
-
-    setfsgid(gid);
-    uid_t old_gid = (uid_t)setfsgid(gid);
-
-    if(old_gid != gid)
-    {
-        char err_msg[MAX_BUF_SIZE];
-        epicsSnprintf(err_msg, sizeof(err_msg),
-                "Failed to set fsgid: %s(%d)", actualName, (int)gid);
-
-        ERR(err_msg);
-        setStringParam(ADStatusMessage, err_msg);
-        callParamCallbacks();
-        return asynError;
-    }
-
-    mFileOwnerGroup->put(actualName);
-    return asynSuccess;
 }
 
 asynStatus eigerDetector::drvUserCreate(asynUser *pasynUser, const char *drvInfo,
