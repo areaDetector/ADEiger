@@ -47,9 +47,14 @@ vector<string> EigerParam::parseArray (struct json_token *tokens,
 
     if(t)
     {
-        arrayValues.reserve(t->num_desc);
-        for(int i = 1; i <= t->num_desc; ++i)
-            arrayValues.push_back(string((t+i)->ptr, (t+i)->len));
+        if(t->type == JSON_TYPE_ARRAY)
+        {
+            arrayValues.reserve(t->num_desc);
+            for(int i = 1; i <= t->num_desc; ++i)
+                arrayValues.push_back(string((t+i)->ptr, (t+i)->len));
+        }
+        else if(t->type == JSON_TYPE_STRING)
+            arrayValues.push_back(string(t->ptr, t->len));
     }
     return arrayValues;
 }
