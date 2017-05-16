@@ -20,7 +20,7 @@ class eigerDetector(AsynPort):
 
     _SpecificTemplate = eigerDetectorTemplate
 
-    def __init__(self, PORT, SERVER, BUFFERS = 50, MEMORY = 0, **args):
+    def __init__(self, PORT, SERVER, BUFFERS = 0, MEMORY = 0, **args):
         # Init the superclass (AsynPort)
         self.__super.__init__(PORT)
         # Update the attributes of self from the commandline args
