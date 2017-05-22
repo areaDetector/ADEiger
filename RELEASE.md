@@ -10,6 +10,12 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-2-2
+------
+
+* Fix Segmentation Fault when using the Monitor
+* Fix error when clearing the files in the FileWriter
+
 R2-2-1
 ------
 
