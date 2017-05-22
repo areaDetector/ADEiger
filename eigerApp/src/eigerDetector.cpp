@@ -163,7 +163,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         int maxBuffers, size_t maxMemory, int priority,
         int stackSize)
 
-    : ADDriver(portName, 1, 0, maxBuffers, maxMemory,
+    : ADDriver(portName, 2, 0, maxBuffers, maxMemory,
                0, 0,             /* No interfaces beyond ADDriver.cpp */
                ASYN_CANBLOCK |   /* ASYN_CANBLOCK=1 */
                ASYN_MULTIDEVICE, /* ASYN_MULTIDEVICE=1 */
