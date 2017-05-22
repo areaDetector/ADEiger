@@ -794,7 +794,8 @@ int EigerParam::put (int value, int timeout)
             return EXIT_FAILURE;
 
         if(mType != EIGER_P_BOOL && mType != EIGER_P_INT &&
-           mType != EIGER_P_UINT && mType != EIGER_P_ENUM)
+           mType != EIGER_P_UINT && mType != EIGER_P_ENUM &&
+           mType != EIGER_P_COMMAND)
         {
             ERR_ARGS("[param=%s] expected bool, int, uint or enum",
                     mAsynName.c_str());
