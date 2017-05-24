@@ -992,7 +992,8 @@ void eigerDetector::saveTask (void)
     for(;;)
     {
         int fd;
-        size_t written = 0;
+        ssize_t written = 0;
+        size_t total_written = 0;
 
         mSaveQueue.receive(&file, sizeof(file_t *));
 
@@ -1044,10 +1045,19 @@ void eigerDetector::saveTask (void)
             perror("fchmod");
         }
 
-        written = write(fd, file->data, file->len);
-        if(written < file->len)
-            ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
-                    file->name, written);
+        total_written = 0;
+        while(total_written < file->len)
+        {
+            written = write(fd, file->data + total_written, file->len - total_written);
+            if(written <= 0)
+            {
+                ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
+                         file->name, total_written);
+                perror("write");
+                break;
+            }
+            total_written += written;
+        }
         close(fd);
 
 reap:
