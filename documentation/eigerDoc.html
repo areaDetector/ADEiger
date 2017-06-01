@@ -364,7 +364,7 @@
     <table border="1" cellpadding="2" cellspacing="2" style="text-align: left">
       <tbody>
         <tr>
-          <td align="center" colspan="7">
+          <td align="center" colspan="8">
             <b>Parameter Definitions in eigerDetector.cpp and EPICS Record Definitions in eiger.template</b>
           </td>
         </tr>
@@ -647,6 +647,32 @@
           <td> stringin</td>
         </tr>
         <tr>
+          <td> </td>
+          <td> stream/config/header_detail</td>
+          <td> asynInt32</td>
+          <td> R/W</td>
+          <td> Selects the level of detail for Stream API Headers. Options are:
+            <ul>
+              <li>All</li>
+              <li>Basic</li>
+              <li>None</li>
+            </ul>
+          </td>
+          <td> EIG_SCI_header_detail</td>
+          <td> StreamHdrDetail<br>StreamHdrDetail_RBV</td>
+          <td> mbbo<br>mbbi</td>
+        </tr>
+        <tr>
+          <td> </td>
+          <td> stream/config/header_appendix</td>
+          <td> asynOctet</td>
+          <td> R/W</td>
+          <td> Sets the text to be appended to the Stream API headers </td>
+          <td> EIG_SCS_header_appendix</td>
+          <td> StreamHdrAppendix</td>
+          <td> waveform</td>
+        </tr>
+        <tr>
           <td align="center" colspan="8"> <b>Monitor control</b> </td>
         </tr>
         <tr>
@@ -855,7 +881,9 @@
                <ul>
                <li>None</li>
                <li>FileWriter</li>
-               <li>Stream</li> </td>
+               <li>Stream</li> 
+               </ul>
+          </td>
           <td> DATA_SOURCE</td>
           <td> DataSource<br>DataSource_RBV</td>
           <td> mbbo<br>mbbi</td>
