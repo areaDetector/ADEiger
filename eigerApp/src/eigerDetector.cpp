@@ -952,11 +952,6 @@ void eigerDetector::downloadTask (void)
 
             if(file->save)
                 mSaveQueue.send(&file, sizeof(file_t *));
-
-            if(file->remove)
-                mApi.deleteFile(file->name);
-            else
-                mFWFree->fetch();
         }
     }
 }
@@ -1035,6 +1030,7 @@ void eigerDetector::saveTask (void)
             ERR_ARGS("[file=%s] unable to open file to be written\n[%s]",
                     file->name, fullFileName);
             perror("open");
+            file->remove = false;
             goto reap;
         }
 
@@ -1054,6 +1050,7 @@ void eigerDetector::saveTask (void)
                 ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
                          file->name, total_written);
                 perror("write");
+                file->remove = false;
                 break;
             }
             total_written += written;
@@ -1079,6 +1076,11 @@ void eigerDetector::reapTask (void)
 
         if(! --file->refCount)
         {
+            if(file->remove)
+                mApi.deleteFile(file->name);
+
+            mFWFree->fetch();
+
             if(file->data)
             {
                 free(file->data);
