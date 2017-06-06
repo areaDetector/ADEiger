@@ -237,8 +237,10 @@ record(ai, "$(P)$(R)FWFree_RBV")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
     field(DESC, "Free disk space")
-    field(EGU,  "kB")
-    field(PREC, "0")
+    field(EGU,  "GB")
+    field(PREC, "3")
+    field(LINR, "LINEAR")
+    field(ESLO, "9.5367431640625e-07")
     field(SCAN, "I/O Intr")
 }
 
