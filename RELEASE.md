@@ -10,6 +10,22 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-3
+----
+
+* Prevent file from being deleted from detector's disk if it wasn't properly saved to local disk.
+* Detector's disk free space is now displayed in GB instead of kB
+* Added the following parameters to the driver:
+    * Stream API header detail (`stream/config/header_detail`)
+    * Stream API header appendix (`stream/config/header_appendix`)
+
+R2-2-2
+------
+
+* Fix Segmentation Fault when using the Monitor
+* Fix error when clearing the files in the FileWriter
+* Fix error when parsing `roi_mode` from Eigers that don't have this feature
+
 R2-2-1
 ------
 
