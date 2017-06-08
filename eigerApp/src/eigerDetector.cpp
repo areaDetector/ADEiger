@@ -1460,6 +1460,7 @@ end:
  */
 asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
 {
+    static int uniqueId = 1;
     const char *functionName = "parseTiffFile";
 
     if(*(uint32_t*)buf != 0x0002A4949)
@@ -1521,6 +1522,13 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
         return asynError;
     }
 
+    pImage->uniqueId = uniqueId++;
+    
+    epicsTimeStamp ts;
+    epicsTimeGetCurrent(&ts);
+    pImage->timeStamp = ts.secPastEpoch + ts.nsec / 1.e9;
+    updateTimeStamp(&pImage->epicsTS);
+    
     memcpy(pImage->pData, buf+8, dataLen);
     doCallbacksGenericPointer(pImage, NDArrayData, 1);
     pImage->release();
