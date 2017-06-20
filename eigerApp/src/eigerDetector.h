@@ -72,6 +72,8 @@
 
 // Stream API Parameters
 #define EigStreamEnableStr         "STREAM_ENABLE"
+#define EigStreamHeaderAppx        "STREAM_HEADER_APPX"
+#define EigStreamImageAppx         "STREAM_IMAGE_APPX"
 #define EigStreamDroppedStr        "STREAM_DROPPED"
 #define EigStreamStateStr          "STREAM_STATE"
 
@@ -169,6 +171,8 @@ protected:
 
     // Eiger parameters: streaming interface
     EigerParam *mStreamEnable;
+    EigerParam *mStreamHeaderAppx;
+    EigerParam *mStreamImageAppx;
     EigerParam *mStreamDropped;
     EigerParam *mStreamState;
 
