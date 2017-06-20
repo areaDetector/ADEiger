@@ -386,6 +386,32 @@ record(bi,"$(P)$(R)StreamEnable_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+record(stringout, "$(P)$(R)StreamHeaderAppx") {
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_HEADER_APPX")
+    field(VAL,  "")
+}
+
+record(stringin, "$(P)$(R)StreamHeaderAppx_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_HEADER_APPX")
+    field(SCAN, "I/O Intr")
+}
+
+record(stringout, "$(P)$(R)StreamImageAppx") {
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_IMAGE_APPX")
+    field(VAL,  "")
+}
+
+record(stringin, "$(P)$(R)StreamImageAppx_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_IMAGE_APPX")
+    field(SCAN, "I/O Intr")
+}
+
 # Stream number of dropped frames
 record(ai, "$(P)$(R)StreamDropped_RBV")
 {

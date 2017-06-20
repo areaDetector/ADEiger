@@ -270,6 +270,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Stream API Parameters
     mStreamEnable     = mParams.create(EigStreamEnableStr,    asynParamInt32, SSStreamConfig, "mode");
     mStreamEnable->setEnumValues(modeEnum);
+    mStreamHeaderAppx = mParams.create(EigStreamHeaderAppx,   asynParamOctet, SSStreamConfig, "header_appendix");
+    mStreamImageAppx  = mParams.create(EigStreamImageAppx,    asynParamOctet, SSStreamConfig, "image_appendix");
     mStreamState      = mParams.create(EigStreamStateStr,     asynParamOctet, SSStreamStatus, "state");
     mStreamDropped    = mParams.create(EigStreamDroppedStr,   asynParamInt32, SSStreamStatus, "dropped");
 
