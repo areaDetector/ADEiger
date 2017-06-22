@@ -239,8 +239,7 @@ record(ai, "$(P)$(R)FWFree_RBV")
     field(DESC, "Free disk space")
     field(EGU,  "GB")
     field(PREC, "3")
-    field(LINR, "LINEAR")
-    field(ESLO, "9.5367431640625e-07")
+    field(ASLO, "9.5367431640625e-07")
     field(SCAN, "I/O Intr")
 }
 

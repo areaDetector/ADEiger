@@ -10,6 +10,11 @@ https://github.com/brunoseivam/ADEiger/releases.
 Release Notes
 =============
 
+R2-4
+----
+
+* Fix incorrect conversion from kB to GB when displaying the detector's free space
+
 R2-3
 ----
 
