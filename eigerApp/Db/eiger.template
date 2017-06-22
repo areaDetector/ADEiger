@@ -445,6 +445,17 @@ record(waveform, "$(P)$(R)StreamHdrAppendix")
     info(autosaveFields, "VAL")
 }
 
+# Stream Image Appendix
+record(waveform, "$(P)$(R)StreamImgAppendix")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCS_image_appendix")
+    field(FTVL, "CHAR")
+    field(NELM, "1024")
+    info(autosaveFields, "VAL")
+}
+
 # Save files locally
 record(bo,"$(P)$(R)SaveFiles") {
     field(PINI, "YES")

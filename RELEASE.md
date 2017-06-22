@@ -14,6 +14,8 @@ R2-4
 ----
 
 * Fix incorrect conversion from kB to GB when displaying the detector's free space
+* Add the following parameters to the driver:
+    * Stream API image appendix (`stream/config/image_appendix`)
 
 R2-3
 ----
