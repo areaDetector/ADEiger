@@ -886,7 +886,7 @@ void eigerDetector::pollTask (void)
 
         // While acquiring, wait and download every file on the list
         i = 0;
-        while(i < totalFiles && !mPollStop)
+        while(i < totalFiles)
         {
             file_t *curFile = &files[i];
 
@@ -906,6 +906,14 @@ void eigerDetector::pollTask (void)
                 else if(curFile->remove)
                     mApi.deleteFile(curFile->name);
                 ++i;
+            }
+            // pollTask was asked to stop and it failed to find a pending file
+            // (acquisition aborted), so leave loop
+            else if(mPollStop)
+            {
+                FLOW_ARGS("file=%s not found and pollTask asked to stop",
+                        curFile->name);
+                break;
             }
         }
 
