@@ -1577,6 +1577,10 @@ asynStatus eigerDetector::eigerStatus (void)
     status |= mMonitorState->fetch();
     status |= mStreamState->fetch();
 
+    // Read a few more interesting parameters
+    status |= mStreamDropped->fetch();
+    status |= mFWFree->fetch();
+
     if(status)
         return asynError;
 
