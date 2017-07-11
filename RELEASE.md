@@ -16,6 +16,7 @@ R2-3
 * Prevent file from being deleted from detector's disk if it wasn't properly saved to local disk.
 * Fix files not being saved when the driver was too busy.
 * Detector's disk free space is now displayed in GB instead of kB
+* Increase `SensorThickness_RBV.PREC` to 6 
 * Fetch the following parameters when updating the status:
     * FileWriter Free Space
     * Stream API Dropped frames

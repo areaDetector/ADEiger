@@ -265,7 +265,7 @@ record(ai, "$(P)$(R)SensorThickness_RBV")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_sensor_thickness")
     field(DESC, "Sensor Thickness")
     field(EGU,  "m")
-    field(PREC, "3")
+    field(PREC, "6")
     field(SCAN, "I/O Intr")
 }
 
