@@ -886,7 +886,7 @@ void eigerDetector::pollTask (void)
 
         // While acquiring, wait and download every file on the list
         i = 0;
-        while(i < totalFiles && !mPollStop)
+        while(i < totalFiles)
         {
             file_t *curFile = &files[i];
 
@@ -906,6 +906,14 @@ void eigerDetector::pollTask (void)
                 else if(curFile->remove)
                     mApi.deleteFile(curFile->name);
                 ++i;
+            }
+            // pollTask was asked to stop and it failed to find a pending file
+            // (acquisition aborted), so leave loop
+            else if(mPollStop)
+            {
+                FLOW_ARGS("file=%s not found and pollTask asked to stop",
+                        curFile->name);
+                break;
             }
         }
 
@@ -952,11 +960,6 @@ void eigerDetector::downloadTask (void)
 
             if(file->save)
                 mSaveQueue.send(&file, sizeof(file_t *));
-
-            if(file->remove)
-                mApi.deleteFile(file->name);
-            else
-                mFWFree->fetch();
         }
     }
 }
@@ -992,7 +995,8 @@ void eigerDetector::saveTask (void)
     for(;;)
     {
         int fd;
-        size_t written = 0;
+        ssize_t written = 0;
+        size_t total_written = 0;
 
         mSaveQueue.receive(&file, sizeof(file_t *));
 
@@ -1034,6 +1038,7 @@ void eigerDetector::saveTask (void)
             ERR_ARGS("[file=%s] unable to open file to be written\n[%s]",
                     file->name, fullFileName);
             perror("open");
+            file->remove = false;
             goto reap;
         }
 
@@ -1044,10 +1049,20 @@ void eigerDetector::saveTask (void)
             perror("fchmod");
         }
 
-        written = write(fd, file->data, file->len);
-        if(written < file->len)
-            ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
-                    file->name, written);
+        total_written = 0;
+        while(total_written < file->len)
+        {
+            written = write(fd, file->data + total_written, file->len - total_written);
+            if(written <= 0)
+            {
+                ERR_ARGS("[file=%s] failed to write to local file (%lu written)",
+                         file->name, total_written);
+                perror("write");
+                file->remove = false;
+                break;
+            }
+            total_written += written;
+        }
         close(fd);
 
 reap:
@@ -1069,6 +1084,11 @@ void eigerDetector::reapTask (void)
 
         if(! --file->refCount)
         {
+            if(file->remove)
+                mApi.deleteFile(file->name);
+
+            mFWFree->fetch();
+
             if(file->data)
             {
                 free(file->data);
@@ -1448,6 +1468,7 @@ end:
  */
 asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
 {
+    static int uniqueId = 1;
     const char *functionName = "parseTiffFile";
 
     if(*(uint32_t*)buf != 0x0002A4949)
@@ -1509,6 +1530,13 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
         return asynError;
     }
 
+    pImage->uniqueId = uniqueId++;
+    
+    epicsTimeStamp ts;
+    epicsTimeGetCurrent(&ts);
+    pImage->timeStamp = ts.secPastEpoch + ts.nsec / 1.e9;
+    updateTimeStamp(&pImage->epicsTS);
+    
     memcpy(pImage->pData, buf+8, dataLen);
     doCallbacksGenericPointer(pImage, NDArrayData, 1);
     pImage->release();
@@ -1548,6 +1576,10 @@ asynStatus eigerDetector::eigerStatus (void)
     status |= mState->fetch();
     status |= mMonitorState->fetch();
     status |= mStreamState->fetch();
+
+    // Read a few more interesting parameters
+    status |= mStreamDropped->fetch();
+    status |= mFWFree->fetch();
 
     if(status)
         return asynError;

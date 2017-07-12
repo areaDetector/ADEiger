@@ -15,7 +15,8 @@ Notes:
 * Depends on the Eiger having the firmware 1.6.4 or newer.
 * Depends on ADCore R2-6 or newer.
 * Currently this was only tested on Linux 64-bit machines.
-* ADEiger is currently incompatible with ADSupport's hdf5 because ADEiger depends on hdf5_hl.
+* ~~ADEiger is currently incompatible with ADSupport's hdf5 because ADEiger depends on hdf5_hl.~~
+    * ADSupport R1-3 now provides hdf5_hl
 
 How to compile:
 ---------------

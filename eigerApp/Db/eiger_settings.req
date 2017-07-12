@@ -24,3 +24,5 @@ $(P)$(R)BeamY
 $(P)$(R)MonitorPeriod
 $(P)$(R)ROIMode
 $(P)$(R)CompressionAlgo
+$(P)$(R)StreamHdrDetail
+$(P)$(R)StreamHdrAppendix

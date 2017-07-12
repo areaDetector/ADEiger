@@ -237,8 +237,9 @@ record(ai, "$(P)$(R)FWFree_RBV")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
     field(DESC, "Free disk space")
-    field(EGU,  "kB")
-    field(PREC, "0")
+    field(EGU,  "GB")
+    field(PREC, "3")
+    field(ASLO, "9.5367431640625e-07")
     field(SCAN, "I/O Intr")
 }
 
@@ -264,7 +265,7 @@ record(ai, "$(P)$(R)SensorThickness_RBV")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_sensor_thickness")
     field(DESC, "Sensor Thickness")
     field(EGU,  "m")
-    field(PREC, "3")
+    field(PREC, "6")
     field(SCAN, "I/O Intr")
 }
 
@@ -402,6 +403,57 @@ record(stringin, "$(P)$(R)StreamState_RBV") {
     field(DTYP, "asynOctetRead")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_STATE")
     field(SCAN, "I/O Intr")
+}
+
+# Stream Header Detail Selection
+record(mbbo,"$(P)$(R)StreamHdrDetail") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCI_header_detail")
+    field(DESC, "Stream Header Detail")
+    field(VAL,  "0")
+    field(ZRST, "All")
+    field(ZRVL, "0")
+    field(ONST, "Basic")
+    field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
+}
+
+record(mbbi,"$(P)$(R)StreamHdrDetail_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCI_header_detail")
+    field(DESC, "Stream Header Detail")
+    field(VAL,  "0")
+    field(ZRST, "All")
+    field(ZRVL, "0")
+    field(ONST, "Basic")
+    field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
+    field(SCAN, "I/O Intr")
+}
+
+# Stream Header Appendix
+record(waveform, "$(P)$(R)StreamHdrAppendix")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCS_header_appendix")
+    field(FTVL, "CHAR")
+    field(NELM, "1024")
+    info(autosaveFields, "VAL")
+}
+
+# Stream Image Appendix
+record(waveform, "$(P)$(R)StreamImgAppendix")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCS_image_appendix")
+    field(FTVL, "CHAR")
+    field(NELM, "1024")
+    info(autosaveFields, "VAL")
 }
 
 # Save files locally
