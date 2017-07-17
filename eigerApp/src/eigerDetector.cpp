@@ -856,6 +856,7 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
+    const size_t MAX_RETRIES = 1;
     const char *functionName = "pollTask";
     acquisition_t acquisition;
     int pendingFiles;
@@ -897,7 +898,8 @@ void eigerDetector::pollTask (void)
         unlock();
 
         i = 0;
-        while(i < totalFiles)
+        size_t retries = 0;
+        while(i < totalFiles && retries <= MAX_RETRIES)
         {
             file_t *curFile = &files[i];
 
@@ -919,12 +921,12 @@ void eigerDetector::pollTask (void)
                 ++i;
             }
             // pollTask was asked to stop and it failed to find a pending file
-            // (acquisition aborted), so leave loop
+            // (acquisition aborted), so let's retry
             else if(mPollStop)
             {
                 FLOW_ARGS("file=%s not found and pollTask asked to stop",
                         curFile->name);
-                break;
+                ++retries;
             }
         }
 
