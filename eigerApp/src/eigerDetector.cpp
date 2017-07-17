@@ -778,13 +778,14 @@ void eigerDetector::controlTask (void)
 
                 if(doTrigger)
                 {
+                    FLOW_ARGS("sending trigger %d/%d. timeout=%.6f, exposure=%.6f",
+                            triggers+1, numTriggers, triggerTimeout, triggerExposure);
                     setShutter(1);
                     unlock();
                     status = mApi.trigger(triggerTimeout, triggerExposure);
                     lock();
                     setShutter(0);
                     ++triggers;
-
                 }
 
                 getIntegerParam(ADStatus, &adStatus);
@@ -792,6 +793,7 @@ void eigerDetector::controlTask (void)
         }
         else // TMExternalSeries or TMExternalEnable
         {
+            FLOW("waiting for stop event");
             unlock();
             mStopEvent.wait();
             lock();
@@ -812,6 +814,7 @@ void eigerDetector::controlTask (void)
         if(waitPoll)
         {
             // Wait FileWriter to go out of the "acquire" state
+            FLOW("waiting for FileWriter");
             string fwAcquire;
             do
             {
@@ -822,14 +825,18 @@ void eigerDetector::controlTask (void)
             // Request polling task to stop
             mPollStop = true;
 
+            FLOW("waiting for pollTask");
             mPollDoneEvent.wait();
             success = success && mPollComplete;
+            FLOW_ARGS("pollTask complete = %d", mPollComplete);
         }
 
         if(waitStream)
         {
+            FLOW("waiting for streamTask");
             mStreamDoneEvent.wait();
             success = success && mStreamComplete;
+            FLOW_ARGS("streamTask complete = %d", mStreamComplete);
         }
         lock();
 
@@ -897,6 +904,7 @@ void eigerDetector::pollTask (void)
             FLOW_ARGS("file=%s", curFile->name);
             if(!mApi.waitFile(curFile->name, 1.0))
             {
+                FLOW_ARGS("file=%s exists", curFile->name);
                 if(curFile->save || curFile->parse)
                 {
                     lock();
@@ -921,6 +929,7 @@ void eigerDetector::pollTask (void)
         }
 
         // Not acquiring anymore, wait for all pending files to be reaped
+        FLOW("waiting for pending files");
         do
         {
             lock();
@@ -929,6 +938,7 @@ void eigerDetector::pollTask (void)
 
             epicsThreadSleep(0.1);
         }while(pendingFiles);
+        FLOW("done waiting for pending files");
 
         // All pending files were processed and reaped
         free(files);
