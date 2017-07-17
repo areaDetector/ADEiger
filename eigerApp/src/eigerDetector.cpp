@@ -885,6 +885,10 @@ void eigerDetector::pollTask (void)
         }
 
         // While acquiring, wait and download every file on the list
+        lock();
+        mPendingFiles->put(0);
+        unlock();
+
         i = 0;
         while(i < totalFiles)
         {
@@ -895,13 +899,12 @@ void eigerDetector::pollTask (void)
             {
                 if(curFile->save || curFile->parse)
                 {
-                    mDownloadQueue.send(&curFile, sizeof(curFile));
-
                     lock();
                     mPendingFiles->get(pendingFiles);
                     mPendingFiles->put(pendingFiles+1);
                     unlock();
 
+                    mDownloadQueue.send(&curFile, sizeof(curFile));
                 }
                 else if(curFile->remove)
                     mApi.deleteFile(curFile->name);
