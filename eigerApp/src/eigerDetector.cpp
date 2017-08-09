@@ -204,6 +204,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     linkEnum.push_back("down");
     linkEnum.push_back("up");
 
+    // Map Trigger Mode ordering
+    vector<string> triggerModeEnum;
+    triggerModeEnum.reserve(4);
+    triggerModeEnum.push_back("ints");
+    triggerModeEnum.push_back("inte");
+    triggerModeEnum.push_back("exts");
+    triggerModeEnum.push_back("exte");
+
     // Driver-only parameters
     mDataSource     = mParams.create(EigDataSourceStr,     asynParamInt32);
     mFirstParam     = mDataSource->getIndex();
@@ -278,6 +286,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mAcquirePeriod     = mParams.create(ADAcquirePeriodString,     asynParamFloat64, SSDetConfig, "frame_time");
     mNumImages         = mParams.create(ADNumImagesString,         asynParamInt32,   SSDetConfig, "nimages");
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
+    mTriggerMode->setEnumValues(triggerModeEnum);
+
     mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "software_version");
     mSerialNumber      = mParams.create(ADSerialNumberString,      asynParamOctet,   SSDetConfig, "detector_number");
     mTemperatureActual = mParams.create(ADTemperatureActualString, asynParamFloat64, SSDetStatus, "board_000/th0_temp");
