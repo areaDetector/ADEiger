@@ -1174,6 +1174,12 @@ void eigerDetector::streamTask (void)
         stream_header_t header = {};
         while((err = api.getHeader(&header, 1)))
         {
+            if(err == STREAM_WRONG_HTYPE)
+            {
+                ERR("got stray packet, ignoring");
+                continue;
+            }
+
             if(err == STREAM_ERROR)
             {
                 ERR("failed to get header packet");
@@ -1201,6 +1207,7 @@ void eigerDetector::streamTask (void)
 
             if(frame.end)
             {
+                FLOW("got end frame");
                 mStreamComplete = true;
                 break;
             }

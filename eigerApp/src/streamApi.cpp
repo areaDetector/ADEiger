@@ -161,7 +161,7 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
 
     if(header)
     {
-        string headerDetail;
+        string htype, headerDetail;
         size_t skip = 0;
         size_t size = zmq_msg_size(&header_msg);
         const char *data = (const char*) zmq_msg_data(&header_msg);
@@ -172,6 +172,16 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
         {
             ERR("failed to parse JSON");
             err = STREAM_ERROR;
+            goto exit;
+        }
+
+        if((err = readToken(tokens, "htype", htype)))
+            goto exit;
+
+        string expectedHType("dheader");
+        if(htype.compare(0, expectedHType.length(), expectedHType))
+        {
+            err = STREAM_WRONG_HTYPE;
             goto exit;
         }
 
@@ -197,7 +207,7 @@ exit:
 
 int StreamAPI::getFrame (stream_frame_t *frame, int timeout)
 {
-    const char *functionName = "getImage";
+    const char *functionName = "getFrame";
     int err = STREAM_SUCCESS;
 
     if(timeout && (err = poll(timeout)))
