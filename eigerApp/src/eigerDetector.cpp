@@ -56,6 +56,8 @@ using std::string;
 using std::vector;
 using std::map;
 
+static const string DRIVER_VERSION("2-3-1");
+
 enum data_source
 {
     SOURCE_NONE,
@@ -181,6 +183,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 {
     const char *functionName = "eigerDetector";
     strncpy(mHostname, serverHostname, sizeof(mHostname));
+
+    // Write version to appropriate parameter
+    setStringParam(NDDriverVersion, DRIVER_VERSION);
 
     // Generate subSystemMap
     mSubSystemMap.insert(std::make_pair("DS", SSDetStatus));
@@ -1270,9 +1275,6 @@ end:
 asynStatus eigerDetector::initParams (void)
 {
     int status = asynSuccess;
-
-    // Write version to appropriate parameter
-    setStringParam(NDDriverVersion, "R2-2-1");
 
     mParams.fetchAll();
 
