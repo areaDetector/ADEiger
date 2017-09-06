@@ -7,6 +7,7 @@ enum stream_err
 {
     STREAM_SUCCESS,
     STREAM_TIMEOUT,
+    STREAM_WRONG_HTYPE,
     STREAM_ERROR,
 };
 

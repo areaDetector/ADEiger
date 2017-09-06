@@ -56,6 +56,8 @@ using std::string;
 using std::vector;
 using std::map;
 
+static const string DRIVER_VERSION("2-3-1");
+
 enum data_source
 {
     SOURCE_NONE,
@@ -182,6 +184,9 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     const char *functionName = "eigerDetector";
     strncpy(mHostname, serverHostname, sizeof(mHostname));
 
+    // Write version to appropriate parameter
+    setStringParam(NDDriverVersion, DRIVER_VERSION);
+
     // Generate subSystemMap
     mSubSystemMap.insert(std::make_pair("DS", SSDetStatus));
     mSubSystemMap.insert(std::make_pair("DC", SSDetConfig));
@@ -203,6 +208,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     linkEnum.reserve(2);
     linkEnum.push_back("down");
     linkEnum.push_back("up");
+
+    // Map Trigger Mode ordering
+    vector<string> triggerModeEnum;
+    triggerModeEnum.reserve(4);
+    triggerModeEnum.push_back("ints");
+    triggerModeEnum.push_back("inte");
+    triggerModeEnum.push_back("exts");
+    triggerModeEnum.push_back("exte");
 
     // Driver-only parameters
     mDataSource     = mParams.create(EigDataSourceStr,     asynParamInt32);
@@ -278,6 +291,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mAcquirePeriod     = mParams.create(ADAcquirePeriodString,     asynParamFloat64, SSDetConfig, "frame_time");
     mNumImages         = mParams.create(ADNumImagesString,         asynParamInt32,   SSDetConfig, "nimages");
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
+    mTriggerMode->setEnumValues(triggerModeEnum);
+
     mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "software_version");
     mSerialNumber      = mParams.create(ADSerialNumberString,      asynParamOctet,   SSDetConfig, "detector_number");
     mTemperatureActual = mParams.create(ADTemperatureActualString, asynParamFloat64, SSDetStatus, "board_000/th0_temp");
@@ -778,13 +793,14 @@ void eigerDetector::controlTask (void)
 
                 if(doTrigger)
                 {
+                    FLOW_ARGS("sending trigger %d/%d. timeout=%.6f, exposure=%.6f",
+                            triggers+1, numTriggers, triggerTimeout, triggerExposure);
                     setShutter(1);
                     unlock();
                     status = mApi.trigger(triggerTimeout, triggerExposure);
                     lock();
                     setShutter(0);
                     ++triggers;
-
                 }
 
                 getIntegerParam(ADStatus, &adStatus);
@@ -792,6 +808,7 @@ void eigerDetector::controlTask (void)
         }
         else // TMExternalSeries or TMExternalEnable
         {
+            FLOW("waiting for stop event");
             unlock();
             mStopEvent.wait();
             lock();
@@ -812,6 +829,7 @@ void eigerDetector::controlTask (void)
         if(waitPoll)
         {
             // Wait FileWriter to go out of the "acquire" state
+            FLOW("waiting for FileWriter");
             string fwAcquire;
             do
             {
@@ -822,14 +840,18 @@ void eigerDetector::controlTask (void)
             // Request polling task to stop
             mPollStop = true;
 
+            FLOW("waiting for pollTask");
             mPollDoneEvent.wait();
             success = success && mPollComplete;
+            FLOW_ARGS("pollTask complete = %d", mPollComplete);
         }
 
         if(waitStream)
         {
+            FLOW("waiting for streamTask");
             mStreamDoneEvent.wait();
             success = success && mStreamComplete;
+            FLOW_ARGS("streamTask complete = %d", mStreamComplete);
         }
         lock();
 
@@ -849,6 +871,7 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
+    const size_t MAX_RETRIES = 1;
     const char *functionName = "pollTask";
     acquisition_t acquisition;
     int pendingFiles;
@@ -885,39 +908,45 @@ void eigerDetector::pollTask (void)
         }
 
         // While acquiring, wait and download every file on the list
+        lock();
+        mPendingFiles->put(0);
+        unlock();
+
         i = 0;
-        while(i < totalFiles)
+        size_t retries = 0;
+        while(i < totalFiles && retries <= MAX_RETRIES)
         {
             file_t *curFile = &files[i];
 
             FLOW_ARGS("file=%s", curFile->name);
             if(!mApi.waitFile(curFile->name, 1.0))
             {
+                FLOW_ARGS("file=%s exists", curFile->name);
                 if(curFile->save || curFile->parse)
                 {
-                    mDownloadQueue.send(&curFile, sizeof(curFile));
-
                     lock();
                     mPendingFiles->get(pendingFiles);
                     mPendingFiles->put(pendingFiles+1);
                     unlock();
 
+                    mDownloadQueue.send(&curFile, sizeof(curFile));
                 }
                 else if(curFile->remove)
                     mApi.deleteFile(curFile->name);
                 ++i;
             }
             // pollTask was asked to stop and it failed to find a pending file
-            // (acquisition aborted), so leave loop
+            // (acquisition aborted), so let's retry
             else if(mPollStop)
             {
                 FLOW_ARGS("file=%s not found and pollTask asked to stop",
                         curFile->name);
-                break;
+                ++retries;
             }
         }
 
         // Not acquiring anymore, wait for all pending files to be reaped
+        FLOW("waiting for pending files");
         do
         {
             lock();
@@ -926,6 +955,7 @@ void eigerDetector::pollTask (void)
 
             epicsThreadSleep(0.1);
         }while(pendingFiles);
+        FLOW("done waiting for pending files");
 
         // All pending files were processed and reaped
         free(files);
@@ -1149,6 +1179,12 @@ void eigerDetector::streamTask (void)
         stream_header_t header = {};
         while((err = api.getHeader(&header, 1)))
         {
+            if(err == STREAM_WRONG_HTYPE)
+            {
+                ERR("got stray packet, ignoring");
+                continue;
+            }
+
             if(err == STREAM_ERROR)
             {
                 ERR("failed to get header packet");
@@ -1176,6 +1212,7 @@ void eigerDetector::streamTask (void)
 
             if(frame.end)
             {
+                FLOW("got end frame");
                 mStreamComplete = true;
                 break;
             }
@@ -1238,9 +1275,6 @@ end:
 asynStatus eigerDetector::initParams (void)
 {
     int status = asynSuccess;
-
-    // Write version to appropriate parameter
-    setStringParam(NDDriverVersion, "R2-2-2");
 
     mParams.fetchAll();
 
@@ -1531,12 +1565,12 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
     }
 
     pImage->uniqueId = uniqueId++;
-    
+
     epicsTimeStamp ts;
     epicsTimeGetCurrent(&ts);
     pImage->timeStamp = ts.secPastEpoch + ts.nsec / 1.e9;
     updateTimeStamp(&pImage->epicsTS);
-    
+
     memcpy(pImage->pData, buf+8, dataLen);
     doCallbacksGenericPointer(pImage, NDArrayData, 1);
     pImage->release();
