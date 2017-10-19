@@ -1,0 +1,4 @@
+dls-controls git@github.com:dls-controls/ADEiger.git
+gitolite ssh://dascgitolite@dasc-git.diamond.ac.uk/controls/support/ADEiger
+upstream git@github.com:brunoseivam/ADEiger.git
+
