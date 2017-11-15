@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <algorithm>
 #include <sstream>
+#include <iomanip>
+#include <limits>
 
 #include <frozen.h>
 #include <ADDriver.h>
@@ -237,7 +239,7 @@ std::string EigerParam::toString (int value)
 std::string EigerParam::toString (double value)
 {
     std::ostringstream os;
-    os << value;
+    os << std::setprecision(std::numeric_limits<long double>::digits10 + 2) << value;
     return os.str();
 }
 
