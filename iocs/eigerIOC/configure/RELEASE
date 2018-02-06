@@ -2,6 +2,8 @@
 # Run "gnumake clean uninstall install" in the application
 # top directory each time this file is changed.
 
-ADEIGER=$(TOP)/../../
+ADEIGER=$(TOP)/../..
 
--include $(ADEIGER)/configure/RELEASE
+-include $(TOP)/../../../configure/RELEASE_PRODS_INCLUDE
+-include $(TOP)/RELEASE.local
+-include $(TOP)/configure/RELEASE.local

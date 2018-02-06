@@ -18,15 +18,11 @@ Notes:
 * ~~ADEiger is currently incompatible with ADSupport's hdf5 because ADEiger depends on hdf5_hl.~~
     * ADSupport R1-3 now provides hdf5_hl
 
-How to compile:
----------------
+Before compiling:
+-----------------
 
-* Clone and compile [areaDetector](https://github.com/areaDetector/areaDetector) according to its instructions.
-* Clone this repository.
-* Edit `AREADETECTOR` variable inside `ADEiger/configure/RELEASE` to point to the correct location.
 * Set `ZMQ` variables inside `ADEiger/configure/CONFIG_SITE` to point to a ZeroMQ installation location if a system package is not installed (`libzmq3-dev` on Debian systems).
   - ZeroMQ 4 is required
-* Run `make` inside `ADEiger`.
 
 HDF5 Plugins:
 -------------
@@ -49,7 +45,6 @@ How to run:
 -----------
 
 * Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC:
-  - If there is no `envPaths`, run `make envPaths` there.
   - Change the IP address in `st.cmd`.
   - Run `./st.cmd`.
 * There is a CS-Studio screen under `areaDetector/ADEiger/eigerApp/op/opi`, just use it with Controls System Studio.

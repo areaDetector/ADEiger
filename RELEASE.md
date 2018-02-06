@@ -2,13 +2,17 @@ ADEiger Releases
 ==================
 
 The latest untagged master branch can be obtained at
-https://github.com/brunoseivam/ADEiger.
+https://github.com/areaDetector/ADEiger.
 
 Tagged source code can be obtained at
-https://github.com/brunoseivam/ADEiger/releases.
+https://github.com/areaDetector/ADEiger/releases.
 
 Release Notes
 =============
+
+R2-5
+----
+* ADEiger moved to the areaDetector organization.
 
 R2-4
 ----

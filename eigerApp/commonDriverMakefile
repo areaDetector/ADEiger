@@ -3,7 +3,7 @@
 
 $(PROD_NAME)_DBD += eigerDetectorSupport.dbd
 
-PROD_LIBS += eigerDetector frozen lz4
+PROD_LIBS += eigerDetector frozen lz4 hdf5_hl
 
 ifdef ZMQ_LIB
   zmq_DIR        += $(ZMQ_LIB)
@@ -12,9 +12,3 @@ else
   PROD_SYS_LIBS  += zmq
 endif
 
-ifdef HDF5_LIB
-  hdf5_hl_DIR    += $(HDF5_LIB)
-  PROD_LIBS      += hdf5_hl
-else
-  PROD_SYS_LIBS  += hdf5_hl
-endif
