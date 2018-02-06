@@ -13,6 +13,8 @@ Release Notes
 R2-4
 ----
 * Added EDM screens, courtesy of Gary Yendell from Diamond Light Source
+* Increase precision of double -> string conversion to maximum (thanks to Gary
+Yendell)
 
 R2-3-1
 ----
