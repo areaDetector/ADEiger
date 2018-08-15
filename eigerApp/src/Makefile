@@ -7,8 +7,8 @@ LIBRARY_IOC = eigerDetector
 
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
 USR_INCLUDES += -I$(TOP)/eigerApp/lz4Src
-USR_INCLUDES += $(HDF5_INCLUDE)
-USR_INCLUDES += $(ZMQ_INCLUDE)
+USR_INCLUDES += $(addprefix -I, $(HDF5_INCLUDE))
+USR_INCLUDES += $(addprefix -I, $(ZMQ_INCLUDE))
 
 LIB_SRCS += eigerDetector.cpp
 LIB_SRCS += restApi.cpp streamApi.cpp eigerParam.cpp
