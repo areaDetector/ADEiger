@@ -1,14 +1,14 @@
 
 file {
-	name="/beamline/epics/support/areaDetector-R2-4/ADEiger/eigerApp/op/adl/eigerStream.adl"
-	version=030107
+	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerStream.adl"
+	version=030109
 }
 display {
 	object {
-		x=1374
-		y=128
-		width=355
-		height=120
+		x=1276
+		y=227
+		width=350
+		height=80
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=105
+		height=80
 	}
 	"basic attribute" {
 		clr=14
@@ -112,9 +112,9 @@ rectangle {
 }
 text {
 	object {
-		x=95
+		x=144
 		y=3
-		width=159
+		width=60
 		height=20
 	}
 	"basic attribute" {
@@ -125,10 +125,10 @@ text {
 }
 text {
 	object {
-		x=18
-		y=45
-		width=100
-		height=18
+		x=5
+		y=30
+		width=140
+		height=20
 	}
 	"basic attribute" {
 		clr=14
@@ -138,8 +138,8 @@ text {
 }
 "choice button" {
 	object {
-		x=133
-		y=45
+		x=150
+		y=31
 		width=120
 		height=18
 	}
@@ -152,10 +152,10 @@ text {
 }
 text {
 	object {
-		x=8
-		y=70
-		width=110
-		height=18
+		x=5
+		y=55
+		width=140
+		height=20
 	}
 	"basic attribute" {
 		clr=14
@@ -165,8 +165,8 @@ text {
 }
 "text update" {
 	object {
-		x=133
-		y=70
+		x=150
+		y=56
 		width=60
 		height=16
 	}
@@ -182,9 +182,9 @@ text {
 }
 "text update" {
 	object {
-		x=264
-		y=45
-		width=80
+		x=275
+		y=31
+		width=70
 		height=18
 	}
 	monitor {

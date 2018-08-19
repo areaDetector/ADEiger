@@ -1,14 +1,14 @@
 
 file {
-	name="/beamline/epics/support/areaDetector-R2-4/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
-	version=030107
+	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
+	version=030109
 }
 display {
 	object {
-		x=378
-		y=648
-		width=356
-		height=280
+		x=1373
+		y=714
+		width=350
+		height=205
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=250
+		height=205
 	}
 	"basic attribute" {
 		clr=14
@@ -101,9 +101,9 @@ rectangle {
 }
 rectangle {
 	object {
-		x=125
+		x=100
 		y=2
-		width=100
+		width=150
 		height=21
 	}
 	"basic attribute" {
@@ -112,9 +112,9 @@ rectangle {
 }
 text {
 	object {
-		x=100
+		x=120
 		y=3
-		width=150
+		width=110
 		height=20
 	}
 	"basic attribute" {
@@ -125,21 +125,21 @@ text {
 }
 text {
 	object {
-		x=25
-		y=40
-		width=100
-		height=18
+		x=5
+		y=30
+		width=140
+		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Enable / Disable"
+	textix="Enable/Disable"
 	align="horiz. right"
 }
 "choice button" {
 	object {
-		x=134
-		y=40
+		x=150
+		y=30
 		width=100
 		height=18
 	}
@@ -152,21 +152,21 @@ text {
 }
 text {
 	object {
-		x=25
-		y=65
-		width=100
-		height=18
+		x=35
+		y=55
+		width=110
+		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="# Images / File"
+	textix="Images/File"
 	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=134
-		y=65
+		x=150
+		y=55
 		width=100
 		height=20
 	}
@@ -180,9 +180,9 @@ text {
 }
 "text update" {
 	object {
-		x=244
-		y=65
-		width=100
+		x=255
+		y=55
+		width=90
 		height=18
 	}
 	monitor {
@@ -195,9 +195,9 @@ text {
 }
 "text update" {
 	object {
-		x=244
-		y=40
-		width=100
+		x=255
+		y=30
+		width=90
 		height=18
 	}
 	monitor {
@@ -210,10 +210,10 @@ text {
 }
 text {
 	object {
-		x=25
-		y=100
-		width=100
-		height=18
+		x=5
+		y=80
+		width=170
+		height=20
 	}
 	"basic attribute" {
 		clr=14
@@ -223,9 +223,9 @@ text {
 }
 "text entry" {
 	object {
-		x=134
-		y=100
-		width=210
+		x=180
+		y=80
+		width=160
 		height=20
 	}
 	control {
@@ -238,9 +238,9 @@ text {
 }
 "text update" {
 	object {
-		x=134
-		y=127
-		width=210
+		x=180
+		y=107
+		width=160
 		height=18
 	}
 	monitor {
@@ -251,90 +251,123 @@ text {
 	limits {
 	}
 }
-text {
+composite {
 	object {
-		x=25
+		x=55
+		y=130
+		width=263
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=55
+				y=130
+				width=150
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Current seq. id"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=218
+				y=131
+				width=100
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)SequenceId"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+	}
+}
+composite {
+	object {
+		x=5
+		y=155
+		width=312
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=5
+				y=155
+				width=200
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="FW Buffer Free Space"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=217
+				y=156
+				width=100
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)FWFree_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+	}
+}
+composite {
+	object {
+		x=35
 		y=180
-		width=100
+		width=282
 		height=20
 	}
-	"basic attribute" {
-		clr=14
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=35
+				y=180
+				width=170
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="DCU Buffer Free %"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=217
+				y=181
+				width=100
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)DCUBufferFree_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
 	}
-	textix="FW Buffer Free Space"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=134
-		y=180
-		width=200
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)FWFree_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=26
-		y=150
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Current seq. $id"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=135
-		y=150
-		width=100
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)SequenceId"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=134
-		y=210
-		width=200
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)DCUBufferFree_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=17
-		y=210
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="DCU Buffer Free %"
-	align="horiz. right"
 }

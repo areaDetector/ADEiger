@@ -1,14 +1,14 @@
 
 file {
-	name="/beamline/epics/support/areaDetector-R2-4/ADEiger/eigerApp/op/adl/eigerMonitor.adl"
-	version=030107
+	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerMonitor.adl"
+	version=030109
 }
 display {
 	object {
-		x=1377
-		y=380
-		width=359
-		height=120
+		x=1289
+		y=765
+		width=350
+		height=80
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=105
+		height=80
 	}
 	"basic attribute" {
 		clr=14
@@ -112,9 +112,9 @@ rectangle {
 }
 text {
 	object {
-		x=95
+		x=139
 		y=3
-		width=159
+		width=70
 		height=20
 	}
 	"basic attribute" {
@@ -123,88 +123,121 @@ text {
 	textix="Monitor"
 	align="horiz. centered"
 }
-text {
+composite {
 	object {
-		x=18
-		y=40
-		width=100
-		height=18
+		x=5
+		y=30
+		width=140
+		height=45
 	}
-	"basic attribute" {
-		clr=14
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=25
+				y=55
+				width=120
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Timeout (mS)"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=5
+				y=30
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Enable/Disable"
+			align="horiz. right"
+		}
 	}
-	textix="Enable/Disable"
-	align="horiz. right"
 }
-"choice button" {
+composite {
 	object {
-		x=133
-		y=40
+		x=150
+		y=30
 		width=120
-		height=18
+		height=45
 	}
-	control {
-		chan="$(P)$(R)MonitorEnable"
-		clr=14
-		bclr=51
-	}
-	stacking="column"
-}
-text {
-	object {
-		x=8
-		y=65
-		width=110
-		height=18
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Timeout (mS)"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=133
-		y=65
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MonitorTimeout"
-		clr=14
-		bclr=51
-	}
-	limits {
+	"composite name"=""
+	children {
+		"choice button" {
+			object {
+				x=150
+				y=30
+				width=120
+				height=18
+			}
+			control {
+				chan="$(P)$(R)MonitorEnable"
+				clr=14
+				bclr=51
+			}
+			stacking="column"
+		}
+		"text entry" {
+			object {
+				x=150
+				y=55
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)MonitorTimeout"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
 	}
 }
-"text update" {
+composite {
 	object {
-		x=264
-		y=65
-		width=80
-		height=18
+		x=275
+		y=30
+		width=70
+		height=43
 	}
-	monitor {
-		chan="$(P)$(R)MonitorTimeout_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=264
-		y=40
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)MonitorEnable_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
+	"composite name"=""
+	children {
+		"text update" {
+			object {
+				x=275
+				y=30
+				width=70
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)MonitorEnable_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=275
+				y=55
+				width=70
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)MonitorTimeout_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
 	}
 }

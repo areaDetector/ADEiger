@@ -1,14 +1,14 @@
 
 file {
-	name="/beamline/perforce/Dev/SBS/4_Controls/4_3_Network_Infrastructure/4_3_1_Comms_Common_Services/sw/epics/areaDetector-R2-4/ADEiger-R2-1/eigerApp/op/adl/eigerDetector.adl"
-	version=030107
+	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerDetector.adl"
+	version=030109
 }
 display {
 	object {
-		x=2744
+		x=100
 		y=69
-		width=1074
-		height=960
+		width=1070
+		height=910
 	}
 	clr=14
 	bclr=4
@@ -89,9 +89,9 @@ display {
 }
 rectangle {
 	object {
-		x=400
+		x=0
 		y=5
-		width=270
+		width=1070
 		height=25
 	}
 	"basic attribute" {
@@ -100,21 +100,21 @@ rectangle {
 }
 text {
 	object {
-		x=350
+		x=0
 		y=5
-		width=370
+		width=1070
 		height=25
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="Eiger Detector Control"
+	textix="Eiger Detector Control $(P)$(R)"
 	align="horiz. centered"
 }
 composite {
 	object {
-		x=715
-		y=775
+		x=360
+		y=725
 		width=350
 		height=165
 	}
@@ -126,15 +126,15 @@ composite {
 		x=360
 		y=40
 		width=350
-		height=900
+		height=680
 	}
 	"composite name"=""
 	"composite file"="eigerAcquisition.adl"
 }
 composite {
 	object {
-		x=715
-		y=675
+		x=5
+		y=386
 		width=350
 		height=80
 	}
@@ -144,29 +144,29 @@ composite {
 composite {
 	object {
 		x=715
-		y=310
+		y=250
 		width=350
-		height=105
+		height=80
 	}
 	"composite name"=""
 	"composite file"="eigerStream.adl"
 }
 composite {
 	object {
-		x=5
-		y=40
+		x=715
+		y=560
 		width=350
-		height=250
+		height=130
 	}
 	"composite name"=""
 	"composite file"="eigerDetectorInfo.adl"
 }
 composite {
 	object {
-		x=5
-		y=310
+		x=715
+		y=695
 		width=350
-		height=230
+		height=210
 	}
 	"composite name"=""
 	"composite file"="eigerDetectorStatus.adl"
@@ -174,9 +174,9 @@ composite {
 composite {
 	object {
 		x=715
-		y=435
+		y=335
 		width=350
-		height=105
+		height=80
 	}
 	"composite name"=""
 	"composite file"="eigerMonitor.adl"
@@ -186,7 +186,7 @@ composite {
 		x=715
 		y=40
 		width=350
-		height=250
+		height=205
 	}
 	"composite name"=""
 	"composite file"="eigerFileWriter.adl"
@@ -194,24 +194,12 @@ composite {
 composite {
 	object {
 		x=5
-		y=560
+		y=471
 		width=350
-		height=380
+		height=370
 	}
 	"composite name"=""
 	"composite file"="eigerDetectorMetadata.adl"
-}
-text {
-	object {
-		x=771
-		y=7
-		width=70
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="EPICS name: "
 }
 rectangle {
 	object {
@@ -224,44 +212,23 @@ rectangle {
 		clr=2
 	}
 }
-text {
+composite {
 	object {
-		x=842
-		y=8
-		width=96
-		height=18
+		x=715
+		y=420
+		width=350
+		height=135
 	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="$(P)$(R)"
+	"composite name"=""
+	"composite file"="ADBuffers.adl"
 }
-text {
+composite {
 	object {
-		x=958
-		y=7
-		width=70
-		height=20
+		x=5
+		y=41
+		width=350
+		height=340
 	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="asyn port:"
-}
-"text update" {
-	object {
-		x=1020
-		y=8
-		width=30
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)PortName_RBV"
-		clr=54
-		bclr=2
-	}
-	align="horiz. centered"
-	format="exponential"
-	limits {
-	}
+	"composite name"=""
+	"composite file"="ADSetup.adl"
 }
