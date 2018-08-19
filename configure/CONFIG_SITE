@@ -44,4 +44,4 @@ endif
 # If zeromq is not installed as a system library, set its path here
 #ZMQ = /home/bmartins/workspace/zmq
 #ZMQ_LIB = $(ZMQ)/lib
-#ZMQ_INCLUDE = -I$(ZMQ)/include
+#ZMQ_INCLUDE = $(ZMQ)/include
