@@ -1,14 +1,14 @@
 
 file {
-	name="/beamline/epics/support/areaDetector-R2-4/ADEiger-R2-1/eigerApp/op/adl/eigerDetectorStatus.adl"
-	version=030107
+	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerDetectorStatus.adl"
+	version=030109
 }
 display {
 	object {
 		x=1185
 		y=75
-		width=362
-		height=262
+		width=350
+		height=210
 	}
 	clr=14
 	bclr=4
@@ -89,9 +89,9 @@ display {
 }
 rectangle {
 	object {
-		x=130
+		x=90
 		y=3
-		width=107
+		width=170
 		height=21
 	}
 	"basic attribute" {
@@ -103,7 +103,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=230
+		height=210
 	}
 	"basic attribute" {
 		clr=14
@@ -112,9 +112,9 @@ rectangle {
 }
 text {
 	object {
-		x=104
+		x=100
 		y=3
-		width=159
+		width=150
 		height=20
 	}
 	"basic attribute" {
@@ -123,248 +123,270 @@ text {
 	textix="Detector Status"
 	align="horiz. centered"
 }
-text {
+composite {
 	object {
-		x=24
-		y=45
-		width=120
-		height=20
+		x=180
+		y=31
+		width=165
+		height=167
 	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Detector State"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=163
-		y=46
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)DetectorState_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=94
-		y=70
-		width=50
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Status"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=163
-		y=71
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)StatusMessage_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=94
-		y=95
-		width=50
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Temeprature C"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=163
-		y=95
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Temp0_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=163
-		y=120
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Humid0_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=163
-		y=146
-		width=50
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link0_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	limits {
-	}
-}
-text {
-	object {
-		x=14
-		y=120
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Humidity %"
-	align="horiz. right"
-}
-text {
-	object {
-		x=14
-		y=145
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Links"
-	align="horiz. right"
-}
-text {
-	object {
-		x=14
-		y=170
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="DCU Buffer Free %"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=163
-		y=170
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)DCUBufferFree_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
+	"composite name"=""
+	children {
+		"text update" {
+			object {
+				x=180
+				y=31
+				width=155
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)DetectorState_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=56
+				width=155
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)StatusMessage_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=80
+				width=155
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Temp0_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=105
+				width=155
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Humid0_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=131
+				width=49
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Link0_RBV"
+				clr=54
+				bclr=4
+			}
+			clrmod="alarm"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=155
+				width=155
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)DCUBufferFree_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=180
+				width=155
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Error_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=219
+				y=131
+				width=49
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Link1_RBV"
+				clr=54
+				bclr=4
+			}
+			clrmod="alarm"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=258
+				y=131
+				width=49
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Link2_RBV"
+				clr=54
+				bclr=4
+			}
+			clrmod="alarm"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=296
+				y=131
+				width=49
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)Link3_RBV"
+				clr=54
+				bclr=4
+			}
+			clrmod="alarm"
+			limits {
+			}
+		}
 	}
 }
-text {
+composite {
 	object {
-		x=14
-		y=195
-		width=130
-		height=20
+		x=5
+		y=30
+		width=170
+		height=170
 	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Error Parameters"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=163
-		y=195
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Error_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=203
-		y=146
-		width=50
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link1_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=243
-		y=146
-		width=50
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link2_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=283
-		y=146
-		width=50
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link3_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	limits {
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=35
+				y=30
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Detector State"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=115
+				y=55
+				width=60
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Status"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=45
+				y=80
+				width=130
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Temeprature C"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=75
+				y=105
+				width=100
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Humidity %"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=125
+				y=130
+				width=50
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Links"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=5
+				y=155
+				width=170
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="DCU Buffer Free %"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=15
+				y=180
+				width=160
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Error Parameters"
+			align="horiz. right"
+		}
 	}
 }
