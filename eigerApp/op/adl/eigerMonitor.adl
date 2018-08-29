@@ -1,14 +1,14 @@
 
 file {
-	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerMonitor.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerMonitor.adl"
 	version=030109
 }
 display {
 	object {
-		x=1289
-		y=765
+		x=1151
+		y=271
 		width=350
-		height=80
+		height=105
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=80
+		height=105
 	}
 	"basic attribute" {
 		clr=14
@@ -123,19 +123,61 @@ text {
 	textix="Monitor"
 	align="horiz. centered"
 }
-composite {
+text {
 	object {
 		x=5
 		y=30
 		width=140
-		height=45
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Enable/Disable"
+	align="horiz. right"
+}
+"choice button" {
+	object {
+		x=150
+		y=30
+		width=120
+		height=18
+	}
+	control {
+		chan="$(P)$(R)MonitorEnable"
+		clr=14
+		bclr=51
+	}
+	stacking="column"
+}
+"text update" {
+	object {
+		x=275
+		y=30
+		width=70
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MonitorEnable_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+composite {
+	object {
+		x=25
+		y=80
+		width=320
+		height=20
 	}
 	"composite name"=""
 	children {
 		text {
 			object {
 				x=25
-				y=55
+				y=80
 				width=120
 				height=20
 			}
@@ -145,48 +187,10 @@ composite {
 			textix="Timeout (mS)"
 			align="horiz. right"
 		}
-		text {
-			object {
-				x=5
-				y=30
-				width=140
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Enable/Disable"
-			align="horiz. right"
-		}
-	}
-}
-composite {
-	object {
-		x=150
-		y=30
-		width=120
-		height=45
-	}
-	"composite name"=""
-	children {
-		"choice button" {
-			object {
-				x=150
-				y=30
-				width=120
-				height=18
-			}
-			control {
-				chan="$(P)$(R)MonitorEnable"
-				clr=14
-				bclr=51
-			}
-			stacking="column"
-		}
 		"text entry" {
 			object {
 				x=150
-				y=55
+				y=80
 				width=60
 				height=20
 			}
@@ -198,36 +202,10 @@ composite {
 			limits {
 			}
 		}
-	}
-}
-composite {
-	object {
-		x=275
-		y=30
-		width=70
-		height=43
-	}
-	"composite name"=""
-	children {
 		"text update" {
 			object {
 				x=275
-				y=30
-				width=70
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)MonitorEnable_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=275
-				y=55
+				y=80
 				width=70
 				height=18
 			}
@@ -239,5 +217,34 @@ composite {
 			limits {
 			}
 		}
+	}
+}
+text {
+	object {
+		x=5
+		y=55
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="State"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=150
+		y=56
+		width=120
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MonitorState_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
 	}
 }

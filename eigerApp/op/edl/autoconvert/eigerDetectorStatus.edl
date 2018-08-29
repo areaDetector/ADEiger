@@ -75,19 +75,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 180
-y 31
-w 165
-h 167
-
-beginGroup
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -98,7 +85,7 @@ x 180
 y 31
 w 155
 h 18
-controlPv "$(P)$(R)DetectorState_RBV"
+controlPv "$(P)$(R)State_RBV"
 format "decimal"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
@@ -119,31 +106,7 @@ major 4
 minor 7
 release 0
 x 180
-y 56
-w 155
-h 18
-controlPv "$(P)$(R)StatusMessage_RBV"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 180
-y 80
+y 81
 w 155
 h 18
 controlPv "$(P)$(R)Temp0_RBV"
@@ -167,7 +130,7 @@ major 4
 minor 7
 release 0
 x 180
-y 105
+y 106
 w 155
 h 18
 controlPv "$(P)$(R)Humid0_RBV"
@@ -191,7 +154,7 @@ major 4
 minor 7
 release 0
 x 180
-y 131
+y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link0_RBV"
@@ -216,7 +179,7 @@ major 4
 minor 7
 release 0
 x 180
-y 155
+y 156
 w 155
 h 18
 controlPv "$(P)$(R)DCUBufferFree_RBV"
@@ -239,32 +202,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 180
-y 180
-w 155
-h 18
-controlPv "$(P)$(R)Error_RBV"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
 x 219
-y 131
+y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link1_RBV"
@@ -289,7 +228,7 @@ major 4
 minor 7
 release 0
 x 258
-y 131
+y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link2_RBV"
@@ -314,7 +253,7 @@ major 4
 minor 7
 release 0
 x 296
-y 131
+y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link3_RBV"
@@ -331,24 +270,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 30
-w 170
-h 170
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -376,26 +297,6 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 115
-y 55
-w 60
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Status"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
 x 45
 y 80
 w 130
@@ -406,7 +307,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Temeprature C"
+  "Temperature C"
 }
 endObjectProperties
 
@@ -477,7 +378,7 @@ major 4
 minor 1
 release 1
 x 15
-y 180
+y 55
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -490,42 +391,67 @@ value {
 }
 endObjectProperties
 
-endGroup
-
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 180
+y 56
+w 155
+h 18
+controlPv "$(P)$(R)Error_RBV"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
 
-# (Group)
-object activeGroupClass
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 15
+y 180
+w 160
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Read Status Rate"
+}
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
 beginObjectProperties
 major 4
 minor 0
 release 0
 x 180
-y 31
-w 165
-h 167
-
-beginGroup
-
-endGroup
-
+y 180
+w 120
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)ReadStatus.SCAN"
+indicatorPv "$(P)$(R)ReadStatus.SCAN"
+font "helvetica-medium-r-12.0"
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 30
-w 170
-h 170
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
 

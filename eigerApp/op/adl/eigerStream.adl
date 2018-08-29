@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerStream.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerStream.adl"
 	version=030109
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=1276
 		y=227
 		width=350
-		height=80
+		height=105
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=80
+		height=105
 	}
 	"basic attribute" {
 		clr=14
@@ -150,10 +150,25 @@ text {
 	}
 	stacking="column"
 }
+"text update" {
+	object {
+		x=275
+		y=31
+		width=70
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)StreamEnable_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
 text {
 	object {
 		x=5
-		y=55
+		y=80
 		width=140
 		height=20
 	}
@@ -166,7 +181,7 @@ text {
 "text update" {
 	object {
 		x=150
-		y=56
+		y=81
 		width=60
 		height=16
 	}
@@ -180,18 +195,32 @@ text {
 	limits {
 	}
 }
+text {
+	object {
+		x=95
+		y=55
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="State"
+	align="horiz. right"
+}
 "text update" {
 	object {
-		x=275
-		y=31
-		width=70
+		x=150
+		y=56
+		width=120
 		height=18
 	}
 	monitor {
-		chan="$(P)$(R)StreamEnable_RBV"
+		chan="$(P)$(R)StreamState_RBV"
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
 }

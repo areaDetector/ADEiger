@@ -1,14 +1,14 @@
 
 file {
-	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
 	version=030109
 }
 display {
 	object {
-		x=1373
-		y=714
+		x=565
+		y=323
 		width=350
-		height=205
+		height=255
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=205
+		height=255
 	}
 	"basic attribute" {
 		clr=14
@@ -150,49 +150,6 @@ text {
 	}
 	stacking="column"
 }
-text {
-	object {
-		x=35
-		y=55
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images/File"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=150
-		y=55
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FWNImagesPerFile"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=255
-		y=55
-		width=90
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)FWNImagesPerFile_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
 "text update" {
 	object {
 		x=255
@@ -211,7 +168,7 @@ text {
 text {
 	object {
 		x=5
-		y=80
+		y=105
 		width=170
 		height=20
 	}
@@ -221,80 +178,10 @@ text {
 	textix="File Name Pattern"
 	align="horiz. right"
 }
-"text entry" {
-	object {
-		x=180
-		y=80
-		width=160
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FWNamePattern"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=180
-		y=107
-		width=160
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)FWNamePattern_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-composite {
-	object {
-		x=55
-		y=130
-		width=263
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=55
-				y=130
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Current seq. id"
-			align="horiz. right"
-		}
-		"text update" {
-			object {
-				x=218
-				y=131
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SequenceId"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-	}
-}
 composite {
 	object {
 		x=5
-		y=155
+		y=180
 		width=312
 		height=20
 	}
@@ -303,7 +190,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=155
+				y=180
 				width=200
 				height=20
 			}
@@ -316,7 +203,7 @@ composite {
 		"text update" {
 			object {
 				x=217
-				y=156
+				y=181
 				width=100
 				height=18
 			}
@@ -331,37 +218,110 @@ composite {
 		}
 	}
 }
-composite {
+text {
 	object {
 		x=35
-		y=180
-		width=282
+		y=80
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images/File"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=150
+		y=80
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWNImagesPerFile"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=255
+		y=80
+		width=90
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWNImagesPerFile_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=180
+		y=105
+		width=160
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWNamePattern"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=180
+		y=132
+		width=160
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWNamePattern_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+composite {
+	object {
+		x=55
+		y=155
+		width=263
 		height=20
 	}
 	"composite name"=""
 	children {
 		text {
 			object {
-				x=35
-				y=180
-				width=170
+				x=55
+				y=155
+				width=150
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="DCU Buffer Free %"
+			textix="Current seq. id"
 			align="horiz. right"
 		}
 		"text update" {
 			object {
-				x=217
-				y=181
+				x=218
+				y=156
 				width=100
 				height=18
 			}
 			monitor {
-				chan="$(P)$(R)DCUBufferFree_RBV"
+				chan="$(P)$(R)SequenceId"
 				clr=54
 				bclr=4
 			}
@@ -369,5 +329,104 @@ composite {
 			limits {
 			}
 		}
+	}
+}
+text {
+	object {
+		x=35
+		y=205
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Auto Remove"
+	align="horiz. right"
+}
+"choice button" {
+	object {
+		x=150
+		y=205
+		width=100
+		height=18
+	}
+	control {
+		chan="$(P)$(R)FWAutoRemove"
+		clr=14
+		bclr=51
+	}
+	stacking="column"
+}
+"text update" {
+	object {
+		x=255
+		y=205
+		width=90
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWAutoRemove_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=230
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Delete All"
+	align="horiz. right"
+}
+"message button" {
+	object {
+		x=150
+		y=230
+		width=93
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWClear"
+		clr=14
+		bclr=20
+	}
+	label="Delete All!!"
+	press_msg="1"
+}
+text {
+	object {
+		x=95
+		y=55
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="State"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=148
+		y=56
+		width=120
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWState_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
 	}
 }

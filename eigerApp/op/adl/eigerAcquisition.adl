@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerAcquisition.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerAcquisition.adl"
 	version=030109
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=1051
 		y=75
 		width=350
-		height=680
+		height=630
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=680
+		height=630
 	}
 	"basic attribute" {
 		clr=14
@@ -228,91 +228,6 @@ text {
 	limits {
 	}
 }
-text {
-	object {
-		x=65
-		y=155
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Exp./image"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=190
-		y=155
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)NumExposures"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=258
-		y=155
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)NumExposures_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=21
-		y=205
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Image mode"
-	align="horiz. right"
-}
-menu {
-	object {
-		x=130
-		y=205
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ImageMode"
-		clr=14
-		bclr=51
-	}
-}
-"text update" {
-	object {
-		x=258
-		y=207
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)ImageMode_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
 composite {
 	object {
 		x=108
@@ -434,53 +349,76 @@ text {
 	limits {
 	}
 }
-text {
+rectangle {
 	object {
-		x=85
-		y=180
-		width=100
-		height=20
+		x=0
+		y=185
+		width=350
+		height=280
 	}
 	"basic attribute" {
 		clr=14
+		fill="outline"
 	}
-	textix="# Triggers"
-	align="horiz. right"
 }
-"text entry" {
+composite {
 	object {
-		x=190
-		y=180
-		width=60
+		x=85
+		y=155
+		width=253
 		height=20
 	}
-	control {
-		chan="$(P)$(R)NumTriggers"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=258
-		y=180
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)NumTriggers_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=85
+				y=155
+				width=100
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="# Triggers"
+			align="horiz. right"
+		}
+		"text entry" {
+			object {
+				x=190
+				y=155
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)NumTriggers"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=258
+				y=155
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)NumTriggers_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
 	}
 }
 composite {
 	object {
 		x=5
-		y=275
+		y=225
 		width=340
 		height=20
 	}
@@ -489,7 +427,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=275
+				y=225
 				width=190
 				height=20
 			}
@@ -502,7 +440,7 @@ composite {
 		"text entry" {
 			object {
 				x=200
-				y=275
+				y=225
 				width=60
 				height=20
 			}
@@ -517,7 +455,7 @@ composite {
 		"text update" {
 			object {
 				x=265
-				y=275
+				y=225
 				width=80
 				height=18
 			}
@@ -531,22 +469,10 @@ composite {
 		}
 	}
 }
-rectangle {
-	object {
-		x=0
-		y=235
-		width=350
-		height=280
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
 composite {
 	object {
 		x=5
-		y=300
+		y=250
 		width=330
 		height=20
 	}
@@ -555,7 +481,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=300
+				y=250
 				width=140
 				height=20
 			}
@@ -568,7 +494,7 @@ composite {
 		menu {
 			object {
 				x=150
-				y=300
+				y=250
 				width=100
 				height=20
 			}
@@ -581,7 +507,7 @@ composite {
 		"text update" {
 			object {
 				x=255
-				y=301
+				y=251
 				width=80
 				height=18
 			}
@@ -599,7 +525,7 @@ composite {
 composite {
 	object {
 		x=5
-		y=250
+		y=200
 		width=340
 		height=20
 	}
@@ -608,7 +534,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=250
+				y=200
 				width=120
 				height=20
 			}
@@ -621,7 +547,7 @@ composite {
 		menu {
 			object {
 				x=130
-				y=250
+				y=200
 				width=120
 				height=20
 			}
@@ -634,7 +560,7 @@ composite {
 		"text update" {
 			object {
 				x=255
-				y=251
+				y=201
 				width=90
 				height=18
 			}
@@ -652,7 +578,7 @@ composite {
 composite {
 	object {
 		x=12
-		y=325
+		y=275
 		width=320
 		height=32
 	}
@@ -661,7 +587,7 @@ composite {
 		"message button" {
 			object {
 				x=112
-				y=325
+				y=275
 				width=70
 				height=30
 			}
@@ -676,7 +602,7 @@ composite {
 		"message button" {
 			object {
 				x=187
-				y=325
+				y=275
 				width=70
 				height=30
 			}
@@ -691,7 +617,7 @@ composite {
 		"message button" {
 			object {
 				x=262
-				y=325
+				y=275
 				width=70
 				height=30
 			}
@@ -706,7 +632,7 @@ composite {
 		rectangle {
 			object {
 				x=12
-				y=327
+				y=277
 				width=80
 				height=30
 			}
@@ -717,7 +643,7 @@ composite {
 		text {
 			object {
 				x=20
-				y=333
+				y=283
 				width=70
 				height=20
 			}
@@ -731,7 +657,7 @@ composite {
 composite {
 	object {
 		x=15
-		y=362
+		y=312
 		width=245
 		height=20
 	}
@@ -740,7 +666,7 @@ composite {
 		text {
 			object {
 				x=160
-				y=362
+				y=312
 				width=100
 				height=20
 			}
@@ -757,7 +683,7 @@ composite {
 		text {
 			object {
 				x=163
-				y=362
+				y=312
 				width=40
 				height=20
 			}
@@ -774,7 +700,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=362
+				y=312
 				width=140
 				height=20
 			}
@@ -789,7 +715,7 @@ composite {
 composite {
 	object {
 		x=5
-		y=387
+		y=337
 		width=335
 		height=20
 	}
@@ -798,7 +724,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=387
+				y=337
 				width=150
 				height=20
 			}
@@ -811,7 +737,7 @@ composite {
 		"text update" {
 			object {
 				x=160
-				y=388
+				y=338
 				width=180
 				height=18
 			}
@@ -829,7 +755,7 @@ composite {
 composite {
 	object {
 		x=15
-		y=412
+		y=362
 		width=325
 		height=20
 	}
@@ -838,7 +764,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=412
+				y=362
 				width=140
 				height=20
 			}
@@ -851,7 +777,7 @@ composite {
 		"text update" {
 			object {
 				x=160
-				y=413
+				y=363
 				width=180
 				height=18
 			}
@@ -869,7 +795,7 @@ composite {
 composite {
 	object {
 		x=15
-		y=437
+		y=387
 		width=215
 		height=20
 	}
@@ -878,7 +804,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=437
+				y=387
 				width=140
 				height=20
 			}
@@ -891,7 +817,7 @@ composite {
 		composite {
 			object {
 				x=160
-				y=437
+				y=387
 				width=70
 				height=20
 			}
@@ -900,7 +826,7 @@ composite {
 				text {
 					object {
 						x=160
-						y=437
+						y=387
 						width=50
 						height=20
 					}
@@ -916,7 +842,7 @@ composite {
 				text {
 					object {
 						x=160
-						y=437
+						y=387
 						width=70
 						height=20
 					}
@@ -933,377 +859,311 @@ composite {
 		}
 	}
 }
-composite {
+"text update" {
+	object {
+		x=160
+		y=438
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CountCutoff_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
 	object {
 		x=45
-		y=487
-		width=215
+		y=437
+		width=110
 		height=20
 	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=160
-				y=488
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)CountCutoff_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=45
-				y=487
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Rate Cutoff"
-			align="horiz. right"
-		}
+	"basic attribute" {
+		clr=14
 	}
+	textix="Rate Cutoff"
+	align="horiz. right"
 }
-composite {
+menu {
 	object {
-		x=5
-		y=462
-		width=255
+		x=160
+		y=475
+		width=100
 		height=20
 	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=160
-				y=463
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SequenceId"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=5
-				y=462
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Current seq. ID"
-			align="horiz. right"
-		}
+	control {
+		chan="$(P)$(R)ROIMode"
+		clr=14
+		bclr=51
 	}
 }
-composite {
+menu {
 	object {
-		x=5
+		x=160
+		y=500
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatfieldApplied"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
 		y=525
-		width=340
-		height=145
+		width=100
+		height=20
 	}
-	"composite name"=""
-	children {
-		composite {
-			object {
-				x=160
-				y=525
-				width=100
-				height=145
-			}
-			"composite name"=""
-			children {
-				menu {
-					object {
-						x=160
-						y=525
-						width=100
-						height=20
-					}
-					control {
-						chan="$(P)$(R)ROIMode"
-						clr=14
-						bclr=51
-					}
-				}
-				menu {
-					object {
-						x=160
-						y=550
-						width=100
-						height=20
-					}
-					control {
-						chan="$(P)$(R)FlatfieldApplied"
-						clr=14
-						bclr=51
-					}
-				}
-				menu {
-					object {
-						x=160
-						y=575
-						width=100
-						height=20
-					}
-					control {
-						chan="$(P)$(R)FWCompression"
-						clr=14
-						bclr=51
-					}
-				}
-				menu {
-					object {
-						x=160
-						y=600
-						width=100
-						height=20
-					}
-					control {
-						chan="$(P)$(R)CompressionAlgo"
-						clr=14
-						bclr=51
-					}
-				}
-				menu {
-					object {
-						x=160
-						y=625
-						width=100
-						height=20
-					}
-					control {
-						chan="$(P)$(R)ArrayCallbacks"
-						clr=14
-						bclr=51
-					}
-				}
-				menu {
-					object {
-						x=160
-						y=650
-						width=100
-						height=20
-					}
-					control {
-						chan="$(P)$(R)DataSource"
-						clr=14
-						bclr=51
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=265
-				y=527
-				width=80
-				height=142
-			}
-			"composite name"=""
-			children {
-				"text update" {
-					object {
-						x=265
-						y=527
-						width=80
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)ROIMode_RBV"
-						clr=54
-						bclr=4
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=265
-						y=551
-						width=80
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)FlatfieldApplied_RBV"
-						clr=54
-						bclr=4
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=265
-						y=576
-						width=80
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)FWCompression_RBV"
-						clr=54
-						bclr=4
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=265
-						y=602
-						width=80
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)CompressionAlgo_RBV"
-						clr=54
-						bclr=4
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=265
-						y=626
-						width=80
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)ArrayCallbacks_RBV"
-						clr=54
-						bclr=4
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=265
-						y=651
-						width=80
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)DataSource_RBV"
-						clr=54
-						bclr=4
-					}
-					format="string"
-					limits {
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=5
-				y=525
-				width=150
-				height=145
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=75
-						y=525
-						width=80
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="ROI mode"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=45
-						y=575
-						width=110
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="FW Compres."
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=15
-						y=600
-						width=140
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Compress. Alg."
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=5
-						y=625
-						width=150
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Array Callbacks"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=45
-						y=650
-						width=110
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Data Source"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=5
-						y=550
-						width=150
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Flatfield Corr."
-					align="horiz. right"
-				}
-			}
-		}
+	control {
+		chan="$(P)$(R)FWCompression"
+		clr=14
+		bclr=51
 	}
+}
+menu {
+	object {
+		x=160
+		y=550
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CompressionAlgo"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=575
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCallbacks"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=600
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DataSource"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=477
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ROIMode_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=501
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FlatfieldApplied_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=526
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWCompression_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=552
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CompressionAlgo_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=576
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCallbacks_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=601
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DataSource_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=75
+		y=475
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="ROI mode"
+	align="horiz. right"
+}
+text {
+	object {
+		x=45
+		y=525
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="FW Compres."
+	align="horiz. right"
+}
+text {
+	object {
+		x=15
+		y=550
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Compress. Alg."
+	align="horiz. right"
+}
+text {
+	object {
+		x=5
+		y=575
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Array Callbacks"
+	align="horiz. right"
+}
+text {
+	object {
+		x=45
+		y=600
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Data Source"
+	align="horiz. right"
+}
+text {
+	object {
+		x=5
+		y=500
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flatfield Corr."
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=160
+		y=413
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DeadTime_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=35
+		y=412
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Readout Time"
+	align="horiz. right"
 }

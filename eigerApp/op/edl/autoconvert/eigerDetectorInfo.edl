@@ -6,7 +6,7 @@ release 1
 x 1311
 y 143
 w 350
-h 130
+h 155
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -49,7 +49,7 @@ release 0
 x 0
 y 0
 w 350
-h 130
+h 155
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -75,19 +75,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 30
-w 160
-h 95
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -95,7 +82,7 @@ major 4
 minor 1
 release 1
 x 35
-y 30
+y 55
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -115,7 +102,7 @@ major 4
 minor 1
 release 1
 x 65
-y 55
+y 80
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -135,7 +122,7 @@ major 4
 minor 1
 release 1
 x 15
-y 80
+y 105
 w 150
 h 20
 font "helvetica-medium-r-14.0"
@@ -155,7 +142,7 @@ major 4
 minor 1
 release 1
 x 5
-y 105
+y 130
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -168,33 +155,15 @@ value {
 }
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 170
-y 31
-w 160
-h 93
-
-beginGroup
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 250
-y 31
-w 60
+x 255
+y 56
+w 80
 h 18
 controlPv "$(P)$(R)MaxSizeY_RBV"
 format "decimal"
@@ -217,8 +186,8 @@ major 4
 minor 7
 release 0
 x 170
-y 31
-w 60
+y 56
+w 80
 h 18
 controlPv "$(P)$(R)MaxSizeX_RBV"
 format "decimal"
@@ -241,32 +210,8 @@ major 4
 minor 7
 release 0
 x 170
-y 61
-w 60
-h 18
-controlPv "$(P)$(R)XPixelSize_RBV"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "center"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 170
-y 56
-w 60
+y 81
+w 80
 h 18
 controlPv "$(P)$(R)XPixelSize_RBV"
 format "decimal"
@@ -289,7 +234,7 @@ major 4
 minor 7
 release 0
 x 170
-y 81
+y 106
 w 160
 h 18
 controlPv "$(P)$(R)SensorMaterial_RBV"
@@ -313,7 +258,7 @@ major 4
 minor 7
 release 0
 x 170
-y 106
+y 131
 w 160
 h 18
 controlPv "$(P)$(R)SensorThickness_RBV"
@@ -336,9 +281,9 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 250
-y 56
-w 60
+x 255
+y 81
+w 80
 h 18
 controlPv "$(P)$(R)YPixelSize_RBV"
 format "decimal"
@@ -354,42 +299,47 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
-x 5
+minor 1
+release 1
+x 55
 y 30
-w 160
-h 95
-
-beginGroup
-
-endGroup
-
+w 110
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Description"
+}
 endObjectProperties
 
-# (Group)
-object activeGroupClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 0
+minor 7
 release 0
 x 170
 y 31
 w 160
-h 93
-
-beginGroup
-
-endGroup
-
+h 18
+controlPv "$(P)$(R)Description_RBV"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
-
 

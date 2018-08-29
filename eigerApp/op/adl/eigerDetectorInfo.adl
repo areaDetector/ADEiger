@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerDetectorInfo.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerDetectorInfo.adl"
 	version=030109
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=1311
 		y=143
 		width=350
-		height=130
+		height=155
 	}
 	clr=14
 	bclr=4
@@ -103,7 +103,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=130
+		height=155
 	}
 	"basic attribute" {
 		clr=14
@@ -123,185 +123,176 @@ text {
 	textix="Detector Info"
 	align="horiz. centered"
 }
-composite {
+text {
+	object {
+		x=35
+		y=55
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Detector Size"
+	align="horiz. right"
+}
+text {
+	object {
+		x=65
+		y=80
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Pixel Size"
+	align="horiz. right"
+}
+text {
+	object {
+		x=15
+		y=105
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sensor Material"
+	align="horiz. right"
+}
+text {
 	object {
 		x=5
-		y=30
+		y=130
 		width=160
-		height=95
+		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=35
-				y=30
-				width=130
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Detector Size"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=65
-				y=55
-				width=100
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Pixel Size"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=15
-				y=80
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Sensor Material"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=5
-				y=105
-				width=160
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Sensor Thickness"
-			align="horiz. right"
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sensor Thickness"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=255
+		y=56
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MaxSizeY_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
 	}
 }
-composite {
+"text update" {
+	object {
+		x=170
+		y=56
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MaxSizeX_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=81
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)XPixelSize_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=106
+		width=160
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SensorMaterial_RBV"
+		clr=54
+		bclr=4
+	}
+	format="engr. notation"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=131
+		width=160
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SensorThickness_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=255
+		y=81
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)YPixelSize_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=55
+		y=30
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Description"
+	align="horiz. right"
+}
+"text update" {
 	object {
 		x=170
 		y=31
 		width=160
-		height=93
+		height=18
 	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=250
-				y=31
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)MaxSizeY_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=170
-				y=31
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)MaxSizeX_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=170
-				y=61
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)XPixelSize_RBV"
-				clr=54
-				bclr=4
-			}
-			align="horiz. centered"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=170
-				y=56
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)XPixelSize_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=170
-				y=81
-				width=160
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SensorMaterial_RBV"
-				clr=54
-				bclr=4
-			}
-			format="engr. notation"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=170
-				y=106
-				width=160
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SensorThickness_RBV"
-				clr=54
-				bclr=4
-			}
-			format="exponential"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=250
-				y=56
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)YPixelSize_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
+	monitor {
+		chan="$(P)$(R)Description_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
 	}
 }

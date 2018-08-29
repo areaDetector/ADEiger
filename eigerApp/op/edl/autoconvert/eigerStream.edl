@@ -6,7 +6,7 @@ release 1
 x 1276
 y 227
 w 350
-h 80
+h 105
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 80
+h 105
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -95,6 +95,30 @@ value {
 }
 endObjectProperties
 
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 275
+y 31
+w 70
+h 18
+controlPv "$(P)$(R)StreamEnable_RBV"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -102,7 +126,7 @@ major 4
 minor 1
 release 1
 x 5
-y 55
+y 80
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -122,7 +146,7 @@ major 4
 minor 7
 release 0
 x 150
-y 56
+y 81
 w 60
 h 16
 controlPv "$(P)$(R)StreamDropped_RBV"
@@ -140,18 +164,38 @@ newPos
 objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 95
+y 55
+w 50
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "State"
+}
+endObjectProperties
+
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 275
-y 31
-w 70
+x 150
+y 56
+w 120
 h 18
-controlPv "$(P)$(R)StreamEnable_RBV"
-format "decimal"
+controlPv "$(P)$(R)StreamState_RBV"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 2560 0 47104

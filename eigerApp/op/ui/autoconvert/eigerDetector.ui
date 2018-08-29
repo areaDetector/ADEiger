@@ -6,8 +6,8 @@
         <rect>
             <x>100</x>
             <y>69</y>
-            <width>1070</width>
-            <height>910</height>
+            <width>1425</width>
+            <height>740</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -114,7 +114,7 @@ border-radius: 2px;
                 <rect>
                     <x>0</x>
                     <y>5</y>
-                    <width>1070</width>
+                    <width>1425</width>
                     <height>25</height>
                 </rect>
             </property>
@@ -170,7 +170,7 @@ border-radius: 2px;
                 <rect>
                     <x>0</x>
                     <y>5</y>
-                    <width>1070</width>
+                    <width>1425</width>
                     <height>25</height>
                 </rect>
             </property>
@@ -178,16 +178,16 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_0">
             <property name="geometry">
                 <rect>
-                    <x>360</x>
-                    <y>725</y>
+                    <x>715</x>
+                    <y>520</y>
                     <width>354</width>
                     <height>169</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>360</x>
-                    <y>725</y>
+                    <x>715</x>
+                    <y>520</y>
                     <width>352</width>
                     <height>167</height>
                 </rect>
@@ -205,7 +205,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>682</height>
+                    <height>632</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -213,7 +213,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>680</height>
+                    <height>630</height>
                 </rect>
             </property>
             <property name="filename">
@@ -251,17 +251,17 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>250</y>
+                    <y>300</y>
                     <width>352</width>
-                    <height>82</height>
+                    <height>107</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>250</y>
+                    <y>300</y>
                     <width>350</width>
-                    <height>80</height>
+                    <height>105</height>
                 </rect>
             </property>
             <property name="filename">
@@ -274,18 +274,18 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_4">
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>560</y>
+                    <x>1070</x>
+                    <y>415</y>
                     <width>352</width>
-                    <height>132</height>
+                    <height>157</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>560</y>
+                    <x>1070</x>
+                    <y>415</y>
                     <width>350</width>
-                    <height>130</height>
+                    <height>155</height>
                 </rect>
             </property>
             <property name="filename">
@@ -298,16 +298,16 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_5">
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>695</y>
+                    <x>5</x>
+                    <y>470</y>
                     <width>352</width>
                     <height>212</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>695</y>
+                    <x>5</x>
+                    <y>470</y>
                     <width>350</width>
                     <height>210</height>
                 </rect>
@@ -323,17 +323,17 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>335</y>
+                    <y>410</y>
                     <width>352</width>
-                    <height>82</height>
+                    <height>107</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>335</y>
+                    <y>410</y>
                     <width>350</width>
-                    <height>80</height>
+                    <height>105</height>
                 </rect>
             </property>
             <property name="filename">
@@ -349,7 +349,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>207</height>
+                    <height>257</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -357,7 +357,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>205</height>
+                    <height>255</height>
                 </rect>
             </property>
             <property name="filename">
@@ -370,16 +370,16 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_8">
             <property name="geometry">
                 <rect>
-                    <x>5</x>
-                    <y>471</y>
+                    <x>1070</x>
+                    <y>40</y>
                     <width>352</width>
                     <height>372</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>5</x>
-                    <y>471</y>
+                    <x>1070</x>
+                    <y>40</y>
                     <width>350</width>
                     <height>370</height>
                 </rect>
@@ -391,54 +391,21 @@ border-radius: 2px;
                 <string></string>
             </property>
         </widget>
-        <widget class="caGraphics" name="caRectangle_1">
-            <property name="form">
-                <enum>caGraphics::Rectangle</enum>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>840</x>
-                    <y>5</y>
-                    <width>70</width>
-                    <height>25</height>
-                </rect>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>218</red>
-                    <green>218</green>
-                    <blue>218</blue>
-                </color>
-            </property>
-            <property name="fillstyle">
-                <enum>Filled</enum>
-            </property>
-            <property name="lineColor">
-                <color alpha="255">
-                    <red>218</red>
-                    <green>218</green>
-                    <blue>218</blue>
-                </color>
-            </property>
-            <property name="linestyle">
-                <enum>Solid</enum>
-            </property>
-        </widget>
         <widget class="caInclude" name="caInclude_9">
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>420</y>
+                    <x>1070</x>
+                    <y>575</y>
                     <width>354</width>
-                    <height>139</height>
+                    <height>164</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>420</y>
+                    <x>1070</x>
+                    <y>575</y>
                     <width>352</width>
-                    <height>137</height>
+                    <height>162</height>
                 </rect>
             </property>
             <property name="filename">
@@ -483,7 +450,6 @@ border-radius: 2px;
         <zorder>caInclude_6</zorder>
         <zorder>caInclude_7</zorder>
         <zorder>caInclude_8</zorder>
-        <zorder>caRectangle_1</zorder>
         <zorder>caInclude_9</zorder>
         <zorder>caInclude_10</zorder>
     </widget>

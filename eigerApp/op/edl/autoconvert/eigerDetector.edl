@@ -5,8 +5,8 @@ minor 0
 release 1
 x 100
 y 69
-w 1070
-h 910
+w 1425
+h 740
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -32,7 +32,7 @@ minor 0
 release 0
 x 0
 y 5
-w 1069
+w 1424
 h 24
 lineColor rgb 55808 55808 55808
 fill
@@ -48,7 +48,7 @@ minor 1
 release 1
 x 0
 y 5
-w 1070
+w 1425
 h 25
 font "helvetica-medium-r-18.0"
 fontAlign "center"
@@ -66,8 +66,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 360
-y 725
+x 715
+y 520
 w 350
 h 165
 
@@ -79,8 +79,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 360
-y 725
+x 715
+y 520
 w 350
 h 165
 fgColor rgb 0 0 0
@@ -112,7 +112,7 @@ release 0
 x 360
 y 40
 w 350
-h 680
+h 630
 
 beginGroup
 
@@ -125,7 +125,7 @@ release 0
 x 360
 y 40
 w 350
-h 680
+h 630
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -196,9 +196,9 @@ major 4
 minor 0
 release 0
 x 715
-y 250
+y 300
 w 350
-h 80
+h 105
 
 beginGroup
 
@@ -209,9 +209,9 @@ major 4
 minor 1
 release 0
 x 715
-y 250
+y 300
 w 350
-h 80
+h 105
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -238,10 +238,10 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 715
-y 560
+x 1070
+y 415
 w 350
-h 130
+h 155
 
 beginGroup
 
@@ -251,10 +251,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 715
-y 560
+x 1070
+y 415
 w 350
-h 130
+h 155
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -281,8 +281,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 715
-y 695
+x 5
+y 470
 w 350
 h 210
 
@@ -294,8 +294,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 715
-y 695
+x 5
+y 470
 w 350
 h 210
 fgColor rgb 0 0 0
@@ -325,9 +325,9 @@ major 4
 minor 0
 release 0
 x 715
-y 335
+y 410
 w 350
-h 80
+h 105
 
 beginGroup
 
@@ -338,9 +338,9 @@ major 4
 minor 1
 release 0
 x 715
-y 335
+y 410
 w 350
-h 80
+h 105
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -370,7 +370,7 @@ release 0
 x 715
 y 40
 w 350
-h 205
+h 255
 
 beginGroup
 
@@ -383,7 +383,7 @@ release 0
 x 715
 y 40
 w 350
-h 205
+h 255
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -410,8 +410,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 5
-y 471
+x 1070
+y 40
 w 350
 h 370
 
@@ -423,8 +423,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 5
-y 471
+x 1070
+y 40
 w 350
 h 370
 fgColor rgb 0 0 0
@@ -447,32 +447,16 @@ visMin "A"
 visMax "1"
 endObjectProperties
 
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 840
-y 5
-w 69
-h 24
-lineColor rgb 55808 55808 55808
-fill
-fillColor rgb 55808 55808 55808
-lineWidth 0
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 715
-y 420
+x 1070
+y 575
 w 350
-h 135
+h 160
 
 beginGroup
 
@@ -482,10 +466,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 715
-y 420
+x 1070
+y 575
 w 350
-h 135
+h 160
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
