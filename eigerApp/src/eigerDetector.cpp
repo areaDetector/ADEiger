@@ -1583,6 +1583,12 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
  */
 asynStatus eigerDetector::eigerStatus (void)
 {
+    // If we are acquiring return immediately
+    int acquiring;
+    getIntegerParam(ADAcquire, &acquiring);
+    if (acquiring) 
+        return asynSuccess;
+
     // Request a status update
     if(mApi.statusUpdate())
         return asynError;
@@ -1600,8 +1606,13 @@ asynStatus eigerDetector::eigerStatus (void)
     // Read the status of each individual link between the head and the server
     status |= mLink0->fetch();
     status |= mLink1->fetch();
-    status |= mLink2->fetch();
-    status |= mLink3->fetch();
+    std::string model;
+    getStringParam(ADModel, model);
+    // The Eiger 500K does not have link2 or link3
+    if (model.find("500K") == std::string::npos) {
+        status |= mLink2->fetch();
+        status |= mLink3->fetch();
+    }
 
     // Read DCU buffer free percentage
     status |= mDCUBufFree->fetch();
@@ -1615,11 +1626,8 @@ asynStatus eigerDetector::eigerStatus (void)
     status |= mStreamDropped->fetch();
     status |= mFWFree->fetch();
 
-    if(status)
-        return asynError;
-
     callParamCallbacks();
-    return asynSuccess;
+    return status==0 ? asynSuccess : asynError;
 }
 
 bool eigerDetector::acquiring (void)
