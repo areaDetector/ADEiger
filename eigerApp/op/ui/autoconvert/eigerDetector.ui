@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>100</x>
-            <y>69</y>
+            <x>356</x>
+            <y>96</y>
             <width>1425</width>
-            <height>740</height>
+            <height>750</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -205,7 +205,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>632</height>
+                    <height>707</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -213,7 +213,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>630</height>
+                    <height>705</height>
                 </rect>
             </property>
             <property name="filename">
