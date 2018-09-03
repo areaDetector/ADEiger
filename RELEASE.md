@@ -22,7 +22,7 @@ R2-6 (September XXX, 2018)
 * Many improvements to medm adl files (Mark Rivers)
   * Added many missing PVs and included screens (e.g. ADSetup, ADBuffers, ADAttrFile)
   * Fixed formatting
-* Added Makefiles to autoconvert medm adl files to files in new ui/autoconvert, edl/autoconvert, and opi/autoconvert directories
+  * Added Makefiles to autoconvert medm adl files to files in new ui/autoconvert, edl/autoconvert, and opi/autoconvert directories
 
 R2-5 (February 6, 2018)
 ----
