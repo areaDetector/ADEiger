@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 356
-y 96
+x 20
+y 92
 w 1425
-h 750
+h 800
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -67,7 +67,7 @@ major 4
 minor 0
 release 0
 x 715
-y 520
+y 620
 w 350
 h 165
 
@@ -80,7 +80,7 @@ major 4
 minor 1
 release 0
 x 715
-y 520
+y 620
 w 350
 h 165
 fgColor rgb 0 0 0
@@ -112,7 +112,7 @@ release 0
 x 360
 y 40
 w 350
-h 705
+h 755
 
 beginGroup
 
@@ -125,7 +125,7 @@ release 0
 x 360
 y 40
 w 350
-h 705
+h 755
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -196,7 +196,7 @@ major 4
 minor 0
 release 0
 x 715
-y 300
+y 400
 w 350
 h 105
 
@@ -209,7 +209,7 @@ major 4
 minor 1
 release 0
 x 715
-y 300
+y 400
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -325,7 +325,7 @@ major 4
 minor 0
 release 0
 x 715
-y 410
+y 510
 w 350
 h 105
 
@@ -338,7 +338,7 @@ major 4
 minor 1
 release 0
 x 715
-y 410
+y 510
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -370,7 +370,7 @@ release 0
 x 715
 y 40
 w 350
-h 255
+h 355
 
 beginGroup
 
@@ -383,7 +383,7 @@ release 0
 x 715
 y 40
 w 350
-h 255
+h 355
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -523,6 +523,49 @@ sizeOfs 5
 numDsps 1
 displayFileName {
   0 "ADSetup.edl"
+}
+noScroll
+endObjectProperties
+
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 685
+w 350
+h 110
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 5
+y 685
+w 350
+h 110
+fgColor rgb 0 0 0
+bgColor rgb 65280 65280 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+displaySource "file"
+file "ADAttrFile.edl"
+sizeOfs 5
+numDsps 1
+displayFileName {
+  0 "ADAttrFile.edl"
 }
 noScroll
 endObjectProperties

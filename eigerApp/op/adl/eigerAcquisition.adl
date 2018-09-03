@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerAcquisition.adl"
+	name="/home/epics/devel/areaDetector-3-3-2/ADEiger/eigerApp/op/adl/eigerAcquisition.adl"
 	version=030109
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=1051
 		y=75
 		width=350
-		height=705
+		height=755
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=705
+		height=755
 	}
 	"basic attribute" {
 		clr=14
@@ -204,7 +204,7 @@ rectangle {
 		x=0
 		y=185
 		width=350
-		height=355
+		height=405
 	}
 	"basic attribute" {
 		clr=14
@@ -525,562 +525,288 @@ composite {
 	object {
 		x=5
 		y=412
-		width=340
-		height=283
+		width=335
+		height=20
 	}
 	"composite name"=""
 	children {
-		composite {
+		text {
 			object {
 				x=5
 				y=412
-				width=335
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=5
-						y=412
-						width=150
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Acquire Message"
-					align="horiz. right"
-				}
-				"text update" {
-					object {
-						x=160
-						y=413
-						width=180
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)StatusMessage_RBV"
-						clr=54
-						bclr=2
-					}
-					format="string"
-					limits {
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=15
-				y=437
-				width=325
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=15
-						y=437
-						width=140
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Detector State"
-					align="horiz. right"
-				}
-				"text update" {
-					object {
-						x=160
-						y=438
-						width=180
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)DetectorState_RBV"
-						clr=54
-						bclr=2
-					}
-					clrmod="alarm"
-					limits {
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=15
-				y=462
-				width=215
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=15
-						y=462
-						width=140
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Detector Armed"
-					align="horiz. right"
-				}
-				composite {
-					object {
-						x=160
-						y=462
-						width=70
-						height=20
-					}
-					"composite name"=""
-					children {
-						text {
-							object {
-								x=160
-								y=462
-								width=50
-								height=20
-							}
-							"basic attribute" {
-								clr=20
-							}
-							"dynamic attribute" {
-								vis="if not zero"
-								chan="$(P)$(R)Armed"
-							}
-							textix="Armed"
-						}
-						text {
-							object {
-								x=160
-								y=462
-								width=70
-								height=20
-							}
-							"basic attribute" {
-								clr=63
-							}
-							"dynamic attribute" {
-								vis="if zero"
-								chan="$(P)$(R)Armed"
-							}
-							textix="Unarmed"
-						}
-					}
-				}
-			}
-		}
-		"text update" {
-			object {
-				x=160
-				y=513
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)CountCutoff_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=45
-				y=512
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Rate Cutoff"
-			align="horiz. right"
-		}
-		menu {
-			object {
-				x=160
-				y=550
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ROIMode"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=575
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FlatfieldApplied"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=600
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FWCompression"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=625
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)CompressionAlgo"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=650
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ArrayCallbacks"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=675
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)DataSource"
-				clr=14
-				bclr=51
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=552
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ROIMode_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=576
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FlatfieldApplied_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=601
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FWCompression_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=627
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)CompressionAlgo_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=651
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ArrayCallbacks_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=676
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)DataSource_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=75
-				y=550
-				width=80
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="ROI mode"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=45
-				y=600
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="FW Compres."
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=15
-				y=625
-				width=140
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Compress. Alg."
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=5
-				y=650
 				width=150
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="Array Callbacks"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=45
-				y=675
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Data Source"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=5
-				y=575
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Flatfield Corr."
+			textix="Acquire Message"
 			align="horiz. right"
 		}
 		"text update" {
 			object {
 				x=160
-				y=488
-				width=100
+				y=413
+				width=180
 				height=18
 			}
 			monitor {
-				chan="$(P)$(R)DeadTime_RBV"
+				chan="$(P)$(R)StatusMessage_RBV"
 				clr=54
-				bclr=4
+				bclr=2
 			}
+			format="string"
 			limits {
 			}
-		}
-		text {
-			object {
-				x=35
-				y=487
-				width=120
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Readout Time"
-			align="horiz. right"
 		}
 	}
 }
 composite {
 	object {
 		x=15
-		y=337
+		y=437
 		width=325
-		height=70
+		height=20
 	}
 	"composite name"=""
 	children {
 		text {
 			object {
-				x=25
-				y=337
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="# Queued arrays"
-			align="horiz. right"
-		}
-		"text update" {
-			object {
-				x=180
-				y=338
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)NumQueuedArrays"
-				clr=54
-				bclr=4
-			}
-			align="horiz. right"
-			limits {
-			}
-		}
-		text {
-			object {
 				x=15
-				y=362
-				width=160
+				y=437
+				width=140
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="Wait for plugins"
-			align="horiz. right"
-		}
-		menu {
-			object {
-				x=180
-				y=362
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)WaitForPlugins"
-				clr=14
-				bclr=51
-			}
-		}
-		text {
-			object {
-				x=55
-				y=387
-				width=120
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Acquire busy"
+			textix="Detector State"
 			align="horiz. right"
 		}
 		"text update" {
 			object {
-				x=180
-				y=388
-				width=160
+				x=160
+				y=438
+				width=180
 				height=18
 			}
 			monitor {
-				chan="$(P)$(R)AcquireBusy"
+				chan="$(P)$(R)DetectorState_RBV"
 				clr=54
 				bclr=2
 			}
 			clrmod="alarm"
-			format="string"
 			limits {
 			}
 		}
+	}
+}
+composite {
+	object {
+		x=15
+		y=462
+		width=215
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=15
+				y=462
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Detector Armed"
+			align="horiz. right"
+		}
+		composite {
+			object {
+				x=160
+				y=462
+				width=70
+				height=20
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=160
+						y=462
+						width=50
+						height=20
+					}
+					"basic attribute" {
+						clr=20
+					}
+					"dynamic attribute" {
+						vis="if not zero"
+						chan="$(P)$(R)Armed"
+					}
+					textix="Armed"
+				}
+				text {
+					object {
+						x=160
+						y=462
+						width=70
+						height=20
+					}
+					"basic attribute" {
+						clr=63
+					}
+					"dynamic attribute" {
+						vis="if zero"
+						chan="$(P)$(R)Armed"
+					}
+					textix="Unarmed"
+				}
+			}
+		}
+	}
+}
+"text update" {
+	object {
+		x=160
+		y=513
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CountCutoff_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=512
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Rate Cutoff"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=160
+		y=488
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DeadTime_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=35
+		y=487
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Readout Time"
+	align="horiz. right"
+}
+text {
+	object {
+		x=25
+		y=337
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Queued arrays"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=180
+		y=338
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumQueuedArrays"
+		clr=54
+		bclr=4
+	}
+	align="horiz. right"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=362
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Wait for plugins"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=180
+		y=362
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)WaitForPlugins"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=55
+		y=387
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Acquire busy"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=180
+		y=388
+		width=160
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquireBusy"
+		clr=54
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
 	}
 }
 composite {
@@ -1287,5 +1013,412 @@ composite {
 			limits {
 			}
 		}
+	}
+}
+composite {
+	object {
+		x=5
+		y=600
+		width=340
+		height=145
+	}
+	"composite name"=""
+	children {
+		menu {
+			object {
+				x=160
+				y=600
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)ROIMode"
+				clr=14
+				bclr=51
+			}
+		}
+		menu {
+			object {
+				x=160
+				y=625
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)FlatfieldApplied"
+				clr=14
+				bclr=51
+			}
+		}
+		menu {
+			object {
+				x=160
+				y=650
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)FWCompression"
+				clr=14
+				bclr=51
+			}
+		}
+		menu {
+			object {
+				x=160
+				y=675
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)CompressionAlgo"
+				clr=14
+				bclr=51
+			}
+		}
+		menu {
+			object {
+				x=160
+				y=700
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)ArrayCallbacks"
+				clr=14
+				bclr=51
+			}
+		}
+		menu {
+			object {
+				x=160
+				y=725
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)DataSource"
+				clr=14
+				bclr=51
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=602
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)ROIMode_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=626
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)FlatfieldApplied_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=651
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)FWCompression_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=677
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)CompressionAlgo_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=701
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)ArrayCallbacks_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=726
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)DataSource_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+		text {
+			object {
+				x=75
+				y=600
+				width=80
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="ROI mode"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=45
+				y=650
+				width=110
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="FW Compres."
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=15
+				y=675
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Compress. Alg."
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=5
+				y=700
+				width=150
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Array Callbacks"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=45
+				y=725
+				width=110
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Data Source"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=5
+				y=625
+				width=150
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Flatfield Corr."
+			align="horiz. right"
+		}
+	}
+}
+"text entry" {
+	object {
+		x=45
+		y=512
+		width=110
+		height=20
+	}
+	control {
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=512
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Rate Cutoff"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=45
+		y=512
+		width=110
+		height=20
+	}
+	monitor {
+		clr=14
+		bclr=51
+	}
+	align="horiz. right"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=512
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Rate Cutoff"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=45
+		y=512
+		width=110
+		height=20
+	}
+	monitor {
+		clr=14
+		bclr=51
+	}
+	align="horiz. right"
+	format="string"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=160
+		y=540
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCounter"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=25
+		y=540
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Image counter"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=225
+		y=541
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCounter_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=55
+		y=565
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Image rate"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=160
+		y=566
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayRate_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
 	}
 }

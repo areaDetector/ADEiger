@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
+	name="/home/epics/devel/areaDetector-3-3-2/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
 	version=030109
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=565
 		y=323
 		width=350
-		height=255
+		height=355
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=255
+		height=355
 	}
 	"basic attribute" {
 		clr=14
@@ -178,46 +178,6 @@ text {
 	textix="File Name Pattern"
 	align="horiz. right"
 }
-composite {
-	object {
-		x=5
-		y=180
-		width=312
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=5
-				y=180
-				width=200
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="FW Buffer Free Space"
-			align="horiz. right"
-		}
-		"text update" {
-			object {
-				x=217
-				y=181
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FWFree_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-	}
-}
 text {
 	object {
 		x=35
@@ -291,115 +251,34 @@ text {
 	limits {
 	}
 }
-composite {
+text {
 	object {
 		x=55
 		y=155
-		width=263
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=55
-				y=155
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Current seq. id"
-			align="horiz. right"
-		}
-		"text update" {
-			object {
-				x=218
-				y=156
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SequenceId"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-	}
-}
-text {
-	object {
-		x=35
-		y=205
-		width=110
+		width=150
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Auto Remove"
+	textix="Current seq. id"
 	align="horiz. right"
-}
-"choice button" {
-	object {
-		x=150
-		y=205
-		width=100
-		height=18
-	}
-	control {
-		chan="$(P)$(R)FWAutoRemove"
-		clr=14
-		bclr=51
-	}
-	stacking="column"
 }
 "text update" {
 	object {
-		x=255
-		y=205
-		width=90
+		x=218
+		y=156
+		width=100
 		height=18
 	}
 	monitor {
-		chan="$(P)$(R)FWAutoRemove_RBV"
+		chan="$(P)$(R)SequenceId"
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
-}
-text {
-	object {
-		x=45
-		y=230
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Delete All"
-	align="horiz. right"
-}
-"message button" {
-	object {
-		x=150
-		y=230
-		width=93
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FWClear"
-		clr=14
-		bclr=20
-	}
-	label="Delete All!!"
-	press_msg="1"
 }
 text {
 	object {
@@ -426,6 +305,298 @@ text {
 		clr=54
 		bclr=4
 	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=205
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Local Path"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=110
+		y=205
+		width=230
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FilePath"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+composite {
+	object {
+		x=5
+		y=280
+		width=312
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=5
+				y=280
+				width=200
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="FW Buffer Free Space"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=217
+				y=281
+				width=100
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)FWFree_RBV"
+				clr=54
+				bclr=4
+			}
+			format="string"
+			limits {
+			}
+		}
+	}
+}
+text {
+	object {
+		x=35
+		y=305
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Auto Remove"
+	align="horiz. right"
+}
+"choice button" {
+	object {
+		x=150
+		y=305
+		width=100
+		height=18
+	}
+	control {
+		chan="$(P)$(R)FWAutoRemove"
+		clr=14
+		bclr=51
+	}
+	stacking="column"
+}
+"text update" {
+	object {
+		x=255
+		y=305
+		width=90
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWAutoRemove_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=330
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Delete All"
+	align="horiz. right"
+}
+"message button" {
+	object {
+		x=150
+		y=330
+		width=93
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWClear"
+		clr=14
+		bclr=20
+	}
+	label="Delete All!!"
+	press_msg="1"
+}
+text {
+	object {
+		x=5
+		y=180
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Save Files Locally"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=190
+		y=180
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SaveFiles"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=255
+		y=181
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWEnable_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+composite {
+	object {
+		x=5
+		y=255
+		width=324
+		height=22
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=5
+				y=256
+				width=170
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Create dir. depth"
+			align="horiz. right"
+		}
+		"text entry" {
+			object {
+				x=180
+				y=255
+				width=40
+				height=22
+			}
+			control {
+				chan="$(P)$(R)CreateDirectory"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=225
+				y=257
+				width=40
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)CreateDirectory_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"related display" {
+			object {
+				x=270
+				y=256
+				width=59
+				height=20
+			}
+			display[0] {
+				name="createDirectoryHelp.adl"
+			}
+			clr=14
+			bclr=51
+			label="Help"
+		}
+	}
+}
+"text update" {
+	object {
+		x=30
+		y=231
+		width=190
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FilePath_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=230
+		y=230
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exists:"
+}
+"text update" {
+	object {
+		x=305
+		y=230
+		width=40
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)FilePathExists_RBV"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
