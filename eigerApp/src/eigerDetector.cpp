@@ -564,11 +564,12 @@ asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
             }
         }
     }
-    else if((p = mParams.getByIndex(function)))
+    else if((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
-    else if (function < mFirstParam)
+    }
+    else if (function < mFirstParam) {
         status = ADDriver::writeOctet(pasynUser, value, nChars, nActual);
-
+    }
     if (status)
         asynPrint(pasynUser, ASYN_TRACE_ERROR,
                   "%s:%s: status=%d, function=%d, value=%s",
@@ -719,6 +720,7 @@ void eigerDetector::controlTask (void)
 
         // Set status parameters
         setIntegerParam(ADStatus, ADStatusAcquire);
+        setIntegerParam(ADNumImagesCounter, 0);
         setStringParam (ADStatusMessage, "Armed");
         mSequenceId->put(sequenceId);
         mArmed->put(true);
@@ -1231,9 +1233,10 @@ void eigerDetector::streamTask (void)
             StreamAPI::uncompress(&frame, (char*)pArray->pData);
             free(frame.data);
 
-            int imageCounter, arrayCallbacks;
+            int imageCounter, numImagesCounter, arrayCallbacks;
             lock();
             getIntegerParam(NDArrayCounter, &imageCounter);
+            getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
             unlock();
 
@@ -1257,6 +1260,7 @@ void eigerDetector::streamTask (void)
 
             lock();
             setIntegerParam(NDArrayCounter, ++imageCounter);
+            setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
             unlock();
 
             callParamCallbacks();
@@ -1336,7 +1340,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     const char *functionName = "parseH5File";
     asynStatus status = asynSuccess;
 
-    int imageCounter, arrayCallbacks;
+    int imageCounter, numImagesCounter, arrayCallbacks;
     hid_t fId, dId, dSpace, dType, mSpace;
     hsize_t dims[3], count[3], offset[3] = {0,0,0};
     herr_t err;
@@ -1426,6 +1430,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     }
 
     getIntegerParam(NDArrayCounter, &imageCounter);
+    getIntegerParam(ADNumImagesCounter, &numImagesCounter);
     for(offset[0] = 0; offset[0] < nImages; ++offset[0])
     {
         NDArray *pImage;
@@ -1480,6 +1485,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         }
 
         setIntegerParam(NDArrayCounter, ++imageCounter);
+        setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
         callParamCallbacks();
 
         pImage->release();
