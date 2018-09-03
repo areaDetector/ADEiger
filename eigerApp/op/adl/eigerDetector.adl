@@ -8,7 +8,7 @@ display {
 		x=20
 		y=92
 		width=1425
-		height=800
+		height=825
 	}
 	clr=14
 	bclr=4
@@ -114,7 +114,7 @@ text {
 composite {
 	object {
 		x=715
-		y=620
+		y=645
 		width=350
 		height=165
 	}
@@ -126,7 +126,7 @@ composite {
 		x=360
 		y=40
 		width=350
-		height=755
+		height=780
 	}
 	"composite name"=""
 	"composite file"="eigerAcquisition.adl"
@@ -144,7 +144,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=400
+		y=425
 		width=350
 		height=105
 	}
@@ -174,7 +174,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=510
+		y=535
 		width=350
 		height=105
 	}
@@ -186,7 +186,7 @@ composite {
 		x=715
 		y=40
 		width=350
-		height=355
+		height=380
 	}
 	"composite name"=""
 	"composite file"="eigerFileWriter.adl"

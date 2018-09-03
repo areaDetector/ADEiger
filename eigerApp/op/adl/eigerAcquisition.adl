@@ -8,7 +8,7 @@ display {
 		x=1051
 		y=75
 		width=350
-		height=755
+		height=780
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=755
+		height=780
 	}
 	"basic attribute" {
 		clr=14
@@ -202,7 +202,7 @@ text {
 rectangle {
 	object {
 		x=0
-		y=185
+		y=210
 		width=350
 		height=405
 	}
@@ -224,10 +224,194 @@ text {
 	textix="# Triggers"
 	align="horiz. right"
 }
+"text update" {
+	object {
+		x=265
+		y=81
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquireTime_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=106
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquirePeriod_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=131
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumImages_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=31
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ThresholdEnergy_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=56
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PhotonEnergy_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=155
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumTriggers_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=80
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquireTime"
+		clr=14
+		bclr=51
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=105
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquirePeriod"
+		clr=14
+		bclr=51
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=130
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumImages"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=30
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ThresholdEnergy"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=55
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PhotonEnergy"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=155
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumTriggers"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
 composite {
 	object {
 		x=5
-		y=225
+		y=250
 		width=340
 		height=20
 	}
@@ -236,7 +420,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=225
+				y=250
 				width=190
 				height=20
 			}
@@ -249,7 +433,7 @@ composite {
 		"text entry" {
 			object {
 				x=200
-				y=225
+				y=250
 				width=60
 				height=20
 			}
@@ -264,7 +448,7 @@ composite {
 		"text update" {
 			object {
 				x=265
-				y=225
+				y=250
 				width=80
 				height=18
 			}
@@ -281,7 +465,7 @@ composite {
 composite {
 	object {
 		x=5
-		y=250
+		y=275
 		width=330
 		height=20
 	}
@@ -290,7 +474,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=250
+				y=275
 				width=140
 				height=20
 			}
@@ -303,7 +487,7 @@ composite {
 		menu {
 			object {
 				x=150
-				y=250
+				y=275
 				width=100
 				height=20
 			}
@@ -316,7 +500,7 @@ composite {
 		"text update" {
 			object {
 				x=255
-				y=251
+				y=276
 				width=80
 				height=18
 			}
@@ -334,7 +518,7 @@ composite {
 composite {
 	object {
 		x=5
-		y=200
+		y=225
 		width=340
 		height=20
 	}
@@ -343,7 +527,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=200
+				y=225
 				width=120
 				height=20
 			}
@@ -356,7 +540,7 @@ composite {
 		menu {
 			object {
 				x=130
-				y=200
+				y=225
 				width=120
 				height=20
 			}
@@ -369,7 +553,7 @@ composite {
 		"text update" {
 			object {
 				x=255
-				y=201
+				y=226
 				width=90
 				height=18
 			}
@@ -387,7 +571,7 @@ composite {
 composite {
 	object {
 		x=12
-		y=275
+		y=300
 		width=320
 		height=32
 	}
@@ -396,7 +580,7 @@ composite {
 		"message button" {
 			object {
 				x=112
-				y=275
+				y=300
 				width=70
 				height=30
 			}
@@ -411,7 +595,7 @@ composite {
 		"message button" {
 			object {
 				x=187
-				y=275
+				y=300
 				width=70
 				height=30
 			}
@@ -426,7 +610,7 @@ composite {
 		"message button" {
 			object {
 				x=262
-				y=275
+				y=300
 				width=70
 				height=30
 			}
@@ -441,7 +625,7 @@ composite {
 		rectangle {
 			object {
 				x=12
-				y=277
+				y=302
 				width=80
 				height=30
 			}
@@ -452,7 +636,7 @@ composite {
 		text {
 			object {
 				x=20
-				y=283
+				y=308
 				width=70
 				height=20
 			}
@@ -466,7 +650,7 @@ composite {
 composite {
 	object {
 		x=15
-		y=312
+		y=337
 		width=245
 		height=20
 	}
@@ -475,7 +659,7 @@ composite {
 		text {
 			object {
 				x=160
-				y=312
+				y=337
 				width=100
 				height=20
 			}
@@ -492,7 +676,7 @@ composite {
 		text {
 			object {
 				x=163
-				y=312
+				y=337
 				width=40
 				height=20
 			}
@@ -509,7 +693,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=312
+				y=337
 				width=140
 				height=20
 			}
@@ -524,7 +708,7 @@ composite {
 composite {
 	object {
 		x=5
-		y=412
+		y=437
 		width=335
 		height=20
 	}
@@ -533,7 +717,7 @@ composite {
 		text {
 			object {
 				x=5
-				y=412
+				y=437
 				width=150
 				height=20
 			}
@@ -546,7 +730,7 @@ composite {
 		"text update" {
 			object {
 				x=160
-				y=413
+				y=438
 				width=180
 				height=18
 			}
@@ -564,7 +748,7 @@ composite {
 composite {
 	object {
 		x=15
-		y=437
+		y=462
 		width=325
 		height=20
 	}
@@ -573,7 +757,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=437
+				y=462
 				width=140
 				height=20
 			}
@@ -586,7 +770,7 @@ composite {
 		"text update" {
 			object {
 				x=160
-				y=438
+				y=463
 				width=180
 				height=18
 			}
@@ -604,7 +788,7 @@ composite {
 composite {
 	object {
 		x=15
-		y=462
+		y=487
 		width=215
 		height=20
 	}
@@ -613,7 +797,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=462
+				y=487
 				width=140
 				height=20
 			}
@@ -626,7 +810,7 @@ composite {
 		composite {
 			object {
 				x=160
-				y=462
+				y=487
 				width=70
 				height=20
 			}
@@ -635,7 +819,7 @@ composite {
 				text {
 					object {
 						x=160
-						y=462
+						y=487
 						width=50
 						height=20
 					}
@@ -651,7 +835,7 @@ composite {
 				text {
 					object {
 						x=160
-						y=462
+						y=487
 						width=70
 						height=20
 					}
@@ -671,7 +855,7 @@ composite {
 "text update" {
 	object {
 		x=160
-		y=513
+		y=538
 		width=100
 		height=18
 	}
@@ -686,7 +870,7 @@ composite {
 text {
 	object {
 		x=45
-		y=512
+		y=537
 		width=110
 		height=20
 	}
@@ -699,7 +883,7 @@ text {
 "text update" {
 	object {
 		x=160
-		y=488
+		y=513
 		width=100
 		height=18
 	}
@@ -714,7 +898,7 @@ text {
 text {
 	object {
 		x=35
-		y=487
+		y=512
 		width=120
 		height=20
 	}
@@ -727,7 +911,7 @@ text {
 text {
 	object {
 		x=25
-		y=337
+		y=362
 		width=150
 		height=20
 	}
@@ -740,7 +924,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=338
+		y=363
 		width=60
 		height=18
 	}
@@ -756,7 +940,7 @@ text {
 text {
 	object {
 		x=15
-		y=362
+		y=387
 		width=160
 		height=20
 	}
@@ -769,7 +953,7 @@ text {
 menu {
 	object {
 		x=180
-		y=362
+		y=387
 		width=80
 		height=20
 	}
@@ -782,7 +966,7 @@ menu {
 text {
 	object {
 		x=55
-		y=387
+		y=412
 		width=120
 		height=20
 	}
@@ -795,7 +979,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=388
+		y=413
 		width=160
 		height=18
 	}
@@ -809,485 +993,175 @@ text {
 	limits {
 	}
 }
-composite {
+menu {
 	object {
-		x=265
-		y=31
-		width=80
-		height=142
-	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=265
-				y=81
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)AcquireTime_RBV"
-				clr=54
-				bclr=4
-			}
-			format="exponential"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=106
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)AcquirePeriod_RBV"
-				clr=54
-				bclr=4
-			}
-			format="exponential"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=131
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)NumImages_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=31
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ThresholdEnergy_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=56
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)PhotonEnergy_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=155
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)NumTriggers_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-	}
-}
-composite {
-	object {
-		x=190
-		y=30
-		width=70
-		height=145
-	}
-	"composite name"=""
-	children {
-		"text entry" {
-			object {
-				x=190
-				y=80
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)AcquireTime"
-				clr=14
-				bclr=51
-			}
-			format="exponential"
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=190
-				y=105
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)AcquirePeriod"
-				clr=14
-				bclr=51
-			}
-			format="exponential"
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=190
-				y=130
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)NumImages"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=190
-				y=30
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ThresholdEnergy"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=190
-				y=55
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)PhotonEnergy"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=190
-				y=155
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)NumTriggers"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-	}
-}
-composite {
-	object {
-		x=5
-		y=600
-		width=340
-		height=145
-	}
-	"composite name"=""
-	children {
-		menu {
-			object {
-				x=160
-				y=600
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ROIMode"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=625
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FlatfieldApplied"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=650
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FWCompression"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=675
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)CompressionAlgo"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=700
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ArrayCallbacks"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=725
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)DataSource"
-				clr=14
-				bclr=51
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=602
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ROIMode_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=626
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FlatfieldApplied_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=651
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FWCompression_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=677
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)CompressionAlgo_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=701
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ArrayCallbacks_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=726
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)DataSource_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=75
-				y=600
-				width=80
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="ROI mode"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=45
-				y=650
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="FW Compres."
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=15
-				y=675
-				width=140
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Compress. Alg."
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=5
-				y=700
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Array Callbacks"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=45
-				y=725
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Data Source"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=5
-				y=625
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Flatfield Corr."
-			align="horiz. right"
-		}
-	}
-}
-"text entry" {
-	object {
-		x=45
-		y=512
-		width=110
+		x=160
+		y=625
+		width=100
 		height=20
 	}
 	control {
+		chan="$(P)$(R)ROIMode"
 		clr=14
 		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=650
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatfieldApplied"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=675
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWCompression"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=700
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CompressionAlgo"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=725
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCallbacks"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=750
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DataSource"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=627
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ROIMode_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=651
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FlatfieldApplied_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=676
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWCompression_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=702
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CompressionAlgo_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=726
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCallbacks_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=751
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DataSource_RBV"
+		clr=54
+		bclr=4
 	}
 	format="string"
 	limits {
@@ -1295,66 +1169,86 @@ composite {
 }
 text {
 	object {
-		x=45
-		y=512
-		width=110
+		x=75
+		y=625
+		width=80
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Rate Cutoff"
+	textix="ROI mode"
 	align="horiz. right"
-}
-"text update" {
-	object {
-		x=45
-		y=512
-		width=110
-		height=20
-	}
-	monitor {
-		clr=14
-		bclr=51
-	}
-	align="horiz. right"
-	format="string"
-	limits {
-	}
 }
 text {
 	object {
 		x=45
-		y=512
+		y=675
 		width=110
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Rate Cutoff"
+	textix="FW Compres."
 	align="horiz. right"
 }
-"text update" {
+text {
+	object {
+		x=15
+		y=700
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Compress. Alg."
+	align="horiz. right"
+}
+text {
+	object {
+		x=5
+		y=725
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Array Callbacks"
+	align="horiz. right"
+}
+text {
 	object {
 		x=45
-		y=512
+		y=750
 		width=110
 		height=20
 	}
-	monitor {
+	"basic attribute" {
 		clr=14
-		bclr=51
 	}
+	textix="Data Source"
 	align="horiz. right"
-	format="string"
-	limits {
+}
+text {
+	object {
+		x=5
+		y=650
+		width=150
+		height=20
 	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flatfield Corr."
+	align="horiz. right"
 }
 "text entry" {
 	object {
 		x=160
-		y=540
+		y=565
 		width=60
 		height=20
 	}
@@ -1369,7 +1263,7 @@ text {
 text {
 	object {
 		x=25
-		y=540
+		y=565
 		width=130
 		height=20
 	}
@@ -1382,7 +1276,7 @@ text {
 "text update" {
 	object {
 		x=225
-		y=541
+		y=566
 		width=80
 		height=18
 	}
@@ -1397,7 +1291,7 @@ text {
 text {
 	object {
 		x=55
-		y=565
+		y=590
 		width=100
 		height=20
 	}
@@ -1410,12 +1304,40 @@ text {
 "text update" {
 	object {
 		x=160
-		y=566
+		y=591
 		width=100
 		height=18
 	}
 	monitor {
 		chan="$(P)$(R)ArrayRate_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=180
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Images Complete"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=265
+		y=180
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumImagesCounter_RBV"
 		clr=54
 		bclr=4
 	}
