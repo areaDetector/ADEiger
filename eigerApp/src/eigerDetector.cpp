@@ -424,8 +424,14 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mTriggerEvent.signal();
     else if (function == mFilePerms->getIndex())
         status = (asynStatus) mFilePerms->put(value & 0666);
-    else if((p = mParams.getByIndex(function)))
+    else if((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
+        // When switching DataSource to stream it seems to be necessary to disable and enable stream
+        if ((p == mDataSource) && (value == SOURCE_STREAM)) {
+            mStreamEnable->put(0);
+            mStreamEnable->put(1);
+        } 
+    }
     else if(function < mFirstParam)
         status = ADDriver::writeInt32(pasynUser, value);
 
