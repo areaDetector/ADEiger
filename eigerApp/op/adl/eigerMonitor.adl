@@ -136,25 +136,11 @@ text {
 	textix="Enable/Disable"
 	align="horiz. right"
 }
-"choice button" {
-	object {
-		x=150
-		y=30
-		width=120
-		height=18
-	}
-	control {
-		chan="$(P)$(R)MonitorEnable"
-		clr=14
-		bclr=51
-	}
-	stacking="column"
-}
 "text update" {
 	object {
-		x=275
-		y=30
-		width=70
+		x=215
+		y=31
+		width=60
 		height=18
 	}
 	monitor {
@@ -162,61 +148,51 @@ text {
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
 }
-composite {
+text {
 	object {
 		x=25
 		y=80
-		width=320
+		width=120
 		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=25
-				y=80
-				width=120
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Timeout (mS)"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=150
-				y=80
-				width=60
-				height=20
-			}
-			control {
-				chan="$(P)$(R)MonitorTimeout"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=275
-				y=80
-				width=70
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)MonitorTimeout_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Timeout (mS)"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=150
+		y=80
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MonitorTimeout"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=215
+		y=81
+		width=70
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MonitorTimeout_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
 	}
 }
 text {
@@ -246,5 +222,18 @@ text {
 	}
 	format="string"
 	limits {
+	}
+}
+menu {
+	object {
+		x=150
+		y=30
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MonitorEnable"
+		clr=14
+		bclr=51
 	}
 }

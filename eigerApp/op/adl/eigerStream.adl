@@ -136,25 +136,11 @@ text {
 	textix="Enable/Disable"
 	align="horiz. right"
 }
-"choice button" {
-	object {
-		x=150
-		y=31
-		width=120
-		height=18
-	}
-	control {
-		chan="$(P)$(R)StreamEnable"
-		clr=14
-		bclr=51
-	}
-	stacking="column"
-}
 "text update" {
 	object {
-		x=275
+		x=215
 		y=31
-		width=70
+		width=60
 		height=18
 	}
 	monitor {
@@ -162,6 +148,7 @@ text {
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
 }
@@ -183,14 +170,13 @@ text {
 		x=150
 		y=81
 		width=60
-		height=16
+		height=18
 	}
 	monitor {
 		chan="$(P)$(R)StreamDropped_RBV"
 		clr=54
-		bclr=2
+		bclr=4
 	}
-	clrmod="alarm"
 	align="horiz. centered"
 	limits {
 	}
@@ -222,5 +208,18 @@ text {
 	}
 	format="string"
 	limits {
+	}
+}
+menu {
+	object {
+		x=150
+		y=30
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamEnable"
+		clr=14
+		bclr=51
 	}
 }
