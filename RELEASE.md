@@ -12,17 +12,18 @@ Release Notes
 
 R2-6 (September XXX, 2018)
 ----
-* Driver fixes and improvements (Mark Rivers)
+* Driver fixes and improvements
   * Avoid error messages when polling status on Eiger 500K, which does not have link2 and link3.
   * Avoid error message when polling status and acquisition is active.  
     The detector status is now not polled when acquisition is active.
   * Previously when DataSource was changed to Stream it was necessary to manually set StreamEnable to No and then Yes
     for it to work properly.  This is now done automatically in the driver.
   * Added support for NumImagesCounter_RBV which counts the number of images collected in the current acquisition.
-* Many improvements to medm adl files (Mark Rivers)
+* Many improvements to medm adl files
   * Added many missing PVs and included screens (e.g. ADSetup, ADBuffers, ADAttrFile)
   * Fixed formatting
   * Added Makefiles to autoconvert medm adl files to files in new ui/autoconvert, edl/autoconvert, and opi/autoconvert directories
+* Uncommented commonPluginSettings.req in iocEiger/auto_settings.req so plugin settings will be saved and restored.
 
 R2-5 (February 6, 2018)
 ----
