@@ -375,7 +375,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>DCU Buff, Free %</string>
+                <string>DCU Buff. Free %</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -630,7 +630,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>170</x>
-                    <y>132</y>
+                    <y>131</y>
                     <width>40</width>
                     <height>18</height>
                 </rect>
@@ -655,6 +655,9 @@ border-radius: 2px;
                     <blue>187</blue>
                 </color>
             </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignHCenter|Qt::AlignVCenter</set>
+            </property>
             <property name="limitsMode">
                 <enum>caLineEdit::Channel</enum>
             </property>
@@ -669,9 +672,6 @@ border-radius: 2px;
             </property>
             <property name="maxValue">
                 <double>1.0</double>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="formatType">
                 <enum>string</enum>
@@ -738,7 +738,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>215</x>
-                    <y>132</y>
+                    <y>131</y>
                     <width>40</width>
                     <height>18</height>
                 </rect>
@@ -763,6 +763,9 @@ border-radius: 2px;
                     <blue>187</blue>
                 </color>
             </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignHCenter|Qt::AlignVCenter</set>
+            </property>
             <property name="limitsMode">
                 <enum>caLineEdit::Channel</enum>
             </property>
@@ -778,9 +781,6 @@ border-radius: 2px;
             <property name="maxValue">
                 <double>1.0</double>
             </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
             <property name="formatType">
                 <enum>string</enum>
             </property>
@@ -792,7 +792,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>260</x>
-                    <y>132</y>
+                    <y>131</y>
                     <width>40</width>
                     <height>18</height>
                 </rect>
@@ -817,6 +817,9 @@ border-radius: 2px;
                     <blue>187</blue>
                 </color>
             </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignHCenter|Qt::AlignVCenter</set>
+            </property>
             <property name="limitsMode">
                 <enum>caLineEdit::Channel</enum>
             </property>
@@ -832,9 +835,6 @@ border-radius: 2px;
             <property name="maxValue">
                 <double>1.0</double>
             </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
             <property name="formatType">
                 <enum>string</enum>
             </property>
@@ -846,7 +846,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>305</x>
-                    <y>132</y>
+                    <y>131</y>
                     <width>40</width>
                     <height>18</height>
                 </rect>
@@ -871,6 +871,9 @@ border-radius: 2px;
                     <blue>187</blue>
                 </color>
             </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignHCenter|Qt::AlignVCenter</set>
+            </property>
             <property name="limitsMode">
                 <enum>caLineEdit::Channel</enum>
             </property>
@@ -885,9 +888,6 @@ border-radius: 2px;
             </property>
             <property name="maxValue">
                 <double>1.0</double>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="formatType">
                 <enum>string</enum>

@@ -171,7 +171,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "DCU Buff, Free %"
+  "DCU Buff. Free %"
 }
 endObjectProperties
 
@@ -294,13 +294,13 @@ major 4
 minor 7
 release 0
 x 170
-y 132
+y 131
 w 40
 h 18
 controlPv "$(P)$(R)Link0_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
-fontAlign "left"
+fontAlign "center"
 fgColor rgb 0 65535 0
 fgAlarm
 bgColor rgb 47872 47872 47872
@@ -343,13 +343,13 @@ major 4
 minor 7
 release 0
 x 215
-y 132
+y 131
 w 40
 h 18
 controlPv "$(P)$(R)Link1_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
-fontAlign "left"
+fontAlign "center"
 fgColor rgb 0 65535 0
 fgAlarm
 bgColor rgb 47872 47872 47872
@@ -368,13 +368,13 @@ major 4
 minor 7
 release 0
 x 260
-y 132
+y 131
 w 40
 h 18
 controlPv "$(P)$(R)Link2_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
-fontAlign "left"
+fontAlign "center"
 fgColor rgb 0 65535 0
 fgAlarm
 bgColor rgb 47872 47872 47872
@@ -393,13 +393,13 @@ major 4
 minor 7
 release 0
 x 305
-y 132
+y 131
 w 40
 h 18
 controlPv "$(P)$(R)Link3_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
-fontAlign "left"
+fontAlign "center"
 fgColor rgb 0 65535 0
 fgAlarm
 bgColor rgb 47872 47872 47872

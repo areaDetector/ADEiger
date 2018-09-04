@@ -185,7 +185,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="DCU Buff, Free %"
+	textix="DCU Buff. Free %"
 	align="horiz. right"
 }
 text {
@@ -262,7 +262,7 @@ text {
 "text update" {
 	object {
 		x=170
-		y=132
+		y=131
 		width=40
 		height=18
 	}
@@ -272,6 +272,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	align="horiz. centered"
 	format="string"
 	limits {
 	}
@@ -294,7 +295,7 @@ text {
 "text update" {
 	object {
 		x=215
-		y=132
+		y=131
 		width=40
 		height=18
 	}
@@ -304,6 +305,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	align="horiz. centered"
 	format="string"
 	limits {
 	}
@@ -311,7 +313,7 @@ text {
 "text update" {
 	object {
 		x=260
-		y=132
+		y=131
 		width=40
 		height=18
 	}
@@ -321,6 +323,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	align="horiz. centered"
 	format="string"
 	limits {
 	}
@@ -328,7 +331,7 @@ text {
 "text update" {
 	object {
 		x=305
-		y=132
+		y=131
 		width=40
 		height=18
 	}
@@ -338,6 +341,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	align="horiz. centered"
 	format="string"
 	limits {
 	}
