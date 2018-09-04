@@ -123,137 +123,9 @@ text {
 	textix="Detector Status"
 	align="horiz. centered"
 }
-"text update" {
-	object {
-		x=180
-		y=31
-		width=155
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)State_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=180
-		y=81
-		width=155
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Temp0_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=180
-		y=106
-		width=155
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Humid0_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=180
-		y=132
-		width=49
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link0_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=180
-		y=156
-		width=155
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)DCUBufferFree_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=219
-		y=132
-		width=49
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link1_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=258
-		y=132
-		width=49
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link2_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=296
-		y=132
-		width=49
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Link3_RBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
 text {
 	object {
-		x=35
+		x=25
 		y=30
 		width=140
 		height=20
@@ -266,7 +138,7 @@ text {
 }
 text {
 	object {
-		x=45
+		x=35
 		y=80
 		width=130
 		height=20
@@ -279,7 +151,7 @@ text {
 }
 text {
 	object {
-		x=75
+		x=65
 		y=105
 		width=100
 		height=20
@@ -292,7 +164,7 @@ text {
 }
 text {
 	object {
-		x=125
+		x=115
 		y=130
 		width=50
 		height=20
@@ -307,18 +179,18 @@ text {
 	object {
 		x=5
 		y=155
-		width=170
+		width=160
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="DCU Buffer Free %"
+	textix="DCU Buff, Free %"
 	align="horiz. right"
 }
 text {
 	object {
-		x=15
+		x=5
 		y=55
 		width=160
 		height=20
@@ -329,9 +201,150 @@ text {
 	textix="Error Parameters"
 	align="horiz. right"
 }
+text {
+	object {
+		x=5
+		y=180
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Read Status Rate"
+	align="horiz. right"
+}
 "text update" {
 	object {
-		x=180
+		x=170
+		y=31
+		width=155
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)State_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=81
+		width=155
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Temp0_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=106
+		width=155
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Humid0_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=132
+		width=40
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Link0_RBV"
+		clr=54
+		bclr=4
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
+		y=156
+		width=155
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DCUBufferFree_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=215
+		y=132
+		width=40
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Link1_RBV"
+		clr=54
+		bclr=4
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=260
+		y=132
+		width=40
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Link2_RBV"
+		clr=54
+		bclr=4
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=305
+		y=132
+		width=40
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Link3_RBV"
+		clr=54
+		bclr=4
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=170
 		y=56
 		width=155
 		height=18
@@ -344,22 +357,9 @@ text {
 	limits {
 	}
 }
-text {
-	object {
-		x=15
-		y=180
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Read Status Rate"
-	align="horiz. right"
-}
 menu {
 	object {
-		x=180
+		x=170
 		y=180
 		width=120
 		height=20
