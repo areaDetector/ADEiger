@@ -181,6 +181,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	format="string"
 	limits {
 	}
 }
@@ -212,6 +213,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	format="string"
 	limits {
 	}
 }
@@ -228,6 +230,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	format="string"
 	limits {
 	}
 }
@@ -244,6 +247,7 @@ text {
 		bclr=4
 	}
 	clrmod="alarm"
+	format="string"
 	limits {
 	}
 }

@@ -177,7 +177,6 @@ text {
 		clr=54
 		bclr=4
 	}
-	align="horiz. centered"
 	limits {
 	}
 }
