@@ -152,7 +152,7 @@ h 18
 controlPv "$(P)$(R)StreamDropped_RBV"
 format "decimal"
 font "helvetica-medium-r-14.0"
-fontAlign "center"
+fontAlign "left"
 fgColor rgb 2560 0 47104
 bgColor rgb 47872 47872 47872
 limitsFromDb

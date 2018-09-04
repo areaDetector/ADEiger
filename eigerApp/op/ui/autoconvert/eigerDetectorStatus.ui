@@ -422,7 +422,7 @@ border-radius: 2px;
                 <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="formatType">
-                <enum>decimal</enum>
+                <enum>string</enum>
             </property>
             <property name="colorMode">
                 <enum>caLineEdit::Alarm_Static</enum>
@@ -530,7 +530,7 @@ border-radius: 2px;
                 <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="formatType">
-                <enum>decimal</enum>
+                <enum>string</enum>
             </property>
             <property name="colorMode">
                 <enum>caLineEdit::Alarm_Static</enum>
@@ -584,7 +584,7 @@ border-radius: 2px;
                 <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="formatType">
-                <enum>decimal</enum>
+                <enum>string</enum>
             </property>
             <property name="colorMode">
                 <enum>caLineEdit::Alarm_Static</enum>
@@ -638,7 +638,7 @@ border-radius: 2px;
                 <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="formatType">
-                <enum>decimal</enum>
+                <enum>string</enum>
             </property>
             <property name="colorMode">
                 <enum>caLineEdit::Alarm_Static</enum>

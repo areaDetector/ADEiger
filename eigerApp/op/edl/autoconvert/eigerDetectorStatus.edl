@@ -158,7 +158,7 @@ y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link0_RBV"
-format "decimal"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
@@ -207,7 +207,7 @@ y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link1_RBV"
-format "decimal"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
@@ -232,7 +232,7 @@ y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link2_RBV"
-format "decimal"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
@@ -257,7 +257,7 @@ y 132
 w 49
 h 18
 controlPv "$(P)$(R)Link3_RBV"
-format "decimal"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
