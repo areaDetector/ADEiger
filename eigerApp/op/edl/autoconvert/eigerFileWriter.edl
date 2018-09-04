@@ -611,7 +611,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "FW Disk Free (GB)"
+  "DCU RAM Disk Free"
 }
 endObjectProperties
 
@@ -681,6 +681,26 @@ smartRefresh
 fastUpdate
 newPos
 objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 271
+y 305
+w 34
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "GB"
+}
 endObjectProperties
 
 # (Menu Button)
