@@ -172,13 +172,13 @@ record(bi,"$(P)$(R)FWEnable_RBV") {
 }
 
 # FileWriter clear all files
-record(ao, "$(P)$(R)FWClear") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
-    field(DESC, "Clear files in the detector")
-}
-
-# FileWriter compression enabled
+#record(ao, "$(P)$(R)FWClear") {
+#    field(DTYP, "asynInt32")
+#    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
+#    field(DESC, "Clear files in the detector")
+#}
+#
+## FileWriter compression enabled
 record(bo,"$(P)$(R)FWCompression") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
@@ -252,33 +252,33 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-# FileWriter free buffer space
-record(ai, "$(P)$(R)FWFree_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
-    field(DESC, "Free disk space")
-    field(EGU,  "GB")
-    field(PREC, "3")
-    field(ASLO, "9.5367431640625e-07")
-    field(SCAN, "I/O Intr")
-}
-
-# FileWriter State
-record(stringin, "$(P)$(R)FWState_RBV") {
-    field(DESC, "FileWriter operational state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_STATE")
-    field(SCAN, "I/O Intr")
-}
-
-record(stringin, "$(P)$(R)Description_RBV")
-{
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DESCRIPTION")
-    field(DESC, "Detector Description")
-    field(SCAN, "I/O Intr")
-}
+## FileWriter free buffer space
+#record(ai, "$(P)$(R)FWFree_RBV")
+#{
+#    field(DTYP, "asynInt32")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
+#    field(DESC, "Free disk space")
+#    field(EGU,  "GB")
+#    field(PREC, "3")
+#    field(ASLO, "9.5367431640625e-07")
+#    field(SCAN, "I/O Intr")
+#}
+#
+## FileWriter State
+#record(stringin, "$(P)$(R)FWState_RBV") {
+#    field(DESC, "FileWriter operational state")
+#    field(DTYP, "asynOctetRead")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_STATE")
+#    field(SCAN, "I/O Intr")
+#}
+#
+#record(stringin, "$(P)$(R)Description_RBV")
+#{
+#    field(DTYP, "asynOctetRead")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DESCRIPTION")
+#    field(DESC, "Detector Description")
+#    field(SCAN, "I/O Intr")
+#}
 
 record(ai, "$(P)$(R)SensorThickness_RBV")
 {
@@ -298,14 +298,14 @@ record(stringin, "$(P)$(R)SensorMaterial_RBV")
     field(SCAN, "I/O Intr")
 }
 
-record(ai, "$(P)$(R)CountCutoff_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_count_cutoff")
-    field(DESC, "Rate Correct Cutoff")
-    field(EGU,  "count")
-    field(SCAN, "I/O Intr")
-}
+#record(ai, "$(P)$(R)CountCutoff_RBV")
+#{
+#    field(DTYP, "asynInt32")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_count_cutoff")
+#    field(DESC, "Rate Correct Cutoff")
+#    field(EGU,  "count")
+#    field(SCAN, "I/O Intr")
+#}
 
 record(ai, "$(P)$(R)XPixelSize_RBV")
 {
@@ -353,15 +353,15 @@ record(mbbi,"$(P)$(R)ROIMode_RBV") {
 }
 
 # Dead time between frames
-record(ai, "$(P)$(R)DeadTime_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_detector_readout_time")
-    field(DESC, "Dead time")
-    field(EGU,  "s")
-    field(PREC, "6")
-    field(SCAN, "I/O Intr")
-}
+#record(ai, "$(P)$(R)DeadTime_RBV")
+#{
+#    field(DTYP, "asynFloat64")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_detector_readout_time")
+#    field(DESC, "Dead time")
+#    field(EGU,  "s")
+#    field(PREC, "6")
+#    field(SCAN, "I/O Intr")
+#}
 
 # Compression algorithm selection
 record(mbbo,"$(P)$(R)CompressionAlgo") {
@@ -611,13 +611,13 @@ record(ai, "$(P)$(R)ThresholdEnergy_RBV")
 
 # ancillary information
 
-record(ao, "$(P)$(R)Wavelength")
-{
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
-    field(PREC, "4")
-    field(EGU,  "Angstroms")
-}
+#record(ao, "$(P)$(R)Wavelength")
+#{
+#    field(DTYP, "asynFloat64")
+#    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
+#    field(PREC, "4")
+#    field(EGU,  "Angstroms")
+#}
 
 record(ao, "$(P)$(R)DetDist")
 {
@@ -646,14 +646,14 @@ record(ao, "$(P)$(R)BeamY")
     field(EGU,  "pixels")
 }
 
-record(ai, "$(P)$(R)Wavelength_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
-    field(PREC, "4")
-    field(EGU,  "Angstroms")
-    field(SCAN, "I/O Intr")
-}
+#record(ai, "$(P)$(R)Wavelength_RBV")
+#{
+#    field(DTYP, "asynFloat64")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
+#    field(PREC, "4")
+#    field(EGU,  "Angstroms")
+#    field(SCAN, "I/O Intr")
+#}
 
 record(ai, "$(P)$(R)DetDist_RBV")
 {
@@ -905,13 +905,13 @@ record(ai, "$(P)$(R)MonitorTimeout_RBV")
     field(SCAN, "I/O Intr")
 }
 
-# Monitor State
-record(stringin, "$(P)$(R)MonitorState_RBV") {
-    field(DESC, "Monitor operational state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_STATE")
-    field(SCAN, "I/O Intr")
-}
+## Monitor State
+#record(stringin, "$(P)$(R)MonitorState_RBV") {
+#    field(DESC, "Monitor operational state")
+#    field(DTYP, "asynOctetRead")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_STATE")
+#    field(SCAN, "I/O Intr")
+#}
 
 # Set DISA for PVs in ADBase that do not apply to Eiger
 
@@ -1005,12 +1005,12 @@ record(stringin, "$(P)$(R)State_RBV") {
 }
 
 # Eiger Error Parameters
-record(stringin, "$(P)$(R)Error_RBV") {
-    field(DESC, "Parameters causing error state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ERROR")
-    field(SCAN, "I/O Intr")
-}
+#record(stringin, "$(P)$(R)Error_RBV") {
+#    field(DESC, "Parameters causing error state")
+#    field(DTYP, "asynOctetRead")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ERROR")
+#    field(SCAN, "I/O Intr")
+#}
 
 record(ai, "$(P)$(R)Temp0_RBV")
 {
@@ -1032,49 +1032,49 @@ record(ai, "$(P)$(R)Humid0_RBV")
     field(PREC, "1")
 }
 
-record(bi, "$(P)$(R)Link0_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_0")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(bi, "$(P)$(R)Link1_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_1")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(bi, "$(P)$(R)Link2_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_2")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(bi, "$(P)$(R)Link3_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_3")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)DCUBufferFree_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DCU_BUF_FREE")
-    field(EGU,  "%")
-    field(SCAN, "I/O Intr")
-    field(VAL,  "0")
-    field(PREC, "1")
-}
+#record(bi, "$(P)$(R)Link0_RBV")
+#{
+#    field(DTYP, "asynInt32")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_0")
+#    field(ZNAM, "Down")
+#    field(ONAM, "Up")
+#    field(SCAN, "I/O Intr")
+#}
+#
+#record(bi, "$(P)$(R)Link1_RBV")
+#{
+#    field(DTYP, "asynInt32")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_1")
+#    field(ZNAM, "Down")
+#    field(ONAM, "Up")
+#    field(SCAN, "I/O Intr")
+#}
+#
+#record(bi, "$(P)$(R)Link2_RBV")
+#{
+#    field(DTYP, "asynInt32")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_2")
+#    field(ZNAM, "Down")
+#    field(ONAM, "Up")
+#    field(SCAN, "I/O Intr")
+#}
+#
+#record(bi, "$(P)$(R)Link3_RBV")
+#{
+#    field(DTYP, "asynInt32")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_3")
+#    field(ZNAM, "Down")
+#    field(ONAM, "Up")
+#    field(SCAN, "I/O Intr")
+#}
+#
+#record(ai, "$(P)$(R)DCUBufferFree_RBV")
+#{
+#    field(DTYP, "asynFloat64")
+#    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DCU_BUF_FREE")
+#    field(EGU,  "%")
+#    field(SCAN, "I/O Intr")
+#    field(VAL,  "0")
+#    field(PREC, "1")
+#}
 
