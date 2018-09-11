@@ -13,7 +13,7 @@
 
 #include <fcntl.h>
 
-#define API_VERSION             "1.6.0"
+#define API_VERSION             "1.8.0"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
 #define EOH                     EOL EOL     // End of Header
