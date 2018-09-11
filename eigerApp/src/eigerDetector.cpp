@@ -407,7 +407,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         else if (!value && adStatus == ADStatusAcquire)
         {
             unlock();
-            mApi.abort();
+            mApi.disarm();
             lock();
             setIntegerParam(ADStatus, ADStatusAborted);
             mStopEvent.signal();
