@@ -151,6 +151,24 @@ record(ao, "$(P)$(R)Trigger") {
     field(DESC, "Trigger the detector")
 }
 
+# Enable Retrigger
+record(bo,"$(P)$(R)Retrigger") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_retrigger")
+    field(VAL,  "1")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bi,"$(P)$(R)Retrigger_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_retrigger")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(SCAN, "I/O Intr")
+}
+
 # FileWriter API enable
 record(bo,"$(P)$(R)FWEnable") {
     field(PINI, "YES")
