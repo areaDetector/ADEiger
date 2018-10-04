@@ -1633,8 +1633,8 @@ asynStatus eigerDetector::eigerStatus (void)
         return asynSuccess;
 
     // Request a status update
-    if(mApi.statusUpdate())
-        return asynError;
+//    if(mApi.statusUpdate())
+//        return asynError;
 
     int status = 0;
     // Read state and error message
