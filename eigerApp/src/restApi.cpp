@@ -32,7 +32,7 @@
 #define MAX_BUF_SIZE            256
 #define MAX_JSON_TOKENS         100
 
-#define DEFAULT_TIMEOUT_INIT    240
+#define DEFAULT_TIMEOUT_INIT    1800
 #define DEFAULT_TIMEOUT_ARM     120
 #define DEFAULT_TIMEOUT_CONNECT 1
 
