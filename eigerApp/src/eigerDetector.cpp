@@ -253,8 +253,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Detector Status Parameters
     mState      = mParams.create(EigStateStr,      asynParamOctet,   SSDetStatus, "state");
 //    mError      = mParams.create(EigErrorStr,      asynParamOctet,   SSDetStatus, "error");
-    mThTemp0    = mParams.create(EigThTemp0Str,    asynParamFloat64, SSDetStatus, "board_000/th0_temp");
-    mThHumid0   = mParams.create(EigThHumid0Str,   asynParamFloat64, SSDetStatus, "board_000/th0_humidity");
+    mThTemp0    = mParams.create(EigThTemp0Str,    asynParamFloat64, SSDetStatus, "temperature");
+    mThHumid0   = mParams.create(EigThHumid0Str,   asynParamFloat64, SSDetStatus, "humidity");
 //    mLink0      = mParams.create(EigLink0Str,      asynParamInt32,   SSDetStatus, "link_0");
 //    mLink1      = mParams.create(EigLink1Str,      asynParamInt32,   SSDetStatus, "link_1");
 //    mLink2      = mParams.create(EigLink2Str,      asynParamInt32,   SSDetStatus, "link_2");
@@ -296,7 +296,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
 //    mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "software_version");
     mSerialNumber      = mParams.create(ADSerialNumberString,      asynParamOctet,   SSDetConfig, "detector_number");
-    mTemperatureActual = mParams.create(ADTemperatureActualString, asynParamFloat64, SSDetStatus, "board_000/th0_temp");
+    mTemperatureActual = mParams.create(ADTemperatureActualString, asynParamFloat64, SSDetStatus, "temperature");
     mNDArraySizeX      = mParams.create(NDArraySizeXString,        asynParamInt32,   SSDetConfig, "x_pixels_in_detector");
     mNDArraySizeY      = mParams.create(NDArraySizeYString,        asynParamInt32,   SSDetConfig, "y_pixels_in_detector");
 
