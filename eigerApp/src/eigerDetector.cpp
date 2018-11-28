@@ -303,6 +303,14 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Test if the detector is initialized
     if(mState->fetch())
     {
+        ERR("Cannot fetch state. Eiger could be disconnected.");
+        setStringParam(ADStatusMessage, "Eiger FAILED TO CONNECT");
+        return;
+    }
+    std::string state;
+    mState->get(state);
+    if(state == "na")
+    {
         ERR("Eiger seems to be uninitialized\nInitializing... (may take a while)");
 
         if(mApi.initialize())
