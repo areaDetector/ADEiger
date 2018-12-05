@@ -67,20 +67,18 @@ record(mbbi,"$(P)$(R)TriggerMode_RBV") {
 }
 
 # Number of Triggers
-record(ao, "$(P)$(R)NumTriggers") {
+record(longout, "$(P)$(R)NumTriggers") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
     field(DESC, "Number of triggers per acquisition")
-    field(PREC, "0")
 }
 
-record(ai, "$(P)$(R)NumTriggers_RBV")
+record(longin, "$(P)$(R)NumTriggers_RBV")
 {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_TRIGGERS")
     field(DESC, "Number of triggers per acquisition")
-    field(PREC, "0")
     field(VAL,  "1")
     field(SCAN, "I/O Intr")
 }
@@ -193,21 +191,19 @@ record(stringin, "$(P)$(R)FWNamePattern_RBV") {
 }
 
 # FileWriter number of images per HDF5 file
-record(ao, "$(P)$(R)FWNImagesPerFile") {
+record(longout, "$(P)$(R)FWNImagesPerFile") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NIMAGES_PER_FILE")
     field(DESC, "Number of images per HDF5 file")
     field(VAL,  "1000")
-    field(PREC, "0")
 }
 
-record(ai, "$(P)$(R)FWNImagesPerFile_RBV")
+record(longin, "$(P)$(R)FWNImagesPerFile_RBV")
 {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NIMAGES_PER_FILE")
     field(DESC, "Number of images per HDF5 file")
-    field(PREC, "0")
     field(SCAN, "I/O Intr")
 }
 
@@ -388,12 +384,11 @@ record(bi,"$(P)$(R)StreamEnable_RBV") {
 }
 
 # Stream number of dropped frames
-record(ai, "$(P)$(R)StreamDropped_RBV")
+record(longin, "$(P)$(R)StreamDropped_RBV")
 {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DROPPED")
     field(DESC, "Number of dropped frames")
-    field(PREC, "0")
     field(SCAN, "I/O Intr")
 }
 
@@ -528,12 +523,11 @@ record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-record(ai, "$(P)$(R)SequenceId")
+record(longin, "$(P)$(R)SequenceId")
 {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SEQ_ID")
     field(DESC, "Image sequence number")
-    field(PREC, "0")
     field(SCAN, "I/O Intr")
 }
 
