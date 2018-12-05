@@ -10,7 +10,7 @@ https://github.com/areaDetector/ADEiger/releases.
 Release Notes
 =============
 
-R2-6 (December 4, 2018)
+R2-6 (December 5, 2018)
 ----
 * Driver fixes and improvements
   * Avoid error messages when polling status on Eiger 500K, which does not have link2 and link3.
@@ -24,6 +24,7 @@ R2-6 (December 4, 2018)
   * Fixed formatting
   * Added Makefiles to autoconvert medm adl files to files in new ui/autoconvert, edl/autoconvert, and opi/autoconvert directories
 * Uncommented commonPluginSettings.req in iocEiger/auto_settings.req so plugin settings will be saved and restored.
+* Changed record types of integer parameters in eiger.template from ao/ai to longout/longin.
 
 R2-5 (February 6, 2018)
 ----
