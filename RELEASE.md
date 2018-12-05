@@ -10,7 +10,7 @@ https://github.com/areaDetector/ADEiger/releases.
 Release Notes
 =============
 
-R2-6 (September XXX, 2018)
+R2-6 (December 4, 2018)
 ----
 * Driver fixes and improvements
   * Avoid error messages when polling status on Eiger 500K, which does not have link2 and link3.
