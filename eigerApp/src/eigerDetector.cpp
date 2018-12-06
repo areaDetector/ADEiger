@@ -671,9 +671,9 @@ void eigerDetector::controlTask (void)
             err = "FileWriter API is disabled";
         else if(dataSource == SOURCE_STREAM && !streamEnable)
             err = "Stream API is disabled";
-        else if(dataSource != SOURCE_NONE && compression &&
+        else if(dataSource == SOURCE_FILEWRITER && compression &&
                 compressionAlgo == "bslz4")
-            err = "Driver can't decode BSLZ4";
+            err = "Driver can't decode BSLZ4 HDF5 files";
 
         // If saving files, check if the File Path is valid
         if(fwEnable && saveFiles)
