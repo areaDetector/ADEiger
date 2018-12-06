@@ -8,6 +8,7 @@
 #include <zmq.h>
 #include <string.h>
 #include <lz4.h>
+#include <bitshuffle.h>
 
 #define ZMQ_PORT        9999
 #define MAX_JSON_TOKENS 512
@@ -328,11 +329,22 @@ int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
 {
     const char *functionName = "uncompress";
 
-    if(LZ4_decompress_fast((const char *)frame->data, dest, (int)frame->uncompressedSize) <0)
-    {
-        ERR("LZ4_decompress failed");
-        return STREAM_ERROR;
-    }
+    if (strcmp(frame->encoding, "lz4") == 0) {
+        if(LZ4_decompress_fast((const char *)frame->data, dest, (int)frame->uncompressedSize) <0)
+        {
+            ERR("LZ4_decompress failed");
+            return STREAM_ERROR;
+        }
+    } 
+    else if (strcmp(frame->encoding, "bslz4") == 0) {
+        int elemSize = 4;
+        if (frame->type == stream_frame_t::UINT16) elemSize = 2;
+        if (bshuf_decompress_lz4((const char *)frame->data, dest, frame->uncompressedSize, elemSize, 0) <0)
+        {
+            ERR("bshuf_decompress_lz4 failed");
+            return STREAM_ERROR;
+        }
+    } 
 
     return STREAM_SUCCESS;
 }
