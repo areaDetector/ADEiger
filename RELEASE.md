@@ -10,6 +10,16 @@ https://github.com/areaDetector/ADEiger/releases.
 Release Notes
 =============
 
+R2-7 (January XXX, 2018)
+----
+* Added support for decompressing bitshuffle/lz4 compressed files on the Stream interface.
+  Previously it could only decompress lz4 without bitshuffle.
+  This meant that if the Eiger server was saving bitshuffle/lz4 it was not possible to read
+  the data into areaDetector, because neither the Stream or Filewriter interfaces supported 
+  that compressor.
+* This requires using ADSupport R1-7 and ADCore R3-5 where bitshuffle support was added.
+* Removed the lz4Src directory from ADEiger.  It now uses the lz4 functions from bloscSrc in ADSupport.
+
 R2-6 (December 5, 2018)
 ----
 * Driver fixes and improvements
