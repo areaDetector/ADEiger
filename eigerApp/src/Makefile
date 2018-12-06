@@ -6,7 +6,6 @@ include $(TOP)/configure/CONFIG
 LIBRARY_IOC = eigerDetector
 
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
-USR_INCLUDES += -I$(TOP)/eigerApp/lz4Src
 USR_INCLUDES += $(addprefix -I, $(HDF5_INCLUDE))
 USR_INCLUDES += $(addprefix -I, $(ZMQ_INCLUDE))
 
