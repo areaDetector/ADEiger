@@ -239,16 +239,17 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 //    mDescription     = mParams.create(EigDescriptionStr,     asynParamOctet,   SSDetConfig, "description");
 
     // Acquisition
-//    mWavelength       = mParams.create(EigWavelengthStr,      asynParamFloat64, SSDetConfig, "wavelength");
+//    mWavelength       = mParams.create(EigWavelengthStr,         asynParamFloat64, SSDetConfig, "wavelength");
 //    mWavelength->setEpsilon(WAVELENGTH_EPSILON);
-    mPhotonEnergy     = mParams.create(EigPhotonEnergyStr,    asynParamFloat64, SSDetConfig, "photon_energy");
+    mPhotonEnergy      = mParams.create(EigPhotonEnergyStr,      asynParamFloat64, SSDetConfig, "photon_energy");
     mPhotonEnergy->setEpsilon(ENERGY_EPSILON);
-    mThreshold        = mParams.create(EigThresholdStr,       asynParamFloat64, SSDetConfig, "threshold_energy");
+    mThreshold         = mParams.create(EigThresholdStr,         asynParamFloat64, SSDetConfig, "threshold_energy");
     mThreshold->setEpsilon(ENERGY_EPSILON);
-    mNTriggers        = mParams.create(EigNTriggersStr,       asynParamInt32,   SSDetConfig, "ntrigger");
-    mCompressionAlgo  = mParams.create(EigCompressionAlgoStr, asynParamInt32,   SSDetConfig, "compression");
-    mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
-//    mAutoSummation    = mParams.create(EigAutoSummationStr,   asynParamInt32,   SSDetConfig, "auto_summation");
+    mNTriggers         = mParams.create(EigNTriggersStr,         asynParamInt32,   SSDetConfig, "ntrigger");
+    mTriggerStartDelay = mParams.create(EigTriggerStartDelayStr, asynParamInt32,   SSDetConfig, "trigger_start_delay");
+    mCompressionAlgo   = mParams.create(EigCompressionAlgoStr,   asynParamInt32,   SSDetConfig, "compression");
+    mROIMode           = mParams.create(EigROIModeStr,           asynParamInt32,   SSDetConfig, "roi_mode");
+//    mAutoSummation     = mParams.create(EigAutoSummationStr,     asynParamInt32,   SSDetConfig, "auto_summation");
 
     // Detector Status Parameters
     mState      = mParams.create(EigStateStr,      asynParamOctet,   SSDetStatus, "state");
@@ -636,7 +637,7 @@ void eigerDetector::controlTask (void)
     int dataSource, adStatus;
     int sequenceId, saveFiles, numImages, numTriggers;
     int numImagesPerFile;
-    double acquirePeriod, triggerTimeout = 0.0, triggerExposure = 0.0;
+    double acquirePeriod, triggerStartDelay, triggerTimeout = 0.0, triggerExposure = 0.0;
     int savedNumImages, filePerms;
 
     lock();
@@ -670,6 +671,7 @@ void eigerDetector::controlTask (void)
         mNTriggers->get(numTriggers);
         mTriggerMode->get(triggerMode);
         mManualTrigger->get(manualTrigger);
+        mTriggerStartDelay->get(triggerStartDelay);
         mFWAutoRemove->get(removeFiles);
         mFWCompression->get(compression);
         mCompressionAlgo->get(compressionAlgo);
@@ -783,7 +785,7 @@ void eigerDetector::controlTask (void)
         {
             if(triggerMode == "ints")
             {
-                triggerTimeout  = acquirePeriod*numImages + 10.0;
+                triggerTimeout  = triggerStartDelay + acquirePeriod*numImages + 10.0;
                 triggerExposure = 0.0;
             }
 

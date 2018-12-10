@@ -38,6 +38,7 @@
 #define EigTriggerExpStr           "TRIGGER_EXPOSURE"
 #define EigNTriggersStr            "NUM_TRIGGERS"
 #define EigManualTriggerStr        "MANUAL_TRIGGER"
+#define EigTriggerStartDelayStr    "TRIGGER_START_DELAY"
 #define EigCompressionAlgoStr      "COMPRESSION_ALGO"
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigROIModeStr              "ROI_MODE"
@@ -121,6 +122,7 @@ protected:
     EigerParam *mTrigger;
     EigerParam *mTriggerExp;
     EigerParam *mManualTrigger;
+    EigerParam *mTriggerStartDelay;
     EigerParam *mArmed;
     EigerParam *mSequenceId;
     EigerParam *mPendingFiles;
