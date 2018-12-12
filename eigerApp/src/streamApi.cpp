@@ -329,19 +329,24 @@ int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
 {
     const char *functionName = "uncompress";
 
-    if (strcmp(frame->encoding, "lz4") == 0) {
-        if(LZ4_decompress_fast((const char *)frame->data, dest, (int)frame->uncompressedSize) <0)
+    if (strcmp(frame->encoding, "lz4<") == 0) {
+        int result = LZ4_decompress_fast((const char *)frame->data, dest, (int)frame->uncompressedSize);
+        if (result < 0)
         {
-            ERR("LZ4_decompress failed");
-            return STREAM_ERROR;
+            ERR_ARGS("LZ4_decompress failed, result=%d\n", result);
+            return STREAM_ERROR; 
         }
     } 
-    else if (strcmp(frame->encoding, "bslz4") == 0) {
-        int elemSize = 4;
+    else if (strcmp(frame->encoding, "bs32-lz4<") == 0) {
+        size_t elemSize = 4;
         if (frame->type == stream_frame_t::UINT16) elemSize = 2;
-        if (bshuf_decompress_lz4((const char *)frame->data, dest, frame->uncompressedSize, elemSize, 0) <0)
+        size_t numElements = frame->uncompressedSize/elemSize;
+        printf("Calling bshuf_decompress_lz4, nmElements=%d, elemSize=%d, blockSize=%d\n",
+               (int)numElements, (int)elemSize, 0);
+        int result = bshuf_decompress_lz4(((const char *)frame->data)+12, dest, numElements, elemSize, 0);
+        if (result < 0)
         {
-            ERR("bshuf_decompress_lz4 failed");
+            ERR_ARGS("bshuf_decompress_lz4 failed, result=%d", result);
             return STREAM_ERROR;
         }
     } 
