@@ -41,6 +41,26 @@ record(mbbi,"$(P)$(R)DataSource_RBV") {
     field(TWST, "Stream")
 }
 
+# Decompress stream data in driver
+record(bo,"$(P)$(R)StreamDecompress") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
+    field(DESC, "Decompress stream data")
+    field(VAL,  "1")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)StreamDecompress_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
+    field(DESC, "Decompress stream data")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(DESC,"Acquire mode")
@@ -1052,3 +1072,4 @@ record(ai, "$(P)$(R)DCUBufferFree_RBV")
     field(VAL,  "0")
     field(PREC, "1")
 }
+
