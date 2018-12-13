@@ -8,7 +8,7 @@ display {
 		x=1276
 		y=227
 		width=350
-		height=105
+		height=130
 	}
 	clr=14
 	bclr=4
@@ -85,18 +85,6 @@ display {
 		3cb420,
 		289315,
 		1a7309,
-	}
-}
-rectangle {
-	object {
-		x=0
-		y=0
-		width=350
-		height=105
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
 	}
 }
 rectangle {
@@ -220,5 +208,59 @@ menu {
 		chan="$(P)$(R)StreamEnable"
 		clr=14
 		bclr=51
+	}
+}
+rectangle {
+	object {
+		x=0
+		y=0
+		width=350
+		height=130
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+text {
+	object {
+		x=35
+		y=106
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Decompress"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=150
+		y=106
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamDecompress"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=255
+		y=107
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)StreamDecompress_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
 	}
 }
