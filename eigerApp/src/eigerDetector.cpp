@@ -233,6 +233,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFileOwnerGroup = mParams.create(EigFileOwnerGroupStr, asynParamOctet);
     mFilePerms      = mParams.create(EigFilePermsStr,      asynParamInt32);
     mMonitorTimeout = mParams.create(EigMonitorTimeoutStr, asynParamInt32);
+    mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
 
     // Metadata
     mDescription     = mParams.create(EigDescriptionStr,     asynParamOctet,   SSDetConfig, "description");
@@ -1236,15 +1237,37 @@ void eigerDetector::streamTask (void)
                 continue;
             }
 
-            StreamAPI::uncompress(&frame, (char*)pArray->pData);
-            free(frame.data);
-
-            int imageCounter, numImagesCounter, arrayCallbacks;
+            
+            int imageCounter, numImagesCounter, arrayCallbacks, decompress;
             lock();
             getIntegerParam(NDArrayCounter, &imageCounter);
             getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+            mStreamDecompress->get(decompress);
             unlock();
+            
+            if (decompress) {
+                StreamAPI::uncompress(&frame, (char*)pArray->pData);
+            } else {
+                unsigned char *pInput=(unsigned char*)frame.data;
+                if (strcmp(frame.encoding, "lz4<") == 0) {
+                    pArray->codec = "lz4";
+                }
+                else if ((strcmp(frame.encoding, "bs32-lz4<") == 0) ||
+                         (strcmp(frame.encoding, "bs16-lz4<") == 0)) {
+                    pArray->codec = "bslz4";
+                    pInput += 12;
+                }
+                else {
+                    ERR_ARGS("unknown encoding %s", frame.encoding);
+                    free(frame.data);
+                    continue;
+                }
+                pArray->compressedSize = frame.compressedSize;
+                memcpy(pArray->pData, pInput, frame.compressedSize);
+            }
+            free(frame.data);
+
 
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;
