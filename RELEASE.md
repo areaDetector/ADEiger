@@ -17,8 +17,17 @@ R2-7 (January XXX, 2018)
   This meant that if the Eiger server was saving bitshuffle/lz4 it was not possible to read
   the data into areaDetector, because neither the Stream or Filewriter interfaces supported 
   that compressor.
-* This requires using ADSupport R1-7 and ADCore R3-5 where bitshuffle support was added.
-* Removed the lz4Src directory from ADEiger.  It now uses the lz4 functions from bloscSrc in ADSupport.
+* Added StreamDecompress record. This controls whether the driver decompresses the arrays from the Stream interface.
+  If StreamDecompress=Yes (default), then the NDArrays received by plugins are decompressed. This was the previous behavior.
+  If StreamDecompress=No then the NDArrays received by plugins are compressed,
+  with the .codec and .compressedSize fields set appropriately. This mode can be useful for passing
+  compressed arrays directly to NDPluginPva (and then to ImageJ) and to NDFileHDF5 once that supports DirectChunkWrite.
+  Other plugins that do not support compressed arrays will need to get their data from an NDPluginCodec plugin
+  that is configured to decompress the NDArrays from ADEiger.
+  This configuration has the advantage that the decompression is offloaded from the driver, and hence can use 
+  more cores and can queue NDArrays in case it cannot keep up.
+* This version requires ADSupport R1-7 and ADCore R3-5 where bitshuffle support was added.
+* Removed the lz4Src directory from ADEiger.  It now uses the lz4 functions from bitshuffleSrc in ADSupport.
 
 R2-6 (December 5, 2018)
 ----
