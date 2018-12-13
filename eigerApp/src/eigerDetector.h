@@ -129,6 +129,7 @@ protected:
     EigerParam *mFileOwnerGroup;
     EigerParam *mFilePerms;
     EigerParam *mMonitorTimeout;
+    EigerParam *mStreamDecompress;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
@@ -172,7 +173,6 @@ protected:
     EigerParam *mStreamEnable;
     EigerParam *mStreamDropped;
     EigerParam *mStreamState;
-    EigerParam *mStreamDecompress;
 
     // Base class parameters
     EigerParam *mAcquireTime;
