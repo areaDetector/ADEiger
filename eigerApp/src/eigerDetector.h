@@ -46,6 +46,7 @@
 // Detector Status Parameters
 #define EigStateStr                "STATE"
 #define EigErrorStr                "ERROR"
+#define EigInitializeStr           "INITIALIZE"
 #define EigThTemp0Str              "TH_TEMP_0"
 #define EigThHumid0Str             "TH_HUMID_0"
 #define EigLink0Str                "LINK_0"
@@ -102,6 +103,7 @@ public:
     void reapTask     (void);
     void monitorTask  (void);
     void streamTask   (void);
+    void initializeTask();
 
     enum roi_mode
     {
@@ -132,6 +134,7 @@ protected:
     EigerParam *mFilePerms;
     EigerParam *mMonitorTimeout;
     EigerParam *mStreamDecompress;
+    EigerParam *mInitialize;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
@@ -191,7 +194,7 @@ private:
     char mHostname[512];
     RestAPI mApi;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
-            mPollDoneEvent;
+            mPollDoneEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
     bool mPollStop, mPollComplete, mStreamComplete;

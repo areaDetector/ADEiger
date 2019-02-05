@@ -143,6 +143,11 @@ static void streamTaskC (void *drvPvt)
     ((eigerDetector *)drvPvt)->streamTask();
 }
 
+static void initializeTaskC (void *drvPvt)
+{
+    ((eigerDetector *)drvPvt)->initializeTask();
+}
+
 /* Constructor for Eiger driver; most parameters are simply passed to
  * ADDriver::ADDriver.
  * After calling the base class constructor this method creates a thread to
@@ -234,6 +239,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFilePerms      = mParams.create(EigFilePermsStr,      asynParamInt32);
     mMonitorTimeout = mParams.create(EigMonitorTimeoutStr, asynParamInt32);
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
+    mInitialize     = mParams.create(EigInitializeStr,     asynParamInt32);
 
     // Metadata
 //    mDescription     = mParams.create(EigDescriptionStr,     asynParamOctet,   SSDetConfig, "description");
@@ -380,6 +386,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)streamTaskC, this) == NULL);
 
+    status |= (epicsThreadCreate("eigerInitializeTask", epicsThreadPriorityHigh,
+            epicsThreadGetStackSize(epicsThreadStackMedium),
+            (EPICSTHREADFUNC)initializeTaskC, this) == NULL);
+
     if(status)
         ERR("epicsThreadCreate failure for some task");
 }
@@ -430,6 +440,11 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
 //    }
     else if (function == ADReadStatus)
         status = eigerStatus();
+    else if (function == mInitialize->getIndex() && value == 1)
+    {
+        setIntegerParam(mInitialize->getIndex(), 1);
+        mInitializeEvent.signal();
+    }
     else if (function == mTrigger->getIndex())
         mTriggerEvent.signal();
     else if (function == mFilePerms->getIndex())
@@ -1312,6 +1327,32 @@ end:
         unlock();
 
         mStreamDoneEvent.signal();
+    }
+}
+
+void eigerDetector::initializeTask()
+{
+    const char *functionName = "initializeTask";
+    for(;;)
+    {
+        mInitializeEvent.wait();
+
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_WARNING,
+                  "%s:%s: Sending initialize command\n",
+                  driverName, functionName);
+
+        int status = mApi.initialize();
+
+        lock();
+        setIntegerParam(mInitialize->getIndex(), 0);
+        unlock();
+
+        if (status) {
+            ERR("Failed to initialize");
+        }
+
+        // Clear events
+        mInitializeEvent.tryWait();
     }
 }
 

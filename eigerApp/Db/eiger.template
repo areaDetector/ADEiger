@@ -1052,6 +1052,13 @@ record(bi, "$(P)$(R)ReverseY_RBV")
     field(DISA, "1")
 }
 
+record(busy, "$(P)$(R)Initialize") {
+   field(DTYP, "asynInt32")
+   field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))INITIALIZE")
+   field(ZNAM, "Done")
+   field(ONAM, "Initialize")
+}
+
 # Eiger State
 record(stringin, "$(P)$(R)State_RBV") {
     field(DESC, "Operational state")
