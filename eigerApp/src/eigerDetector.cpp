@@ -246,10 +246,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mThreshold         = mParams.create(EigThresholdStr,         asynParamFloat64, SSDetConfig, "threshold_energy");
     mThreshold->setEpsilon(ENERGY_EPSILON);
     mNTriggers         = mParams.create(EigNTriggersStr,         asynParamInt32,   SSDetConfig, "ntrigger");
-    mTriggerStartDelay = mParams.create(EigTriggerStartDelayStr, asynParamInt32,   SSDetConfig, "trigger_start_delay");
+    mTriggerStartDelay = mParams.create(EigTriggerStartDelayStr, asynParamFloat64, SSDetConfig, "trigger_start_delay");
     mCompressionAlgo   = mParams.create(EigCompressionAlgoStr,   asynParamInt32,   SSDetConfig, "compression");
     mROIMode           = mParams.create(EigROIModeStr,           asynParamInt32,   SSDetConfig, "roi_mode");
-//    mAutoSummation     = mParams.create(EigAutoSummationStr,     asynParamInt32,   SSDetConfig, "auto_summation");
+    mAutoSummation     = mParams.create(EigAutoSummationStr,     asynParamInt32,   SSDetConfig, "auto_summation");
 
     // Detector Status Parameters
     mState      = mParams.create(EigStateStr,      asynParamOctet,   SSDetStatus, "state");

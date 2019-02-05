@@ -151,19 +151,36 @@ record(ao, "$(P)$(R)Trigger") {
     field(DESC, "Trigger the detector")
 }
 
-# Enable Retrigger
-record(bo,"$(P)$(R)Retrigger") {
+record(bo,"$(P)$(R)CountingMode") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_retrigger")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
+    field(VAL,  "1")
+    field(ZNAM, "Normal")
+    field(ONAM, "Retrigger")
+}
+
+record(bi,"$(P)$(R)CountingMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
+    field(ZNAM, "Normal")
+    field(ONAM, "Retrigger")
+    field(SCAN, "I/O Intr")
+}
+
+# Enable Auto Summation
+record(bo,"$(P)$(R)AutoSummation") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
     field(VAL,  "1")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
 }
 
-record(bi,"$(P)$(R)Retrigger_RBV") {
+record(bi,"$(P)$(R)AutoSummation_RBV") {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_retrigger")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
     field(SCAN, "I/O Intr")
