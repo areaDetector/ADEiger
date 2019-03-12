@@ -426,21 +426,24 @@ record(mbbo,"$(P)$(R)CompressionAlgo") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
     field(DESC, "Compression Algorithm")
     field(VAL,  "0")
-    field(ZRST, "LZ4")
+    field(ZRST, "BSLZ4")
     field(ZRVL, "0")
-    field(ONST, "BS LZ4")
+    field(ONST, "LZ4")
     field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
 }
 
 record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
     field(DESC, "Compression Algorithm")
-    field(VAL,  "0")
-    field(ZRST, "LZ4")
+    field(ZRST, "BSLZ4")
     field(ZRVL, "0")
-    field(ONST, "BS LZ4")
+    field(ONST, "LZ4")
     field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
     field(SCAN, "I/O Intr")
 }
 
@@ -488,11 +491,11 @@ record(mbbo,"$(P)$(R)StreamHdrDetail") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCI_header_detail")
     field(DESC, "Stream Header Detail")
     field(VAL,  "0")
-    field(ZRST, "All")
+    field(ZRST, "None")
     field(ZRVL, "0")
     field(ONST, "Basic")
     field(ONVL, "1")
-    field(TWST, "None")
+    field(TWST, "All")
     field(TWVL, "2")
 }
 
@@ -501,11 +504,11 @@ record(mbbi,"$(P)$(R)StreamHdrDetail_RBV") {
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_SCI_header_detail")
     field(DESC, "Stream Header Detail")
     field(VAL,  "0")
-    field(ZRST, "All")
+    field(ZRST, "None")
     field(ZRVL, "0")
     field(ONST, "Basic")
     field(ONVL, "1")
-    field(TWST, "None")
+    field(TWST, "All")
     field(TWVL, "2")
     field(SCAN, "I/O Intr")
 }
