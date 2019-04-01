@@ -2,7 +2,7 @@ ADEiger
 ===========
 An
 [EPICS](http://www.aps.anl.gov/epics/)
-[areaDetector](http://cars.uchicago.edu/software/epics/areaDetector.html)
+[areaDetector](https://cars.uchicago.edu/software/epics/areaDetector.html)
 driver for the Eiger pixel array detectors from
 [Dectris](http://www.dectris.com).
 
