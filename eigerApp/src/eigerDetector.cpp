@@ -256,6 +256,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mCompressionAlgo   = mParams.create(EigCompressionAlgoStr,   asynParamInt32,   SSDetConfig, "compression");
     mROIMode           = mParams.create(EigROIModeStr,           asynParamInt32,   SSDetConfig, "roi_mode");
     mAutoSummation     = mParams.create(EigAutoSummationStr,     asynParamInt32,   SSDetConfig, "auto_summation");
+    mBitDepthImage     = mParams.create(EigBitDepthImageStr,     asynParamInt32,   SSDetConfig, "bit_depth_image");
 
     // Detector Status Parameters
     mState      = mParams.create(EigStateStr,      asynParamOctet,   SSDetStatus, "state");

@@ -47,6 +47,7 @@
 #define EigStateStr                "STATE"
 #define EigErrorStr                "ERROR"
 #define EigInitializeStr           "INITIALIZE"
+#define EigBitDepthImageStr        "BIT_DEPTH_IMAGE"
 #define EigThTemp0Str              "TH_TEMP_0"
 #define EigThHumid0Str             "TH_HUMID_0"
 #define EigLink0Str                "LINK_0"
@@ -147,6 +148,7 @@ protected:
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
     EigerParam *mAutoSummation;
+    EigerParam *mBitDepthImage;
 
     // Eiger parameters: status
     EigerParam *mState;
