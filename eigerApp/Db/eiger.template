@@ -197,16 +197,21 @@ record(bi,"$(P)$(R)FWCompression_RBV") {
 }
 
 # FileWriter name pattern
-record(stringout, "$(P)$(R)FWNamePattern") {
+record(waveform, "$(P)$(R)FWNamePattern") {
     field(PINI, "YES")
     field(DTYP, "asynOctetWrite")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+    field(FTVL, "CHAR")
+    field(NELM, "256")
     field(VAL,  "series_$id")
+    info(autosaveFields, "VAL")
 }
 
-record(stringin, "$(P)$(R)FWNamePattern_RBV") {
+record(waveform, "$(P)$(R)FWNamePattern_RBV") {
     field(DTYP, "asynOctetRead")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NAME_PATTERN")
+    field(FTVL, "CHAR")
+    field(NELM, "256")
     field(SCAN, "I/O Intr")
 }
 

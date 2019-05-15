@@ -1251,11 +1251,11 @@ void eigerDetector::streamTask (void)
             } else {
                 unsigned char *pInput=(unsigned char*)frame.data;
                 if (strcmp(frame.encoding, "lz4<") == 0) {
-                    pArray->codec = "lz4";
+                    pArray->codec.name = "lz4";
                 }
                 else if ((strcmp(frame.encoding, "bs32-lz4<") == 0) ||
                          (strcmp(frame.encoding, "bs16-lz4<") == 0)) {
-                    pArray->codec = "bslz4";
+                    pArray->codec.name = "bslz4";
                     pInput += 12;
                 }
                 else {
