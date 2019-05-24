@@ -296,7 +296,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>decimal</enum>
+                <enum>string</enum>
             </property>
         </widget>
         <widget class="caLineEdit" name="caLineEdit_0">

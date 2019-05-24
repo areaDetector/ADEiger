@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
+	name="/home/epics/devel/areaDetector-3-5/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
 	version=030109
 }
 display {
@@ -148,6 +148,7 @@ text {
 		clr=14
 		bclr=51
 	}
+	format="string"
 	limits {
 	}
 }

@@ -106,7 +106,7 @@ y 105
 w 160
 h 20
 controlPv "$(P)$(R)FWNamePattern"
-format "decimal"
+format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
