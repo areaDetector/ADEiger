@@ -1,0 +1,45 @@
+# Database for the records specific to the Eiger2X
+# Gary Yendell
+# 1/8/19
+
+include "eigerBase.template"
+
+## Reorder Enums ##
+
+# Compression algorithm selection
+record(mbbo,"$(P)$(R)CompressionAlgo") {
+    field(ZRST, "BSLZ4")
+    field(ZRVL, "0")
+    field(ONST, "LZ4")
+    field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
+}
+
+record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
+    field(ZRST, "BSLZ4")
+    field(ZRVL, "0")
+    field(ONST, "LZ4")
+    field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
+}
+
+# Stream Header Detail Selection
+record(mbbo,"$(P)$(R)StreamHdrDetail") {
+    field(ZRST, "None")
+    field(ZRVL, "0")
+    field(ONST, "Basic")
+    field(ONVL, "1")
+    field(TWST, "All")
+    field(TWVL, "2")
+}
+
+record(mbbi,"$(P)$(R)StreamHdrDetail_RBV") {
+    field(ZRST, "None")
+    field(ZRVL, "0")
+    field(ONST, "Basic")
+    field(ONVL, "1")
+    field(TWST, "All")
+    field(TWVL, "2")
+}

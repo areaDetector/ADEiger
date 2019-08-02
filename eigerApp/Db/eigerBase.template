@@ -171,13 +171,6 @@ record(bi,"$(P)$(R)FWEnable_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-# FileWriter clear all files
-record(ao, "$(P)$(R)FWClear") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
-    field(DESC, "Clear files in the detector")
-}
-
 # FileWriter compression enabled
 record(bo,"$(P)$(R)FWCompression") {
     field(PINI, "YES")
@@ -608,8 +601,6 @@ record(ai, "$(P)$(R)ThresholdEnergy_RBV")
     field(SCAN, "I/O Intr")
 }
 
-# ancillary information
-
 record(ao, "$(P)$(R)Wavelength")
 {
     field(DTYP, "asynFloat64")
@@ -617,6 +608,35 @@ record(ao, "$(P)$(R)Wavelength")
     field(PREC, "4")
     field(EGU,  "Angstroms")
 }
+
+record(ai, "$(P)$(R)Wavelength_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
+    field(PREC, "4")
+    field(EGU,  "Angstroms")
+    field(SCAN, "I/O Intr")
+}
+
+# Enable Auto Summation
+record(bo,"$(P)$(R)AutoSummation") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
+    field(VAL,  "1")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bi,"$(P)$(R)AutoSummation_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(SCAN, "I/O Intr")
+}
+
+# ancillary information
 
 record(ao, "$(P)$(R)DetDist")
 {
@@ -643,15 +663,6 @@ record(ao, "$(P)$(R)BeamY")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_beam_center_y")
     field(PREC, "3")
     field(EGU,  "pixels")
-}
-
-record(ai, "$(P)$(R)Wavelength_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH")
-    field(PREC, "4")
-    field(EGU,  "Angstroms")
-    field(SCAN, "I/O Intr")
 }
 
 record(ai, "$(P)$(R)DetDist_RBV")
@@ -1003,7 +1014,6 @@ record(stringin, "$(P)$(R)State_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-# Eiger Error Parameters
 record(stringin, "$(P)$(R)Error_RBV") {
     field(DESC, "Parameters causing error state")
     field(DTYP, "asynOctetRead")
@@ -1025,52 +1035,6 @@ record(ai, "$(P)$(R)Humid0_RBV")
 {
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_HUMID_0")
-    field(EGU,  "%")
-    field(SCAN, "I/O Intr")
-    field(VAL,  "0")
-    field(PREC, "1")
-}
-
-record(bi, "$(P)$(R)Link0_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_0")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(bi, "$(P)$(R)Link1_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_1")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(bi, "$(P)$(R)Link2_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_2")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(bi, "$(P)$(R)Link3_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_3")
-    field(ZNAM, "Down")
-    field(ONAM, "Up")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)DCUBufferFree_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DCU_BUF_FREE")
     field(EGU,  "%")
     field(SCAN, "I/O Intr")
     field(VAL,  "0")
