@@ -164,7 +164,7 @@ int EigerParam::parseMinMax (struct json_token *tokens, string const & key,
     return EXIT_SUCCESS;
 }
 
-int EigerParam::parseValue (struct json_token *tokens, string & rawValue)
+int EigerParam::parseValue (struct json_token *tokens, std::string & rawValue)
 {
     const char *functionName = "parseValue";
 
@@ -178,7 +178,7 @@ int EigerParam::parseValue (struct json_token *tokens, string & rawValue)
     return EXIT_SUCCESS;
 }
 
-int EigerParam::parseValue (string const & rawValue, bool & value)
+int EigerParam::parseValue (std::string const & rawValue, bool & value)
 {
     const char *functionName = "parseValue";
 
@@ -194,7 +194,7 @@ int EigerParam::parseValue (string const & rawValue, bool & value)
     return EXIT_SUCCESS;
 }
 
-int EigerParam::parseValue (string const & rawValue, int & value)
+int EigerParam::parseValue (std::string const & rawValue, int & value)
 {
     const char *functionName = "parseValue";
 
@@ -206,7 +206,7 @@ int EigerParam::parseValue (string const & rawValue, int & value)
     return EXIT_SUCCESS;
 }
 
-int EigerParam::parseValue (string const & rawValue, double & value)
+int EigerParam::parseValue (std::string const & rawValue, double & value)
 {
     const char *functionName = "parseValue";
 
@@ -651,7 +651,7 @@ int EigerParam::fetch (double & value, int timeout)
     return get(value);
 }
 
-int EigerParam::fetch (string & value, int timeout)
+int EigerParam::fetch (std::string & value, int timeout)
 {
     const char *functionName = "fetch<string>";
 
@@ -888,7 +888,7 @@ int EigerParam::put (double value, int timeout)
     return EXIT_SUCCESS;
 }
 
-int EigerParam::put (string const & value, int timeout)
+int EigerParam::put (std::string const & value, int timeout)
 {
     const char *functionName = "put<string>";
     FLOW_ARGS("%s", value.c_str());
