@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<display version="2.0.0">
+  <name>eigerTop</name>
+  <x>215</x>
+  <y>139</y>
+  <width>170</width>
+  <height>150</height>
+  <background_color>
+    <color red="187" green="187" blue="187">
+    </color>
+  </background_color>
+  <grid_visible>false</grid_visible>
+  <grid_step_x>5</grid_step_x>
+  <widget type="label" version="2.0.0">
+    <name>text #6</name>
+    <text>Area Detector</text>
+    <x>14</x>
+    <y>10</y>
+    <width>201</width>
+    <height>31</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="30.0">
+      </font>
+    </font>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #9</name>
+    <text>Eiger</text>
+    <x>3</x>
+    <y>50</y>
+    <width>70</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #12</name>
+    <actions>
+      <action type="open_display">
+        <file>----------------------------------------------</file>
+        <target>tab</target>
+        <description>----------------------------------------------</description>
+      </action>
+      <action type="open_display">
+        <file>eigerDetector.opi</file>
+        <macros>
+          <P>3EIG1:</P>
+          <R>cam1:</R>
+        </macros>
+        <target>tab</target>
+        <description>Eiger Detector Control</description>
+      </action>
+      <action type="open_display">
+        <file>----------------------------------------------</file>
+        <target>tab</target>
+        <description>----------------------------------------------</description>
+      </action>
+      <action type="open_display">
+        <file>-------------------------------</file>
+        <target>tab</target>
+      </action>
+      <action type="open_display">
+        <file>ADBase.opi</file>
+        <macros>
+          <P>3EIG1:</P>
+          <R>cam1:</R>
+        </macros>
+        <target>tab</target>
+        <description>ADCore ADBase screen</description>
+      </action>
+      <action type="open_display">
+        <file>----------------------------------------------</file>
+        <target>tab</target>
+        <description>----------------------------------------------</description>
+      </action>
+    </actions>
+    <text></text>
+    <x>85</x>
+    <y>50</y>
+    <width>70</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #20</name>
+    <actions>
+      <action type="open_display">
+        <file>ioc_stats_soft.opi</file>
+        <macros>
+          <ioc>3EIG1:</ioc>
+        </macros>
+        <target>tab</target>
+        <description>IOC Status soft ioc</description>
+      </action>
+      <action type="open_display">
+        <file>--------------------</file>
+        <target>tab</target>
+        <description>---------------------</description>
+      </action>
+      <action type="open_display">
+        <file>save_restoreStatus.opi</file>
+        <macros>
+          <P>3EIG1:</P>
+        </macros>
+        <target>tab</target>
+        <description>save_restore Status</description>
+      </action>
+    </actions>
+    <text>Status</text>
+    <x>85</x>
+    <y>89</y>
+    <width>70</width>
+    <height>20</height>
+    <foreground_color>
+      <color red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="51" green="153" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #27</name>
+    <text>IOC</text>
+    <x>3</x>
+    <y>90</y>
+    <width>70</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+</display>
