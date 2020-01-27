@@ -13,7 +13,7 @@
 
 #include <fcntl.h>
 
-#define API_VERSION             "1.6.0"
+#define API_VERSION             "1.8.0"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
 #define EOH                     EOL EOL     // End of Header
@@ -32,7 +32,7 @@
 #define MAX_BUF_SIZE            256
 #define MAX_JSON_TOKENS         100
 
-#define DEFAULT_TIMEOUT_INIT    240
+#define DEFAULT_TIMEOUT_INIT    1800
 #define DEFAULT_TIMEOUT_ARM     120
 #define DEFAULT_TIMEOUT_CONNECT 1
 

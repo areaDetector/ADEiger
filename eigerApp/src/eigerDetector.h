@@ -38,6 +38,7 @@
 #define EigTriggerExpStr           "TRIGGER_EXPOSURE"
 #define EigNTriggersStr            "NUM_TRIGGERS"
 #define EigManualTriggerStr        "MANUAL_TRIGGER"
+#define EigTriggerStartDelayStr    "TRIGGER_START_DELAY"
 #define EigCompressionAlgoStr      "COMPRESSION_ALGO"
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigROIModeStr              "ROI_MODE"
@@ -45,6 +46,8 @@
 // Detector Status Parameters
 #define EigStateStr                "STATE"
 #define EigErrorStr                "ERROR"
+#define EigInitializeStr           "INITIALIZE"
+#define EigBitDepthImageStr        "BIT_DEPTH_IMAGE"
 #define EigThTemp0Str              "TH_TEMP_0"
 #define EigThHumid0Str             "TH_HUMID_0"
 #define EigLink0Str                "LINK_0"
@@ -101,6 +104,7 @@ public:
     void reapTask     (void);
     void monitorTask  (void);
     void streamTask   (void);
+    void initializeTask();
 
     enum roi_mode
     {
@@ -121,6 +125,7 @@ protected:
     EigerParam *mTrigger;
     EigerParam *mTriggerExp;
     EigerParam *mManualTrigger;
+    EigerParam *mTriggerStartDelay;
     EigerParam *mArmed;
     EigerParam *mSequenceId;
     EigerParam *mPendingFiles;
@@ -130,6 +135,7 @@ protected:
     EigerParam *mFilePerms;
     EigerParam *mMonitorTimeout;
     EigerParam *mStreamDecompress;
+    EigerParam *mInitialize;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
@@ -142,6 +148,7 @@ protected:
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
     EigerParam *mAutoSummation;
+    EigerParam *mBitDepthImage;
 
     // Eiger parameters: status
     EigerParam *mState;
@@ -189,7 +196,7 @@ private:
     char mHostname[512];
     RestAPI mApi;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
-            mPollDoneEvent;
+            mPollDoneEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
     bool mPollStop, mPollComplete, mStreamComplete;
