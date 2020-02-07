@@ -17,7 +17,7 @@
     mAsynName.c_str(), functionName, msg)
 
 #define ERR_ARGS(fmt,...) asynPrint(mSet->getUser(), ASYN_TRACE_ERROR, \
-    "Param[%s]::%s: "fmt"\n", mAsynName.c_str(), functionName, __VA_ARGS__);
+    "Param[%s]::%s: " fmt "\n", mAsynName.c_str(), functionName, __VA_ARGS__);
 
 // Flow message formatters
 #define FLOW(msg) asynPrint(mSet->getUser(), ASYN_TRACE_FLOW, \
@@ -25,7 +25,7 @@
     mAsynName.c_str(), functionName, msg)
 
 #define FLOW_ARGS(fmt,...) asynPrint(mSet->getUser(), ASYN_TRACE_FLOW, \
-    "Param[%s]::%s: "fmt"\n", mAsynName.c_str(), functionName, __VA_ARGS__);
+    "Param[%s]::%s: " fmt "\n", mAsynName.c_str(), functionName, __VA_ARGS__);
 
 
 #define MAX_BUFFER_SIZE 128

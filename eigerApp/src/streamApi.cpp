@@ -16,7 +16,7 @@
 #define ERR_PREFIX  "StreamApi"
 #define ERR(msg) fprintf(stderr, ERR_PREFIX "::%s: %s\n", functionName, msg)
 
-#define ERR_ARGS(fmt,...) fprintf(stderr, ERR_PREFIX "::%s: "fmt"\n", \
+#define ERR_ARGS(fmt,...) fprintf(stderr, ERR_PREFIX "::%s: " fmt "\n", \
         functionName, __VA_ARGS__)
 
 using std::string;
