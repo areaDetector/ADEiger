@@ -43,14 +43,14 @@
     driverName, functionName, msg)
 
 #define ERR_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, \
-    "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
+    "%s::%s: " fmt "\n", driverName, functionName, __VA_ARGS__);
 
 // Flow message formatters
 #define FLOW(msg) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, "%s::%s: %s\n", \
     driverName, functionName, msg)
 
 #define FLOW_ARGS(fmt,...) asynPrint(pasynUserSelf, ASYN_TRACE_FLOW, \
-    "%s::%s: "fmt"\n", driverName, functionName, __VA_ARGS__);
+    "%s::%s: " fmt "\n", driverName, functionName, __VA_ARGS__);
 
 using std::string;
 using std::vector;
