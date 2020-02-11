@@ -7,6 +7,7 @@ driver for the Eiger pixel array detectors from
 [Dectris](http://www.dectris.com).
 
 Additional information:
+* [Documentation](https://areadetector.github.io/master/ADEiger/ADEiger.html)
 * [Release notes](RELEASE.md).
 
 Notes:
