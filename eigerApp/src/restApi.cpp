@@ -13,7 +13,6 @@
 
 #include <fcntl.h>
 
-#define API_VERSION             "1.6.0"
 #define EOL                     "\r\n"      // End of Line
 #define EOL_LEN                 2           // End of Line Length
 #define EOH                     EOL EOL     // End of Header
@@ -100,24 +99,6 @@ typedef struct response
 } response_t;
 
 // Static public members
-
-const char *RestAPI::sysStr [SSCount] = {
-    "/detector/api/version",
-    "/detector/api/"   API_VERSION "/config/",
-    "/detector/api/"   API_VERSION "/status/",
-    "/filewriter/api/" API_VERSION "/config/",
-    "/filewriter/api/" API_VERSION "/status/",
-    "/filewriter/api/" API_VERSION "/command/",
-    "/detector/api/"   API_VERSION "/command/",
-    "/data/",
-    "/monitor/api/"    API_VERSION "/config/",
-    "/monitor/api/"    API_VERSION "/status/",
-    "/monitor/api/"    API_VERSION "/images/",
-    "/stream/api/"     API_VERSION "/config/",
-    "/stream/api/"     API_VERSION "/status/",
-    "/system/api/"     API_VERSION "/command/",
-};
-
 
 static int parseHeader (response_t *response)
 {
@@ -253,7 +234,7 @@ int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, si
 
 // Public members
 
-RestAPI::RestAPI (string const & hostname, int port, size_t numSockets) :
+RestAPI::RestAPI (std::string const & hostname, int port, int eigerModel, size_t numSockets) :
     mHostname(hostname), mPort(port), mNumSockets(numSockets),
     mSockets(new socket_t[numSockets])
 {
@@ -271,6 +252,27 @@ RestAPI::RestAPI (string const & hostname, int port, size_t numSockets) :
         mSockets[i].fd = -1;
         mSockets[i].retries = 0;
     }
+
+    // Define REST URIs based on Eiger model number
+    std::string api;
+    switch(eigerModel) {
+        case EIGER1: api = "1.6.0";
+        case EIGER2: api = "1.8.0";
+    }
+    mSysStr[SSAPIVersion] = "/detector/api/version";
+    mSysStr[SSDetConfig] = "/detector/api/" + api + "/config/";
+    mSysStr[SSDetStatus] = "/detector/api/" + api + "/status/";
+    mSysStr[SSFWConfig] = "/filewriter/api/" + api + "/config/";
+    mSysStr[SSFWStatus] = "/filewriter/api/" + api + "/status/";
+    mSysStr[SSFWCommand] = "/filewriter/api/" + api + "/command/";
+    mSysStr[SSCommand] = "/detector/api/" + api + "/command/";
+    mSysStr[SSData] = "/data/";
+    mSysStr[SSMonConfig] = "/monitor/api/" + api + "/config/";
+    mSysStr[SSMonStatus] = "/monitor/api/" + api + "/status/";
+    mSysStr[SSMonImages] = "/monitor/api/" + api + "/images/";
+    mSysStr[SSStreamConfig] = "/stream/api/" + api + "/config/";
+    mSysStr[SSStreamStatus] = "/stream/api/" + api + "/status/";
+    mSysStr[SSSysCommand] = "/system/api/" + api + "/command/";
 }
 
 int RestAPI::initialize (void)
@@ -287,7 +289,7 @@ int RestAPI::arm (int *sequenceId)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_PUT, sysStr[SSCommand], "arm", mHostname.c_str(), 0lu);
+            REQUEST_PUT, mSysStr[SSCommand].c_str(), "arm", mHostname.c_str(), 0lu);
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -368,7 +370,7 @@ int RestAPI::getFileSize (const char *filename, size_t *size)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename, mHostname.c_str());
+            REQUEST_HEAD, mSysStr[SSData].c_str(), filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -403,7 +405,7 @@ int RestAPI::waitFile (const char *filename, double timeout)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_HEAD, sysStr[SSData], filename, mHostname.c_str());
+            REQUEST_HEAD, mSysStr[SSData].c_str(), filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -451,7 +453,7 @@ int RestAPI::deleteFile (const char *filename)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_DELETE, sysStr[SSData], filename, mHostname.c_str());
+            REQUEST_DELETE, mSysStr[SSData].c_str(), filename, mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -667,7 +669,7 @@ int RestAPI::put (sys_t sys, string const & param, string const & value,
 
     int headerLen;
     char header[MAX_BUF_SIZE];
-    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, sysStr[sys],
+    headerLen = epicsSnprintf(header, sizeof(header), REQUEST_PUT, mSysStr[sys].c_str(),
             param.c_str(), mHostname.c_str(), (size_t)valueLen);
 
     request_t request = {};
@@ -711,7 +713,7 @@ int RestAPI::get (sys_t sys, string const & param, string & value, int timeout)
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET, sysStr[sys], param.c_str(), mHostname.c_str());
+            REQUEST_GET, mSysStr[sys].c_str(), param.c_str(), mHostname.c_str());
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];
@@ -749,7 +751,7 @@ int RestAPI::getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize,
     request.data      = requestBuf;
     request.dataLen   = sizeof(requestBuf);
     request.actualLen = epicsSnprintf(request.data, request.dataLen,
-            REQUEST_GET_FILE, sysStr[sys], name, mHostname.c_str(), accept);
+            REQUEST_GET_FILE, mSysStr[sys].c_str(), name, mHostname.c_str(), accept);
 
     response_t response = {};
     char responseBuf[MAX_MESSAGE_SIZE];

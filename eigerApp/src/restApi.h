@@ -10,6 +10,9 @@
 #define MAX_CHANGED_PARAMS  32
 #define MAX_PARAM_NAME      64
 
+#define EIGER1 1
+#define EIGER2 2
+
 // Subsystems
 typedef enum
 {
@@ -44,6 +47,7 @@ private:
     struct sockaddr_in mAddress;
     size_t mNumSockets;
     socket_t *mSockets;
+    std::string mSysStr[SSCount];
 
     int connect (socket_t *s);
     int setNonBlock (socket_t *s, bool nonBlock);
@@ -53,12 +57,10 @@ private:
     int getBlob (sys_t sys, const char *name, char **buf, size_t *bufSize, const char *accept);
 
 public:
-    static const char *sysStr [SSCount];
-
     static int buildMasterName (const char *pattern, int seqId, char *buf, size_t bufSize);
     static int buildDataName   (int n, const char *pattern, int seqId, char *buf, size_t bufSize);
 
-    RestAPI (std::string const & hostname, int port = 80, size_t numSockets=5);
+    RestAPI (std::string const & hostname, int port=80, int eigerModel=1, size_t numSockets=5);
 
     int get (sys_t sys, std::string const & param, std::string & value, int timeout = DEFAULT_TIMEOUT);
     int put (sys_t sys, std::string const & param, std::string const & value = "", std::string * reply = NULL, int timeout = DEFAULT_TIMEOUT);

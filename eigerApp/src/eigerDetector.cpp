@@ -162,7 +162,7 @@ static void streamTaskC (void *drvPvt)
  * \param[in] stackSize The stack size for the asyn port driver thread if
  *            ASYN_CANBLOCK is set in asynFlags.
  */
-eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
+eigerDetector::eigerDetector (const char *portName, const char *serverHostname, int eigerModel,
         int maxBuffers, size_t maxMemory, int priority,
         int stackSize)
 
@@ -172,7 +172,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                ASYN_MULTIDEVICE, /* ASYN_MULTIDEVICE=1 */
                1,                /* autoConnect=1 */
                priority, stackSize),
-    mApi(serverHostname),
+    mApi(serverHostname, 80, eigerModel),
+    mEigerModel(eigerModel),
     mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -237,7 +238,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
 
     // Metadata
-    mDescription     = mParams.create(EigDescriptionStr,     asynParamOctet,   SSDetConfig, "description");
+    mDescription = mParams.create(EigDescriptionStr, asynParamOctet, SSDetConfig, "description");
 
     // Acquisition
     mWavelength       = mParams.create(EigWavelengthStr,      asynParamFloat64, SSDetConfig, "wavelength");
@@ -256,14 +257,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mError      = mParams.create(EigErrorStr,      asynParamOctet,   SSDetStatus, "error");
     mThTemp0    = mParams.create(EigThTemp0Str,    asynParamFloat64, SSDetStatus, "board_000/th0_temp");
     mThHumid0   = mParams.create(EigThHumid0Str,   asynParamFloat64, SSDetStatus, "board_000/th0_humidity");
-    mLink0      = mParams.create(EigLink0Str,      asynParamInt32,   SSDetStatus, "link_0");
-    mLink1      = mParams.create(EigLink1Str,      asynParamInt32,   SSDetStatus, "link_1");
-    mLink2      = mParams.create(EigLink2Str,      asynParamInt32,   SSDetStatus, "link_2");
-    mLink3      = mParams.create(EigLink3Str,      asynParamInt32,   SSDetStatus, "link_3");
-    mDCUBufFree = mParams.create(EigDCUBufFreeStr, asynParamFloat64, SSDetStatus, "builder/dcu_buffer_free");
-
-    for(int i = mLink0->getIndex(); i <= mLink3->getIndex(); ++i)
-        mParams.getByIndex(i)->setEnumValues(linkEnum);
 
     // File Writer
     mFWEnable       = mParams.create(EigFWEnableStr,       asynParamInt32, SSFWConfig,  "mode");
@@ -274,7 +267,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFWImgNumStart  = mParams.create(EigFWImgNumStartStr,  asynParamInt32, SSFWConfig,  "image_nr_start");
     mFWState        = mParams.create(EigFWStateStr,        asynParamOctet, SSFWStatus,  "state");
     mFWFree         = mParams.create(EigFWFreeStr,         asynParamInt32, SSFWStatus,  "buffer_free");
-    mFWClear        = mParams.create(EigFWClearStr,        asynParamInt32, SSFWCommand, "clear");
 
     // Monitor API Parameters
     mMonitorEnable  = mParams.create(EigMonitorEnableStr,  asynParamInt32, SSMonConfig, "mode");
@@ -294,15 +286,36 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mNumImages         = mParams.create(ADNumImagesString,         asynParamInt32,   SSDetConfig, "nimages");
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
     mTriggerMode->setEnumValues(triggerModeEnum);
-
     mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "software_version");
     mSerialNumber      = mParams.create(ADSerialNumberString,      asynParamOctet,   SSDetConfig, "detector_number");
     mTemperatureActual = mParams.create(ADTemperatureActualString, asynParamFloat64, SSDetStatus, "board_000/th0_temp");
     mNDArraySizeX      = mParams.create(NDArraySizeXString,        asynParamInt32,   SSDetConfig, "x_pixels_in_detector");
     mNDArraySizeY      = mParams.create(NDArraySizeYString,        asynParamInt32,   SSDetConfig, "y_pixels_in_detector");
 
+    if (mEigerModel == EIGER1)
+    {
+        mLink0 = mParams.create(EigLink0Str, asynParamInt32, SSDetStatus, "link_0");
+        mLink1 = mParams.create(EigLink1Str, asynParamInt32, SSDetStatus, "link_1");
+        mLink2 = mParams.create(EigLink2Str, asynParamInt32, SSDetStatus, "link_2");
+        mLink3 = mParams.create(EigLink3Str, asynParamInt32, SSDetStatus, "link_3");
+        for(int i = mLink0->getIndex(); i <= mLink3->getIndex(); ++i)
+        {
+            mParams.getByIndex(i)->setEnumValues(linkEnum);
+        }
+        mDCUBufFree = mParams.create(EigDCUBufFreeStr, asynParamFloat64, SSDetStatus, "builder/dcu_buffer_free");
+        mFWClear = mParams.create(EigFWClearStr, asynParamInt32, SSFWCommand, "clear");
+    }
+
     // Test if the detector is initialized
-    if(mDescription->fetch())
+    if(mState->fetch())
+    {
+        ERR("Cannot fetch state. Eiger could be disconnected.");
+        setStringParam(ADStatusMessage, "Eiger FAILED TO CONNECT");
+        return;
+    }
+    std::string state;
+    mState->get(state);
+    if(state == "na")
     {
         ERR("Eiger seems to be uninitialized\nInitializing... (may take a while)");
 
@@ -415,7 +428,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         }
         setIntegerParam(ADAcquire, value);
     }
-    else if (function == mFWClear->getIndex())
+    else if (mEigerModel == EIGER1 && function == mFWClear->getIndex())
     {
         status = (asynStatus) mFWClear->put(1);
         mFWFree->fetch();
@@ -432,7 +445,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         if ((p == mDataSource) && (value == SOURCE_STREAM)) {
             mStreamEnable->put(0);
             mStreamEnable->put(1);
-        } 
+        }
     }
     else if(function < mFirstParam)
         status = ADDriver::writeInt32(pasynUser, value);
@@ -1244,7 +1257,6 @@ void eigerDetector::streamTask (void)
                 continue;
             }
 
-            
             int imageCounter, numImagesCounter, arrayCallbacks, decompress;
             lock();
             getIntegerParam(NDArrayCounter, &imageCounter);
@@ -1252,7 +1264,7 @@ void eigerDetector::streamTask (void)
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
             mStreamDecompress->get(decompress);
             unlock();
-            
+
             if (decompress) {
                 StreamAPI::uncompress(&frame, (char*)pArray->pData);
             } else {
@@ -1274,7 +1286,6 @@ void eigerDetector::streamTask (void)
                 memcpy(pArray->pData, pInput, frame.compressedSize);
             }
             free(frame.data);
-
 
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;
@@ -1628,12 +1639,15 @@ asynStatus eigerDetector::eigerStatus (void)
     // If we are acquiring return immediately
     int acquiring;
     getIntegerParam(ADAcquire, &acquiring);
-    if (acquiring) 
+    if (acquiring)
         return asynSuccess;
 
     // Request a status update
-    if(mApi.statusUpdate())
-        return asynError;
+    if (mEigerModel == EIGER1)
+    {
+        if(mApi.statusUpdate())
+            return asynError;
+    }
 
     int status = 0;
     // Read state and error message
@@ -1645,15 +1659,19 @@ asynStatus eigerDetector::eigerStatus (void)
     status |= mTemperatureActual->fetch();
     status |= mThHumid0->fetch();
 
-    // Read the status of each individual link between the head and the server
-    status |= mLink0->fetch();
-    status |= mLink1->fetch();
-    std::string model;
-    getStringParam(ADModel, model);
-    // The Eiger 500K does not have link2 or link3
-    if (model.find("500K") == std::string::npos) {
-        status |= mLink2->fetch();
-        status |= mLink3->fetch();
+    // Read a few more interesting parameters
+    if (mEigerModel == EIGER1)
+    {
+        // Read the status of each individual link between the head and the server
+        status |= mLink0->fetch();
+        status |= mLink1->fetch();
+        std::string model;
+        getStringParam(ADModel, model);
+        // The Eiger 500K does not have link2 or link3
+        if (model.find("500K") == std::string::npos) {
+            status |= mLink2->fetch();
+            status |= mLink3->fetch();
+        }
     }
 
     // Read DCU buffer free percentage
@@ -1741,34 +1759,32 @@ asynStatus eigerDetector::drvUserCreate(asynUser *pasynUser, const char *drvInfo
     return ADDriver::drvUserCreate(pasynUser, drvInfo, pptypeName, psize);
 }
 
-extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort,
-        int maxBuffers, size_t maxMemory, int priority, int stackSize)
+extern "C" int eigerDetectorConfig(const char *portName, const char *serverPort, int eigerModel,
+                                   int maxBuffers, size_t maxMemory, int priority, int stackSize)
 {
-    new eigerDetector(portName, serverPort, maxBuffers, maxMemory, priority,
-            stackSize);
+    new eigerDetector(portName, serverPort, eigerModel, maxBuffers, maxMemory, priority, stackSize);
     return asynSuccess;
 }
 
 // Code for iocsh registration
 static const iocshArg eigerDetectorConfigArg0 = {"Port name", iocshArgString};
-static const iocshArg eigerDetectorConfigArg1 = {"Server host name",
-    iocshArgString};
-static const iocshArg eigerDetectorConfigArg2 = {"maxBuffers", iocshArgInt};
-static const iocshArg eigerDetectorConfigArg3 = {"maxMemory", iocshArgInt};
-static const iocshArg eigerDetectorConfigArg4 = {"priority", iocshArgInt};
-static const iocshArg eigerDetectorConfigArg5 = {"stackSize", iocshArgInt};
+static const iocshArg eigerDetectorConfigArg1 = {"Server host name", iocshArgString};
+static const iocshArg eigerDetectorConfigArg2 = {"eigerModel", iocshArgInt};
+static const iocshArg eigerDetectorConfigArg3 = {"maxBuffers", iocshArgInt};
+static const iocshArg eigerDetectorConfigArg4 = {"maxMemory", iocshArgInt};
+static const iocshArg eigerDetectorConfigArg5 = {"priority", iocshArgInt};
+static const iocshArg eigerDetectorConfigArg6 = {"stackSize", iocshArgInt};
 static const iocshArg * const eigerDetectorConfigArgs[] = {
-    &eigerDetectorConfigArg0, &eigerDetectorConfigArg1,
-    &eigerDetectorConfigArg2, &eigerDetectorConfigArg3,
-    &eigerDetectorConfigArg4, &eigerDetectorConfigArg5};
+    &eigerDetectorConfigArg0, &eigerDetectorConfigArg1, &eigerDetectorConfigArg2,
+    &eigerDetectorConfigArg3, &eigerDetectorConfigArg4, &eigerDetectorConfigArg5,
+    &eigerDetectorConfigArg6};
 
-static const iocshFuncDef configeigerDetector = {"eigerDetectorConfig", 6,
-    eigerDetectorConfigArgs};
+static const iocshFuncDef configeigerDetector = {"eigerDetectorConfig", 7, eigerDetectorConfigArgs};
 
 static void configeigerDetectorCallFunc(const iocshArgBuf *args)
 {
     eigerDetectorConfig(args[0].sval, args[1].sval, args[2].ival, args[3].ival,
-            args[4].ival, args[5].ival);
+            args[4].ival, args[5].ival, args[6].ival);
 }
 
 static void eigerDetectorRegister(void)

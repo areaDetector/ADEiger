@@ -80,8 +80,8 @@
 class eigerDetector : public ADDriver
 {
 public:
-    eigerDetector(const char *portName, const char *serverHostname,
-            int maxBuffers, size_t maxMemory, int priority, int stackSize);
+    eigerDetector(const char *portName, const char *serverHostname, int eigerModel,
+                  int maxBuffers, size_t maxMemory, int priority, int stackSize);
 
     // These are the methods that we override from ADDriver
     virtual asynStatus writeInt32  (asynUser *pasynUser, epicsInt32 value);
@@ -188,6 +188,7 @@ protected:
 private:
     char mHostname[512];
     RestAPI mApi;
+    int mEigerModel;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
             mPollDoneEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
