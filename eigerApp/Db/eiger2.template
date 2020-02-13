@@ -4,6 +4,44 @@
 
 include "eigerBase.template"
 
+record(bo,"$(P)$(R)CountingMode") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
+    field(VAL,  "1")
+    field(ZNAM, "Normal")
+    field(ONAM, "Retrigger")
+}
+
+record(bi,"$(P)$(R)CountingMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
+    field(ZNAM, "Normal")
+    field(ONAM, "Retrigger")
+    field(SCAN, "I/O Intr")
+}
+
+# Trigger Start Delay
+record(ao, "$(P)$(R)TriggerStartDelay")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
+    field(DESC, "Trigger start delay")
+    field(EGU,  "s")
+    field(PREC, "9")
+}
+
+record(ai, "$(P)$(R)TriggerStartDelay_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
+    field(DESC, "Trigger start delay")
+    field(EGU,  "s")
+    field(PREC, "9")
+    field(SCAN, "I/O Intr")
+}
+
 ## Reorder Enums ##
 
 # Compression algorithm selection

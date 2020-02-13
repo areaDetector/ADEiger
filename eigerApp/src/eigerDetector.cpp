@@ -311,6 +311,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname, 
         mDCUBufFree = mParams.create(EigDCUBufFreeStr, asynParamFloat64, SSDetStatus, "builder/dcu_buffer_free");
         mFWClear = mParams.create(EigFWClearStr, asynParamInt32, SSFWCommand, "clear");
     }
+    else if (mEigerModel == EIGER2)
+    {
+        mTriggerStartDelay = mParams.create(EigTriggerStartDelayStr, asynParamFloat64, SSDetConfig, "trigger_start_delay");
+    }
 
     // Test if the detector is initialized
     if(mState->fetch())
@@ -657,7 +661,7 @@ void eigerDetector::controlTask (void)
     int dataSource, adStatus;
     int sequenceId, saveFiles, numImages, numTriggers;
     int numImagesPerFile;
-    double acquirePeriod, triggerTimeout = 0.0, triggerExposure = 0.0;
+    double acquirePeriod, triggerStartDelay, triggerTimeout = 0.0, triggerExposure = 0.0;
     int savedNumImages, filePerms;
 
     lock();
@@ -811,6 +815,11 @@ void eigerDetector::controlTask (void)
             if(triggerMode == "ints")
             {
                 triggerTimeout  = acquirePeriod*numImages + 10.0;
+                if (mEigerModel == EIGER2)
+                {
+                    mTriggerStartDelay->get(triggerStartDelay);
+                    triggerTimeout += triggerStartDelay;
+                }
                 triggerExposure = 0.0;
             }
 
