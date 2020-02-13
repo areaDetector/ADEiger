@@ -218,7 +218,7 @@ available. There is a rate-limit of 10Hz. Once downloaded, the TIFF
 image is parsed into areaDetector's NDArray on NDArrayAddr 1
 (therefore, an independent NDArray stream).
 
-Chrystallography Parameters
+Crystallography Parameters
 ---------------------------
 
 A few parameters are available as metadata for the acquisition. These
@@ -235,81 +235,64 @@ the standard driver parameters.
 .. cssclass:: table-bordered table-striped table-hover
 .. flat-table::
   :header-rows: 2
+  :widths: 10 10 80
 
-
-  * -
-    - **Implementation of Parameters in asynNDArrayDriver.h and ADDriver.h, and EPICS Record Definitions in ADBase.template and NDFile.template**
-    -
-    -
-  * - **Parameter index variable**
-    - **EPICS record name**
-    - **Eiger Parameter**
-    - **Description**
-  * - ADTriggerMode
-    - $(P)$(R)TriggerMode, $(P)$(R)TriggerMode_RBV
+  * - Implementation of Parameters in asynNDArrayDriver.h and ADDriver.h, and EPICS Record Definitions in ADBase.template and NDFile.template
+  * - EPICS record name
+    - Eiger Parameter
+    - Description
+  * - $(P)$(R)TriggerMode, $(P)$(R)TriggerMode_RBV
     - detector/config/trigger_mode
     - Sets the trigger mode for the detector. Options are:
-        * Internal Series
-        * Internal Enable
-        * External Series
-        * External Enable
-  * - ADNumImages
-    - $(P)$(R)NumImages, $(P)$(R)NumImages_RBV
+
+      - Internal Series
+      - Internal Enable
+      - External Series
+      - External Enable
+  * - $(P)$(R)NumImages, $(P)$(R)NumImages_RBV
     - detector/config/nimages
     - Sets the number of images to take per trigger when on Internal Series or External
       Series mode.
-  * - ADAcquireTime
-    - $(P)$(R)AcquireTime, $(P)$(R)AcquireTime_RBV
+  * - $(P)$(R)AcquireTime, $(P)$(R)AcquireTime_RBV
     - detector/config/count_time
     - Sets the parameter "count_time", which is the exposure time for a single image on
       INTS or EXTS mode.
-  * - ADAcquirePeriod
-    - $(P)$(R)AcquirePeriod, $(P)$(R)AcquirePeriod_RBV
+  * - $(P)$(R)AcquirePeriod, $(P)$(R)AcquirePeriod_RBV
     - detector/config/frame_time
     - Sets the parameter "frame_time", which directly affects the frame rate of the detector.
       The resulting frame rate will be 1/AcquirePeriod.
-  * - NDDataType
-    - $(P)$(R)DataType_RBV
-    -
+  * - $(P)$(R)DataType_RBV
+    - N.A
     - The data type of the image data. If AcquireTime results in less than 50Hz, this
       will have the value UInt16, otherwise UInt32.
-  * - ADTemperatureActual
-    - $(P)$(R)TemperatureActual
+  * - $(P)$(R)TemperatureActual
     - detector/status/board_000/th0_temp
     - Reads the actual temperature of the detector.
-  * - ADMaxSizeX
-    - $(P)$(R)MaxSizeX_RBV
-    -
+  * - $(P)$(R)MaxSizeX_RBV
+    - N.A
     - Detector sensor size in the X direction.
-  * - ADMaxSizeY
-    - $(P)$(R)MaxSizeY_RBV
-    -
+  * - $(P)$(R)MaxSizeY_RBV
+    - N.A
     - Detector sensor size in the Y direction.
-  * - NDArraySizeX
-    - $(P)$(R)ArraySizeX_RBV
+  * - $(P)$(R)ArraySizeX_RBV
     - detector/config/x_pixels_in_detector
     - Current detector sensor size in the X direction. This can change depending on the
       ROI Mode selected.
-  * - NDArraySizeY
-    - $(P)$(R)ArraySizeY_RBV
+  * - $(P)$(R)ArraySizeY_RBV
     - detector/config/y_pixels_in_detector
     - Current detector sensor size in the Y direction. This can change depending on the
       ROI Mode selected.
-  * - ADManufacturer, ADModel
-    - $(P)$(R)Manufacturer_RBV, $(P)$(R)Model_RBV
+  * - $(P)$(R)Manufacturer_RBV, $(P)$(R)Model_RBV
     - detector/config/description
     - Reads the detector manufacturer (Dectris) and model (Eiger xx M).
-  * - ADSerialNumber
-    - $(P)$(R)SerialNumber_RBV
+  * - $(P)$(R)SerialNumber_RBV
     - detector/config/detector_number
     - Detector serial number
-  * - ADFirmwareVersion
-    - $(P)$(R)FirmwareVersion_RBV
+  * - $(P)$(R)FirmwareVersion_RBV
     - detector/config/software_version
     - Detector firmware version
-  * - NDDriverVersion
-    - $(P)$(R)DriverVersion_RBV
-    -
+  * - $(P)$(R)DriverVersion_RBV
+    - N.A
     - This driver's version
 
 Eiger specific parameters
@@ -321,539 +304,303 @@ those in asynNDArrayDriver.h and ADDriver.h.
 .. cssclass:: table-bordered table-striped table-hover
 .. flat-table::
   :header-rows: 2
+  :widths: 10 70 10 10
 
 
   * -
-    - **Parameter Definitions in eigerDetector.cpp and EPICS Record Definitions in eiger.template**
-  * - **Parameter index variable**
-    - **Eiger Parameter**
-    - **asyn interface**
-    - **Access**
-    - **Description**
-    - **drvInfo string**
-    - **EPICS record name**
-    - **EPICS record type**
-  * - **Detector Metadata**
-  * - EigerDescription
-    - detector/config/description
-    - asynOctet
-    - R/O
+    - Parameter Definitions in eigerDetector.cpp and EPICS Record Definitions in eiger.template
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
+  * -
+    - **Detector Metadata**
+  * - detector/config/description
     - Detector's manufacturer and model
-    - DESCRIPTION
     - Description_RBV
     - stringin
-  * - EigerSensorMaterial
-    - detector/config/sensor_material
-    - asynOctet
-    - R/O
+  * - detector/config/sensor_material
     - Detector's sensor material
-    - EIG_DCD_sensor_material
     - SensorMaterial_RBV
     - stringin
-  * - EigerSensorThickness
-    - detector/config/sensor_thickness
-    - asynFloat64
-    - R/O
+  * - detector/config/sensor_thickness
     - Detector's sensor thickness, in meters
-    - EIG_DCD_sensor_thickness
     - SensorThickness_RBV
     - ai
-  * - EigerXPixelSize
-    - detector/config/x_pixel_size
-    - asynFloat64
-    - R/O
+  * - detector/config/x_pixel_size
     - Detector's pixel size in the X direction, in meters
-    - EIG_DCD_x_pixel_size
     - XPixelSize_RBV
     - ai
-  * - EigerYPixelSize
-    - detector/config/y_pixel_size
-    - asynFloat64
-    - R/O
+  * - detector/config/y_pixel_size
     - Detector's pixel size in the Y direction, in meters
-    - EIG_DCD_y_pixel_size
     - YPixelSize_RBV
     - ai
-  * - EigerDeadTime
-    - detector/config/detector_readout_time
-    - asynFloat64
-    - R/O
+  * - detector/config/detector_readout_time
     - Detector's readout time (dead time) between frames. Changes with different Threshold
       Energies.
-    - EIG_DCD_detector_readout_time
     - DeadTime_RBV
     - ai
-  * - **Status Parameters**
-  * - EigerState
-    - detector/status/state
-    - asynOctet
-    - R/O
+  * -
+    - **Status Parameters**
+  * - detector/status/state
     - State of the detector
-    - STATE
     - State_RBV
     - stringin
-  * - EigerError
-    - detector/status/error
-    - asynOctet
-    - R/O
+  * - detector/status/error
     - List of parameters causing an error state
-    - ERROR
     - Error_RBV
     - stringin
-  * - EigerDCUBufferFree
-    - detector/status/builder/dcu_buffer_free
-    - asynFloat64
-    - R/O
+  * - detector/status/builder/dcu_buffer_free
     - Percentage of the detector's internal buffer that is free. Low values may indicate
       a problem.
-    - DCU_BUF_FREE
     - DCUBufferFree_RBV
     - ai
-  * - EigerThTemp0
-    - detector/status/board_000/th0_temp
-    - asynFloat64
-    - R/O
+  * - detector/status/board_000/th0_temp
     - Temperature of the first module
-    - TH_TEMP_0
     - Temp0_RBV
     - ai
-  * - EigerThHumid0
-    - detector/status/board_000/th0_humidity
-    - asynFloat64
-    - R/O
+  * - detector/status/board_000/th0_humidity
     - Humidity of the first module
-    - TH_HUMID_0
     - Humid0_RBV
     - ai
-  * - EigerLink0, EigerLink1, EigerLink2, EigerLink3
-    - detector/status/link_0, detector/status/link_1, detector/status/link_2, detector/status/link_3
-    - asynInt32
-    - R/O
+  * - detector/status/link_0, detector/status/link_1, detector/status/link_2, detector/status/link_3
     - Status of the four links between the detector server and the head
-    - LINK_0, LINK_1, LINK_2, LINK_3
     - Link0_RBV, Link1_RBV, Link2_RBV, Link3_RBV
     - bi
-  * - **FileWriter Control**
-  * - EigerFWEnable
-    - filewriter/config/mode
-    - asynInt32
-    - R/W
+  * -
+    - **FileWriter Control**
+  * - filewriter/config/mode
     - Enables or disables the FileWriter module
-    - FW_ENABLE
     - FWEnable, FWEnable_RBV
     - bo, bi
-  * - EigerFWClear
-    - filewriter/config/clear
-    - asynInt32
-    - W/O
+  * - filewriter/config/clear
     - Writing to this PV clears *all* files on the detector server disk
-    - CLEAR
     - FWClear
     - ao
-  * - EigerFWCompression
-    - filewriter/config/compression_enabled
-    - asynInt32
-    - R/W
+  * - filewriter/config/compression_enabled
     - Enables or disables LZ4 or BSLZ4 compression on the server side
-    - COMPRESSION
     - FWCompression, FWCompression_RBV
     - bo, bi
-  * - EigerFWNamePattern
-    - filewriter/config/name_patttern
-    - asynOctet
-    - R/W
+  * - filewriter/config/name_patttern
     - Name pattern for the generated HDF5 files. The pattern can be anything, but it must
       contain the string '$id' in it. This string is replaced with the current sequence
-      id of the acquisition. The default is: "series_$id", which would generate the files:
+      id of the acquisition. The default is: "series_$id", which would generate the files::
+
         * series_1_master.h5
         * series_1_data_000001.h5
         * series_1_data_000002.h5
         * ...
+
       For the sequence id 1. If '$id' is omitted, files might get overwritten on the server,
       because then every acqusition would generate files with the same name
-    - NAME_PATTERN
     - FWNamePattern, FWNamePattern_RBV
     - stringout, stringin
-  * - EigerFWNImagesPerFile
-    - filewriter/config/nimages_per_file
-    - asynInt32
-    - R/W
+  * - filewriter/config/nimages_per_file
     - Number of images per HDF5 data file
-    - NIMAGES_PER_FILE
     - FWNImgsPerFile, FWNImgsPerFile_RBV
     - ao, ai
-  * - EigerFWAutoRemove
-    -
-    - asynInt32
-    - R/W
+  * - N.A.
     - Controls whether downloaded files should be removed from the detector disk
-    - AUTO_REMOVE
     - FWAutoRemove, FWAutoRemove_RBV
     - bo, bi
-  * - EigerFWFree
-    - filewriter/status/buffer_free
-    - asynFloat64
-    - R/O
+  * - filewriter/status/buffer_free
     - Free space on detector disk.
-    - FW_FREE
     - FWFree_RBV
     - ai
-  * - EigerFWState
-    - filewriter/status/state
-    - asynOctet
-    - R/O
+  * - filewriter/status/state
     - State of the FileWriter module
-    - FW_STATE
     - FWState_RBV
     - stringin
-  * - **Stream Control**
-  * - EigerStreamEnable
-    - stream/config/mode
-    - asynInt32
-    - R/W
+  * -
+    - **Stream Control**
+  * - stream/config/mode
     - Enables or disables the Stream module
-    - STREAM_ENABLE
     - StreamEnable, StreamEnable_RBV
     - bo, bi
-  * - EigerStreamDropped
-    - stream/status/dropped
-    - asynInt32
-    - R/O
+  * - stream/status/dropped
     - Indicates how many images were dropped in the last acquisition
-    - STREAM_DROPPED
     - StreamDropped_RBV
     - ai
-  * - EigerStreamDecompress
-    - N.A.
-    - asynInt32
-    - R/W
+  * - N.A.
     - Controls whether the NDArrays from the Stream interface are decompressed (Yes) or
       compressed (No)
-    - STREAM_DECOMPRES
     - StreamDecompress, StreamDecompress_RBV
     - bo, bi
-  * - EigerStreamState
-    - stream/status/state
-    - asynOctet
-    - R/O
+  * - stream/status/state
     - State of the Stream module
-    - STREAM_STATE
     - StreamState_RBV
     - stringin
-  * -
-    - stream/config/header_detail
-    - asynInt32
-    - R/W
+  * - stream/config/header_detail
     - Selects the level of detail for Stream API Headers. Options are:
-        * All
-        * Basic
-        * None
-    - EIG_SCI_header_detail
+        - All
+        - Basic
+        - None
     - StreamHdrDetail, StreamHdrDetail_RBV
     - mbbo, mbbi
-  * -
-    - stream/config/header_appendix
-    - asynOctet
-    - R/W
+  * - stream/config/header_appendix
     - Sets the text to be appended to the Stream API headers
-    - EIG_SCS_header_appendix
     - StreamHdrAppendix
     - waveform
-  * -
-    - stream/config/image_appendix
-    - asynOctet
-    - R/W
+  * - stream/config/image_appendix
     - Sets the text to be appended to the Stream API images
-    - EIG_SCS_image_appendix
     - StreamImgAppendix
     - waveform
-  * - **Monitor Control**
-  * - EigerMonitorEnable
-    - monitor/config/mode
-    - asynInt32
-    - R/W
+  * -
+    - **Monitor Control**
+  * - monitor/config/mode
     - Enables or disables the Monitor module
-    - MONITOR_ENABLE
     - MonitorEnable, MonitorEnable_RBV
     - bo, bi
-  * - EigerMonitorTimeout
-    -
-    - asynInt32
-    - R/W
+  * - N.A.
     - Timeout for queries on the Monitor interface for new images
-    - MONITOR_TIMEOUT
     - MonitorTimeout, MonitorTimeout_RBV
     - ao, ai
-  * - EigerMonitorState
-    - monitor/status/state
-    - asynOctet
-    - R/O
+  * - monitor/status/state
     - State of the Monitor module
-    - MONITOR_STATE
     - MonitorState_RBV
     - stringin
-  * - **Acquisition Metadata**
-  * - EigerBeamX
-    - detector/config/beam_center_x
-    - asynFloat64
-    - R/W
+  * -
+    - **Acquisition Metadata**
+  * - detector/config/beam_center_x
     - X position of the beam
-    - EIG_DCD_beam_center_x
     - BeamX, BeamX_RBV
     - ao, ai
-  * - EigerBeamY
-    - detector/config/beam_center_y
-    - asynFloat64
-    - R/W
+  * - detector/config/beam_center_y
     - Y position of the beam
-    - EIG_DCD_beam_center_y
     - BeamY, BeamY_RBV
     - ao, ai
-  * - EigerDetDist
-    - detector/config/detector_distance
-    - asynFloat64
-    - R/W
+  * - detector/config/detector_distance
     - Detector distance
-    - EIG_DCD_detector_distance
     - DetDist, DetDist_RBV
     - ao, ai
-  * - EigerWavelength
-    - detector/config/wavelength
-    - asynFloat64
-    - R/W
+  * - detector/config/wavelength
     - Wavelength of the beam. This parameter is automatically changed whenever the PhotonEnergy
       changes
-    - WAVELENGTH
     - Wavelength, Wavelength_RBV
     - ao, ai
-  * - EigerCountCutoff
-    - detector/config/countrate_correction_count_cutoff
-    - asynInt32
-    - R/O
+  * - detector/config/countrate_correction_count_cutoff
     - Number of counts after which the detector will cutoff due to the count rate correction.
-    - EIG_DCI_countrate_correction_count_cutoff
     - CountCutoff_RBV
     - ai
-  * - **Acquisition MX Metadata**
-  * - EigerChiStart
-    - detector/config/chi_start
-    - asynFloat64
-    - R/W
+  * -
+    - **Acquisition MX Metadata**
+  * - detector/config/chi_start
     - Start value of the Chi angle
-    - EIG_DCD_chi_start
     - ChiStart, ChiStart_RBV
     - ao, ai
-  * - EigerChiIncr
-    - detector/config/chi_increment
-    - asynFloat64
-    - R/W
+  * - detector/config/chi_increment
     - Chi angle increment per frame
-    - EIG_DCD_chi_increment
     - ChiIncr, ChiIncr_RBV
     - ao, ai
-  * - EigerKappaStart
-    - detector/config/kappa_start
-    - asynFloat64
-    - R/W
+  * - detector/config/kappa_start
     - Start value of the Kappa angle
-    - EIG_DCD_kappa_start
     - KappaStart, KappaStart_RBV
     - ao, ai
-  * - EigerKappaIncr
-    - detector/config/kappa_increment
-    - asynFloat64
-    - R/W
+  * - detector/config/kappa_increment
     - Kappa angle increment per frame
-    - EIG_DCD_kappa_increment
     - KappaIncr, KappaIncr_RBV
     - ao, ai
-  * - EigerOmegaStart
-    - detector/config/omega_start
-    - asynFloat64
-    - R/W
+  * - detector/config/omega_start
     - Start value of the Omega angle
-    - EIG_DCD_omega_start
     - OmegaStart, OmegaStart_RBV
     - ao, ai
-  * - EigerOmegaIncr
-    - detector/config/omega_increment
-    - asynFloat64
-    - R/W
+  * - detector/config/omega_increment
     - Omega angle increment per frame
-    - EIG_DCD_omega_increment
     - OmegaIncr, OmegaIncr_RBV
     - ao, ai
-  * - EigerPhiStart
-    - detector/config/phi_start
-    - asynFloat64
-    - R/W
+  * - detector/config/phi_start
     - Start value of the Phi angle
-    - EIG_DCD_phi_start
     - PhiStart, PhiStart_RBV
     - ao, ai
-  * - EigerPhiIncr
-    - detector/config/phi_increment
-    - asynFloat64
-    - R/W
+  * - detector/config/phi_increment
     - Phi angle increment per frame
-    - EIG_DCD_phi_increment
     - PhiIncr, PhiIncr_RBV
     - ao, ai
-  * - EigerTwoThetaStart
-    - detector/config/two_theta_start
-    - asynFloat64
-    - R/W
+  * - detector/config/two_theta_start
     - Start value of the TwoTheta angle
-    - EIG_DCD_two_theta_start
     - TwoThetaStart, TwoThetaStart_RBV
     - ao, ai
-  * - EigerTwoThetaIncr
-    - detector/config/two_theta_increment
-    - asynFloat64
-    - R/W
+  * - detector/config/two_theta_increment
     - TwoTheta angle increment per frame
-    - EIG_DCD_two_theta_increment
     - TwoThetaIncr, TwoThetaIncr_RBV
     - ao, ai
-  * - **Acquisition Control**
-  * - EigerDataSource
-    -
-    - asynInt32
-    - R/W
+  * -
+    - **Acquisition Control**
+  * - N.A.
     - Which data source to use for areaDetecor pipeline. Valid values:
         * None
         * FileWriter
         * Stream
-    - DATA_SOURCE
     - DataSource, DataSource_RBV
     - mbbo, mbbi
-  * - EigerArmed
-    -
-    - asynInt32
-    - R/O
+  * - N.A.
     - Armed state of the detector
-    - ARMED
     - Armed
     - bi
-  * - EigerSaveFiles
-    -
-    - asynInt32
-    - R/W
+  * - N.A.
     - Controls whether acquired files should be saved locally to disk
-    - SAVE_FILES
     - SaveFiles, SaveFiles_RBV
     - bo, bi
-  * - EigerFileOwner
-    -
-    - asynOctet
-    - R/W
+  * - N.A.
     - Controls the owner of the file saved to disk. Requires the IOC to have the CAP_SETUID
       capability.
-    - FILE_OWNER
     - FileOwner, FileOwner_RBV
     - stringout, stringin
-  * - EigerFileOwnerGroup
-    -
-    - asynOctet
-    - R/W
+  * - N.A.
     - Controls the owner group of the file saved to disk. Requires the IOC to have the
       CAP_SETGID capability.
-    - FILE_OWNER_GROUP
     - FileOwnerGrp, FileOwnerGrp_RBV
     - stringout, stringin
-  * - EigerFilePerms
-    -
-    - asynInt32
-    - R/W
+  * - N.A.
     - Controls the permissions for the files saved to disk
-    - FILE_PERMISSIONS
     - FilePerms
     - ao
-  * - EigerSequenceId
-    -
-    - asynInt32
-    - R/O
+  * - N.A.
     - Sequence ID of the current acquisition
-    - SEQ_ID
     - SequenceId
     - ai
-  * - EigerFlatfield
-    - detector/config/flatfield_correction_applied
-    - asynInt32
-    - R/W
+  * - detector/config/flatfield_correction_applied
     - Controls whether the flatfield correction should be applied
-    - EIG_DCI_flatfield_correction_applied
     - FlatfieldApplied, FlatfieldApplied_RBV
     - bo, bi
-  * - EigerPhotonEnergy
-    - detector/config/photon_energy
-    - asynFloat64
-    - R/W
+  * - detector/config/photon_energy
     - Photon energy for the acquisition
-    - PHOTON_ENERGY
     - PhotonEnergy, PhotonEnergy_RBV
     - ao, ai
-  * - EigerThreshold
-    - detector/config/threshold_energy
-    - asynFloat64
-    - R/W
+  * - detector/config/threshold_energy
     - Energy threshold for the acquisition
-    - THRESHOLD
     - Threshold, Threshold_RBV
     - ao, ai
-  * - EigerTrigger
-    - detector/command/trigger
-    - asynInt32
-    - W/O
+  * - detector/command/trigger
     - Software trigger to be used on modes INTS and INTE when ManualTrigger is set
-    - TRIGGER
     - Trigger
     - ao
-  * - EigerTriggerExp
-    - detector/command/trigger
-    - asynFloat64
-    - R/W
+  * - detector/command/trigger
     - Exposure to be used with the triggers on the INTE mode
-    - TRIGGER_EXPOSURE
     - TriggerExposure, TriggerExposure_RBV
     - ao, ai
-  * - EigerNTriggers
-    - detector/config/ntrigger
-    - asynInt32
-    - R/W
+  * - detector/config/ntrigger
     - Number of triggers for the acquisition
-    - NUM_TRIGGERS
     - NumTriggers, NumTriggers_RBV
     - ao, ai
-  * - EigerManualTrigger
-    -
-    - asynInt32
-    - R/W
+  * - N.A.
     - On INTS and INTE modes, controls whether triggers will be issued automatically (0)
       or only via the Trigger PV (1).
-    - MANUAL_TRIGGER
     - ManualTrigger, ManualTrigger_RBV
     - bo, bi
-  * - EigerCompressionAlgo
-    - detector/config/compression
-    - asynInt32
-    - R/W
+  * - detector/config/compression
     - Compression algorithm to use when compression is enabled. Options are:
         * lz4
         * bslz4 (bitshuffle lz4)
+
       The selected algorithm will always be used on the Stream ZMQ interface. It will
       also be used for HDF5 files written by the FileWriter interface if FWCompression=Enabled.
-    - COMPRESSION_ALGO
     - CompressionAlgo, CompressionAlgo_RBV
     - mbbo, mbbi
-  * - EigerROIMode
-    - detector/config/roi_mode
-    - asynInt32
-    - R/W
+  * - detector/config/roi_mode
     - Which ROI mode to use. **Only supported on Eiger 9M and 16M.** Options are:
         * Disabled
         * 4M
-    - ROI_MODE
     - ROIMode, ROIMode_RBV
     - mbbo, mbbi
 
