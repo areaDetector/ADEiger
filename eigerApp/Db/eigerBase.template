@@ -13,6 +13,15 @@ record(ao,"$(P)$(R)AcquirePeriod") {
     field(VAL, "1")
 }
 
+# Eiger Stream Image Bit Depth
+record(longin, "$(P)$(R)BitDepthImage_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_bit_depth_image")
+    field(DESC, "Image Bit Depth")
+    field(SCAN, "I/O Intr")
+}
+
 # Data source for the acquisition
 record(mbbo,"$(P)$(R)DataSource") {
     field(PINI, "YES")
