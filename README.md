@@ -8,7 +8,7 @@ driver for the Eiger pixel array detectors from
 
 Additional information:
 * [Documentation](https://areadetector.github.io/master/ADEiger/eiger.html)
-* [Release notes](RELEASE.md).
+* [Release notes](RELEASE.md)
 
 Notes:
 ------
