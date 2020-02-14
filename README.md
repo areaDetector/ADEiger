@@ -7,7 +7,7 @@ driver for the Eiger pixel array detectors from
 [Dectris](http://www.dectris.com).
 
 Additional information:
-* [Documentation](https://areadetector.github.io/master/ADEiger/ADEiger.html)
+* [Documentation](https://areadetector.github.io/master/ADEiger/eiger.html)
 * [Release notes](RELEASE.md).
 
 Notes:
@@ -16,8 +16,6 @@ Notes:
 * Depends on the Eiger having the firmware 1.6.4 or newer.
 * Depends on ADCore R2-6 or newer.
 * Currently this was only tested on Linux 64-bit machines.
-* ~~ADEiger is currently incompatible with ADSupport's hdf5 because ADEiger depends on hdf5_hl.~~
-    * ADSupport R1-3 now provides hdf5_hl
 
 Before compiling:
 -----------------
@@ -28,19 +26,10 @@ Before compiling:
 HDF5 Plugins:
 -------------
 
-If you want ADEiger to decode compressed data produced by the detector, you will have to have a couple of decompression
-plugins compiled and on the path:
+If you want HDF5 tools to compress files produced by the detector, you will need to have the bitshuffle and LZ4 decompression
+plugins available.  These are built in ADSupport.
 
-* Bitshuffle:
-
-Available [here](https://github.com/kiyo-masui/bitshuffle).
-
-* LZ4:
-
-Deprecated version available [here](https://github.com/michaelrissi/HDF5Plugin.git).
-New version available [here](https://github.com/nexusformat/HDF5-External-Filter-Plugins).
-
-Once they are compiled, add their paths to the environment variable `HDF5_PLUGIN_PATH`, separated by a colon.
+The environment variable `HDF5_PLUGIN_PATH` should be set to `[your_path]/ADSupport/lib/linux-x86_64`.
 
 How to run:
 -----------
@@ -48,4 +37,5 @@ How to run:
 * Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC:
   - Change the IP address in `st.cmd`.
   - Run `./st.cmd`.
-* There is a CS-Studio screen under `areaDetector/ADEiger/eigerApp/op/opi`, just use it with Controls System Studio.
+* There are medm, edm, CSS-Boy, caQtDM, and Phoebus Display Builder screens under `areaDetector/ADEiger/eigerApp/op/`.
+
