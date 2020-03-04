@@ -67,7 +67,7 @@ enum data_source
 
 typedef struct
 {
-    string pattern;
+    char pattern[MAX_BUF_SIZE];
     int sequenceId;
     size_t nDataFiles;
     bool saveFiles, parseFiles, removeFiles;
@@ -740,7 +740,9 @@ void eigerDetector::controlTask (void)
         if(dataSource == SOURCE_FILEWRITER || (fwEnable && saveFiles))
         {
             acquisition_t acq;
-            mFWNamePattern->get(acq.pattern);
+            string acq_pattern_temp;
+            mFWNamePattern->get(&acq_pattern_temp);
+            sprintf(acq.pattern, "%s", acq_pattern_temp.c_str());
             acq.sequenceId  = sequenceId;
             acq.nDataFiles  = ceil(((double)(numImages*numTriggers))/((double)numImagesPerFile));
             acq.saveFiles   = saveFiles;
@@ -908,10 +910,10 @@ void eigerDetector::pollTask (void)
             files[i].perms    = acquisition.filePerms;
 
             if(isMaster)
-                RestAPI::buildMasterName(acquisition.pattern.c_str(), acquisition.sequenceId,
+                RestAPI::buildMasterName(acquisition.pattern, acquisition.sequenceId,
                         files[i].name, sizeof(files[i].name));
             else
-                RestAPI::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern.c_str(),
+                RestAPI::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern,
                         acquisition.sequenceId, files[i].name,
                         sizeof(files[i].name));
         }
