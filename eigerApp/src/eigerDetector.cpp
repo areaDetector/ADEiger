@@ -740,9 +740,13 @@ void eigerDetector::controlTask (void)
         if(dataSource == SOURCE_FILEWRITER || (fwEnable && saveFiles))
         {
             acquisition_t acq;
+            
             string acq_pattern_temp;
             mFWNamePattern->get(acq_pattern_temp);
-            strncpy(acq.pattern, acq_pattern_temp.c_str(), sizeof(acq.pattern) - 1);
+            strncpy(acq.pattern, acq_pattern_temp.c_str(), sizeof(acq.pattern));
+            // Add null terminator to end of pattern string in case buffer is not large enough
+            acq.pattern[MAX_BUF_SIZE - 1] = '\0';
+            
             acq.sequenceId  = sequenceId;
             acq.nDataFiles  = ceil(((double)(numImages*numTriggers))/((double)numImagesPerFile));
             acq.saveFiles   = saveFiles;
