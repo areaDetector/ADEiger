@@ -742,7 +742,7 @@ void eigerDetector::controlTask (void)
             acquisition_t acq;
             string acq_pattern_temp;
             mFWNamePattern->get(acq_pattern_temp);
-            strncpy(acq.pattern, acq_pattern_temp.c_str(), sizeof(acq_pattern_temp.c_str()));
+            strncpy(acq.pattern, acq_pattern_temp.c_str(), sizeof(acq.pattern) - 1);
             acq.sequenceId  = sequenceId;
             acq.nDataFiles  = ceil(((double)(numImages*numTriggers))/((double)numImagesPerFile));
             acq.saveFiles   = saveFiles;
