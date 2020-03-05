@@ -56,7 +56,7 @@ using std::string;
 using std::vector;
 using std::map;
 
-static const string DRIVER_VERSION("2-5");
+static const string DRIVER_VERSION("2-8");
 
 enum data_source
 {
@@ -67,7 +67,7 @@ enum data_source
 
 typedef struct
 {
-    string pattern;
+    char pattern[MAX_BUF_SIZE];
     int sequenceId;
     size_t nDataFiles;
     bool saveFiles, parseFiles, removeFiles;
@@ -740,7 +740,13 @@ void eigerDetector::controlTask (void)
         if(dataSource == SOURCE_FILEWRITER || (fwEnable && saveFiles))
         {
             acquisition_t acq;
-            mFWNamePattern->get(acq.pattern);
+            
+            string acq_pattern_temp;
+            mFWNamePattern->get(acq_pattern_temp);
+            strncpy(acq.pattern, acq_pattern_temp.c_str(), sizeof(acq.pattern));
+            // Add null terminator to end of pattern string in case buffer is not large enough
+            acq.pattern[MAX_BUF_SIZE - 1] = '\0';
+            
             acq.sequenceId  = sequenceId;
             acq.nDataFiles  = ceil(((double)(numImages*numTriggers))/((double)numImagesPerFile));
             acq.saveFiles   = saveFiles;
@@ -908,10 +914,10 @@ void eigerDetector::pollTask (void)
             files[i].perms    = acquisition.filePerms;
 
             if(isMaster)
-                RestAPI::buildMasterName(acquisition.pattern.c_str(), acquisition.sequenceId,
+                RestAPI::buildMasterName(acquisition.pattern, acquisition.sequenceId,
                         files[i].name, sizeof(files[i].name));
             else
-                RestAPI::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern.c_str(),
+                RestAPI::buildDataName(i-1+DEFAULT_NR_START, acquisition.pattern,
                         acquisition.sequenceId, files[i].name,
                         sizeof(files[i].name));
         }
