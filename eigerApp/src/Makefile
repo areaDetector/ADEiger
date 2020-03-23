@@ -3,7 +3,7 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 
-LIBRARY_IOC = eigerDetector
+LIBRARY_IOC_Linux = eigerDetector
 
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
 USR_INCLUDES += $(addprefix -I, $(HDF5_INCLUDE))
