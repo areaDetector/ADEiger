@@ -88,6 +88,8 @@ int EigerParam::parseType (struct json_token *tokens, eiger_param_type_t & type)
     switch(typeStr[0])
     {
     case 's': type = EIGER_P_STRING;  break;
+    // "string" changed to "list" in 1.8.0 as of EIGER2 v2020.1
+    case 'l': type = EIGER_P_STRING;  break;
     case 'f': type = EIGER_P_DOUBLE;  break;
     case 'b': type = EIGER_P_BOOL;    break;
     case 'u': type = EIGER_P_UINT;    break;
