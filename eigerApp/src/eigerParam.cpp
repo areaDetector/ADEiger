@@ -730,7 +730,7 @@ int EigerParam::basePut (const std::string & rawValue, int timeout)
     }
 
     // Parse JSON
-    if(!reply.empty())
+    if(!(reply.empty() || reply == "\"\""))
     {
         struct json_token tokens[MAX_JSON_TOKENS];
         int err = parse_json(reply.c_str(), reply.size(), tokens, MAX_JSON_TOKENS);
