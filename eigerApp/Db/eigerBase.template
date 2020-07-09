@@ -17,7 +17,7 @@ record(ao,"$(P)$(R)AcquirePeriod") {
 record(longin, "$(P)$(R)BitDepthImage_RBV")
 {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_bit_depth_image")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_bit_depth_image")
     field(DESC, "Image Bit Depth")
     field(SCAN, "I/O Intr")
 }
