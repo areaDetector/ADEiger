@@ -232,6 +232,23 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname, 
     triggerModeEnum.push_back("exts");
     triggerModeEnum.push_back("exte");
 
+    // Work around 'allowed_values' change between 1.6.0 and 1.8.0 and
+    // ordering change in 1.8.0 as of EIGER2 v2020.1
+    vector<string> compressionEnum;
+    if (mEigerModel == EIGER1)
+    {
+        compressionEnum.reserve(2);
+        compressionEnum.push_back("lz4");
+        compressionEnum.push_back("bslz4");
+    }
+    else if (mEigerModel == EIGER2)
+    {
+        compressionEnum.reserve(3);
+        compressionEnum.push_back("bslz4");
+        compressionEnum.push_back("lz4");
+        compressionEnum.push_back("none");
+    }
+
     // Driver-only parameters
     mDataSource     = mParams.create(EigDataSourceStr,     asynParamInt32);
     mFirstParam     = mDataSource->getIndex();
@@ -263,6 +280,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname, 
     mThreshold->setEpsilon(ENERGY_EPSILON);
     mNTriggers        = mParams.create(EigNTriggersStr,       asynParamInt32,   SSDetConfig, "ntrigger");
     mCompressionAlgo  = mParams.create(EigCompressionAlgoStr, asynParamInt32,   SSDetConfig, "compression");
+    mCompressionAlgo->setEnumValues(compressionEnum);
     mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
     mAutoSummation    = mParams.create(EigAutoSummationStr,   asynParamInt32,   SSDetConfig, "auto_summation");
 
