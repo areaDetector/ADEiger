@@ -156,6 +156,7 @@ static void initializeTaskC (void *drvPvt)
  * parameters defined in this class, asynNDArrayDriver, and ADDriver.
  * \param[in] portName The name of the asyn port driver to be created.
  * \param[in] serverHostname The IP or url of the detector webserver.
+ * \param[in] eigerModel The detector model series (1=EIGER1, 2=EIGER2).
  * \param[in] maxBuffers The maximum number of NDArray buffers that the
  *            NDArrayPool for this driver is allowed to allocate. Set this to
  *            -1 to allow an unlimited number of buffers.
