@@ -192,6 +192,13 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname, 
     const char *functionName = "eigerDetector";
     strncpy(mHostname, serverHostname, sizeof(mHostname));
 
+    // Validate eigerModel argument
+    if (eigerModel != EIGER1 && eigerModel != EIGER2)
+    {
+        ERR_ARGS("invalid eigerModel argument: %d", eigerModel);
+        return;
+    }
+
     // Write version to appropriate parameter
     setStringParam(NDDriverVersion, DRIVER_VERSION);
 
