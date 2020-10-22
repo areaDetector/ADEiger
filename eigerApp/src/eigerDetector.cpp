@@ -13,6 +13,7 @@
 #include <epicsThread.h>
 #include <epicsMessageQueue.h>
 #include <iocsh.h>
+#include <string.h>
 #include <math.h>
 #include <sys/fsuid.h>
 #include <sys/stat.h>
