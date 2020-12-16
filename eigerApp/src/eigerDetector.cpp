@@ -192,7 +192,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     // Get API version
     mAPIVersion = mApi.getAPIVersion();
-printf("mAPIVersion=%d\n", mAPIVersion);
 
     // Write version to appropriate parameter
     setStringParam(NDDriverVersion, DRIVER_VERSION);
@@ -285,7 +284,7 @@ printf("mAPIVersion=%d\n", mAPIVersion);
 
     // Driver-only parameters
     mDataSource     = mParams.create(EigDataSourceStr,     asynParamInt32);
- 
+
     mFWAutoRemove   = mParams.create(EigFWAutoRemoveStr,   asynParamInt32);
     mTrigger        = mParams.create(EigTriggerStr,        asynParamInt32);
     mTriggerExp     = mParams.create(EigTriggerExpStr,     asynParamFloat64);
@@ -309,7 +308,6 @@ printf("mAPIVersion=%d\n", mAPIVersion);
     mEigerModel = Eiger1;
     if ((description.find("Eiger2") != std::string::npos) || (description.find("EIGER2") != std::string::npos))
         mEigerModel = Eiger2;
-printf("mEigerModel=%d\n", mEigerModel);
 
     // Acquisition
     mWavelength       = mParams.create(EigWavelengthStr,      asynParamFloat64, SSDetConfig, "wavelength");
@@ -324,7 +322,7 @@ printf("mEigerModel=%d\n", mEigerModel);
     mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
     mAutoSummation    = mParams.create(EigAutoSummationStr,   asynParamInt32,   SSDetConfig, "auto_summation");
 
-    // Detector status parameters
+    // Detector Status Parameters
     mError      = mParams.create(EigErrorStr,      asynParamOctet,   SSDetStatus, "error");
     mThTemp0    = mParams.create(EigThTemp0Str,    asynParamFloat64, SSDetStatus, "board_000/th0_temp");
     mThHumid0   = mParams.create(EigThHumid0Str,   asynParamFloat64, SSDetStatus, "board_000/th0_humidity");
