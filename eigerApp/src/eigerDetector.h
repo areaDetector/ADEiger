@@ -7,6 +7,11 @@
 #include "restApi.h"
 #include "eigerParam.h"
 
+typedef enum {
+  Eiger1,
+  Eiger2
+} eigerModel_t;
+
 // areaDetector NDArray data source
 #define EigDataSourceStr           "DATA_SOURCE"
 
@@ -82,7 +87,7 @@
 class eigerDetector : public ADDriver
 {
 public:
-    eigerDetector(const char *portName, const char *serverHostname, int eigerModel,
+    eigerDetector(const char *portName, const char *serverHostname,
                   int maxBuffers, size_t maxMemory, int priority, int stackSize);
 
     // These are the methods that we override from ADDriver
@@ -184,6 +189,7 @@ protected:
     EigerParam *mAcquirePeriod;
     EigerParam *mNumImages;
     EigerParam *mTriggerMode;
+    EigerParam *mSDKVersion;
     EigerParam *mFirmwareVersion;
     EigerParam *mSerialNumber;
     EigerParam *mTemperatureActual;
@@ -193,7 +199,8 @@ protected:
 private:
     char mHostname[512];
     RestAPI mApi;
-    int mEigerModel;
+    eigerModel_t mEigerModel;
+    eigerAPIVersion_t mAPIVersion;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
             mPollDoneEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
