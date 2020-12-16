@@ -234,7 +234,7 @@ int RestAPI::buildDataName (int n, const char *pattern, int seqId, char *buf, si
 
 // Public members
 
-RestAPI::RestAPI (std::string const & hostname, int port, int eigerModel, size_t numSockets) :
+RestAPI::RestAPI (std::string const & hostname, int port, size_t numSockets) :
     mHostname(hostname), mPort(port), mNumSockets(numSockets),
     mSockets(new socket_t[numSockets])
 {
@@ -253,13 +253,27 @@ RestAPI::RestAPI (std::string const & hostname, int port, int eigerModel, size_t
         mSockets[i].retries = 0;
     }
 
-    // Define REST URIs based on Eiger model number
+    // Define REST URIs based on API version
     std::string api;
-    switch(eigerModel) {
-        case EIGER1: api = "1.6.0";
-        case EIGER2: api = "1.8.0";
-    }
     mSysStr[SSAPIVersion] = "/detector/api/version";
+    string response;
+    this->get(SSAPIVersion, "", response, 10);
+    struct json_token tokens[MAX_JSON_TOKENS];
+    int err = parse_json(response.c_str(), response.length(), tokens, MAX_JSON_TOKENS);
+    if (err < 0) {
+        throw std::runtime_error("unable to parse response json");
+    }
+    struct json_token *token = find_json_token(tokens, "value");
+    if (token == NULL)
+        throw std::runtime_error("unable to find value token");
+    api = string(token->ptr, token->len);
+    if (api == "1.6.0")
+        mAPIVersion = API_1_6_0;
+    else if (api == "1.8.0")
+        mAPIVersion = API_1_8_0;
+    else
+        throw std::runtime_error("Unknown API, must be 1.6.0 or 1.8.0");
+
     mSysStr[SSDetConfig] = "/detector/api/" + api + "/config/";
     mSysStr[SSDetStatus] = "/detector/api/" + api + "/status/";
     mSysStr[SSFWConfig] = "/filewriter/api/" + api + "/config/";
@@ -359,6 +373,11 @@ int RestAPI::wait (void)
 int RestAPI::statusUpdate (void)
 {
     return put(SSCommand, "status_update");
+}
+
+eigerAPIVersion_t RestAPI::getAPIVersion (void)
+{
+    return mAPIVersion;
 }
 
 int RestAPI::getFileSize (const char *filename, size_t *size)
