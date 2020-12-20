@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector-3-10/ADEiger/eigerApp/op/adl/eiger1Detector.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerDetector.adl"
 	version=030109
 }
 display {
@@ -129,7 +129,7 @@ composite {
 		height=780
 	}
 	"composite name"=""
-	"composite file"="eigerAcquisition.adl"
+	"composite file"="eiger1Acquisition.adl"
 }
 composite {
 	object {

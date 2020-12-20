@@ -51,7 +51,7 @@
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #14</name>
-    <file>eigerAcquisition.bob</file>
+    <file>eiger1Acquisition.bob</file>
     <x>360</x>
     <y>40</y>
     <width>350</width>

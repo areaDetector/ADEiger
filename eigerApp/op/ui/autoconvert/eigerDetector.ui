@@ -217,7 +217,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerAcquisition.adl</string>
+                <string>eiger1Acquisition.adl</string>
             </property>
             <property name="macro">
                 <string></string>
