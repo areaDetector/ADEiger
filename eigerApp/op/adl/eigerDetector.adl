@@ -1,12 +1,12 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerDetector.adl"
+	name="/home/epics/devel/areaDetector-3-10/ADEiger/eigerApp/op/adl/eiger1Detector.adl"
 	version=030109
 }
 display {
 	object {
-		x=20
-		y=92
+		x=77
+		y=82
 		width=1425
 		height=840
 	}
@@ -108,7 +108,7 @@ text {
 	"basic attribute" {
 		clr=54
 	}
-	textix="Eiger Detector Control $(P)$(R)"
+	textix="Eiger1 Detector Control $(P)$(R)"
 	align="horiz. centered"
 }
 composite {
@@ -169,7 +169,7 @@ composite {
 		height=210
 	}
 	"composite name"=""
-	"composite file"="eigerDetectorStatus.adl"
+	"composite file"="eiger1DetectorStatus.adl"
 }
 composite {
 	object {
@@ -189,7 +189,7 @@ composite {
 		height=380
 	}
 	"composite name"=""
-	"composite file"="eigerFileWriter.adl"
+	"composite file"="eiger1FileWriter.adl"
 }
 composite {
 	object {
