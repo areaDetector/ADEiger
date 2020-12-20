@@ -42,6 +42,138 @@ record(ai, "$(P)$(R)TriggerStartDelay_RBV")
     field(SCAN, "I/O Intr")
 }
 
+# Threshold 2 energy
+record(ao, "$(P)$(R)Threshold2Energy")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2")
+    field(DESC, "Energy threshold")
+    field(EGU,  "eV")
+    field(PREC, "3")
+}
+
+record(ai, "$(P)$(R)Threshold2Energy_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2")
+    field(DESC, "Energy threshold")
+    field(EGU,  "eV")
+    field(PREC, "3")
+    field(SCAN, "I/O Intr")
+}
+
+# Threshold 2 enable
+record(bo,"$(P)$(R)Threshold2Enable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2_ENABLE")
+    field(DESC, "Enable threshold 2")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+}
+
+record(bi,"$(P)$(R)Threshold2Enable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2_ENABLE")
+    field(DESC, "Enable threshold 2")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+}
+
+# Threshold difference enable
+record(bo,"$(P)$(R)ThresholdDiffEnable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD_DIFF_ENABLE")
+    field(DESC, "Enable threshold difference images")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+}
+
+record(bi,"$(P)$(R)ThresholdDiffEnable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD_DIFF_ENABLE")
+    field(DESC, "Enable threshold difference images")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+}
+
+# Countrate correction enable
+record(bo,"$(P)$(R)CountrateCorrEnable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COUNTRATE_CORR_ENABLE")
+    field(DESC, "Enable countrate correction")
+    field(VAL,  "1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+}
+
+record(bi,"$(P)$(R)CountrateCorrEnable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COUNTRATE_CORR_ENABLE")
+    field(DESC, "Enable countrate correction")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+}
+
+# Add external gate mode to the value in eigerBase.template
+record(mbbo,"$(P)$(R)TriggerMode") {
+    field(FRVL,"4")
+    field(FRST,"External Gate")
+}
+
+record(mbbi,"$(P)$(R)TriggerMode_RBV") {
+    field(FRVL,"4")
+    field(FRST,"External Gate")
+}
+
+# External gate mode
+record(mbbo,"$(P)$(R)ExtGateMode") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
+    field(DESC, "External gate mode")
+    field(ZRST, "Pump & Probe")
+    field(ZRVL, "0")
+    field(ONST, "HDR")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)ExtGateMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
+    field(DESC, "ROI Mode")
+    field(DESC, "External gate mode")
+    field(ZRST, "Pump & Probe")
+    field(ZRVL, "0")
+    field(ONST, "HDR")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
+}
+
+# High voltage reset
+record(bo,"$(P)$(R)HVReset") {
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HIGH_VOLTAGE_RESET")
+    field(DESC, "Reset high voltage")
+    field(ZNAM, "Done")
+    field(ONAM, "Reset")
+}
+
+# High voltage state
+record(stringin, "$(P)$(R)HVState_RBV") {
+    field(DESC, "High voltage state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HIGH_VOLTAGE_STATE")
+    field(SCAN, "I/O Intr")
+}
+
 ## Reorder Enums ##
 
 # Compression algorithm selection
