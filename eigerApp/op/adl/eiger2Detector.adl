@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=258
-		y=112
+		x=540
+		y=162
 		width=1425
-		height=850
+		height=880
 	}
 	clr=14
 	bclr=4
@@ -113,8 +113,8 @@ text {
 }
 composite {
 	object {
-		x=715
-		y=670
+		x=5
+		y=685
 		width=350
 		height=165
 	}
@@ -134,7 +134,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=425
+		y=400
 		width=350
 		height=130
 	}
@@ -164,7 +164,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=560
+		y=535
 		width=350
 		height=105
 	}
@@ -176,7 +176,7 @@ composite {
 		x=715
 		y=40
 		width=350
-		height=380
+		height=355
 	}
 	"composite name"=""
 	"composite file"="eiger2FileWriter.adl"
@@ -213,8 +213,8 @@ composite {
 }
 composite {
 	object {
-		x=5
-		y=685
+		x=1070
+		y=740
 		width=350
 		height=110
 	}
@@ -226,8 +226,38 @@ composite {
 		x=360
 		y=40
 		width=350
-		height=805
+		height=305
 	}
 	"composite name"=""
-	"composite file"="eiger2Acquisition.adl"
+	"composite file"="eiger2AcquisitionSetup.adl"
+}
+composite {
+	object {
+		x=360
+		y=509
+		width=350
+		height=365
+	}
+	"composite name"=""
+	"composite file"="eigerAcquisitionStatus.adl"
+}
+composite {
+	object {
+		x=360
+		y=349
+		width=350
+		height=155
+	}
+	"composite name"=""
+	"composite file"="eiger2Trigger.adl"
+}
+composite {
+	object {
+		x=715
+		y=645
+		width=350
+		height=180
+	}
+	"composite name"=""
+	"composite file"="eigerReadout.adl"
 }

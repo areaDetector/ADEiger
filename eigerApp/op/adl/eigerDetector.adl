@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=77
-		y=82
+		x=208
+		y=178
 		width=1425
-		height=840
+		height=854
 	}
 	clr=14
 	bclr=4
@@ -113,23 +113,13 @@ text {
 }
 composite {
 	object {
-		x=715
-		y=670
+		x=5
+		y=685
 		width=350
 		height=165
 	}
 	"composite name"=""
 	"composite file"="ADShutter.adl"
-}
-composite {
-	object {
-		x=360
-		y=40
-		width=350
-		height=780
-	}
-	"composite name"=""
-	"composite file"="eiger1Acquisition.adl"
 }
 composite {
 	object {
@@ -223,11 +213,51 @@ composite {
 }
 composite {
 	object {
-		x=5
-		y=685
+		x=360
+		y=705
 		width=350
 		height=110
 	}
 	"composite name"=""
 	"composite file"="ADAttrFile.adl"
+}
+composite {
+	object {
+		x=360
+		y=40
+		width=350
+		height=155
+	}
+	"composite name"=""
+	"composite file"="eiger1AcquisitionSetup.adl"
+}
+composite {
+	object {
+		x=360
+		y=200
+		width=350
+		height=130
+	}
+	"composite name"=""
+	"composite file"="eiger1Trigger.adl"
+}
+composite {
+	object {
+		x=360
+		y=335
+		width=350
+		height=365
+	}
+	"composite name"=""
+	"composite file"="eigerAcquisitionStatus.adl"
+}
+composite {
+	object {
+		x=715
+		y=670
+		width=350
+		height=180
+	}
+	"composite name"=""
+	"composite file"="eigerReadout.adl"
 }
