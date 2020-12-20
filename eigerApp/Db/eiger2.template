@@ -29,7 +29,7 @@ record(ao, "$(P)$(R)TriggerStartDelay")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
     field(DESC, "Trigger start delay")
     field(EGU,  "s")
-    field(PREC, "9")
+    field(PREC, "4")
 }
 
 record(ai, "$(P)$(R)TriggerStartDelay_RBV")
@@ -38,7 +38,7 @@ record(ai, "$(P)$(R)TriggerStartDelay_RBV")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
     field(DESC, "Trigger start delay")
     field(EGU,  "s")
-    field(PREC, "9")
+    field(PREC, "4")
     field(SCAN, "I/O Intr")
 }
 
