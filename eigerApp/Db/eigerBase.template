@@ -558,7 +558,7 @@ record(longin, "$(P)$(R)SequenceId")
 }
 
 
-# Threshold energy
+# Photon energy
 record(ao, "$(P)$(R)PhotonEnergy")
 {
     field(PINI, "YES")
