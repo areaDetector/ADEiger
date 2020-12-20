@@ -247,9 +247,8 @@
   <widget type="label" version="2.0.0">
     <name>text #53</name>
     <text>HV State</text>
-    <x>85</x>
+    <x>65</x>
     <y>130</y>
-    <width>80</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -259,9 +258,8 @@
   <widget type="label" version="2.0.0">
     <name>text #56</name>
     <text>HV Reset</text>
-    <x>85</x>
+    <x>65</x>
     <y>155</y>
-    <width>80</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -279,12 +277,12 @@
     </actions>
     <pv_name>$(P)$(R)HVReset</pv_name>
     <text>HV Reset</text>
-    <x>170</x>
+    <x>175</x>
     <y>155</y>
     <width>120</width>
     <height>20</height>
     <background_color>
-      <color red="115" green="223" blue="255">
+      <color red="253" green="0" blue="0">
       </color>
     </background_color>
   </widget>

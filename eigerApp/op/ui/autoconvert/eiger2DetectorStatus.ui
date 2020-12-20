@@ -721,9 +721,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>85</x>
+                    <x>65</x>
                     <y>130</y>
-                    <width>80</width>
+                    <width>100</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -757,9 +757,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>85</x>
+                    <x>65</x>
                     <y>155</y>
-                    <width>80</width>
+                    <width>100</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -767,7 +767,7 @@ border-radius: 2px;
         <widget class="caMessageButton" name="caMessageButton_0">
             <property name="geometry">
                 <rect>
-                    <x>170</x>
+                    <x>175</x>
                     <y>155</y>
                     <width>120</width>
                     <height>20</height>
@@ -788,9 +788,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
+                    <red>253</red>
+                    <green>0</green>
+                    <blue>0</blue>
                 </color>
             </property>
             <property name="label">
