@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>eigerDetector</name>
-  <x>20</x>
-  <y>92</y>
+  <x>77</x>
+  <y>82</y>
   <width>1425</width>
   <height>840</height>
   <background_color>
@@ -27,7 +27,7 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #9</name>
-    <text>Eiger Detector Control $(P)$(R)</text>
+    <text>Eiger1 Detector Control $(P)$(R)</text>
     <y>5</y>
     <width>1425</width>
     <height>25</height>
@@ -83,7 +83,7 @@
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #22</name>
-    <file>eigerDetectorStatus.bob</file>
+    <file>eiger1DetectorStatus.bob</file>
     <x>5</x>
     <y>470</y>
     <width>350</width>
@@ -99,7 +99,7 @@
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #26</name>
-    <file>eigerFileWriter.bob</file>
+    <file>eiger1FileWriter.bob</file>
     <x>715</x>
     <y>40</y>
     <width>350</width>

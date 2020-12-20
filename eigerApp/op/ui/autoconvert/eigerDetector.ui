@@ -4,8 +4,8 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>20</x>
-            <y>92</y>
+            <x>77</x>
+            <y>82</y>
             <width>1425</width>
             <height>840</height>
         </rect>
@@ -158,7 +158,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Eiger Detector Control $(P)$(R)</string>
+                <string>Eiger1 Detector Control $(P)$(R)</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -313,7 +313,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorStatus.adl</string>
+                <string>eiger1DetectorStatus.adl</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -361,7 +361,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerFileWriter.adl</string>
+                <string>eiger1FileWriter.adl</string>
             </property>
             <property name="macro">
                 <string></string>
