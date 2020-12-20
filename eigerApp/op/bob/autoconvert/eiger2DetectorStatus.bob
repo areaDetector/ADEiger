@@ -277,7 +277,7 @@
     </actions>
     <pv_name>$(P)$(R)HVReset</pv_name>
     <text>HV Reset</text>
-    <x>175</x>
+    <x>170</x>
     <y>155</y>
     <width>120</width>
     <height>20</height>

@@ -813,7 +813,7 @@ $(pv_value)</tooltip>
     <visible>true</visible>
     <widget_type>Action Button</widget_type>
     <width>120</width>
-    <x>175</x>
+    <x>170</x>
     <y>155</y>
   </widget>
 </display>

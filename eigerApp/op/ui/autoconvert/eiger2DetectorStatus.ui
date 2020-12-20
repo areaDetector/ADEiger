@@ -767,7 +767,7 @@ border-radius: 2px;
         <widget class="caMessageButton" name="caMessageButton_0">
             <property name="geometry">
                 <rect>
-                    <x>175</x>
+                    <x>170</x>
                     <y>155</y>
                     <width>120</width>
                     <height>20</height>
