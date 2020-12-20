@@ -1,0 +1,637 @@
+
+file {
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger1AcquisitionStatus.adl"
+	version=030109
+}
+display {
+	object {
+		x=566
+		y=159
+		width=350
+		height=365
+	}
+	clr=14
+	bclr=4
+	cmap=""
+	gridSpacing=5
+	gridOn=0
+	snapToGrid=0
+}
+"color map" {
+	ncolors=65
+	colors {
+		ffffff,
+		ececec,
+		dadada,
+		c8c8c8,
+		bbbbbb,
+		aeaeae,
+		9e9e9e,
+		919191,
+		858585,
+		787878,
+		696969,
+		5a5a5a,
+		464646,
+		2d2d2d,
+		000000,
+		00d800,
+		1ebb00,
+		339900,
+		2d7f00,
+		216c00,
+		fd0000,
+		de1309,
+		be190b,
+		a01207,
+		820400,
+		5893ff,
+		597ee1,
+		4b6ec7,
+		3a5eab,
+		27548d,
+		fbf34a,
+		f9da3c,
+		eeb62b,
+		e19015,
+		cd6100,
+		ffb0ff,
+		d67fe2,
+		ae4ebc,
+		8b1a96,
+		610a75,
+		a4aaff,
+		8793e2,
+		6a73c1,
+		4d52a4,
+		343386,
+		c7bb6d,
+		b79d5c,
+		a47e3c,
+		7d5627,
+		58340f,
+		99ffff,
+		73dfff,
+		4ea5f9,
+		2a63e4,
+		0a00b8,
+		ebf1b5,
+		d4db9d,
+		bbc187,
+		a6a462,
+		8b8239,
+		73ff6b,
+		52da3b,
+		3cb420,
+		289315,
+		1a7309,
+	}
+}
+rectangle {
+	object {
+		x=0
+		y=0
+		width=350
+		height=365
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=50
+		y=2
+		width=250
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=85
+		y=2
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Acquisition Status"
+	align="horiz. centered"
+}
+composite {
+	object {
+		x=10
+		y=30
+		width=330
+		height=30
+	}
+	"composite name"=""
+	children {
+		"message button" {
+			object {
+				x=110
+				y=30
+				width=70
+				height=30
+			}
+			control {
+				chan="$(P)$(R)Acquire"
+				clr=14
+				bclr=53
+			}
+			label="Start"
+			press_msg="1"
+		}
+		"message button" {
+			object {
+				x=185
+				y=30
+				width=70
+				height=30
+			}
+			control {
+				chan="$(P)$(R)Acquire"
+				clr=14
+				bclr=53
+			}
+			label="Stop"
+			press_msg="0"
+		}
+		"message button" {
+			object {
+				x=260
+				y=30
+				width=80
+				height=30
+			}
+			control {
+				chan="$(P)$(R)Trigger"
+				clr=14
+				bclr=53
+			}
+			label="Trigger"
+			press_msg="0"
+		}
+		rectangle {
+			object {
+				x=10
+				y=30
+				width=80
+				height=30
+			}
+			"basic attribute" {
+				clr=2
+			}
+		}
+		text {
+			object {
+				x=15
+				y=35
+				width=70
+				height=20
+			}
+			"basic attribute" {
+				clr=54
+			}
+			textix="Acquire"
+		}
+	}
+}
+composite {
+	object {
+		x=5
+		y=65
+		width=335
+		height=298
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=5
+				y=290
+				width=170
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="# Images Complete"
+			align="horiz. right"
+		}
+		composite {
+			object {
+				x=35
+				y=65
+				width=245
+				height=20
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=180
+						y=65
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=30
+					}
+					"dynamic attribute" {
+						vis="if not zero"
+						calc="A"
+						chan="$(P)$(R)Acquire"
+					}
+					textix="Collecting"
+				}
+				text {
+					object {
+						x=183
+						y=65
+						width=40
+						height=20
+					}
+					"basic attribute" {
+						clr=63
+					}
+					"dynamic attribute" {
+						vis="if zero"
+						calc="A"
+						chan="$(P)$(R)Acquire"
+					}
+					textix="Done"
+				}
+				text {
+					object {
+						x=35
+						y=65
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Acquire Status"
+					align="horiz. right"
+				}
+			}
+		}
+		text {
+			object {
+				x=25
+				y=90
+				width=150
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="# Queued arrays"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=180
+				y=91
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)NumQueuedArrays"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		text {
+			object {
+				x=15
+				y=115
+				width=160
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Wait for plugins"
+			align="horiz. right"
+		}
+		menu {
+			object {
+				x=180
+				y=115
+				width=80
+				height=20
+			}
+			control {
+				chan="$(P)$(R)WaitForPlugins"
+				clr=14
+				bclr=51
+			}
+		}
+		text {
+			object {
+				x=55
+				y=140
+				width=120
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Acquire busy"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=180
+				y=141
+				width=160
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)AcquireBusy"
+				clr=54
+				bclr=2
+			}
+			clrmod="alarm"
+			format="string"
+			limits {
+			}
+		}
+		text {
+			object {
+				x=25
+				y=165
+				width=150
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Acquire Message"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=180
+				y=166
+				width=160
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)StatusMessage_RBV"
+				clr=54
+				bclr=2
+			}
+			format="string"
+			limits {
+			}
+		}
+		text {
+			object {
+				x=35
+				y=190
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Detector State"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=180
+				y=191
+				width=160
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)DetectorState_RBV"
+				clr=54
+				bclr=2
+			}
+			clrmod="alarm"
+			limits {
+			}
+		}
+		text {
+			object {
+				x=35
+				y=215
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Detector Armed"
+			align="horiz. right"
+		}
+		composite {
+			object {
+				x=180
+				y=215
+				width=70
+				height=20
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=180
+						y=215
+						width=50
+						height=20
+					}
+					"basic attribute" {
+						clr=20
+					}
+					"dynamic attribute" {
+						vis="if not zero"
+						chan="$(P)$(R)Armed"
+					}
+					textix="Armed"
+				}
+				text {
+					object {
+						x=180
+						y=215
+						width=70
+						height=20
+					}
+					"basic attribute" {
+						clr=63
+					}
+					"dynamic attribute" {
+						vis="if zero"
+						chan="$(P)$(R)Armed"
+					}
+					textix="Unarmed"
+				}
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=266
+				width=100
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)CountCutoff_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		text {
+			object {
+				x=65
+				y=265
+				width=110
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Rate Cutoff"
+			align="horiz. right"
+		}
+		"text update" {
+			object {
+				x=180
+				y=241
+				width=100
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)DeadTime_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		text {
+			object {
+				x=55
+				y=240
+				width=120
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Readout Time"
+			align="horiz. right"
+		}
+		composite {
+			object {
+				x=45
+				y=318
+				width=280
+				height=45
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=180
+						y=318
+						width=60
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ArrayCounter"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				text {
+					object {
+						x=45
+						y=318
+						width=130
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Image counter"
+					align="horiz. right"
+				}
+				"text update" {
+					object {
+						x=245
+						y=319
+						width=80
+						height=18
+					}
+					monitor {
+						chan="$(P)$(R)ArrayCounter_RBV"
+						clr=54
+						bclr=4
+					}
+					limits {
+					}
+				}
+				text {
+					object {
+						x=75
+						y=343
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Image rate"
+					align="horiz. right"
+				}
+				"text update" {
+					object {
+						x=180
+						y=344
+						width=100
+						height=18
+					}
+					monitor {
+						chan="$(P)$(R)ArrayRate_RBV"
+						clr=54
+						bclr=4
+					}
+					limits {
+					}
+				}
+			}
+		}
+		"text update" {
+			object {
+				x=180
+				y=290
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)NumImagesCounter_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+	}
+}
