@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>eiger2Detector</name>
-  <x>258</x>
-  <y>112</y>
+  <x>540</x>
+  <y>162</y>
   <width>1425</width>
-  <height>850</height>
+  <height>880</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -44,8 +44,8 @@
   <widget type="embedded" version="2.0.0">
     <name>composite #12</name>
     <file>ADShutter.bob</file>
-    <x>715</x>
-    <y>670</y>
+    <x>5</x>
+    <y>685</y>
     <width>350</width>
     <height>165</height>
   </widget>
@@ -61,7 +61,7 @@
     <name>composite #16</name>
     <file>eigerStream.bob</file>
     <x>715</x>
-    <y>425</y>
+    <y>400</y>
     <width>350</width>
     <height>130</height>
   </widget>
@@ -85,7 +85,7 @@
     <name>composite #22</name>
     <file>eigerMonitor.bob</file>
     <x>715</x>
-    <y>560</y>
+    <y>535</y>
     <width>350</width>
     <height>105</height>
   </widget>
@@ -95,7 +95,7 @@
     <x>715</x>
     <y>40</y>
     <width>350</width>
-    <height>380</height>
+    <height>355</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #26</name>
@@ -124,17 +124,41 @@
   <widget type="embedded" version="2.0.0">
     <name>composite #32</name>
     <file>ADAttrFile.bob</file>
-    <x>5</x>
-    <y>685</y>
+    <x>1070</x>
+    <y>740</y>
     <width>350</width>
     <height>110</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #34</name>
-    <file>eiger2Acquisition.bob</file>
+    <file>eiger2AcquisitionSetup.bob</file>
     <x>360</x>
     <y>40</y>
     <width>350</width>
-    <height>805</height>
+    <height>305</height>
+  </widget>
+  <widget type="embedded" version="2.0.0">
+    <name>composite #36</name>
+    <file>eigerAcquisitionStatus.bob</file>
+    <x>360</x>
+    <y>509</y>
+    <width>350</width>
+    <height>365</height>
+  </widget>
+  <widget type="embedded" version="2.0.0">
+    <name>composite #38</name>
+    <file>eiger2Trigger.bob</file>
+    <x>360</x>
+    <y>349</y>
+    <width>350</width>
+    <height>155</height>
+  </widget>
+  <widget type="embedded" version="2.0.0">
+    <name>composite #40</name>
+    <file>eigerReadout.bob</file>
+    <x>715</x>
+    <y>645</y>
+    <width>350</width>
+    <height>180</height>
   </widget>
 </display>

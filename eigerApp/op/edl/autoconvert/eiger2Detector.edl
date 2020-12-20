@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 258
-y 112
+x 540
+y 162
 w 1425
-h 850
+h 880
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -66,8 +66,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 715
-y 670
+x 5
+y 685
 w 350
 h 165
 fgColor rgb 0 0 0
@@ -115,7 +115,7 @@ major 4
 minor 0
 release 0
 x 715
-y 425
+y 400
 w 350
 h 130
 fgColor rgb 0 0 0
@@ -187,7 +187,7 @@ major 4
 minor 0
 release 0
 x 715
-y 560
+y 535
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -213,7 +213,7 @@ release 0
 x 715
 y 40
 w 350
-h 380
+h 355
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -306,8 +306,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 5
-y 685
+x 1070
+y 740
 w 350
 h 110
 fgColor rgb 0 0 0
@@ -333,17 +333,89 @@ release 0
 x 360
 y 40
 w 350
-h 805
+h 305
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
 botShadowColor rgb 0 0 0
 displaySource "file"
-file "eiger2Acquisition.edl"
+file "eiger2AcquisitionSetup.edl"
 sizeOfs 5
 numDsps 1
 displayFileName {
-  0 "eiger2Acquisition.edl"
+  0 "eiger2AcquisitionSetup.edl"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 509
+w 350
+h 365
+fgColor rgb 0 0 0
+bgColor rgb 65280 65280 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+displaySource "file"
+file "eigerAcquisitionStatus.edl"
+sizeOfs 5
+numDsps 1
+displayFileName {
+  0 "eigerAcquisitionStatus.edl"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 349
+w 350
+h 155
+fgColor rgb 0 0 0
+bgColor rgb 65280 65280 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+displaySource "file"
+file "eiger2Trigger.edl"
+sizeOfs 5
+numDsps 1
+displayFileName {
+  0 "eiger2Trigger.edl"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 715
+y 645
+w 350
+h 180
+fgColor rgb 0 0 0
+bgColor rgb 65280 65280 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+displaySource "file"
+file "eigerReadout.edl"
+sizeOfs 5
+numDsps 1
+displayFileName {
+  0 "eigerReadout.edl"
 }
 noScroll
 endObjectProperties

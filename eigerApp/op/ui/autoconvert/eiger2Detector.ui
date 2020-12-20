@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>258</x>
-            <y>112</y>
+            <x>540</x>
+            <y>162</y>
             <width>1425</width>
-            <height>850</height>
+            <height>880</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -178,16 +178,16 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_0">
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>670</y>
+                    <x>5</x>
+                    <y>685</y>
                     <width>354</width>
                     <height>169</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>670</y>
+                    <x>5</x>
+                    <y>685</y>
                     <width>352</width>
                     <height>167</height>
                 </rect>
@@ -227,7 +227,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>425</y>
+                    <y>400</y>
                     <width>352</width>
                     <height>132</height>
                 </rect>
@@ -235,7 +235,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>425</y>
+                    <y>400</y>
                     <width>350</width>
                     <height>130</height>
                 </rect>
@@ -276,16 +276,16 @@ border-radius: 2px;
                 <rect>
                     <x>5</x>
                     <y>470</y>
-                    <width>352</width>
-                    <height>212</height>
+                    <width>354</width>
+                    <height>214</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>5</x>
                     <y>470</y>
-                    <width>350</width>
-                    <height>210</height>
+                    <width>352</width>
+                    <height>212</height>
                 </rect>
             </property>
             <property name="filename">
@@ -299,7 +299,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>560</y>
+                    <y>535</y>
                     <width>352</width>
                     <height>107</height>
                 </rect>
@@ -307,7 +307,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>560</y>
+                    <y>535</y>
                     <width>350</width>
                     <height>105</height>
                 </rect>
@@ -325,7 +325,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>382</height>
+                    <height>357</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -333,7 +333,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>380</height>
+                    <height>355</height>
                 </rect>
             </property>
             <property name="filename">
@@ -418,16 +418,16 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_10">
             <property name="geometry">
                 <rect>
-                    <x>5</x>
-                    <y>685</y>
+                    <x>1070</x>
+                    <y>740</y>
                     <width>354</width>
                     <height>114</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>5</x>
-                    <y>685</y>
+                    <x>1070</x>
+                    <y>740</y>
                     <width>352</width>
                     <height>112</height>
                 </rect>
@@ -445,7 +445,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>807</height>
+                    <height>307</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -453,11 +453,83 @@ border-radius: 2px;
                     <x>360</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>805</height>
+                    <height>305</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger2Acquisition.adl</string>
+                <string>eiger2AcquisitionSetup.adl</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_12">
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>509</y>
+                    <width>352</width>
+                    <height>367</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>509</y>
+                    <width>350</width>
+                    <height>365</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerAcquisitionStatus.adl</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_13">
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>349</y>
+                    <width>352</width>
+                    <height>157</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>349</y>
+                    <width>350</width>
+                    <height>155</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eiger2Trigger.adl</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_14">
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>645</y>
+                    <width>352</width>
+                    <height>182</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>645</y>
+                    <width>350</width>
+                    <height>180</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerReadout.adl</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -477,6 +549,9 @@ border-radius: 2px;
         <zorder>caInclude_9</zorder>
         <zorder>caInclude_10</zorder>
         <zorder>caInclude_11</zorder>
+        <zorder>caInclude_12</zorder>
+        <zorder>caInclude_13</zorder>
+        <zorder>caInclude_14</zorder>
     </widget>
 </widget>
 </ui>
