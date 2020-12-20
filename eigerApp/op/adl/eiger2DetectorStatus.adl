@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector-3-10/ADEiger/eigerApp/op/adl/eiger2DetectorStatus.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2DetectorStatus.adl"
 	version=030109
 }
 display {
@@ -151,19 +151,6 @@ text {
 }
 text {
 	object {
-		x=65
-		y=105
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Humidity %"
-	align="horiz. right"
-}
-text {
-	object {
 		x=5
 		y=55
 		width=160
@@ -221,21 +208,6 @@ text {
 "text update" {
 	object {
 		x=170
-		y=106
-		width=155
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Humid0_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=170
 		y=56
 		width=155
 		height=18
@@ -260,4 +232,88 @@ menu {
 		clr=14
 		bclr=51
 	}
+}
+"text update" {
+	object {
+		x=170
+		y=106
+		width=155
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Humid0_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=65
+		y=105
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Humidity %"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=170
+		y=131
+		width=155
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)HVState_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=65
+		y=130
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="HV State"
+	align="horiz. right"
+}
+text {
+	object {
+		x=65
+		y=155
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="HV Reset"
+	align="horiz. right"
+}
+"message button" {
+	object {
+		x=175
+		y=155
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)HVReset"
+		clr=14
+		bclr=20
+	}
+	label="HV Reset"
+	press_msg="1"
 }
