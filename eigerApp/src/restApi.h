@@ -75,6 +75,7 @@ public:
     int cancel     (void);
     int abort      (void);
     int wait       (void);
+    int hvReset    (int resetTime);
     int statusUpdate (void);
     eigerAPIVersion_t getAPIVersion(void);
 
