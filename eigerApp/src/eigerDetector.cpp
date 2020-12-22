@@ -31,6 +31,8 @@
 #include "restApi.h"
 #include "streamApi.h"
 
+// Set this flag if you are using the pre-release firmware that supports External Gate mode
+//#define HAVE_EXTG_FIRMWARE      1
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
 #define DEFAULT_QUEUE_CAPACITY  2
@@ -349,9 +351,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     triggerModeEnum.push_back("inte");
     triggerModeEnum.push_back("exts");
     triggerModeEnum.push_back("exte");
+#ifdef HAVE_EXTG_FIRMWARE
     if (mEigerModel == Eiger2) {
         triggerModeEnum.push_back("extg");
     }
+#endif
     mTriggerMode->setEnumValues(triggerModeEnum);
     mSDKVersion        = mParams.create(ADSDKVersionString,        asynParamOctet,   SSDetConfig, "software_version");
     mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "eiger_fw_version");
@@ -387,12 +391,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mThreshold2Enable->setEnumValues(modeEnum);
         mThresholdDiffEnable = mParams.create(EigThresholdDiffEnableStr, asynParamInt32,   SSDetConfig, "threshold/difference/mode");
         mThresholdDiffEnable->setEnumValues(modeEnum);
+#ifdef HAVE_EXTG_FIRMWARE
         mExtGateMode         = mParams.create(EigExtGateModeStr,         asynParamInt32,   SSDetConfig, "extg_mode");
-        vector<string> extgEnum;
-        extgEnum.reserve(2);
-        extgEnum.push_back("pump-and-probe");
-        extgEnum.push_back("hdr");
-        //mExtGateMode->setEnumValues(extgEnum);
+        mNumExposures        = mParams.create(ADNumExposuresString,      asynParamInt32,   SSDetConfig, "nexpi");
+#endif
     }
 
     // Set default parameters
