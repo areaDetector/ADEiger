@@ -549,6 +549,46 @@ record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Countrate correction applied
+record(bo,"$(P)$(R)CountrateCorrApplied") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
+    field(DESC, "Apply countrate correction")
+    field(VAL,  "1")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bi,"$(P)$(R)CountrateCorrApplied_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
+    field(DESC, "Apply countrate correction")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(SCAN, "I/O Intr")
+}
+
+# Pixel mask applied
+record(bo,"$(P)$(R)PixelMaskApplied") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
+    field(DESC, "Apply pixel mask")
+    field(VAL,  "1")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+record(bi,"$(P)$(R)PixelMaskApplied_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
+    field(DESC, "Apply pixel mask")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(SCAN, "I/O Intr")
+}
+
 record(longin, "$(P)$(R)SequenceId")
 {
     field(DTYP, "asynInt32")
