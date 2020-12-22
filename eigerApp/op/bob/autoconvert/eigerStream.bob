@@ -44,10 +44,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #12</name>
-    <text>Enable/Disable</text>
-    <x>5</x>
+    <text>Enable</text>
+    <x>85</x>
     <y>30</y>
-    <width>140</width>
+    <width>60</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>

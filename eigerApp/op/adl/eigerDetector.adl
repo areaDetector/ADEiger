@@ -8,7 +8,7 @@ display {
 		x=208
 		y=178
 		width=1425
-		height=854
+		height=905
 	}
 	clr=14
 	bclr=4
@@ -256,7 +256,7 @@ composite {
 		x=715
 		y=670
 		width=350
-		height=180
+		height=230
 	}
 	"composite name"=""
 	"composite file"="eigerReadout.adl"

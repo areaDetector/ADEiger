@@ -113,15 +113,15 @@ text {
 }
 text {
 	object {
-		x=5
+		x=85
 		y=30
-		width=140
+		width=60
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Enable/Disable"
+	textix="Enable"
 	align="horiz. right"
 }
 "text update" {

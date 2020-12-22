@@ -45,7 +45,7 @@
     <name>composite #12</name>
     <file>ADShutter.bob</file>
     <x>5</x>
-    <y>685</y>
+    <y>710</y>
     <width>350</width>
     <height>165</height>
   </widget>
@@ -79,7 +79,7 @@
     <x>5</x>
     <y>470</y>
     <width>350</width>
-    <height>210</height>
+    <height>235</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #22</name>
@@ -135,13 +135,13 @@
     <x>360</x>
     <y>40</y>
     <width>350</width>
-    <height>305</height>
+    <height>280</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #36</name>
     <file>eigerAcquisitionStatus.bob</file>
     <x>360</x>
-    <y>509</y>
+    <y>485</y>
     <width>350</width>
     <height>365</height>
   </widget>
@@ -149,7 +149,7 @@
     <name>composite #38</name>
     <file>eiger2Trigger.bob</file>
     <x>360</x>
-    <y>349</y>
+    <y>325</y>
     <width>350</width>
     <height>155</height>
   </widget>
@@ -159,6 +159,6 @@
     <x>715</x>
     <y>645</y>
     <width>350</width>
-    <height>180</height>
+    <height>230</height>
   </widget>
 </display>

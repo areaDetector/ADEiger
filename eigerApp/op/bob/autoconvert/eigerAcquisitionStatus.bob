@@ -149,222 +149,74 @@
       <auto_size>true</auto_size>
     </widget>
   </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #33</name>
+  <widget type="label" version="2.0.0">
+    <name>text #33</name>
+    <text># Images Complete</text>
     <x>5</x>
+    <y>290</y>
+    <width>170</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #36</name>
+    <x>35</x>
     <y>65</y>
-    <width>335</width>
-    <height>298</height>
+    <width>245</width>
+    <height>20</height>
     <style>3</style>
     <transparent>true</transparent>
     <widget type="label" version="2.0.0">
-      <name>text #36</name>
-      <text># Images Complete</text>
-      <y>225</y>
-      <width>170</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #39</name>
-      <x>30</x>
-      <width>245</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #42</name>
-        <text>Collecting</text>
-        <x>145</x>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="251" green="243" blue="74">
-          </color>
-        </foreground_color>
-        <auto_size>true</auto_size>
-        <rules>
-          <rule name="vis_if_not_zero" prop_id="visible" out_exp="false">
-            <exp bool_exp="!(pv0!=0)">
-              <value>false</value>
-            </exp>
-            <pv_name>$(P)$(R)Acquire</pv_name>
-          </rule>
-        </rules>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #46</name>
-        <text>Done</text>
-        <x>148</x>
-        <width>40</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="40" green="147" blue="21">
-          </color>
-        </foreground_color>
-        <auto_size>true</auto_size>
-        <rules>
-          <rule name="vis_if_zero" prop_id="visible" out_exp="false">
-            <exp bool_exp="!(pv0==0)">
-              <value>false</value>
-            </exp>
-            <pv_name>$(P)$(R)Acquire</pv_name>
-          </rule>
-        </rules>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #50</name>
-        <text>Acquire Status</text>
-        <width>140</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <horizontal_alignment>2</horizontal_alignment>
-      </widget>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #53</name>
-      <text># Queued arrays</text>
-      <x>20</x>
-      <y>25</y>
-      <width>150</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #56</name>
-      <pv_name>$(P)$(R)NumQueuedArrays</pv_name>
-      <x>175</x>
-      <y>26</y>
-      <width>60</width>
-      <height>18</height>
+      <name>text #39</name>
+      <text>Collecting</text>
+      <x>145</x>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
       </font>
       <foreground_color>
-        <color red="10" green="0" blue="184">
+        <color red="251" green="243" blue="74">
         </color>
       </foreground_color>
-      <background_color>
-        <color red="187" green="187" blue="187">
-        </color>
-      </background_color>
-      <format>1</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
+      <auto_size>true</auto_size>
+      <rules>
+        <rule name="vis_if_not_zero" prop_id="visible" out_exp="false">
+          <exp bool_exp="!(pv0!=0)">
+            <value>false</value>
+          </exp>
+          <pv_name>$(P)$(R)Acquire</pv_name>
+        </rule>
+      </rules>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #60</name>
-      <text>Wait for plugins</text>
-      <x>10</x>
-      <y>50</y>
-      <width>160</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="combo" version="2.0.0">
-      <name>menu #63</name>
-      <pv_name>$(P)$(R)WaitForPlugins</pv_name>
-      <x>175</x>
-      <y>50</y>
-      <width>80</width>
-      <height>20</height>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #66</name>
-      <text>Acquire busy</text>
-      <x>50</x>
-      <y>75</y>
-      <width>120</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #69</name>
-      <pv_name>$(P)$(R)AcquireBusy</pv_name>
-      <x>175</x>
-      <y>76</y>
-      <width>160</width>
-      <height>18</height>
+      <name>text #43</name>
+      <text>Done</text>
+      <x>148</x>
+      <width>40</width>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
       </font>
       <foreground_color>
-        <color red="10" green="0" blue="184">
+        <color red="40" green="147" blue="21">
         </color>
       </foreground_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
+      <auto_size>true</auto_size>
+      <rules>
+        <rule name="vis_if_zero" prop_id="visible" out_exp="false">
+          <exp bool_exp="!(pv0==0)">
+            <value>false</value>
+          </exp>
+          <pv_name>$(P)$(R)Acquire</pv_name>
+        </rule>
+      </rules>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #73</name>
-      <text>Acquire Message</text>
-      <x>20</x>
-      <y>100</y>
-      <width>150</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #76</name>
-      <pv_name>$(P)$(R)StatusMessage_RBV</pv_name>
-      <x>175</x>
-      <y>101</y>
-      <width>160</width>
-      <height>18</height>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #80</name>
-      <text>Detector State</text>
-      <x>30</x>
-      <y>125</y>
+      <name>text #47</name>
+      <text>Acquire Status</text>
       <width>140</width>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -372,275 +224,410 @@
       </font>
       <horizontal_alignment>2</horizontal_alignment>
     </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #83</name>
-      <pv_name>$(P)$(R)DetectorState_RBV</pv_name>
-      <x>175</x>
-      <y>126</y>
-      <width>160</width>
-      <height>18</height>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #50</name>
+    <text># Queued arrays</text>
+    <x>25</x>
+    <y>90</y>
+    <width>150</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #53</name>
+    <pv_name>$(P)$(R)NumQueuedArrays</pv_name>
+    <x>180</x>
+    <y>91</y>
+    <width>60</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #57</name>
+    <text>Wait for plugins</text>
+    <x>15</x>
+    <y>115</y>
+    <width>160</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #60</name>
+    <pv_name>$(P)$(R)WaitForPlugins</pv_name>
+    <x>180</x>
+    <y>115</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #63</name>
+    <text>Acquire busy</text>
+    <x>55</x>
+    <y>140</y>
+    <width>120</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #66</name>
+    <pv_name>$(P)$(R)AcquireBusy</pv_name>
+    <x>180</x>
+    <y>141</y>
+    <width>160</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #70</name>
+    <text>Acquire Message</text>
+    <x>25</x>
+    <y>165</y>
+    <width>150</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #73</name>
+    <pv_name>$(P)$(R)StatusMessage_RBV</pv_name>
+    <x>180</x>
+    <y>166</y>
+    <width>160</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #77</name>
+    <text>Detector State</text>
+    <x>35</x>
+    <y>190</y>
+    <width>140</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #80</name>
+    <pv_name>$(P)$(R)DetectorState_RBV</pv_name>
+    <x>180</x>
+    <y>191</y>
+    <width>160</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #84</name>
+    <text>Detector Armed</text>
+    <x>35</x>
+    <y>215</y>
+    <width>140</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #87</name>
+    <x>180</x>
+    <y>215</y>
+    <width>70</width>
+    <height>20</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #90</name>
+      <text>Armed</text>
+      <width>50</width>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
       </font>
       <foreground_color>
-        <color red="10" green="0" blue="184">
+        <color red="253" green="0" blue="0">
         </color>
       </foreground_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-      <format>1</format>
-      <show_units>false</show_units>
+      <auto_size>true</auto_size>
+      <rules>
+        <rule name="vis_if_not_zero" prop_id="visible" out_exp="false">
+          <exp bool_exp="!(pv0!=0)">
+            <value>false</value>
+          </exp>
+          <pv_name>$(P)$(R)Armed</pv_name>
+        </rule>
+      </rules>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #87</name>
-      <text>Detector Armed</text>
-      <x>30</x>
-      <y>150</y>
-      <width>140</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #90</name>
-      <x>175</x>
-      <y>150</y>
+      <name>text #94</name>
+      <text>Unarmed</text>
       <width>70</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #93</name>
-        <text>Armed</text>
-        <width>50</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="253" green="0" blue="0">
-          </color>
-        </foreground_color>
-        <auto_size>true</auto_size>
-        <rules>
-          <rule name="vis_if_not_zero" prop_id="visible" out_exp="false">
-            <exp bool_exp="!(pv0!=0)">
-              <value>false</value>
-            </exp>
-            <pv_name>$(P)$(R)Armed</pv_name>
-          </rule>
-        </rules>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #97</name>
-        <text>Unarmed</text>
-        <width>70</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="40" green="147" blue="21">
-          </color>
-        </foreground_color>
-        <auto_size>true</auto_size>
-        <rules>
-          <rule name="vis_if_zero" prop_id="visible" out_exp="false">
-            <exp bool_exp="!(pv0==0)">
-              <value>false</value>
-            </exp>
-            <pv_name>$(P)$(R)Armed</pv_name>
-          </rule>
-        </rules>
-      </widget>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #101</name>
-      <pv_name>$(P)$(R)CountCutoff_RBV</pv_name>
-      <x>175</x>
-      <y>201</y>
-      <height>18</height>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
       </font>
       <foreground_color>
-        <color red="10" green="0" blue="184">
+        <color red="40" green="147" blue="21">
         </color>
       </foreground_color>
-      <background_color>
-        <color red="187" green="187" blue="187">
-        </color>
-      </background_color>
-      <format>1</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
+      <auto_size>true</auto_size>
+      <rules>
+        <rule name="vis_if_zero" prop_id="visible" out_exp="false">
+          <exp bool_exp="!(pv0==0)">
+            <value>false</value>
+          </exp>
+          <pv_name>$(P)$(R)Armed</pv_name>
+        </rule>
+      </rules>
     </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #105</name>
-      <text>Rate Cutoff</text>
-      <x>60</x>
-      <y>200</y>
-      <width>110</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #98</name>
+    <pv_name>$(P)$(R)CountCutoff_RBV</pv_name>
+    <x>180</x>
+    <y>266</y>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #108</name>
-      <pv_name>$(P)$(R)DeadTime_RBV</pv_name>
-      <x>175</x>
-      <y>176</y>
-      <height>18</height>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #102</name>
+    <text>Rate Cutoff</text>
+    <x>65</x>
+    <y>265</y>
+    <width>110</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <background_color>
-        <color red="187" green="187" blue="187">
-        </color>
-      </background_color>
-      <format>1</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #112</name>
-      <text>Readout Time</text>
-      <x>50</x>
-      <y>175</y>
-      <width>120</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #105</name>
+    <pv_name>$(P)$(R)DeadTime_RBV</pv_name>
+    <x>180</x>
+    <y>241</y>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #115</name>
-      <x>40</x>
-      <y>253</y>
-      <width>280</width>
-      <height>45</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #118</name>
-        <pv_name>$(P)$(R)ArrayCounter</pv_name>
-        <x>135</x>
-        <width>60</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #122</name>
-        <text>Image counter</text>
-        <width>130</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <horizontal_alignment>2</horizontal_alignment>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #125</name>
-        <pv_name>$(P)$(R)ArrayCounter_RBV</pv_name>
-        <x>200</x>
-        <y>1</y>
-        <width>80</width>
-        <height>18</height>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="187" green="187" blue="187">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #129</name>
-        <text>Image rate</text>
-        <x>30</x>
-        <y>25</y>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <horizontal_alignment>2</horizontal_alignment>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #132</name>
-        <pv_name>$(P)$(R)ArrayRate_RBV</pv_name>
-        <x>135</x>
-        <y>26</y>
-        <height>18</height>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="187" green="187" blue="187">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #136</name>
-      <pv_name>$(P)$(R)NumImagesCounter_RBV</pv_name>
-      <x>175</x>
-      <y>225</y>
-      <width>80</width>
-      <height>18</height>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #109</name>
+    <text>Readout Time</text>
+    <x>55</x>
+    <y>240</y>
+    <width>120</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <background_color>
-        <color red="187" green="187" blue="187">
-        </color>
-      </background_color>
-      <format>1</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #112</name>
+    <pv_name>$(P)$(R)ArrayCounter</pv_name>
+    <x>180</x>
+    <y>318</y>
+    <width>60</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #116</name>
+    <text>Image counter</text>
+    <x>45</x>
+    <y>318</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #119</name>
+    <pv_name>$(P)$(R)ArrayCounter_RBV</pv_name>
+    <x>245</x>
+    <y>319</y>
+    <width>80</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #123</name>
+    <text>Image rate</text>
+    <x>75</x>
+    <y>343</y>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #126</name>
+    <pv_name>$(P)$(R)ArrayRate_RBV</pv_name>
+    <x>180</x>
+    <y>344</y>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #130</name>
+    <pv_name>$(P)$(R)NumImagesCounter_RBV</pv_name>
+    <x>180</x>
+    <y>291</y>
+    <width>80</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
 </display>

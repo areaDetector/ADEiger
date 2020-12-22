@@ -6,7 +6,7 @@ release 1
 x 793
 y 72
 w 350
-h 305
+h 280
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 305
+h 280
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -519,7 +519,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 55
+x 45
 y 255
 w 130
 h 20
@@ -544,50 +544,6 @@ y 256
 w 80
 h 18
 controlPv "$(P)$(R)CountingMode_RBV"
-format "string"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 5
-y 280
-w 180
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Count rate correct"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 265
-y 281
-w 80
-h 18
-controlPv "$(P)$(R)CountrateCorrEnable_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
@@ -805,9 +761,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 190
+x 180
 y 255
-w 70
+w 80
 h 20
 fgColor rgb 0 0 0
 bgColor rgb 29440 57088 65280
@@ -816,26 +772,6 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 controlPv "$(P)$(R)CountingMode"
 indicatorPv "$(P)$(R)CountingMode"
-font "helvetica-medium-r-12.0"
-endObjectProperties
-
-# (Menu Button)
-object activeMenuButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 190
-y 280
-w 70
-h 20
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-inconsistentColor rgb 17920 17920 17920
-topShadowColor rgb 55808 55808 55808
-botShadowColor rgb 17920 17920 17920
-controlPv "$(P)$(R)CountrateCorrEnable"
-indicatorPv "$(P)$(R)CountrateCorrEnable"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 # (Group)

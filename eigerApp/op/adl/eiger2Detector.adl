@@ -114,7 +114,7 @@ text {
 composite {
 	object {
 		x=5
-		y=685
+		y=710
 		width=350
 		height=165
 	}
@@ -156,7 +156,7 @@ composite {
 		x=5
 		y=470
 		width=350
-		height=210
+		height=235
 	}
 	"composite name"=""
 	"composite file"="eiger2DetectorStatus.adl"
@@ -226,7 +226,7 @@ composite {
 		x=360
 		y=40
 		width=350
-		height=305
+		height=280
 	}
 	"composite name"=""
 	"composite file"="eiger2AcquisitionSetup.adl"
@@ -234,7 +234,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=509
+		y=485
 		width=350
 		height=365
 	}
@@ -244,7 +244,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=349
+		y=325
 		width=350
 		height=155
 	}
@@ -256,7 +256,7 @@ composite {
 		x=715
 		y=645
 		width=350
-		height=180
+		height=230
 	}
 	"composite name"=""
 	"composite file"="eigerReadout.adl"

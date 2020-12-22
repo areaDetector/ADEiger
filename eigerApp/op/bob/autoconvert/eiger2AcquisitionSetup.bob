@@ -4,7 +4,7 @@
   <x>793</x>
   <y>72</y>
   <width>350</width>
-  <height>305</height>
+  <height>280</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -14,7 +14,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #6</name>
     <width>350</width>
-    <height>305</height>
+    <height>280</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -421,7 +421,7 @@
   <widget type="label" version="2.0.0">
     <name>text #90</name>
     <text>Counting mode</text>
-    <x>55</x>
+    <x>45</x>
     <y>255</y>
     <width>130</width>
     <font>
@@ -433,9 +433,9 @@
   <widget type="combo" version="2.0.0">
     <name>menu #93</name>
     <pv_name>$(P)$(R)CountingMode</pv_name>
-    <x>190</x>
+    <x>180</x>
     <y>255</y>
-    <width>70</width>
+    <width>80</width>
     <height>20</height>
     <background_color>
       <color red="115" green="223" blue="255">
@@ -466,56 +466,8 @@
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #100</name>
-    <text>Count rate correct</text>
-    <x>5</x>
-    <y>280</y>
-    <width>180</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="combo" version="2.0.0">
-    <name>menu #103</name>
-    <pv_name>$(P)$(R)CountrateCorrEnable</pv_name>
-    <x>190</x>
-    <y>280</y>
-    <width>70</width>
-    <height>20</height>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #106</name>
-    <pv_name>$(P)$(R)CountrateCorrEnable_RBV</pv_name>
-    <x>265</x>
-    <y>281</y>
-    <width>80</width>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #110</name>
+    <name>composite #100</name>
     <x>105</x>
     <y>205</y>
     <width>240</width>
@@ -523,7 +475,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="label" version="2.0.0">
-      <name>text #113</name>
+      <name>text #103</name>
       <text># Images</text>
       <width>80</width>
       <font>
@@ -533,7 +485,7 @@
       <horizontal_alignment>2</horizontal_alignment>
     </widget>
     <widget type="textentry" version="3.0.0">
-      <name>text entry #116</name>
+      <name>text entry #106</name>
       <pv_name>$(P)$(R)NumImages</pv_name>
       <x>85</x>
       <width>70</width>
@@ -550,7 +502,7 @@
       <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>text update #120</name>
+      <name>text update #110</name>
       <pv_name>$(P)$(R)NumImages_RBV</pv_name>
       <x>160</x>
       <y>1</y>
@@ -574,7 +526,7 @@
     </widget>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #124</name>
+    <name>text #114</name>
     <text># Exposures/image</text>
     <x>15</x>
     <y>230</y>
@@ -586,7 +538,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #127</name>
+    <name>text entry #117</name>
     <pv_name>$(P)$(R)NumExposures</pv_name>
     <x>190</x>
     <y>230</y>
@@ -604,7 +556,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #131</name>
+    <name>text update #121</name>
     <pv_name>$(P)$(R)NumExposures_RBV</pv_name>
     <x>265</x>
     <y>231</y>

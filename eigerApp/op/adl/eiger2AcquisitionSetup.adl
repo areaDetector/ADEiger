@@ -8,7 +8,7 @@ display {
 		x=793
 		y=72
 		width=350
-		height=305
+		height=280
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=305
+		height=280
 	}
 	"basic attribute" {
 		clr=14
@@ -428,7 +428,7 @@ menu {
 }
 text {
 	object {
-		x=55
+		x=45
 		y=255
 		width=130
 		height=20
@@ -441,9 +441,9 @@ text {
 }
 menu {
 	object {
-		x=190
+		x=180
 		y=255
-		width=70
+		width=80
 		height=20
 	}
 	control {
@@ -461,48 +461,6 @@ menu {
 	}
 	monitor {
 		chan="$(P)$(R)CountingMode_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=5
-		y=280
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Count rate correct"
-	align="horiz. right"
-}
-menu {
-	object {
-		x=190
-		y=280
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CountrateCorrEnable"
-		clr=14
-		bclr=51
-	}
-}
-"text update" {
-	object {
-		x=265
-		y=281
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)CountrateCorrEnable_RBV"
 		clr=54
 		bclr=4
 	}

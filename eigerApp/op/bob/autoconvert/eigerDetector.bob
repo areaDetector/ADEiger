@@ -4,7 +4,7 @@
   <x>208</x>
   <y>178</y>
   <width>1425</width>
-  <height>854</height>
+  <height>905</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -159,6 +159,6 @@
     <x>715</x>
     <y>670</y>
     <width>350</width>
-    <height>180</height>
+    <height>230</height>
   </widget>
 </display>

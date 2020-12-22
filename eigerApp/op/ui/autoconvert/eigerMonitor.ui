@@ -231,7 +231,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Enable/Disable</string>
+                <string>Enable</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -241,9 +241,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>5</x>
+                    <x>85</x>
                     <y>30</y>
-                    <width>140</width>
+                    <width>60</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -321,7 +321,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Timeout (mS)</string>
+                <string>Timeout (ms)</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>

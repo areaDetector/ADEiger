@@ -7,7 +7,7 @@
             <x>208</x>
             <y>178</y>
             <width>1425</width>
-            <height>854</height>
+            <height>905</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -517,7 +517,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>670</y>
                     <width>352</width>
-                    <height>182</height>
+                    <height>232</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -525,7 +525,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>670</y>
                     <width>350</width>
-                    <height>180</height>
+                    <height>230</height>
                 </rect>
             </property>
             <property name="filename">

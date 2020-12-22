@@ -606,4 +606,16 @@
     </font>
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #129</name>
+    <text>(e.g. testA_$id)</text>
+    <x>15</x>
+    <y>130</y>
+    <width>160</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
 </display>

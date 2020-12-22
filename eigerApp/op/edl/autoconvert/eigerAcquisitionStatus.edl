@@ -128,19 +128,6 @@ endGroup
 endObjectProperties
 
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 65
-w 335
-h 298
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -613,19 +600,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 45
-y 318
-w 280
-h 45
-
-beginGroup
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -740,11 +714,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -752,7 +721,7 @@ major 4
 minor 7
 release 0
 x 180
-y 290
+y 291
 w 80
 h 18
 controlPv "$(P)$(R)NumImagesCounter_RBV"
@@ -768,11 +737,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -871,18 +835,6 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 5
-y 65
-w 335
-h 298
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
 x 35
 y 65
 w 245
@@ -926,28 +878,6 @@ w 70
 h 20
 
 beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 45
-y 318
-w 280
-h 45
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
 
 endGroup
 

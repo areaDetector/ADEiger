@@ -566,3 +566,16 @@ text {
 	textix="GB"
 	align="horiz. right"
 }
+text {
+	object {
+		x=15
+		y=130
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="(e.g. testA_$id)"
+	align="horiz. right"
+}
