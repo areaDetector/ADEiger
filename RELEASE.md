@@ -9,6 +9,44 @@ https://github.com/areaDetector/ADEiger/releases.
 
 Release Notes
 =============
+R2-8 (January XXX, 2021)
+----
+* Added support for Eiger2 detectors.
+  These use a different version of the Simplon API (1.8.0) from most Eiger1 detectors which use 1.6.0.
+  However, some Eiger1 detectors do use the 1.8.0 Simplon API.
+  The Eiger2 detectors also have new features such as 2 energy thresholds rather than just 1.
+* The driver automatically detects which version of the API is in use (1.8.0 or 1.6.0) and what Eiger
+  model is being used (Eiger1 or Eiger2).
+* The startup script loads either the eiger1.template or eiger2.template database file.
+  Both of these load eigerBase.template, which contains the records that are common to both models.
+* The existing iocBoot/iocEiger directory is configured for an Eiger1 detector.
+* The new iocBoot/iocEiger2 directory is configured for an Eiger2 detector.
+* The following records have been added for both Eiger models:
+  - CountrateCorrApplied (enable/disable the countrate correction)
+  - PixelMaskApplied (enable/disable the pixel mask)
+  - BitDepthImage_RBV (Bit depth for images on the Stream interface)
+  - Initialize (initializes the server)
+  - AutoSummation (enable/disable autosummation)
+* The following records are present only on the Eiger1:
+  - FWClear (erase all files on the server)
+  - Link0_RBV, Link1_RBV, Link2_RBV, Link3_RBV (status of the detector links)
+  - DCUBufferFree_RBV (number of free buffers on the server)
+* The following records are present only on the Eiger2:
+  - CountingMode (sets the counting mode to "normal" or "retrigger")
+  - TriggerStartDelay (sets the delay time after a trigger is received)
+  - Threshold2Energy (energy of the second threshold)
+  - Threshold2EnergyEnable (enables the second threshold)
+  - ThresholdDiffEnable (enables calculation of difference image, threshold1-threshold2)
+  - HVResetTime (set the time that the high voltage is off when HVReset is executed)
+  - HVReset (resets the high voltage.  Meant for use with CdTe models)
+  - HVState (the current state of the high voltage)
+  - CompressionAlgo has an additional choice, "None", which sends uncompressed images over the Stream interface.
+* The following records are supported in new firmware that will be released in early 2021, but
+  is currently available for testing.  The records are present in ADBase.template or eiger2.template but
+  a flag must be set in the driver to enable the logic for them.
+  - TriggerMode has an additional option, ExternalGate.
+  - ExtGateMode (selects "Pump & Probe" or "HDR" for high dynamic range)
+  - NumExposures (selects the number of exposures per image)
 
 R2-7 (December 22, 2020)
 ----
