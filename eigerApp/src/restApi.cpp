@@ -370,6 +370,14 @@ int RestAPI::wait (void)
     return put(SSCommand, "wait", "", NULL, -1);
 }
 
+int RestAPI::hvReset (int resetTime)
+{
+    char resetTimeStr[MAX_BUF_SIZE];
+
+    epicsSnprintf(resetTimeStr, sizeof(resetTimeStr), "%d", resetTime);
+    return put(SSCommand, "hv_reset", resetTimeStr, NULL, resetTime+1);
+}
+
 int RestAPI::statusUpdate (void)
 {
     return put(SSCommand, "status_update");
