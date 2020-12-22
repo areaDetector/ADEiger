@@ -7,6 +7,11 @@
 #include "restApi.h"
 #include "eigerParam.h"
 
+typedef enum {
+  Eiger1,
+  Eiger2
+} eigerModel_t;
+
 // areaDetector NDArray data source
 #define EigDataSourceStr           "DATA_SOURCE"
 
@@ -34,10 +39,15 @@
 // Acquisition Parameters
 #define EigPhotonEnergyStr         "PHOTON_ENERGY"
 #define EigThresholdStr            "THRESHOLD"
+#define EigThreshold2Str           "THRESHOLD2"
+#define EigThreshold2EnableStr     "THRESHOLD2_ENABLE"
+#define EigThresholdDiffEnableStr  "THRESHOLD_DIFF_ENABLE"
 #define EigTriggerStr              "TRIGGER"
 #define EigTriggerExpStr           "TRIGGER_EXPOSURE"
 #define EigNTriggersStr            "NUM_TRIGGERS"
 #define EigManualTriggerStr        "MANUAL_TRIGGER"
+#define EigTriggerStartDelayStr    "TRIGGER_START_DELAY"
+#define EigExtGateModeStr          "EXT_GATE_MODE"
 #define EigCompressionAlgoStr      "COMPRESSION_ALGO"
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigROIModeStr              "ROI_MODE"
@@ -45,6 +55,7 @@
 // Detector Status Parameters
 #define EigStateStr                "STATE"
 #define EigErrorStr                "ERROR"
+#define EigInitializeStr           "INITIALIZE"
 #define EigThTemp0Str              "TH_TEMP_0"
 #define EigThHumid0Str             "TH_HUMID_0"
 #define EigLink0Str                "LINK_0"
@@ -57,6 +68,9 @@
 #define EigArmedStr                "ARMED"
 #define EigSequenceIdStr           "SEQ_ID"
 #define EigPendingFilesStr         "PENDING_FILES"
+#define EigHVResetTimeStr          "HV_RESET_TIME"
+#define EigHVResetStr              "HV_RESET"
+#define EigHVStateStr              "HV_STATE"
 
 // File Saving Parameters
 #define EigSaveFilesStr            "SAVE_FILES"
@@ -81,7 +95,7 @@ class eigerDetector : public ADDriver
 {
 public:
     eigerDetector(const char *portName, const char *serverHostname,
-            int maxBuffers, size_t maxMemory, int priority, int stackSize);
+                  int maxBuffers, size_t maxMemory, int priority, int stackSize);
 
     // These are the methods that we override from ADDriver
     virtual asynStatus writeInt32  (asynUser *pasynUser, epicsInt32 value);
@@ -101,6 +115,7 @@ public:
     void reapTask     (void);
     void monitorTask  (void);
     void streamTask   (void);
+    void initializeTask();
 
     enum roi_mode
     {
@@ -121,6 +136,7 @@ protected:
     EigerParam *mTrigger;
     EigerParam *mTriggerExp;
     EigerParam *mManualTrigger;
+    EigerParam *mTriggerStartDelay;
     EigerParam *mArmed;
     EigerParam *mSequenceId;
     EigerParam *mPendingFiles;
@@ -130,6 +146,9 @@ protected:
     EigerParam *mFilePerms;
     EigerParam *mMonitorTimeout;
     EigerParam *mStreamDecompress;
+    EigerParam *mInitialize;
+    EigerParam *mHVResetTime;
+    EigerParam *mHVReset;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
@@ -138,13 +157,18 @@ protected:
     EigerParam *mWavelength;
     EigerParam *mPhotonEnergy;
     EigerParam *mThreshold;
+    EigerParam *mThreshold2;
+    EigerParam *mThreshold2Enable;
+    EigerParam *mThresholdDiffEnable;
     EigerParam *mNTriggers;
+    EigerParam *mExtGateMode;
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
     EigerParam *mAutoSummation;
 
     // Eiger parameters: status
     EigerParam *mState;
+    EigerParam *mHVState;
     EigerParam *mError;
     EigerParam *mThTemp0;
     EigerParam *mThHumid0;
@@ -178,7 +202,9 @@ protected:
     EigerParam *mAcquireTime;
     EigerParam *mAcquirePeriod;
     EigerParam *mNumImages;
+    EigerParam *mNumExposures;
     EigerParam *mTriggerMode;
+    EigerParam *mSDKVersion;
     EigerParam *mFirmwareVersion;
     EigerParam *mSerialNumber;
     EigerParam *mTemperatureActual;
@@ -188,8 +214,10 @@ protected:
 private:
     char mHostname[512];
     RestAPI mApi;
+    eigerModel_t mEigerModel;
+    eigerAPIVersion_t mAPIVersion;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
-            mPollDoneEvent;
+            mPollDoneEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
     bool mPollStop, mPollComplete, mStreamComplete;

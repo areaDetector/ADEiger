@@ -1,0 +1,217 @@
+# Database for the records specific to the Eiger2X
+# Gary Yendell
+# 1/8/19
+
+include "eigerBase.template"
+
+record(bo,"$(P)$(R)CountingMode") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
+    field(VAL,  "1")
+    field(ZNAM, "Normal")
+    field(ONAM, "Retrigger")
+}
+
+record(bi,"$(P)$(R)CountingMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
+    field(ZNAM, "Normal")
+    field(ONAM, "Retrigger")
+    field(SCAN, "I/O Intr")
+}
+
+# Trigger Start Delay
+record(ao, "$(P)$(R)TriggerStartDelay")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
+    field(DESC, "Trigger start delay")
+    field(EGU,  "s")
+    field(PREC, "4")
+}
+
+record(ai, "$(P)$(R)TriggerStartDelay_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
+    field(DESC, "Trigger start delay")
+    field(EGU,  "s")
+    field(PREC, "4")
+    field(SCAN, "I/O Intr")
+}
+
+# Threshold 2 energy
+record(ao, "$(P)$(R)Threshold2Energy")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2")
+    field(DESC, "Energy threshold")
+    field(EGU,  "eV")
+    field(PREC, "3")
+}
+
+record(ai, "$(P)$(R)Threshold2Energy_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2")
+    field(DESC, "Energy threshold")
+    field(EGU,  "eV")
+    field(PREC, "3")
+    field(SCAN, "I/O Intr")
+}
+
+# Threshold 2 enable
+record(bo,"$(P)$(R)Threshold2Enable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2_ENABLE")
+    field(DESC, "Enable threshold 2")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+}
+
+record(bi,"$(P)$(R)Threshold2Enable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD2_ENABLE")
+    field(DESC, "Enable threshold 2")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+}
+
+# Threshold difference enable
+record(bo,"$(P)$(R)ThresholdDiffEnable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD_DIFF_ENABLE")
+    field(DESC, "Enable threshold difference images")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+}
+
+record(bi,"$(P)$(R)ThresholdDiffEnable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD_DIFF_ENABLE")
+    field(DESC, "Enable threshold difference images")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+}
+
+# Add external gate mode to the value in eigerBase.template
+record(mbbo,"$(P)$(R)TriggerMode") {
+    field(FRVL,"4")
+    field(FRST,"External Gate")
+}
+
+record(mbbi,"$(P)$(R)TriggerMode_RBV") {
+    field(FRVL,"4")
+    field(FRST,"External Gate")
+}
+
+# External gate mode
+record(mbbo,"$(P)$(R)ExtGateMode") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
+    field(DESC, "External gate mode")
+    field(ZRST, "Pump & Probe")
+    field(ZRVL, "0")
+    field(ONST, "HDR")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)ExtGateMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
+    field(DESC, "ROI Mode")
+    field(DESC, "External gate mode")
+    field(ZRST, "Pump & Probe")
+    field(ZRVL, "0")
+    field(ONST, "HDR")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
+}
+
+# High voltage reset time
+record(ao, "$(P)$(R)HVResetTime")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET_TIME")
+    field(DESC, "High voltage reset time")
+    field(VAL,  "30")
+    field(EGU,  "s")
+    field(PREC, "0")
+}
+
+record(ai, "$(P)$(R)HVResetTime_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET_TIME")
+    field(DESC, "High voltage reset time")
+    field(EGU,  "s")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
+# High voltage reset
+record(bo,"$(P)$(R)HVReset") {
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET")
+    field(DESC, "Reset high voltage")
+    field(ZNAM, "Done")
+    field(ONAM, "Reset")
+}
+
+# High voltage state
+record(stringin, "$(P)$(R)HVState_RBV") {
+    field(DESC, "High voltage state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_STATE")
+    field(SCAN, "I/O Intr")
+}
+
+## Reorder Enums ##
+
+# Compression algorithm selection
+record(mbbo,"$(P)$(R)CompressionAlgo") {
+    field(ZRST, "BSLZ4")
+    field(ZRVL, "0")
+    field(ONST, "LZ4")
+    field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
+}
+
+record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
+    field(ZRST, "BSLZ4")
+    field(ZRVL, "0")
+    field(ONST, "LZ4")
+    field(ONVL, "1")
+    field(TWST, "None")
+    field(TWVL, "2")
+}
+
+# Stream Header Detail Selection
+record(mbbo,"$(P)$(R)StreamHdrDetail") {
+    field(ZRST, "None")
+    field(ZRVL, "0")
+    field(ONST, "Basic")
+    field(ONVL, "1")
+    field(TWST, "All")
+    field(TWVL, "2")
+}
+
+record(mbbi,"$(P)$(R)StreamHdrDetail_RBV") {
+    field(ZRST, "None")
+    field(ZRVL, "0")
+    field(ONST, "Basic")
+    field(ONVL, "1")
+    field(TWST, "All")
+    field(TWVL, "2")
+}

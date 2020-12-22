@@ -81,9 +81,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 5
+x 85
 y 30
-w 140
+w 60
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -91,7 +91,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Enable/Disable"
+  "Enable"
 }
 endObjectProperties
 
@@ -135,7 +135,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Timeout (mS)"
+  "Timeout (ms)"
 }
 endObjectProperties
 

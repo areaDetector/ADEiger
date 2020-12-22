@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
-  <name>eigerFileWriter</name>
+  <name>eiger1FileWriter</name>
   <x>565</x>
   <y>323</y>
   <width>350</width>
@@ -600,6 +600,18 @@
     <x>285</x>
     <y>305</y>
     <width>20</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #129</name>
+    <text>(e.g. testA_$id)</text>
+    <x>15</x>
+    <y>130</y>
+    <width>160</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>

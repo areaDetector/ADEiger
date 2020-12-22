@@ -1,0 +1,58 @@
+# Database for the records specific to the Eiger1X
+# Gary Yendell
+# 1/8/19
+
+include "eigerBase.template"
+
+# FileWriter clear all files
+record(ao, "$(P)$(R)FWClear") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
+    field(DESC, "Clear files in the detector")
+}
+
+record(bi, "$(P)$(R)Link0_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_0")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link1_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_1")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link2_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_2")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi, "$(P)$(R)Link3_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LINK_3")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)DCUBufferFree_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DCU_BUF_FREE")
+    field(EGU,  "%")
+    field(SCAN, "I/O Intr")
+    field(VAL,  "0")
+    field(PREC, "1")
+}

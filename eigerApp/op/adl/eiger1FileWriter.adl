@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector-3-5/ADEiger/eigerApp/op/adl/eigerFileWriter.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger1FileWriter.adl"
 	version=030109
 }
 display {
@@ -592,5 +592,18 @@ text {
 		clr=14
 	}
 	textix="GB"
+	align="horiz. right"
+}
+text {
+	object {
+		x=15
+		y=130
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="(e.g. testA_$id)"
 	align="horiz. right"
 }

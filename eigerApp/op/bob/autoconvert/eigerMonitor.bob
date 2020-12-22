@@ -59,10 +59,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #15</name>
-    <text>Enable/Disable</text>
-    <x>5</x>
+    <text>Enable</text>
+    <x>85</x>
     <y>30</y>
-    <width>140</width>
+    <width>60</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -94,7 +94,7 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #22</name>
-    <text>Timeout (mS)</text>
+    <text>Timeout (ms)</text>
     <x>25</x>
     <y>80</y>
     <width>120</width>
