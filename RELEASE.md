@@ -10,7 +10,7 @@ https://github.com/areaDetector/ADEiger/releases.
 Release Notes
 =============
 
-R2-7 (January XXX, 2018)
+R2-7 (December 22, 2020)
 ----
 * Added support for decompressing bitshuffle/lz4 compressed files on the Stream interface.
   Previously it could only decompress lz4 without bitshuffle.
@@ -21,7 +21,7 @@ R2-7 (January XXX, 2018)
   * If StreamDecompress=Yes (default), then the NDArrays received by plugins are decompressed. This was the previous behavior.
   * If StreamDecompress=No then the NDArrays received by plugins are compressed,
     with the .codec and .compressedSize fields set appropriately. This mode can be useful for passing
-    compressed arrays directly to NDPluginPva (and then to ImageJ) and to NDFileHDF5 once that supports DirectChunkWrite.
+    compressed arrays directly to NDPluginPva (and then to ImageJ) and to NDFileHDF5 since that supports DirectChunkWrite.
   * Other plugins that do not support compressed arrays will need to get their data from an NDPluginCodec plugin
     that is configured to decompress the NDArrays from ADEiger.
     This configuration has the advantage that the decompression is offloaded from the driver, and hence can use 
