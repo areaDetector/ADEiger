@@ -57,7 +57,7 @@ using std::string;
 using std::vector;
 using std::map;
 
-static const string DRIVER_VERSION("2-8");
+static const string DRIVER_VERSION("2.7.0");
 
 enum data_source
 {
