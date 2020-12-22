@@ -39,11 +39,15 @@ typedef enum {
 // Acquisition Parameters
 #define EigPhotonEnergyStr         "PHOTON_ENERGY"
 #define EigThresholdStr            "THRESHOLD"
+#define EigThreshold2Str           "THRESHOLD2"
+#define EigThreshold2EnableStr     "THRESHOLD2_ENABLE"
+#define EigThresholdDiffEnableStr  "THRESHOLD_DIFF_ENABLE"
 #define EigTriggerStr              "TRIGGER"
 #define EigTriggerExpStr           "TRIGGER_EXPOSURE"
 #define EigNTriggersStr            "NUM_TRIGGERS"
 #define EigManualTriggerStr        "MANUAL_TRIGGER"
 #define EigTriggerStartDelayStr    "TRIGGER_START_DELAY"
+#define EigExtGateModeStr          "EXT_GATE_MODE"
 #define EigCompressionAlgoStr      "COMPRESSION_ALGO"
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigROIModeStr              "ROI_MODE"
@@ -64,6 +68,9 @@ typedef enum {
 #define EigArmedStr                "ARMED"
 #define EigSequenceIdStr           "SEQ_ID"
 #define EigPendingFilesStr         "PENDING_FILES"
+#define EigHVResetTimeStr          "HV_RESET_TIME"
+#define EigHVResetStr              "HV_RESET"
+#define EigHVStateStr              "HV_STATE"
 
 // File Saving Parameters
 #define EigSaveFilesStr            "SAVE_FILES"
@@ -140,6 +147,8 @@ protected:
     EigerParam *mMonitorTimeout;
     EigerParam *mStreamDecompress;
     EigerParam *mInitialize;
+    EigerParam *mHVResetTime;
+    EigerParam *mHVReset;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
@@ -148,13 +157,18 @@ protected:
     EigerParam *mWavelength;
     EigerParam *mPhotonEnergy;
     EigerParam *mThreshold;
+    EigerParam *mThreshold2;
+    EigerParam *mThreshold2Enable;
+    EigerParam *mThresholdDiffEnable;
     EigerParam *mNTriggers;
+    EigerParam *mExtGateMode;
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
     EigerParam *mAutoSummation;
 
     // Eiger parameters: status
     EigerParam *mState;
+    EigerParam *mHVState;
     EigerParam *mError;
     EigerParam *mThTemp0;
     EigerParam *mThHumid0;
@@ -188,6 +202,7 @@ protected:
     EigerParam *mAcquireTime;
     EigerParam *mAcquirePeriod;
     EigerParam *mNumImages;
+    EigerParam *mNumExposures;
     EigerParam *mTriggerMode;
     EigerParam *mSDKVersion;
     EigerParam *mFirmwareVersion;

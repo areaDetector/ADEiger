@@ -57,7 +57,7 @@ using std::string;
 using std::vector;
 using std::map;
 
-static const string DRIVER_VERSION("2-8");
+static const string DRIVER_VERSION("2.8");
 
 enum data_source
 {
@@ -206,43 +206,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mSubSystemMap.insert(std::make_pair("SS", SSStreamStatus));
     mSubSystemMap.insert(std::make_pair("SC", SSStreamConfig));
 
-    // Work around weird ordering
-    vector<string> modeEnum;
-    modeEnum.reserve(2);
-    modeEnum.push_back("disabled");
-    modeEnum.push_back("enabled");
-
-    // Work around missing 'allowed_values'
-    vector<string> linkEnum;
-    linkEnum.reserve(2);
-    linkEnum.push_back("down");
-    linkEnum.push_back("up");
-
-    // Map Trigger Mode ordering
-    vector<string> triggerModeEnum;
-    triggerModeEnum.reserve(4);
-    triggerModeEnum.push_back("ints");
-    triggerModeEnum.push_back("inte");
-    triggerModeEnum.push_back("exts");
-    triggerModeEnum.push_back("exte");
-
-    // Work around 'allowed_values' change between 1.6.0 and 1.8.0 and
-    // ordering change in 1.8.0 as of EIGER2 v2020.1
-    vector<string> compressionEnum;
-    if (mAPIVersion == API_1_6_0)
-    {
-        compressionEnum.reserve(2);
-        compressionEnum.push_back("lz4");
-        compressionEnum.push_back("bslz4");
-    }
-    else if (mAPIVersion == API_1_8_0)
-    {
-        compressionEnum.reserve(3);
-        compressionEnum.push_back("bslz4");
-        compressionEnum.push_back("lz4");
-        compressionEnum.push_back("none");
-    }
-
     // Detector Status Parameters
     mState      = mParams.create(EigStateStr,      asynParamOctet,   SSDetStatus, "state");
     mFirstParam = mState->getIndex();
@@ -298,6 +261,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFilePerms      = mParams.create(EigFilePermsStr,      asynParamInt32);
     mMonitorTimeout = mParams.create(EigMonitorTimeoutStr, asynParamInt32);
     mInitialize     = mParams.create(EigInitializeStr,     asynParamInt32);
+    mHVResetTime    = mParams.create(EigHVResetTimeStr,    asynParamFloat64);
+    mHVReset        = mParams.create(EigHVResetStr,        asynParamInt32);
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
 
     // Metadata
@@ -309,6 +274,12 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     if ((description.find("Eiger2") != std::string::npos) || (description.find("EIGER2") != std::string::npos))
         mEigerModel = Eiger2;
 
+    // Work around weird ordering
+    vector<string> modeEnum;
+    modeEnum.reserve(2);
+    modeEnum.push_back("disabled");
+    modeEnum.push_back("enabled");    
+
     // Acquisition
     mWavelength       = mParams.create(EigWavelengthStr,      asynParamFloat64, SSDetConfig, "wavelength");
     mWavelength->setEpsilon(WAVELENGTH_EPSILON);
@@ -317,6 +288,22 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mThreshold        = mParams.create(EigThresholdStr,       asynParamFloat64, SSDetConfig, "threshold_energy");
     mThreshold->setEpsilon(ENERGY_EPSILON);
     mNTriggers        = mParams.create(EigNTriggersStr,       asynParamInt32,   SSDetConfig, "ntrigger");
+    // Work around 'allowed_values' change between 1.6.0 and 1.8.0 and
+    // ordering change in 1.8.0 as of EIGER2 v2020.1
+    vector<string> compressionEnum;
+    if (mAPIVersion == API_1_6_0)
+    {
+        compressionEnum.reserve(2);
+        compressionEnum.push_back("lz4");
+        compressionEnum.push_back("bslz4");
+    }
+    else if (mAPIVersion == API_1_8_0)
+    {
+        compressionEnum.reserve(3);
+        compressionEnum.push_back("bslz4");
+        compressionEnum.push_back("lz4");
+        compressionEnum.push_back("none");
+    }
     mCompressionAlgo  = mParams.create(EigCompressionAlgoStr, asynParamInt32,   SSDetConfig, "compression");
     mCompressionAlgo->setEnumValues(compressionEnum);
     mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
@@ -326,6 +313,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mError      = mParams.create(EigErrorStr,      asynParamOctet,   SSDetStatus, "error");
     mThTemp0    = mParams.create(EigThTemp0Str,    asynParamFloat64, SSDetStatus, "board_000/th0_temp");
     mThHumid0   = mParams.create(EigThHumid0Str,   asynParamFloat64, SSDetStatus, "board_000/th0_humidity");
+    mHVState    = mParams.create(EigHVStateStr,    asynParamOctet,   SSDetStatus, "high_voltage/state");
 
     // File Writer
     mFWEnable       = mParams.create(EigFWEnableStr,       asynParamInt32, SSFWConfig,  "mode");
@@ -354,6 +342,16 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mAcquirePeriod     = mParams.create(ADAcquirePeriodString,     asynParamFloat64, SSDetConfig, "frame_time");
     mNumImages         = mParams.create(ADNumImagesString,         asynParamInt32,   SSDetConfig, "nimages");
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
+    // Map Trigger Mode ordering
+    vector<string> triggerModeEnum;
+    triggerModeEnum.reserve(5);
+    triggerModeEnum.push_back("ints");
+    triggerModeEnum.push_back("inte");
+    triggerModeEnum.push_back("exts");
+    triggerModeEnum.push_back("exte");
+    if (mEigerModel == Eiger2) {
+        triggerModeEnum.push_back("extg");
+    }
     mTriggerMode->setEnumValues(triggerModeEnum);
     mSDKVersion        = mParams.create(ADSDKVersionString,        asynParamOctet,   SSDetConfig, "software_version");
     mFirmwareVersion   = mParams.create(ADFirmwareVersionString,   asynParamOctet,   SSDetConfig, "eiger_fw_version");
@@ -364,6 +362,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     if (mEigerModel == Eiger1)
     {
+        // Work around missing 'allowed_values'
+        vector<string> linkEnum;
+        linkEnum.reserve(2);
+        linkEnum.push_back("down");
+        linkEnum.push_back("up");
         mLink0 = mParams.create(EigLink0Str, asynParamInt32, SSDetStatus, "link_0");
         mLink1 = mParams.create(EigLink1Str, asynParamInt32, SSDetStatus, "link_1");
         mLink2 = mParams.create(EigLink2Str, asynParamInt32, SSDetStatus, "link_2");
@@ -377,9 +380,20 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     }
     else if (mEigerModel == Eiger2)  // Should this depend on the model or the API?
     {
-        mTriggerStartDelay = mParams.create(EigTriggerStartDelayStr, asynParamFloat64, SSDetConfig, "trigger_start_delay");
+        mTriggerStartDelay   = mParams.create(EigTriggerStartDelayStr,   asynParamFloat64, SSDetConfig, "trigger_start_delay");
+        mThreshold2          = mParams.create(EigThreshold2Str,          asynParamFloat64, SSDetConfig, "threshold/2/energy");
+        mThreshold2->setEpsilon(ENERGY_EPSILON);
+        mThreshold2Enable    = mParams.create(EigThreshold2EnableStr,    asynParamInt32,   SSDetConfig, "threshold/2/mode");
+        mThreshold2Enable->setEnumValues(modeEnum);
+        mThresholdDiffEnable = mParams.create(EigThresholdDiffEnableStr, asynParamInt32,   SSDetConfig, "threshold/difference/mode");
+        mThresholdDiffEnable->setEnumValues(modeEnum);
+        mExtGateMode         = mParams.create(EigExtGateModeStr,         asynParamInt32,   SSDetConfig, "extg_mode");
+        vector<string> extgEnum;
+        extgEnum.reserve(2);
+        extgEnum.push_back("pump-and-probe");
+        extgEnum.push_back("hdr");
+        //mExtGateMode->setEnumValues(extgEnum);
     }
-
 
     // Set default parameters
     if(initParams())
@@ -488,6 +502,11 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mTriggerEvent.signal();
     else if (function == mFilePerms->getIndex())
         status = (asynStatus) mFilePerms->put(value & 0666);
+    else if (function == mHVReset->getIndex()) {
+        double resetTime;
+        mHVResetTime->get(resetTime);
+        mApi.hvReset((int)resetTime);
+    }
     else if((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
         // When switching DataSource to stream it seems to be necessary to disable and enable stream
@@ -1752,13 +1771,16 @@ asynStatus eigerDetector::eigerStatus (void)
             status |= mLink2->fetch();
             status |= mLink3->fetch();
         }
-
         // Read DCU buffer free percentage
         status |= mDCUBufFree->fetch();
     }
+    if (mEigerModel == Eiger2)
+    {
+        status |= mHVState->fetch();
+    }
 
     // Read state of the different modules
-    status |= mState->fetch();
+    status |= mFWState->fetch();
     status |= mMonitorState->fetch();
     status |= mStreamState->fetch();
 
