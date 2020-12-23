@@ -13,20 +13,22 @@ Additional information:
 Notes:
 ------
 
-* Depends on the Eiger having the firmware 1.6.4 or newer.
-* Depends on ADCore R2-6 or newer.
+* Depends on the Eiger1 having the firmware 1.6.4 or newer.
+* Depends on the Eiger2 having the firmware 2020.2 or newer.
+* Depends on ADCore R3-5 and ADSupport R1-7 or newer.
 * Currently this was only tested on Linux 64-bit machines.
 
 Before compiling:
 -----------------
 
-* Set `ZMQ` variables inside `ADEiger/configure/CONFIG_SITE` to point to a ZeroMQ installation location if a system package is not installed (`libzmq3-dev` on Debian systems).
+* Set `ZMQ` variables inside `ADEiger/configure/CONFIG_SITE` to point to a ZeroMQ installation location if a system package
+  is not installed (`libzmq3-dev` on Debian systems).
   - ZeroMQ 4 is required
 
 HDF5 Plugins:
 -------------
 
-If you want HDF5 tools to compress files produced by the detector, you will need to have the bitshuffle and LZ4 decompression
+If you want HDF5 applications to decompress files produced by the detector, you will need to have the bitshuffle and LZ4 decompression
 plugins available.  These are built in ADSupport.
 
 The environment variable `HDF5_PLUGIN_PATH` should be set to `[your_path]/ADSupport/lib/linux-x86_64`.
@@ -34,8 +36,8 @@ The environment variable `HDF5_PLUGIN_PATH` should be set to `[your_path]/ADSupp
 How to run:
 -----------
 
-* Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC:
+* Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC for the Eiger1 and in iocEiger2/ for the Eiger2:
   - Change the IP address in `st.cmd`.
   - Run `./st.cmd`.
-* There are medm, edm, CSS-Boy, caQtDM, and Phoebus Display Builder screens under `areaDetector/ADEiger/eigerApp/op/`.
+* There are medm, edm, caQtDM, CSS-Boy, and CSS-Phoebus screens under `areaDetector/ADEiger/eigerApp/op/`.
 
