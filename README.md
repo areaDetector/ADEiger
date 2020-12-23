@@ -16,7 +16,7 @@ Notes:
 * Depends on the Eiger1 having the firmware 1.6.4 or newer.
 * Depends on the Eiger2 having the firmware 2020.2 or newer.
 * Depends on ADCore R3-5 and ADSupport R1-7 or newer.
-* Currently this was only tested on Linux 64-bit machines.
+* This has only been tested on Linux 64-bit machines.
 
 Before compiling:
 -----------------
@@ -36,7 +36,7 @@ The environment variable `HDF5_PLUGIN_PATH` should be set to `[your_path]/ADSupp
 How to run:
 -----------
 
-* Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC for the Eiger1 and in iocEiger2/ for the Eiger2:
+* Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC for the Eiger1, and in iocEiger2/ for the Eiger2:
   - Change the IP address in `st.cmd`.
   - Run `./st.cmd`.
 * There are medm, edm, caQtDM, CSS-Boy, and CSS-Phoebus screens under `areaDetector/ADEiger/eigerApp/op/`.
