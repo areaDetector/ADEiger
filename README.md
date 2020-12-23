@@ -3,7 +3,7 @@ ADEiger
 An
 [EPICS](http://www.aps.anl.gov/epics/)
 [areaDetector](https://github.com/areaDetector/areaDetector/blob/master/README.md)
-driver for the Eiger pixel array detectors from
+driver for the Eiger and Eiger2 pixel array detectors from
 [Dectris](http://www.dectris.com).
 
 Additional information:
