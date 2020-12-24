@@ -57,100 +57,96 @@
     </foreground_color>
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #15</name>
+  <widget type="action_button" version="3.0.0">
+    <name>message button #15</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P)$(R)Acquire</pv_name>
+        <value>1</value>
+        <description>Write</description>
+      </action>
+    </actions>
+    <pv_name>$(P)$(R)Acquire</pv_name>
+    <text>Start</text>
+    <x>110</x>
+    <y>30</y>
+    <width>70</width>
+    <background_color>
+      <color red="30" green="187" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>message button #18</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P)$(R)Acquire</pv_name>
+        <value>0</value>
+        <description>Write</description>
+      </action>
+    </actions>
+    <pv_name>$(P)$(R)Acquire</pv_name>
+    <text>Stop</text>
+    <x>185</x>
+    <y>30</y>
+    <width>70</width>
+    <background_color>
+      <color red="222" green="19" blue="9">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>message button #21</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P)$(R)Trigger</pv_name>
+        <value>0</value>
+        <description>Write</description>
+      </action>
+    </actions>
+    <pv_name>$(P)$(R)Trigger</pv_name>
+    <text>Trigger</text>
+    <x>260</x>
+    <y>30</y>
+    <width>80</width>
+    <background_color>
+      <color red="88" green="147" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>rectangle #24</name>
     <x>10</x>
     <y>30</y>
-    <width>330</width>
+    <width>80</width>
     <height>30</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="action_button" version="3.0.0">
-      <name>message button #18</name>
-      <actions>
-        <action type="write_pv">
-          <pv_name>$(P)$(R)Acquire</pv_name>
-          <value>1</value>
-          <description>Write</description>
-        </action>
-      </actions>
-      <pv_name>$(P)$(R)Acquire</pv_name>
-      <text>Start</text>
-      <x>100</x>
-      <width>70</width>
-      <background_color>
-        <color red="42" green="99" blue="228">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="action_button" version="3.0.0">
-      <name>message button #21</name>
-      <actions>
-        <action type="write_pv">
-          <pv_name>$(P)$(R)Acquire</pv_name>
-          <value>0</value>
-          <description>Write</description>
-        </action>
-      </actions>
-      <pv_name>$(P)$(R)Acquire</pv_name>
-      <text>Stop</text>
-      <x>175</x>
-      <width>70</width>
-      <background_color>
-        <color red="42" green="99" blue="228">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="action_button" version="3.0.0">
-      <name>message button #24</name>
-      <actions>
-        <action type="write_pv">
-          <pv_name>$(P)$(R)Trigger</pv_name>
-          <value>0</value>
-          <description>Write</description>
-        </action>
-      </actions>
-      <pv_name>$(P)$(R)Trigger</pv_name>
-      <text>Trigger</text>
-      <x>250</x>
-      <width>80</width>
-      <background_color>
-        <color red="42" green="99" blue="228">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="rectangle" version="2.0.0">
-      <name>rectangle #27</name>
-      <width>80</width>
-      <height>30</height>
-      <line_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </line_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #30</name>
-      <text>Acquire</text>
-      <x>5</x>
-      <y>5</y>
-      <width>70</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <auto_size>true</auto_size>
-    </widget>
+    <line_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #33</name>
+    <name>text #27</name>
+    <text>Acquire</text>
+    <x>15</x>
+    <y>35</y>
+    <width>70</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #30</name>
     <text># Images Complete</text>
     <x>5</x>
     <y>290</y>
@@ -162,7 +158,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #36</name>
+    <name>composite #33</name>
     <x>35</x>
     <y>65</y>
     <width>245</width>
@@ -170,7 +166,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="label" version="2.0.0">
-      <name>text #39</name>
+      <name>text #36</name>
       <text>Collecting</text>
       <x>145</x>
       <font>
@@ -192,7 +188,7 @@
       </rules>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #43</name>
+      <name>text #40</name>
       <text>Done</text>
       <x>148</x>
       <width>40</width>
@@ -215,7 +211,7 @@
       </rules>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #47</name>
+      <name>text #44</name>
       <text>Acquire Status</text>
       <width>140</width>
       <font>
@@ -226,7 +222,7 @@
     </widget>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #50</name>
+    <name>text #47</name>
     <text># Queued arrays</text>
     <x>25</x>
     <y>90</y>
@@ -238,7 +234,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #53</name>
+    <name>text update #50</name>
     <pv_name>$(P)$(R)NumQueuedArrays</pv_name>
     <x>180</x>
     <y>91</y>
@@ -261,7 +257,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #57</name>
+    <name>text #54</name>
     <text>Wait for plugins</text>
     <x>15</x>
     <y>115</y>
@@ -273,7 +269,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #60</name>
+    <name>menu #57</name>
     <pv_name>$(P)$(R)WaitForPlugins</pv_name>
     <x>180</x>
     <y>115</y>
@@ -286,7 +282,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #63</name>
+    <name>text #60</name>
     <text>Acquire busy</text>
     <x>55</x>
     <y>140</y>
@@ -298,7 +294,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #66</name>
+    <name>text update #63</name>
     <pv_name>$(P)$(R)AcquireBusy</pv_name>
     <x>180</x>
     <y>141</y>
@@ -320,7 +316,7 @@
     <show_units>false</show_units>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #70</name>
+    <name>text #67</name>
     <text>Acquire Message</text>
     <x>25</x>
     <y>165</y>
@@ -332,7 +328,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #73</name>
+    <name>text update #70</name>
     <pv_name>$(P)$(R)StatusMessage_RBV</pv_name>
     <x>180</x>
     <y>166</y>
@@ -355,7 +351,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #77</name>
+    <name>text #74</name>
     <text>Detector State</text>
     <x>35</x>
     <y>190</y>
@@ -367,7 +363,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #80</name>
+    <name>text update #77</name>
     <pv_name>$(P)$(R)DetectorState_RBV</pv_name>
     <x>180</x>
     <y>191</y>
@@ -389,7 +385,7 @@
     <show_units>false</show_units>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #84</name>
+    <name>text #81</name>
     <text>Detector Armed</text>
     <x>35</x>
     <y>215</y>
@@ -401,7 +397,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #87</name>
+    <name>composite #84</name>
     <x>180</x>
     <y>215</y>
     <width>70</width>
@@ -409,7 +405,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="label" version="2.0.0">
-      <name>text #90</name>
+      <name>text #87</name>
       <text>Armed</text>
       <width>50</width>
       <font>
@@ -431,7 +427,7 @@
       </rules>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #94</name>
+      <name>text #91</name>
       <text>Unarmed</text>
       <width>70</width>
       <font>
@@ -454,7 +450,7 @@
     </widget>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #98</name>
+    <name>text update #95</name>
     <pv_name>$(P)$(R)CountCutoff_RBV</pv_name>
     <x>180</x>
     <y>266</y>
@@ -476,7 +472,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #102</name>
+    <name>text #99</name>
     <text>Rate Cutoff</text>
     <x>65</x>
     <y>265</y>
@@ -488,7 +484,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #105</name>
+    <name>text update #102</name>
     <pv_name>$(P)$(R)DeadTime_RBV</pv_name>
     <x>180</x>
     <y>241</y>
@@ -510,7 +506,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #109</name>
+    <name>text #106</name>
     <text>Readout Time</text>
     <x>55</x>
     <y>240</y>
@@ -522,7 +518,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #112</name>
+    <name>text entry #109</name>
     <pv_name>$(P)$(R)ArrayCounter</pv_name>
     <x>180</x>
     <y>318</y>
@@ -540,7 +536,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #116</name>
+    <name>text #113</name>
     <text>Image counter</text>
     <x>45</x>
     <y>318</y>
@@ -552,7 +548,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #119</name>
+    <name>text update #116</name>
     <pv_name>$(P)$(R)ArrayCounter_RBV</pv_name>
     <x>245</x>
     <y>319</y>
@@ -575,7 +571,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #123</name>
+    <name>text #120</name>
     <text>Image rate</text>
     <x>75</x>
     <y>343</y>
@@ -586,7 +582,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #126</name>
+    <name>text update #123</name>
     <pv_name>$(P)$(R)ArrayRate_RBV</pv_name>
     <x>180</x>
     <y>344</y>
@@ -608,7 +604,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #130</name>
+    <name>text update #127</name>
     <pv_name>$(P)$(R)NumImagesCounter_RBV</pv_name>
     <x>180</x>
     <y>291</y>

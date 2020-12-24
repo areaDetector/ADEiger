@@ -627,9 +627,9 @@ $(pv_value)</tooltip>
     <auto_size>false</auto_size>
     <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
     <background_color>
-      <color red="187" green="187" blue="187" />
+      <color red="70" green="70" blue="70" />
     </background_color>
-    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
     <border_color>
       <color red="0" green="128" blue="255" />
     </border_color>
@@ -639,9 +639,9 @@ $(pv_value)</tooltip>
     <font>
       <fontdata fontName="Sans" height="11" style="0" pixels="false" />
     </font>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="10" green="0" blue="184" />
+      <color name="OK" red="0" green="255" blue="0" />
     </foreground_color>
     <format_type>4</format_type>
     <height>18</height>
@@ -667,9 +667,9 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>60</width>
+    <width>80</width>
     <wrap_words>false</wrap_words>
-    <x>245</x>
+    <x>265</x>
     <y>31</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -956,7 +956,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <visible>true</visible>
     <widget_type>Menu Button</widget_type>
-    <width>60</width>
+    <width>80</width>
     <x>180</x>
     <y>30</y>
   </widget>
@@ -1131,7 +1131,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <visible>true</visible>
     <widget_type>Menu Button</widget_type>
-    <width>60</width>
+    <width>80</width>
     <x>180</x>
     <y>180</y>
   </widget>
@@ -1141,9 +1141,9 @@ $(pv_value)</tooltip>
     <auto_size>false</auto_size>
     <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
     <background_color>
-      <color red="187" green="187" blue="187" />
+      <color red="70" green="70" blue="70" />
     </background_color>
-    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
     <border_color>
       <color red="0" green="128" blue="255" />
     </border_color>
@@ -1153,9 +1153,9 @@ $(pv_value)</tooltip>
     <font>
       <fontdata fontName="Sans" height="11" style="0" pixels="false" />
     </font>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="10" green="0" blue="184" />
+      <color name="OK" red="0" green="255" blue="0" />
     </foreground_color>
     <format_type>4</format_type>
     <height>18</height>
@@ -1181,9 +1181,9 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>60</width>
+    <width>80</width>
     <wrap_words>false</wrap_words>
-    <x>245</x>
+    <x>265</x>
     <y>181</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -1657,7 +1657,7 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <visible>true</visible>
     <widget_type>Menu Button</widget_type>
-    <width>60</width>
+    <width>80</width>
     <x>180</x>
     <y>329</y>
   </widget>
@@ -1667,9 +1667,9 @@ $(pv_value)</tooltip>
     <auto_size>false</auto_size>
     <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
     <background_color>
-      <color red="187" green="187" blue="187" />
+      <color red="70" green="70" blue="70" />
     </background_color>
-    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
     <border_color>
       <color red="0" green="128" blue="255" />
     </border_color>
@@ -1679,9 +1679,9 @@ $(pv_value)</tooltip>
     <font>
       <fontdata fontName="Sans" height="11" style="0" pixels="false" />
     </font>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
     <foreground_color>
-      <color red="10" green="0" blue="184" />
+      <color name="OK" red="0" green="255" blue="0" />
     </foreground_color>
     <format_type>4</format_type>
     <height>18</height>
@@ -1707,9 +1707,9 @@ $(pv_value)</tooltip>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Text Update</widget_type>
-    <width>60</width>
+    <width>80</width>
     <wrap_words>false</wrap_words>
-    <x>245</x>
+    <x>265</x>
     <y>330</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">

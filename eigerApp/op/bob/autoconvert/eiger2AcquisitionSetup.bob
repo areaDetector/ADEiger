@@ -363,12 +363,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #80</name>
@@ -558,12 +557,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="combo" version="2.0.0">
     <name>menu #122</name>
@@ -581,7 +579,7 @@
   <widget type="label" version="2.0.0">
     <name>text #125</name>
     <text>Threshold 1 enable</text>
-    <x>10</x>
+    <x>5</x>
     <y>55</y>
     <width>180</width>
     <font>
@@ -593,7 +591,7 @@
   <widget type="textupdate" version="2.0.0">
     <name>text update #128</name>
     <pv_name>$(P)$(R)Threshold1Enable_RBV</pv_name>
-    <x>270</x>
+    <x>265</x>
     <y>56</y>
     <width>80</width>
     <height>18</height>
@@ -606,17 +604,16 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="combo" version="2.0.0">
     <name>menu #132</name>
     <pv_name>$(P)$(R)Threshold1Enable</pv_name>
-    <x>195</x>
+    <x>190</x>
     <y>55</y>
     <width>70</width>
     <height>20</height>

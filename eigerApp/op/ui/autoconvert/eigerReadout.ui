@@ -276,9 +276,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -303,7 +303,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_1">
@@ -486,9 +486,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -513,7 +513,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLineEdit" name="caLineEdit_2">
@@ -594,9 +594,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -621,7 +621,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLineEdit" name="caLineEdit_4">
@@ -876,9 +876,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -903,7 +903,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_6">
@@ -996,9 +996,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -1023,7 +1023,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_7">
@@ -1116,9 +1116,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -1143,7 +1143,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_8">

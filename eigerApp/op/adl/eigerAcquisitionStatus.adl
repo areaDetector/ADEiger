@@ -123,84 +123,73 @@ text {
 	textix="Acquisition Status"
 	align="horiz. centered"
 }
-composite {
+"message button" {
+	object {
+		x=110
+		y=30
+		width=70
+		height=30
+	}
+	control {
+		chan="$(P)$(R)Acquire"
+		clr=14
+		bclr=16
+	}
+	label="Start"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=185
+		y=30
+		width=70
+		height=30
+	}
+	control {
+		chan="$(P)$(R)Acquire"
+		clr=14
+		bclr=21
+	}
+	label="Stop"
+	press_msg="0"
+}
+"message button" {
+	object {
+		x=260
+		y=30
+		width=80
+		height=30
+	}
+	control {
+		chan="$(P)$(R)Trigger"
+		clr=14
+		bclr=25
+	}
+	label="Trigger"
+	press_msg="0"
+}
+rectangle {
 	object {
 		x=10
 		y=30
-		width=330
+		width=80
 		height=30
 	}
-	"composite name"=""
-	children {
-		"message button" {
-			object {
-				x=110
-				y=30
-				width=70
-				height=30
-			}
-			control {
-				chan="$(P)$(R)Acquire"
-				clr=14
-				bclr=53
-			}
-			label="Start"
-			press_msg="1"
-		}
-		"message button" {
-			object {
-				x=185
-				y=30
-				width=70
-				height=30
-			}
-			control {
-				chan="$(P)$(R)Acquire"
-				clr=14
-				bclr=53
-			}
-			label="Stop"
-			press_msg="0"
-		}
-		"message button" {
-			object {
-				x=260
-				y=30
-				width=80
-				height=30
-			}
-			control {
-				chan="$(P)$(R)Trigger"
-				clr=14
-				bclr=53
-			}
-			label="Trigger"
-			press_msg="0"
-		}
-		rectangle {
-			object {
-				x=10
-				y=30
-				width=80
-				height=30
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		text {
-			object {
-				x=15
-				y=35
-				width=70
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="Acquire"
-		}
+	"basic attribute" {
+		clr=2
 	}
+}
+text {
+	object {
+		x=15
+		y=35
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Acquire"
 }
 text {
 	object {

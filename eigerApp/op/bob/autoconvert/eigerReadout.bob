@@ -92,12 +92,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #25</name>
@@ -175,12 +174,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
     <name>text update #44</name>
@@ -221,12 +219,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
     <name>text update #52</name>
@@ -327,12 +324,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #75</name>
@@ -374,12 +370,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #85</name>
@@ -421,12 +416,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #95</name>

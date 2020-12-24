@@ -75,19 +75,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 30
-w 330
-h 30
-
-beginGroup
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -122,11 +109,6 @@ value {
   "Acquire"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Static Text)
 object activeXTextClass
@@ -737,18 +719,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 30
-w 330
-h 30
-
-beginGroup
 
 # (Message Button)
 object activeMessageButtonClass
@@ -761,8 +731,8 @@ y 30
 w 70
 h 30
 fgColor rgb 0 0 0
-onColor rgb 10752 25344 58368
-offColor rgb 10752 25344 58368
+onColor rgb 7680 47872 0
+offColor rgb 7680 47872 0
 topShadowColor rgb 65280 65280 65280
 botShadowColor rgb 0 0 0
 controlPv "$(P)$(R)Acquire"
@@ -786,8 +756,8 @@ y 30
 w 70
 h 30
 fgColor rgb 0 0 0
-onColor rgb 10752 25344 58368
-offColor rgb 10752 25344 58368
+onColor rgb 56832 4864 2304
+offColor rgb 56832 4864 2304
 topShadowColor rgb 65280 65280 65280
 botShadowColor rgb 0 0 0
 controlPv "$(P)$(R)Acquire"
@@ -811,8 +781,8 @@ y 30
 w 80
 h 30
 fgColor rgb 0 0 0
-onColor rgb 10752 25344 58368
-offColor rgb 10752 25344 58368
+onColor rgb 22528 37632 65280
+offColor rgb 22528 37632 65280
 topShadowColor rgb 65280 65280 65280
 botShadowColor rgb 0 0 0
 controlPv "$(P)$(R)Trigger"
@@ -824,11 +794,6 @@ offLabel "Trigger"
 useEnumNumeric
 font "helvetica-medium-r-18.0"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties

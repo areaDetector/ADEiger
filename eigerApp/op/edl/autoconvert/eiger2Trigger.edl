@@ -199,19 +199,6 @@ endGroup
 endObjectProperties
 
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 80
-w 330
-h 70
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -316,8 +303,9 @@ controlPv "$(P)$(R)ManualTrigger_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -395,11 +383,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -474,18 +457,6 @@ endGroup
 
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 80
-w 330
-h 70
-
-beginGroup
 
 # (Menu Button)
 object activeMenuButtonClass
@@ -506,9 +477,4 @@ controlPv "$(P)$(R)ManualTrigger"
 indicatorPv "$(P)$(R)ManualTrigger"
 font "helvetica-medium-r-12.0"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 

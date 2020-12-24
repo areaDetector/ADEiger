@@ -459,8 +459,9 @@ controlPv "$(P)$(R)ThresholdDiffEnable_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -705,8 +706,9 @@ controlPv "$(P)$(R)Threshold2Enable_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -721,7 +723,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 10
+x 5
 y 55
 w 180
 h 20
@@ -741,7 +743,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 270
+x 265
 y 56
 w 80
 h 18
@@ -749,8 +751,9 @@ controlPv "$(P)$(R)Threshold1Enable_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -842,7 +845,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 195
+x 190
 y 55
 w 70
 h 20

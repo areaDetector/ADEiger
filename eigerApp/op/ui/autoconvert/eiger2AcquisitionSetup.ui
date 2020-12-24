@@ -1007,9 +1007,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -1034,7 +1034,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_7">
@@ -1509,9 +1509,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -1536,7 +1536,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caMenu" name="caMenu_2">
@@ -1598,7 +1598,7 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>10</x>
+                    <x>5</x>
                     <y>55</y>
                     <width>180</width>
                     <height>20</height>
@@ -1608,7 +1608,7 @@ border-radius: 2px;
         <widget class="caLineEdit" name="caLineEdit_10">
             <property name="geometry">
                 <rect>
-                    <x>270</x>
+                    <x>265</x>
                     <y>56</y>
                     <width>80</width>
                     <height>18</height>
@@ -1629,9 +1629,9 @@ border-radius: 2px;
             </property>
             <property name="background">
                 <color alpha="255">
-                    <red>187</red>
-                    <green>187</green>
-                    <blue>187</blue>
+                    <red>70</red>
+                    <green>70</green>
+                    <blue>70</blue>
                 </color>
             </property>
             <property name="limitsMode">
@@ -1656,13 +1656,13 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
             <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
+                <enum>caLineEdit::Alarm_Static</enum>
             </property>
         </widget>
         <widget class="caMenu" name="caMenu_3">
             <property name="geometry">
                 <rect>
-                    <x>195</x>
+                    <x>190</x>
                     <y>55</y>
                     <width>70</width>
                     <height>20</height>

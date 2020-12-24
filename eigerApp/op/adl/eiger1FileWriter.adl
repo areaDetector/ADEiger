@@ -257,16 +257,17 @@ text {
 }
 "text update" {
 	object {
-		x=245
+		x=265
 		y=31
-		width=60
+		width=80
 		height=18
 	}
 	monitor {
 		chan="$(P)$(R)FWEnable_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -347,7 +348,7 @@ menu {
 	object {
 		x=180
 		y=30
-		width=60
+		width=80
 		height=20
 	}
 	control {
@@ -401,7 +402,7 @@ menu {
 	object {
 		x=180
 		y=180
-		width=60
+		width=80
 		height=20
 	}
 	control {
@@ -412,16 +413,17 @@ menu {
 }
 "text update" {
 	object {
-		x=245
+		x=265
 		y=181
-		width=60
+		width=80
 		height=18
 	}
 	monitor {
 		chan="$(P)$(R)SaveFiles_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -556,7 +558,7 @@ menu {
 	object {
 		x=180
 		y=329
-		width=60
+		width=80
 		height=20
 	}
 	control {
@@ -567,16 +569,17 @@ menu {
 }
 "text update" {
 	object {
-		x=245
+		x=265
 		y=330
-		width=60
+		width=80
 		height=18
 	}
 	monitor {
 		chan="$(P)$(R)FWAutoRemove_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}

@@ -86,16 +86,17 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 215
+x 235
 y 31
-w 60
+w 80
 h 18
 controlPv "$(P)$(R)StreamEnable_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -233,7 +234,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 255
+x 235
 y 107
 w 80
 h 18
@@ -241,8 +242,9 @@ controlPv "$(P)$(R)StreamDecompress_RBV"
 format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -259,7 +261,7 @@ minor 0
 release 0
 x 150
 y 30
-w 60
+w 80
 h 20
 fgColor rgb 0 0 0
 bgColor rgb 29440 57088 65280
@@ -279,7 +281,7 @@ minor 0
 release 0
 x 150
 y 106
-w 100
+w 80
 h 20
 fgColor rgb 0 0 0
 bgColor rgb 29440 57088 65280

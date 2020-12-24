@@ -157,8 +157,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)ROIMode_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -238,8 +239,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)FWCompression_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -270,8 +272,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)ArrayCallbacks_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -367,8 +370,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)FlatfieldApplied_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -409,8 +413,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)CountrateCorrApplied_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -451,8 +456,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)PixelMaskApplied_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}

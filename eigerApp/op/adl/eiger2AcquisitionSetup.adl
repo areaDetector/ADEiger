@@ -378,8 +378,9 @@ menu {
 	monitor {
 		chan="$(P)$(R)ThresholdDiffEnable_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -546,8 +547,9 @@ text {
 	monitor {
 		chan="$(P)$(R)Threshold2Enable_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -567,7 +569,7 @@ menu {
 }
 text {
 	object {
-		x=10
+		x=5
 		y=55
 		width=180
 		height=20
@@ -580,7 +582,7 @@ text {
 }
 "text update" {
 	object {
-		x=270
+		x=265
 		y=56
 		width=80
 		height=18
@@ -588,15 +590,16 @@ text {
 	monitor {
 		chan="$(P)$(R)Threshold1Enable_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
 }
 menu {
 	object {
-		x=195
+		x=190
 		y=55
 		width=70
 		height=20

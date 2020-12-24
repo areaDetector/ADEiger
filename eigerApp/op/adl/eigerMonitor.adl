@@ -138,16 +138,17 @@ text {
 }
 "text update" {
 	object {
-		x=215
+		x=235
 		y=31
-		width=60
+		width=80
 		height=18
 	}
 	monitor {
 		chan="$(P)$(R)MonitorEnable_RBV"
 		clr=54
-		bclr=4
+		bclr=12
 	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -228,7 +229,7 @@ menu {
 	object {
 		x=150
 		y=30
-		width=60
+		width=80
 		height=20
 	}
 	control {

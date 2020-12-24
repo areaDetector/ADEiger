@@ -206,9 +206,9 @@
   <widget type="textupdate" version="2.0.0">
     <name>text update #47</name>
     <pv_name>$(P)$(R)FWEnable_RBV</pv_name>
-    <x>245</x>
+    <x>265</x>
     <y>31</y>
-    <width>60</width>
+    <width>80</width>
     <height>18</height>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -219,12 +219,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #51</name>
@@ -319,7 +318,7 @@
     <pv_name>$(P)$(R)FWEnable</pv_name>
     <x>180</x>
     <y>30</y>
-    <width>60</width>
+    <width>80</width>
     <height>20</height>
     <background_color>
       <color red="115" green="223" blue="255">
@@ -378,7 +377,7 @@
     <pv_name>$(P)$(R)SaveFiles</pv_name>
     <x>180</x>
     <y>180</y>
-    <width>60</width>
+    <width>80</width>
     <height>20</height>
     <background_color>
       <color red="115" green="223" blue="255">
@@ -389,9 +388,9 @@
   <widget type="textupdate" version="2.0.0">
     <name>text update #85</name>
     <pv_name>$(P)$(R)SaveFiles_RBV</pv_name>
-    <x>245</x>
+    <x>265</x>
     <y>181</y>
-    <width>60</width>
+    <width>80</width>
     <height>18</height>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -402,12 +401,11 @@
       </color>
     </foreground_color>
     <background_color>
-      <color red="187" green="187" blue="187">
+      <color red="70" green="70" blue="70">
       </color>
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #89</name>
