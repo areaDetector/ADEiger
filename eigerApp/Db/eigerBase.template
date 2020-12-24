@@ -58,16 +58,20 @@ record(bo,"$(P)$(R)StreamDecompress") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
     field(DESC, "Decompress stream data")
     field(VAL,  "1")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)StreamDecompress_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
     field(DESC, "Decompress stream data")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -120,16 +124,20 @@ record(bo,"$(P)$(R)ManualTrigger") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
     field(DESC, "Disable auto triggering")
     field(VAL,  "0")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)ManualTrigger_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MANUAL_TRIGGER")
     field(DESC, "Disable auto triggering")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -168,34 +176,42 @@ record(bo,"$(P)$(R)FWEnable") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_ENABLE")
     field(DESC, "Enable usage of FileWriter API")
     field(VAL,  "1")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)FWEnable_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_ENABLE")
     field(DESC, "Enable usage of FileWriter API")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
-# FileWriter compression enabled
+# FileWriter compression enable
 record(bo,"$(P)$(R)FWCompression") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION")
     field(VAL,  "1")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)FWCompression_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -241,16 +257,20 @@ record(bo,"$(P)$(R)FWAutoRemove") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_REMOVE")
     field(DESC, "Auto remove files")
     field(VAL,  "0")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)FWAutoRemove_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_REMOVE")
     field(DESC, "Auto remove files")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -336,10 +356,12 @@ record(mbbo,"$(P)$(R)ROIMode") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
     field(DESC, "ROI Mode")
     field(VAL,  "0")
-    field(ZRST, "Disabled")
+    field(ZRST, "Disable")
     field(ZRVL, "0")
     field(ONST, "4M")
     field(ONVL, "1")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(mbbi,"$(P)$(R)ROIMode_RBV") {
@@ -352,6 +374,8 @@ record(mbbi,"$(P)$(R)ROIMode_RBV") {
     field(ONST, "4M")
     field(ONVL, "1")
     field(SCAN, "I/O Intr")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 # Dead time between frames
@@ -397,16 +421,20 @@ record(bo,"$(P)$(R)StreamEnable") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_ENABLE")
     field(DESC, "Enable usage of Stream API")
     field(VAL,  "0")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)StreamEnable_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_ENABLE")
     field(DESC, "Enable usage of Stream API")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -484,15 +512,19 @@ record(bo,"$(P)$(R)SaveFiles") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
     field(VAL,  "0")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)SaveFiles_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -538,15 +570,19 @@ record(bo,"$(P)$(R)FlatfieldApplied") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
     field(VAL,  "1")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -557,16 +593,20 @@ record(bo,"$(P)$(R)CountrateCorrApplied") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
     field(DESC, "Apply countrate correction")
     field(VAL,  "1")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)CountrateCorrApplied_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
     field(DESC, "Apply countrate correction")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -577,16 +617,20 @@ record(bo,"$(P)$(R)PixelMaskApplied") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
     field(DESC, "Apply pixel mask")
     field(VAL,  "1")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)PixelMaskApplied_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
     field(DESC, "Apply pixel mask")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -674,15 +718,19 @@ record(bo,"$(P)$(R)AutoSummation") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
     field(VAL,  "1")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)AutoSummation_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
-    field(ZNAM, "Disabled")
-    field(ONAM, "Enabled")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 
@@ -930,16 +978,20 @@ record(bo,"$(P)$(R)MonitorEnable") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_ENABLE")
     field(DESC, "Enable usage of Monitor API")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)MonitorEnable_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_ENABLE")
     field(DESC, "Enable usage of Monitor API")
-    field(ZNAM, "No")
-    field(ONAM, "Yes")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
     field(SCAN, "I/O Intr")
 }
 

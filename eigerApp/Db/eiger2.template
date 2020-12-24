@@ -50,6 +50,8 @@ record(bo,"$(P)$(R)Threshold1Enable") {
     field(DESC, "Enable threshold 1")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)Threshold1Enable_RBV") {
@@ -59,6 +61,8 @@ record(bi,"$(P)$(R)Threshold1Enable_RBV") {
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(SCAN, "I/O Intr")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 # Threshold 2 energy
@@ -90,6 +94,8 @@ record(bo,"$(P)$(R)Threshold2Enable") {
     field(DESC, "Enable threshold 2")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)Threshold2Enable_RBV") {
@@ -99,6 +105,8 @@ record(bi,"$(P)$(R)Threshold2Enable_RBV") {
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(SCAN, "I/O Intr")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 # Threshold difference enable
@@ -109,6 +117,8 @@ record(bo,"$(P)$(R)ThresholdDiffEnable") {
     field(DESC, "Enable threshold difference images")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 record(bi,"$(P)$(R)ThresholdDiffEnable_RBV") {
@@ -118,6 +128,8 @@ record(bi,"$(P)$(R)ThresholdDiffEnable_RBV") {
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(SCAN, "I/O Intr")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
 # Add external gate mode to the value in eigerBase.template
