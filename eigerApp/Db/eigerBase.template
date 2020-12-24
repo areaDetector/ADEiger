@@ -1,4 +1,5 @@
 # Database for the records specific to the Eiger driver
+# These record are common to the Eiger1 and Eiger2
 # Bruno Martins
 # June 2, 2015
 
@@ -696,24 +697,6 @@ record(ao, "$(P)$(R)DetDist")
     field(EGU,  "m")
 }
 
-record(ao, "$(P)$(R)BeamX")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_beam_center_x")
-    field(PREC, "3")
-    field(EGU,  "pixels")
-}
-
-record(ao, "$(P)$(R)BeamY")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_beam_center_y")
-    field(PREC, "3")
-    field(EGU,  "pixels")
-}
-
 record(ai, "$(P)$(R)DetDist_RBV")
 {
     field(DTYP, "asynFloat64")
@@ -723,6 +706,15 @@ record(ai, "$(P)$(R)DetDist_RBV")
     field(SCAN, "I/O Intr")
 }
 
+record(ao, "$(P)$(R)BeamX")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_beam_center_x")
+    field(PREC, "3")
+    field(EGU,  "pixels")
+}
+
 record(ai, "$(P)$(R)BeamX_RBV")
 {
     field(DTYP, "asynFloat64")
@@ -730,6 +722,15 @@ record(ai, "$(P)$(R)BeamX_RBV")
     field(PREC, "3")
     field(EGU,  "pixels")
     field(SCAN, "I/O Intr")
+}
+
+record(ao, "$(P)$(R)BeamY")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_beam_center_y")
+    field(PREC, "3")
+    field(EGU,  "pixels")
 }
 
 record(ai, "$(P)$(R)BeamY_RBV")
