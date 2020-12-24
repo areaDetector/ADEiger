@@ -226,7 +226,7 @@ composite {
 		x=360
 		y=40
 		width=350
-		height=280
+		height=305
 	}
 	"composite name"=""
 	"composite file"="eiger2AcquisitionSetup.adl"
@@ -234,7 +234,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=485
+		y=510
 		width=350
 		height=365
 	}
@@ -244,7 +244,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=325
+		y=350
 		width=350
 		height=155
 	}

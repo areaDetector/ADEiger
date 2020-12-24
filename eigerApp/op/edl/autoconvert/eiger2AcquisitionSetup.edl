@@ -6,7 +6,7 @@ release 1
 x 793
 y 72
 w 350
-h 280
+h 305
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 280
+h 305
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -55,7 +55,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Threshold (eV)"
+  "Threshold 1 (eV)"
 }
 endObjectProperties
 
@@ -152,7 +152,7 @@ major 4
 minor 1
 release 1
 x 15
-y 155
+y 180
 w 170
 h 20
 font "helvetica-medium-r-14.0"
@@ -172,7 +172,7 @@ major 4
 minor 1
 release 1
 x 5
-y 180
+y 205
 w 180
 h 20
 font "helvetica-medium-r-14.0"
@@ -192,7 +192,7 @@ major 4
 minor 1
 release 1
 x 5
-y 130
+y 155
 w 180
 h 20
 font "helvetica-medium-r-14.0"
@@ -212,7 +212,7 @@ major 4
 minor 7
 release 0
 x 265
-y 156
+y 181
 w 80
 h 18
 controlPv "$(P)$(R)AcquireTime_RBV"
@@ -236,7 +236,7 @@ major 4
 minor 7
 release 0
 x 265
-y 181
+y 206
 w 80
 h 18
 controlPv "$(P)$(R)AcquirePeriod_RBV"
@@ -260,7 +260,7 @@ major 4
 minor 7
 release 0
 x 265
-y 131
+y 156
 w 80
 h 18
 controlPv "$(P)$(R)PhotonEnergy_RBV"
@@ -284,7 +284,7 @@ major 4
 minor 7
 release 0
 x 190
-y 155
+y 180
 w 70
 h 20
 controlPv "$(P)$(R)AcquireTime"
@@ -310,7 +310,7 @@ major 4
 minor 7
 release 0
 x 190
-y 180
+y 205
 w 70
 h 20
 controlPv "$(P)$(R)AcquirePeriod"
@@ -336,7 +336,7 @@ major 4
 minor 7
 release 0
 x 190
-y 130
+y 155
 w 70
 h 20
 controlPv "$(P)$(R)PhotonEnergy"
@@ -362,7 +362,7 @@ major 4
 minor 1
 release 1
 x 25
-y 55
+y 80
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -382,7 +382,7 @@ major 4
 minor 7
 release 0
 x 265
-y 56
+y 81
 w 80
 h 18
 controlPv "$(P)$(R)Threshold2Energy_RBV"
@@ -406,7 +406,7 @@ major 4
 minor 7
 release 0
 x 190
-y 55
+y 80
 w 70
 h 20
 controlPv "$(P)$(R)Threshold2Energy"
@@ -431,52 +431,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 5
-y 80
-w 180
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Threshold 2 enable"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 265
-y 81
-w 80
-h 18
-controlPv "$(P)$(R)Threshold2Enable_RBV"
-format "string"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
 x 35
-y 105
+y 130
 w 150
 h 20
 font "helvetica-medium-r-14.0"
@@ -496,7 +452,7 @@ major 4
 minor 7
 release 0
 x 265
-y 105
+y 130
 w 80
 h 18
 controlPv "$(P)$(R)ThresholdDiffEnable_RBV"
@@ -520,7 +476,7 @@ major 4
 minor 1
 release 1
 x 45
-y 255
+y 280
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -540,7 +496,7 @@ major 4
 minor 7
 release 0
 x 265
-y 256
+y 281
 w 80
 h 18
 controlPv "$(P)$(R)CountingMode_RBV"
@@ -564,7 +520,7 @@ major 4
 minor 0
 release 0
 x 105
-y 205
+y 230
 w 240
 h 20
 
@@ -577,7 +533,7 @@ major 4
 minor 1
 release 1
 x 105
-y 205
+y 230
 w 80
 h 20
 font "helvetica-medium-r-14.0"
@@ -597,7 +553,7 @@ major 4
 minor 7
 release 0
 x 190
-y 205
+y 230
 w 70
 h 20
 controlPv "$(P)$(R)NumImages"
@@ -623,7 +579,7 @@ major 4
 minor 7
 release 0
 x 265
-y 206
+y 231
 w 80
 h 18
 controlPv "$(P)$(R)NumImages_RBV"
@@ -652,7 +608,7 @@ major 4
 minor 1
 release 1
 x 15
-y 230
+y 255
 w 170
 h 20
 font "helvetica-medium-r-14.0"
@@ -672,7 +628,7 @@ major 4
 minor 7
 release 0
 x 190
-y 230
+y 255
 w 70
 h 20
 controlPv "$(P)$(R)NumExposures"
@@ -698,11 +654,99 @@ major 4
 minor 7
 release 0
 x 265
-y 231
+y 256
 w 80
 h 18
 controlPv "$(P)$(R)NumExposures_RBV"
 format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 105
+w 180
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Threshold 2 enable"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 265
+y 106
+w 80
+h 18
+controlPv "$(P)$(R)Threshold2Enable_RBV"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 55
+w 180
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Threshold 1 enable"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 270
+y 56
+w 80
+h 18
+controlPv "$(P)$(R)Threshold1Enable_RBV"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 2560 0 47104
@@ -722,27 +766,7 @@ major 4
 minor 0
 release 0
 x 190
-y 80
-w 70
-h 20
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-inconsistentColor rgb 17920 17920 17920
-topShadowColor rgb 55808 55808 55808
-botShadowColor rgb 17920 17920 17920
-controlPv "$(P)$(R)Threshold2Enable"
-indicatorPv "$(P)$(R)Threshold2Enable"
-font "helvetica-medium-r-12.0"
-endObjectProperties
-
-# (Menu Button)
-object activeMenuButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 190
-y 105
+y 130
 w 70
 h 20
 fgColor rgb 0 0 0
@@ -762,7 +786,7 @@ major 4
 minor 0
 release 0
 x 180
-y 255
+y 280
 w 80
 h 20
 fgColor rgb 0 0 0
@@ -781,7 +805,7 @@ major 4
 minor 0
 release 0
 x 105
-y 205
+y 230
 w 240
 h 20
 
@@ -791,4 +815,44 @@ endGroup
 
 endObjectProperties
 
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 190
+y 105
+w 70
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)Threshold2Enable"
+indicatorPv "$(P)$(R)Threshold2Enable"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 195
+y 55
+w 70
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)Threshold1Enable"
+indicatorPv "$(P)$(R)Threshold1Enable"
+font "helvetica-medium-r-12.0"
+endObjectProperties
 

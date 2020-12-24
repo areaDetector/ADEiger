@@ -135,13 +135,13 @@
     <x>360</x>
     <y>40</y>
     <width>350</width>
-    <height>280</height>
+    <height>305</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #36</name>
     <file>eigerAcquisitionStatus.bob</file>
     <x>360</x>
-    <y>485</y>
+    <y>510</y>
     <width>350</width>
     <height>365</height>
   </widget>
@@ -149,7 +149,7 @@
     <name>composite #38</name>
     <file>eiger2Trigger.bob</file>
     <x>360</x>
-    <y>325</y>
+    <y>350</y>
     <width>350</width>
     <height>155</height>
   </widget>

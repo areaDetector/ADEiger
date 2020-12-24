@@ -8,7 +8,7 @@ display {
 		x=793
 		y=72
 		width=350
-		height=280
+		height=305
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=280
+		height=305
 	}
 	"basic attribute" {
 		clr=14
@@ -109,7 +109,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Threshold (eV)"
+	textix="Threshold 1 (eV)"
 	align="horiz. right"
 }
 "text update" {
@@ -169,7 +169,7 @@ text {
 text {
 	object {
 		x=15
-		y=155
+		y=180
 		width=170
 		height=20
 	}
@@ -182,7 +182,7 @@ text {
 text {
 	object {
 		x=5
-		y=180
+		y=205
 		width=180
 		height=20
 	}
@@ -195,7 +195,7 @@ text {
 text {
 	object {
 		x=5
-		y=130
+		y=155
 		width=180
 		height=20
 	}
@@ -208,7 +208,7 @@ text {
 "text update" {
 	object {
 		x=265
-		y=156
+		y=181
 		width=80
 		height=18
 	}
@@ -224,7 +224,7 @@ text {
 "text update" {
 	object {
 		x=265
-		y=181
+		y=206
 		width=80
 		height=18
 	}
@@ -240,7 +240,7 @@ text {
 "text update" {
 	object {
 		x=265
-		y=131
+		y=156
 		width=80
 		height=18
 	}
@@ -255,7 +255,7 @@ text {
 "text entry" {
 	object {
 		x=190
-		y=155
+		y=180
 		width=70
 		height=20
 	}
@@ -271,7 +271,7 @@ text {
 "text entry" {
 	object {
 		x=190
-		y=180
+		y=205
 		width=70
 		height=20
 	}
@@ -287,7 +287,7 @@ text {
 "text entry" {
 	object {
 		x=190
-		y=130
+		y=155
 		width=70
 		height=20
 	}
@@ -302,7 +302,7 @@ text {
 text {
 	object {
 		x=25
-		y=55
+		y=80
 		width=160
 		height=20
 	}
@@ -315,7 +315,7 @@ text {
 "text update" {
 	object {
 		x=265
-		y=56
+		y=81
 		width=80
 		height=18
 	}
@@ -330,7 +330,7 @@ text {
 "text entry" {
 	object {
 		x=190
-		y=55
+		y=80
 		width=70
 		height=20
 	}
@@ -344,37 +344,8 @@ text {
 }
 text {
 	object {
-		x=5
-		y=80
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Threshold 2 enable"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=265
-		y=81
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)Threshold2Enable_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
 		x=35
-		y=105
+		y=130
 		width=150
 		height=20
 	}
@@ -387,20 +358,7 @@ text {
 menu {
 	object {
 		x=190
-		y=80
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)Threshold2Enable"
-		clr=14
-		bclr=51
-	}
-}
-menu {
-	object {
-		x=190
-		y=105
+		y=130
 		width=70
 		height=20
 	}
@@ -413,7 +371,7 @@ menu {
 "text update" {
 	object {
 		x=265
-		y=105
+		y=130
 		width=80
 		height=18
 	}
@@ -429,7 +387,7 @@ menu {
 text {
 	object {
 		x=45
-		y=255
+		y=280
 		width=130
 		height=20
 	}
@@ -442,7 +400,7 @@ text {
 menu {
 	object {
 		x=180
-		y=255
+		y=280
 		width=80
 		height=20
 	}
@@ -455,7 +413,7 @@ menu {
 "text update" {
 	object {
 		x=265
-		y=256
+		y=281
 		width=80
 		height=18
 	}
@@ -471,7 +429,7 @@ menu {
 composite {
 	object {
 		x=105
-		y=205
+		y=230
 		width=240
 		height=20
 	}
@@ -480,7 +438,7 @@ composite {
 		text {
 			object {
 				x=105
-				y=205
+				y=230
 				width=80
 				height=20
 			}
@@ -493,7 +451,7 @@ composite {
 		"text entry" {
 			object {
 				x=190
-				y=205
+				y=230
 				width=70
 				height=20
 			}
@@ -508,7 +466,7 @@ composite {
 		"text update" {
 			object {
 				x=265
-				y=206
+				y=231
 				width=80
 				height=18
 			}
@@ -525,7 +483,7 @@ composite {
 text {
 	object {
 		x=15
-		y=230
+		y=255
 		width=170
 		height=20
 	}
@@ -538,7 +496,7 @@ text {
 "text entry" {
 	object {
 		x=190
-		y=230
+		y=255
 		width=70
 		height=20
 	}
@@ -553,7 +511,7 @@ text {
 "text update" {
 	object {
 		x=265
-		y=231
+		y=256
 		width=80
 		height=18
 	}
@@ -563,5 +521,89 @@ text {
 		bclr=4
 	}
 	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=105
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Threshold 2 enable"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=265
+		y=106
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Threshold2Enable_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+menu {
+	object {
+		x=190
+		y=105
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Threshold2Enable"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=10
+		y=55
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Threshold 1 enable"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=270
+		y=56
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)Threshold1Enable_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+menu {
+	object {
+		x=195
+		y=55
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Threshold1Enable"
+		clr=14
+		bclr=51
 	}
 }
