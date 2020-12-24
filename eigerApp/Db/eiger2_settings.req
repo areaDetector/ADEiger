@@ -1,0 +1,7 @@
+file "eigerBase_settings.req", P=$(P), R=$(R)
+$(P)$(R)Threshold1Enable
+$(P)$(R)Threshold2Energy
+$(P)$(R)Threshold2Enable
+$(P)$(R)ThresholdDiffEnable
+$(P)$(R)ExtGateMode
+$(P)$(R)HVResetTime
