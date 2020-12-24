@@ -42,6 +42,25 @@ record(ai, "$(P)$(R)TriggerStartDelay_RBV")
     field(SCAN, "I/O Intr")
 }
 
+# Threshold 1 enable
+record(bo,"$(P)$(R)Threshold1Enable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD1_ENABLE")
+    field(DESC, "Enable threshold 1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+}
+
+record(bi,"$(P)$(R)Threshold1Enable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD1_ENABLE")
+    field(DESC, "Enable threshold 1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+}
+
 # Threshold 2 energy
 record(ao, "$(P)$(R)Threshold2Energy")
 {
