@@ -32,7 +32,7 @@
 #include "streamApi.h"
 
 // Set this flag if you are using the pre-release firmware that supports External Gate mode
-//#define HAVE_EXTG_FIRMWARE      1
+#define HAVE_EXTG_FIRMWARE      1
 #define MAX_BUF_SIZE            256
 #define DEFAULT_NR_START        1
 #define DEFAULT_QUEUE_CAPACITY  2
@@ -384,6 +384,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     }
     else if (mEigerModel == Eiger2)  // Should this depend on the model or the API?
     {
+        mThreshold1Enable    = mParams.create(EigThreshold1EnableStr,    asynParamInt32,   SSDetConfig, "threshold/1/mode");
+        mThreshold1Enable->setEnumValues(modeEnum);
         mTriggerStartDelay   = mParams.create(EigTriggerStartDelayStr,   asynParamFloat64, SSDetConfig, "trigger_start_delay");
         mThreshold2          = mParams.create(EigThreshold2Str,          asynParamFloat64, SSDetConfig, "threshold/2/energy");
         mThreshold2->setEpsilon(ENERGY_EPSILON);

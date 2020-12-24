@@ -39,6 +39,7 @@ typedef enum {
 // Acquisition Parameters
 #define EigPhotonEnergyStr         "PHOTON_ENERGY"
 #define EigThresholdStr            "THRESHOLD"
+#define EigThreshold1EnableStr     "THRESHOLD1_ENABLE"
 #define EigThreshold2Str           "THRESHOLD2"
 #define EigThreshold2EnableStr     "THRESHOLD2_ENABLE"
 #define EigThresholdDiffEnableStr  "THRESHOLD_DIFF_ENABLE"
@@ -157,6 +158,7 @@ protected:
     EigerParam *mWavelength;
     EigerParam *mPhotonEnergy;
     EigerParam *mThreshold;
+    EigerParam *mThreshold1Enable;
     EigerParam *mThreshold2;
     EigerParam *mThreshold2Enable;
     EigerParam *mThresholdDiffEnable;
