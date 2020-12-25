@@ -330,7 +330,10 @@ int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
     const char *functionName = "uncompress";
     char *pInput = (char *)frame->data;
 
-    if (strcmp(frame->encoding, "lz4<") == 0) {
+    if (strcmp(frame->encoding, "<") == 0) {
+        memcpy(dest, pInput, frame->uncompressedSize);
+    } 
+    else if (strcmp(frame->encoding, "lz4<") == 0) {
         int result = LZ4_decompress_fast(pInput, dest, (int)frame->uncompressedSize);
         if (result < 0)
         {
