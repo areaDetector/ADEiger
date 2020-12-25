@@ -4,7 +4,7 @@
   <x>1185</x>
   <y>75</y>
   <width>350</width>
-  <height>235</height>
+  <height>260</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -29,7 +29,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #9</name>
     <width>350</width>
-    <height>235</height>
+    <height>260</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -198,63 +198,6 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #43</name>
-    <text>Read Status Rate</text>
-    <x>5</x>
-    <y>205</y>
-    <width>160</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="combo" version="2.0.0">
-    <name>menu #46</name>
-    <pv_name>$(P)$(R)ReadStatus.SCAN</pv_name>
-    <x>170</x>
-    <y>205</y>
-    <width>120</width>
-    <height>20</height>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #49</name>
-    <text>HV Reset</text>
-    <x>85</x>
-    <y>180</y>
-    <width>80</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="action_button" version="3.0.0">
-    <name>message button #52</name>
-    <actions>
-      <action type="write_pv">
-        <pv_name>$(P)$(R)HVReset</pv_name>
-        <value>1</value>
-        <description>Write</description>
-      </action>
-    </actions>
-    <pv_name>$(P)$(R)HVReset</pv_name>
-    <text>HV Reset</text>
-    <x>170</x>
-    <y>180</y>
-    <width>120</width>
-    <height>20</height>
-    <background_color>
-      <color red="253" green="0" blue="0">
-      </color>
-    </background_color>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #55</name>
     <text>HV State</text>
     <x>85</x>
     <y>130</y>
@@ -266,7 +209,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #58</name>
+    <name>text update #46</name>
     <pv_name>$(P)$(R)HVState_RBV</pv_name>
     <x>170</x>
     <y>131</y>
@@ -289,7 +232,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #62</name>
+    <name>text #50</name>
     <text>HV Reset Time</text>
     <x>35</x>
     <y>155</y>
@@ -301,7 +244,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #65</name>
+    <name>text update #53</name>
     <pv_name>$(P)$(R)HVResetTime_RBV</pv_name>
     <x>255</x>
     <y>156</y>
@@ -324,7 +267,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #69</name>
+    <name>text entry #57</name>
     <pv_name>$(P)$(R)HVResetTime</pv_name>
     <x>170</x>
     <y>155</y>
@@ -340,5 +283,93 @@
     <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #61</name>
+    <text>Read Status Rate</text>
+    <x>5</x>
+    <y>230</y>
+    <width>160</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #64</name>
+    <pv_name>$(P)$(R)ReadStatus.SCAN</pv_name>
+    <x>170</x>
+    <y>230</y>
+    <width>120</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #67</name>
+    <text>HV Reset</text>
+    <x>85</x>
+    <y>180</y>
+    <width>80</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>message button #70</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P)$(R)HVReset</pv_name>
+        <value>1</value>
+        <description>Write</description>
+      </action>
+    </actions>
+    <pv_name>$(P)$(R)HVReset</pv_name>
+    <text>HV Reset</text>
+    <x>170</x>
+    <y>180</y>
+    <width>120</width>
+    <height>20</height>
+    <background_color>
+      <color red="253" green="0" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>message button #73</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P)$(R)Initialize</pv_name>
+        <value>1</value>
+        <description>Write</description>
+      </action>
+    </actions>
+    <pv_name>$(P)$(R)Initialize</pv_name>
+    <text>Initialize</text>
+    <x>170</x>
+    <y>205</y>
+    <width>120</width>
+    <height>20</height>
+    <background_color>
+      <color red="253" green="0" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #76</name>
+    <text>Initialize</text>
+    <x>65</x>
+    <y>205</y>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
   </widget>
 </display>

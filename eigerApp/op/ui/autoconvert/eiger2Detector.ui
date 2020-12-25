@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>540</x>
-            <y>162</y>
+            <x>488</x>
+            <y>98</y>
             <width>1425</width>
-            <height>880</height>
+            <height>950</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -179,7 +179,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>5</x>
-                    <y>710</y>
+                    <y>735</y>
                     <width>354</width>
                     <height>169</height>
                 </rect>
@@ -187,7 +187,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>5</x>
-                    <y>710</y>
+                    <y>735</y>
                     <width>352</width>
                     <height>167</height>
                 </rect>
@@ -227,17 +227,17 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>400</y>
+                    <y>475</y>
                     <width>352</width>
-                    <height>132</height>
+                    <height>157</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>400</y>
+                    <y>475</y>
                     <width>350</width>
-                    <height>130</height>
+                    <height>155</height>
                 </rect>
             </property>
             <property name="filename">
@@ -277,7 +277,7 @@ border-radius: 2px;
                     <x>5</x>
                     <y>470</y>
                     <width>352</width>
-                    <height>237</height>
+                    <height>262</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -285,7 +285,7 @@ border-radius: 2px;
                     <x>5</x>
                     <y>470</y>
                     <width>350</width>
-                    <height>235</height>
+                    <height>260</height>
                 </rect>
             </property>
             <property name="filename">
@@ -299,7 +299,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>535</y>
+                    <y>635</y>
                     <width>352</width>
                     <height>107</height>
                 </rect>
@@ -307,7 +307,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>535</y>
+                    <y>635</y>
                     <width>350</width>
                     <height>105</height>
                 </rect>
@@ -325,7 +325,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>357</height>
+                    <height>432</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -333,7 +333,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>355</height>
+                    <height>430</height>
                 </rect>
             </property>
             <property name="filename">
@@ -370,16 +370,16 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_8">
             <property name="geometry">
                 <rect>
-                    <x>1070</x>
-                    <y>575</y>
+                    <x>715</x>
+                    <y>745</y>
                     <width>354</width>
                     <height>164</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>1070</x>
-                    <y>575</y>
+                    <x>715</x>
+                    <y>745</y>
                     <width>352</width>
                     <height>162</height>
                 </rect>
@@ -419,7 +419,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>1070</x>
-                    <y>740</y>
+                    <y>835</y>
                     <width>354</width>
                     <height>114</height>
                 </rect>
@@ -427,7 +427,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>1070</x>
-                    <y>740</y>
+                    <y>835</y>
                     <width>352</width>
                     <height>112</height>
                 </rect>
@@ -469,7 +469,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>510</y>
                     <width>352</width>
-                    <height>367</height>
+                    <height>392</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -477,7 +477,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>510</y>
                     <width>350</width>
-                    <height>365</height>
+                    <height>390</height>
                 </rect>
             </property>
             <property name="filename">
@@ -514,18 +514,18 @@ border-radius: 2px;
         <widget class="caInclude" name="caInclude_14">
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>645</y>
+                    <x>1070</x>
+                    <y>575</y>
                     <width>352</width>
-                    <height>232</height>
+                    <height>257</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>715</x>
-                    <y>645</y>
+                    <x>1070</x>
+                    <y>575</y>
                     <width>350</width>
-                    <height>230</height>
+                    <height>255</height>
                 </rect>
             </property>
             <property name="filename">

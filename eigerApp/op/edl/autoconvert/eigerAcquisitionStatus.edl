@@ -6,7 +6,7 @@ release 1
 x 566
 y 159
 w 350
-h 365
+h 390
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 365
+h 390
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -75,41 +75,6 @@ value {
 }
 endObjectProperties
 
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 30
-w 79
-h 29
-lineColor rgb 55808 55808 55808
-fill
-fillColor rgb 55808 55808 55808
-lineWidth 0
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 15
-y 35
-w 70
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 2560 0 47104
-bgColor index 3
-useDisplayBg
-value {
-  "Acquire"
-}
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -117,7 +82,7 @@ major 4
 minor 1
 release 1
 x 5
-y 290
+y 315
 w 170
 h 20
 font "helvetica-medium-r-14.0"
@@ -494,6 +459,59 @@ endGroup
 endObjectProperties
 
 
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 18
+y 30
+w 80
+h 30
+
+beginGroup
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 18
+y 30
+w 79
+h 29
+lineColor rgb 55808 55808 55808
+fill
+fillColor rgb 55808 55808 55808
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 23
+y 35
+w 70
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 2560 0 47104
+bgColor index 3
+useDisplayBg
+value {
+  "Acquire"
+}
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -501,11 +519,11 @@ major 4
 minor 7
 release 0
 x 180
-y 266
+y 291
 w 100
 h 18
 controlPv "$(P)$(R)CountCutoff_RBV"
-format "decimal"
+format "exponential"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 2560 0 47104
@@ -525,7 +543,7 @@ major 4
 minor 1
 release 1
 x 65
-y 265
+y 290
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -538,50 +556,6 @@ value {
 }
 endObjectProperties
 
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 180
-y 241
-w 100
-h 18
-controlPv "$(P)$(R)DeadTime_RBV"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 55
-y 240
-w 120
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Readout Time"
-}
-endObjectProperties
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -589,7 +563,7 @@ major 4
 minor 7
 release 0
 x 180
-y 318
+y 343
 w 60
 h 20
 controlPv "$(P)$(R)ArrayCounter"
@@ -615,7 +589,7 @@ major 4
 minor 1
 release 1
 x 45
-y 318
+y 343
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -635,7 +609,7 @@ major 4
 minor 7
 release 0
 x 245
-y 319
+y 344
 w 80
 h 18
 controlPv "$(P)$(R)ArrayCounter_RBV"
@@ -659,7 +633,7 @@ major 4
 minor 1
 release 1
 x 75
-y 343
+y 368
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -679,7 +653,7 @@ major 4
 minor 7
 release 0
 x 180
-y 344
+y 369
 w 100
 h 18
 controlPv "$(P)$(R)ArrayRate_RBV"
@@ -703,7 +677,7 @@ major 4
 minor 7
 release 0
 x 180
-y 291
+y 316
 w 80
 h 18
 controlPv "$(P)$(R)NumImagesCounter_RBV"
@@ -720,79 +694,92 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Message Button)
-object activeMessageButtonClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 0
+minor 7
 release 0
-x 110
-y 30
-w 70
-h 30
-fgColor rgb 0 0 0
-onColor rgb 7680 47872 0
-offColor rgb 7680 47872 0
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)Acquire"
-pressValue "1"
-releaseValue 
-onLabel "Start"
-offLabel "Start"
-3d
-useEnumNumeric
-font "helvetica-medium-r-18.0"
+x 180
+y 266
+w 100
+h 18
+controlPv "$(P)$(R)DeadTime_RBV"
+format "exponential"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
 
-# (Message Button)
-object activeMessageButtonClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
-x 185
-y 30
-w 70
-h 30
+minor 1
+release 1
+x 55
+y 265
+w 120
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
 fgColor rgb 0 0 0
-onColor rgb 56832 4864 2304
-offColor rgb 56832 4864 2304
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)Acquire"
-pressValue "0"
-releaseValue 
-onLabel "Stop"
-offLabel "Stop"
-3d
-useEnumNumeric
-font "helvetica-medium-r-18.0"
+bgColor index 3
+useDisplayBg
+value {
+  "Readout Time"
+}
 endObjectProperties
 
-# (Message Button)
-object activeMessageButtonClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 0
+minor 7
 release 0
-x 260
-y 30
-w 80
-h 30
+x 180
+y 241
+w 100
+h 18
+controlPv "$(P)$(R)BitDepthImage_RBV"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 25
+y 240
+w 150
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
 fgColor rgb 0 0 0
-onColor rgb 22528 37632 65280
-offColor rgb 22528 37632 65280
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)Trigger"
-pressValue "0"
-releaseValue 
-onLabel "Trigger"
-offLabel "Trigger"
-3d
-useEnumNumeric
-font "helvetica-medium-r-18.0"
+bgColor index 3
+useDisplayBg
+value {
+  "Image Bit Depth"
+}
 endObjectProperties
 # (Group)
 object activeGroupClass
@@ -848,4 +835,96 @@ endGroup
 
 endObjectProperties
 
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 18
+y 30
+w 80
+h 30
+
+beginGroup
+
+endGroup
+
+endObjectProperties
+
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 103
+y 30
+w 70
+h 30
+fgColor rgb 0 0 0
+onColor rgb 7680 47872 0
+offColor rgb 7680 47872 0
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)Acquire"
+pressValue "1"
+releaseValue 
+onLabel "Start"
+offLabel "Start"
+3d
+useEnumNumeric
+font "helvetica-medium-r-18.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 178
+y 30
+w 70
+h 30
+fgColor rgb 0 0 0
+onColor rgb 56832 4864 2304
+offColor rgb 56832 4864 2304
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)Acquire"
+pressValue "0"
+releaseValue 
+onLabel "Stop"
+offLabel "Stop"
+3d
+useEnumNumeric
+font "helvetica-medium-r-18.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 253
+y 30
+w 80
+h 30
+fgColor rgb 0 0 0
+onColor rgb 7680 47872 0
+offColor rgb 7680 47872 0
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)Trigger"
+pressValue "0"
+releaseValue 
+onLabel "Trigger"
+offLabel "Trigger"
+3d
+useEnumNumeric
+font "helvetica-medium-r-18.0"
+endObjectProperties
 

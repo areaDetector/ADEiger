@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 540
-y 162
+x 488
+y 98
 w 1425
-h 880
+h 950
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -60,14 +60,27 @@ value {
 }
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
 x 5
-y 710
+y 735
+w 350
+h 165
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 5
+y 735
 w 350
 h 165
 fgColor rgb 0 0 0
@@ -84,11 +97,30 @@ displayFileName {
 noScroll
 endObjectProperties
 
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 386
+w 350
+h 80
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 5
 y 386
@@ -108,16 +140,35 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
 x 715
-y 400
+y 475
 w 350
-h 130
+h 155
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 715
+y 475
+w 350
+h 155
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -132,11 +183,30 @@ displayFileName {
 noScroll
 endObjectProperties
 
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 1070
+y 415
+w 350
+h 155
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 1070
 y 415
@@ -156,8 +226,14 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
@@ -165,7 +241,20 @@ release 0
 x 5
 y 470
 w 350
-h 235
+h 260
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 5
+y 470
+w 350
+h 260
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -180,14 +269,33 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
 x 715
-y 535
+y 635
+w 350
+h 105
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 715
+y 635
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -204,8 +312,14 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
@@ -213,7 +327,20 @@ release 0
 x 715
 y 40
 w 350
-h 355
+h 430
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 715
+y 40
+w 350
+h 430
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -228,11 +355,30 @@ displayFileName {
 noScroll
 endObjectProperties
 
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 1070
+y 40
+w 350
+h 370
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 1070
 y 40
@@ -252,14 +398,33 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 1070
-y 575
+x 715
+y 745
+w 350
+h 160
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 715
+y 745
 w 350
 h 160
 fgColor rgb 0 0 0
@@ -276,11 +441,30 @@ displayFileName {
 noScroll
 endObjectProperties
 
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 41
+w 350
+h 340
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 5
 y 41
@@ -300,14 +484,33 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
 x 1070
-y 740
+y 835
+w 350
+h 110
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 1070
+y 835
 w 350
 h 110
 fgColor rgb 0 0 0
@@ -324,11 +527,30 @@ displayFileName {
 noScroll
 endObjectProperties
 
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 40
+w 350
+h 305
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 360
 y 40
@@ -348,8 +570,14 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
@@ -357,7 +585,20 @@ release 0
 x 360
 y 510
 w 350
-h 365
+h 390
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 360
+y 510
+w 350
+h 390
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -372,11 +613,30 @@ displayFileName {
 noScroll
 endObjectProperties
 
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 350
+w 350
+h 155
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 360
 y 350
@@ -396,16 +656,35 @@ displayFileName {
 noScroll
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 715
-y 645
+x 1070
+y 575
 w 350
-h 230
+h 255
+
+beginGroup
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 1070
+y 575
+w 350
+h 255
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -418,5 +697,11 @@ displayFileName {
   0 "eigerReadout.edl"
 }
 noScroll
+endObjectProperties
+
+endGroup
+
+visMin "A"
+visMax "1"
 endObjectProperties
 

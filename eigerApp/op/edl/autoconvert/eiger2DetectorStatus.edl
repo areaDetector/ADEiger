@@ -6,7 +6,7 @@ release 1
 x 1185
 y 75
 w 350
-h 235
+h 260
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -49,7 +49,7 @@ release 0
 x 0
 y 0
 w 350
-h 235
+h 260
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -257,46 +257,6 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 5
-y 205
-w 160
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Read Status Rate"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 85
-y 180
-w 80
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "HV Reset"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
 x 85
 y 130
 w 80
@@ -405,6 +365,66 @@ newPos
 objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 230
+w 160
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Read Status Rate"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 85
+y 180
+w 80
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "HV Reset"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 65
+y 205
+w 100
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Initialize"
+}
+endObjectProperties
+
 # (Menu Button)
 object activeMenuButtonClass
 beginObjectProperties
@@ -412,7 +432,7 @@ major 4
 minor 0
 release 0
 x 170
-y 205
+y 230
 w 120
 h 20
 fgColor rgb 0 0 0
@@ -445,6 +465,31 @@ pressValue "1"
 releaseValue 
 onLabel "HV Reset"
 offLabel "HV Reset"
+3d
+useEnumNumeric
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 170
+y 205
+w 120
+h 20
+fgColor rgb 0 0 0
+onColor rgb 64768 0 0
+offColor rgb 64768 0 0
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)Initialize"
+pressValue "1"
+releaseValue 
+onLabel "Initialize"
+offLabel "Initialize"
 3d
 useEnumNumeric
 font "helvetica-medium-r-12.0"

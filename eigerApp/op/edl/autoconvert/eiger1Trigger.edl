@@ -150,7 +150,7 @@ y 55
 w 100
 h 20
 controlPv "$(P)$(R)TriggerExposure"
-format "decimal"
+format "exponential"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -176,7 +176,7 @@ y 56
 w 80
 h 18
 controlPv "$(P)$(R)TriggerExposure_RBV"
-format "decimal"
+format "exponential"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 2560 0 47104

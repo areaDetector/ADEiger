@@ -4,7 +4,7 @@
   <x>1276</x>
   <y>227</y>
   <width>350</width>
-  <height>130</height>
+  <height>155</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -76,11 +76,87 @@
     <format>6</format>
     <show_units>false</show_units>
   </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #19</name>
+    <pv_name>$(P)$(R)StreamEnable</pv_name>
+    <x>150</x>
+    <y>30</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>rectangle #22</name>
+    <width>350</width>
+    <height>155</height>
+    <line_width>1</line_width>
+    <line_color>
+      <color red="0" green="0" blue="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="0" green="0" blue="0">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+  </widget>
   <widget type="label" version="2.0.0">
-    <name>text #19</name>
+    <name>text #25</name>
+    <text>Header Detail</text>
+    <x>15</x>
+    <y>55</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #28</name>
+    <pv_name>$(P)$(R)StreamHdrDetail</pv_name>
+    <x>150</x>
+    <y>55</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #31</name>
+    <pv_name>$(P)$(R)StreamHdrDetail_RBV</pv_name>
+    <x>235</x>
+    <y>56</y>
+    <width>80</width>
+    <height>18</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #35</name>
     <text>Dropped Frames</text>
     <x>5</x>
-    <y>80</y>
+    <y>130</y>
     <width>140</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -89,10 +165,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #22</name>
+    <name>text update #38</name>
     <pv_name>$(P)$(R)StreamDropped_RBV</pv_name>
     <x>150</x>
-    <y>81</y>
+    <y>131</y>
     <width>60</width>
     <height>18</height>
     <font>
@@ -112,10 +188,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #26</name>
+    <name>text #42</name>
     <text>State</text>
     <x>95</x>
-    <y>55</y>
+    <y>105</y>
     <width>50</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -124,10 +200,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #29</name>
+    <name>text update #45</name>
     <pv_name>$(P)$(R)StreamState_RBV</pv_name>
     <x>150</x>
-    <y>56</y>
+    <y>106</y>
     <width>120</width>
     <height>18</height>
     <font>
@@ -146,40 +222,11 @@
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
-  <widget type="combo" version="2.0.0">
-    <name>menu #33</name>
-    <pv_name>$(P)$(R)StreamEnable</pv_name>
-    <x>150</x>
-    <y>30</y>
-    <width>80</width>
-    <height>20</height>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="rectangle" version="2.0.0">
-    <name>rectangle #36</name>
-    <width>350</width>
-    <height>130</height>
-    <line_width>1</line_width>
-    <line_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </line_color>
-    <background_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </background_color>
-    <transparent>true</transparent>
-  </widget>
   <widget type="label" version="2.0.0">
-    <name>text #39</name>
+    <name>text #49</name>
     <text>Decompress</text>
-    <x>35</x>
-    <y>106</y>
-    <width>110</width>
+    <x>45</x>
+    <y>80</y>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -187,10 +234,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #42</name>
+    <name>menu #52</name>
     <pv_name>$(P)$(R)StreamDecompress</pv_name>
     <x>150</x>
-    <y>106</y>
+    <y>80</y>
     <width>80</width>
     <height>20</height>
     <background_color>
@@ -200,10 +247,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #45</name>
+    <name>text update #55</name>
     <pv_name>$(P)$(R)StreamDecompress_RBV</pv_name>
     <x>235</x>
-    <y>107</y>
+    <y>81</y>
     <width>80</width>
     <height>18</height>
     <font>

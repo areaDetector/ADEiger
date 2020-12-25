@@ -190,6 +190,7 @@ text {
 		clr=14
 		bclr=51
 	}
+	format="exponential"
 	limits {
 	}
 }
@@ -205,6 +206,7 @@ text {
 		clr=54
 		bclr=4
 	}
+	format="exponential"
 	limits {
 	}
 }

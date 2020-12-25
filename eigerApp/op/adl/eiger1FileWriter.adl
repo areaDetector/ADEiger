@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=565
-		y=323
+		x=192
+		y=324
 		width=350
-		height=380
+		height=455
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,58 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=380
+		height=455
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+composite {
+	object {
+		x=75
+		y=430
+		width=198
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=75
+				y=430
+				width=100
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Delete All"
+			align="horiz. right"
+		}
+		"message button" {
+			object {
+				x=180
+				y=430
+				width=93
+				height=20
+			}
+			control {
+				chan="$(P)$(R)FWClear"
+				clr=14
+				bclr=20
+			}
+			label="Delete All!!"
+			press_msg="1"
+		}
+	}
+}
+rectangle {
+	object {
+		x=0
+		y=0
+		width=350
+		height=455
 	}
 	"basic attribute" {
 		clr=14
@@ -155,7 +206,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=132
+		y=131
 		width=160
 		height=18
 	}
@@ -215,35 +266,6 @@ text {
 }
 text {
 	object {
-		x=5
-		y=252
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Local Path Exists"
-}
-"text update" {
-	object {
-		x=180
-		y=252
-		width=40
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)FilePathExists_RBV"
-		clr=14
-		bclr=2
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
 		x=115
 		y=30
 		width=60
@@ -269,49 +291,6 @@ text {
 	}
 	clrmod="alarm"
 	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=65
-		y=80
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images/File"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=180
-		y=80
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FWNImagesPerFile"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=245
-		y=80
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)FWNImagesPerFile_RBV"
-		clr=54
-		bclr=4
-	}
 	limits {
 	}
 }
@@ -430,26 +409,39 @@ menu {
 }
 text {
 	object {
-		x=5
-		y=281
-		width=170
+		x=15
+		y=130
+		width=160
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Create dir. depth"
+	textix="(e.g. testA_$id)"
+	align="horiz. right"
+}
+text {
+	object {
+		x=65
+		y=80
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images/File"
 	align="horiz. right"
 }
 "text entry" {
 	object {
 		x=180
-		y=280
-		width=40
-		height=22
+		y=80
+		width=60
+		height=20
 	}
 	control {
-		chan="$(P)$(R)CreateDirectory"
+		chan="$(P)$(R)FWNImagesPerFile"
 		clr=14
 		bclr=51
 	}
@@ -458,65 +450,131 @@ text {
 }
 "text update" {
 	object {
-		x=225
-		y=282
-		width=40
+		x=245
+		y=81
+		width=60
 		height=18
 	}
 	monitor {
-		chan="$(P)$(R)CreateDirectory_RBV"
+		chan="$(P)$(R)FWNImagesPerFile_RBV"
 		clr=54
 		bclr=4
 	}
 	limits {
 	}
 }
-"related display" {
+composite {
 	object {
-		x=270
-		y=281
-		width=59
+		x=5
+		y=255
+		width=215
 		height=20
 	}
-	display[0] {
-		name="createDirectoryHelp.adl"
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=5
+				y=255
+				width=170
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Local Path Exists"
+		}
+		"text update" {
+			object {
+				x=180
+				y=255
+				width=40
+				height=20
+			}
+			monitor {
+				chan="$(P)$(R)FilePathExists_RBV"
+				clr=14
+				bclr=2
+			}
+			clrmod="alarm"
+			format="string"
+			limits {
+			}
+		}
 	}
-	clr=14
-	bclr=51
-	label="Help"
 }
-text {
+composite {
 	object {
-		x=75
-		y=355
-		width=100
+		x=5
+		y=280
+		width=324
 		height=20
 	}
-	"basic attribute" {
-		clr=14
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=5
+				y=280
+				width=170
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Create dir. depth"
+			align="horiz. right"
+		}
+		"text entry" {
+			object {
+				x=180
+				y=280
+				width=40
+				height=20
+			}
+			control {
+				chan="$(P)$(R)CreateDirectory"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=225
+				y=281
+				width=40
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)CreateDirectory_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"related display" {
+			object {
+				x=270
+				y=280
+				width=59
+				height=20
+			}
+			display[0] {
+				name="createDirectoryHelp.adl"
+			}
+			clr=14
+			bclr=51
+			label="Help"
+		}
 	}
-	textix="Delete All"
-	align="horiz. right"
-}
-"message button" {
-	object {
-		x=180
-		y=355
-		width=93
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FWClear"
-		clr=14
-		bclr=20
-	}
-	label="Delete All!!"
-	press_msg="1"
 }
 text {
 	object {
 		x=5
-		y=305
+		y=380
 		width=170
 		height=20
 	}
@@ -529,7 +587,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=306
+		y=381
 		width=100
 		height=18
 	}
@@ -544,7 +602,7 @@ text {
 text {
 	object {
 		x=65
-		y=330
+		y=405
 		width=110
 		height=20
 	}
@@ -557,7 +615,7 @@ text {
 menu {
 	object {
 		x=180
-		y=329
+		y=404
 		width=80
 		height=20
 	}
@@ -570,7 +628,7 @@ menu {
 "text update" {
 	object {
 		x=265
-		y=330
+		y=405
 		width=80
 		height=18
 	}
@@ -587,7 +645,7 @@ menu {
 text {
 	object {
 		x=285
-		y=305
+		y=380
 		width=20
 		height=20
 	}
@@ -600,13 +658,131 @@ text {
 text {
 	object {
 		x=15
-		y=130
-		width=160
+		y=305
+		width=100
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="(e.g. testA_$id)"
+	textix="File Owner"
 	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=120
+		y=305
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FileOwner"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=225
+		y=306
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FileOwner_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=330
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File Group"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=120
+		y=330
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FileOwnerGrp"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=225
+		y=331
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FileOwnerGrp_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=355
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File Perms."
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=120
+		y=355
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FilePerms"
+		clr=14
+		bclr=51
+	}
+	format="octal"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=225
+		y=356
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FilePerms_RBV"
+		clr=54
+		bclr=4
+	}
+	format="octal"
+	limits {
+	}
 }

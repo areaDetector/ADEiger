@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1185
-y 75
+x 10
+y 31
 w 350
-h 210
+h 230
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -49,7 +49,7 @@ release 0
 x 0
 y 0
 w 350
-h 210
+h 230
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -192,26 +192,6 @@ bgColor index 3
 useDisplayBg
 value {
   "Error Parameters"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 5
-y 180
-w 160
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Read Status Rate"
 }
 endObjectProperties
 
@@ -435,6 +415,46 @@ newPos
 objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 205
+w 160
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Read Status Rate"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 65
+y 180
+w 100
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Initialize"
+}
+endObjectProperties
+
 # (Menu Button)
 object activeMenuButtonClass
 beginObjectProperties
@@ -442,7 +462,7 @@ major 4
 minor 0
 release 0
 x 170
-y 180
+y 205
 w 120
 h 20
 fgColor rgb 0 0 0
@@ -452,6 +472,31 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 controlPv "$(P)$(R)ReadStatus.SCAN"
 indicatorPv "$(P)$(R)ReadStatus.SCAN"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 170
+y 180
+w 120
+h 20
+fgColor rgb 0 0 0
+onColor rgb 64768 0 0
+offColor rgb 64768 0 0
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)Initialize"
+pressValue "1"
+releaseValue 
+onLabel "Initialize"
+offLabel "Initialize"
+3d
+useEnumNumeric
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
