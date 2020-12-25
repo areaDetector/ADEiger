@@ -14,7 +14,7 @@ record(ao,"$(P)$(R)AcquirePeriod") {
     field(VAL, "1")
 }
 
-# Eiger Stream Image Bit Depth
+# Image Bit Depth
 record(longin, "$(P)$(R)BitDepthImage_RBV")
 {
     field(DTYP, "asynInt32")
@@ -149,7 +149,7 @@ record(ao, "$(P)$(R)TriggerExposure")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
     field(DESC, "Trigger Exposure for INTE mode")
     field(EGU,  "s")
-    field(PREC, "6")
+    field(PREC, "3")
 }
 
 record(ai, "$(P)$(R)TriggerExposure_RBV")
@@ -158,7 +158,7 @@ record(ai, "$(P)$(R)TriggerExposure_RBV")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
     field(DESC, "Trigger Exposure for INTE mode")
     field(EGU,  "s")
-    field(PREC, "6")
+    field(PREC, "3")
     field(SCAN, "I/O Intr")
 }
 
@@ -385,7 +385,7 @@ record(ai, "$(P)$(R)DeadTime_RBV")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_detector_readout_time")
     field(DESC, "Dead time")
     field(EGU,  "s")
-    field(PREC, "6")
+    field(PREC, "3")
     field(SCAN, "I/O Intr")
 }
 
@@ -562,6 +562,12 @@ record(ao,"$(P)$(R)FilePerms") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_PERMISSIONS")
     field(VAL,  "0644")
+}
+
+record(ai,"$(P)$(R)FilePerms_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_PERMISSIONS")
+    field(SCAN, "I/O Intr")
 }
 
 # Flatfield correction applied
