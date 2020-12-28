@@ -19,7 +19,7 @@ R2-8 (January XXX, 2021)
   model is being used (Eiger1 or Eiger2).
 * The startup script loads either the eiger1.template or eiger2.template database file.
   Both of these load eigerBase.template, which contains the records that are common to both models.
-* The existing iocBoot/iocEiger directory is configured for an Eiger1 detector.
+* The iocBoot/iocEiger directory has been renamed to iocEiger1 and is configured for an Eiger1 detector.
 * The new iocBoot/iocEiger2 directory is configured for an Eiger2 detector.
 * The following records have been added for both Eiger models:
   - CountrateCorrApplied (enable/disable the countrate correction)
@@ -41,13 +41,33 @@ R2-8 (January XXX, 2021)
   - HVResetTime (set the time that the high voltage is off when HVReset is executed)
   - HVReset (resets the high voltage.  Meant for use with CdTe models)
   - HVState (the current state of the high voltage)
-  - CompressionAlgo has an additional choice, "None", which sends uncompressed images over the Stream interface.
-* The following records are supported in new firmware that will be released in early 2021, but
+  - CompressionAlgo has an additional choice, "None", which sends uncompressed arrays over the Stream interface.
+    The stream interface now supports uncompressed arrays.
+* The following records are supported in new Eiger2 firmware that will be released in early 2021, but
   is currently available for testing.  The records are present in ADBase.template or eiger2.template but
   a flag must be set in the driver to enable the logic for them.
   - TriggerMode has an additional option, ExternalGate.
   - ExtGateMode (selects "Pump & Probe" or "HDR" for high dynamic range)
   - NumExposures (selects the number of exposures per image)
+* The PREC fields for a number of records with units of time were decreased, and the OPI screens were
+  changed to use exponential notation, which is easier to read and modify.
+* The enum choices for records that enable/disable a feature were not consistent.
+  Some used Enable/Disable (which is the standard in ADCore), some used Enabled/Disabled, and some used Yes/No.
+  Changed so all records now use Enable/Disable.  
+  Set the disabled (0) state to have NO_ALARM and the enabled state to have MINOR alarm.
+  OPI screens now use alarm color mode, which makes it easier to see the state at a glance.
+  The numeric values associated with the logical states have not changed, 0=Disable, 1=Enable. 
+  NOTE: This may break backwards compatibility with clients if they use the strings rather than
+  the numeric value to set the state.
+* Created new eiger1_settings.req and eiger2_settings.req for autosave.
+  These both load eigerBase_settings.req for records common to both models.
+* Added additional records to the OPI screens that were already present in the template files:
+  - FileOwner, FileOwnerGrp, FilePerms
+  - DeadTime_RBV
+  - StreamHdrDetail
+* Created new top-level medm screen, eiger2Detector.adl (and the auto-converted OPI screens)
+* Improved the layout of eigerDetector.adl, with new widgets and new sub-screens,
+  some of which are common to the Eiger2 and some specific to the Eiger1.
 
 R2-7 (December 22, 2020)
 ----
