@@ -331,7 +331,7 @@ int RestAPI::trigger (int timeout, double exposure)
     if(!exposure)
         return put(SSCommand, "trigger", "", NULL, timeout);
 
-    // Tigger for INTE mode
+    // Trigger for INTE mode
     // putDouble should block for the whole exposure duration, but it doesn't
     // (Eiger's fault)
     char exposureStr[MAX_BUF_SIZE];
