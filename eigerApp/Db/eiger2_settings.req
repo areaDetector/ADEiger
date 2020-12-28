@@ -1,9 +1,21 @@
 file "eigerBase_settings.req", P=$(P), R=$(R)
+
+###################
+# Detector Status #
+###################
+$(P)$(R)HVResetTime
+
+#####################
+# Acquisition Setup #
+#####################
 $(P)$(R)Threshold1Enable
 $(P)$(R)Threshold2Energy
 $(P)$(R)Threshold2Enable
 $(P)$(R)ThresholdDiffEnable
-$(P)$(R)ExtGateMode
 $(P)$(R)CountingMode
+
+#################
+# Trigger Setup #
+#################
+$(P)$(R)ExtGateMode
 $(P)$(R)TriggerStartDelay
-$(P)$(R)HVResetTime

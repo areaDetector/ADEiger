@@ -4,6 +4,54 @@
 
 include "eigerBase.template"
 
+###################
+# Detector Status #
+###################
+
+# High voltage reset time
+record(ao, "$(P)$(R)HVResetTime")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET_TIME")
+    field(DESC, "High voltage reset time")
+    field(VAL,  "30")
+    field(EGU,  "s")
+    field(PREC, "0")
+}
+
+record(ai, "$(P)$(R)HVResetTime_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET_TIME")
+    field(DESC, "High voltage reset time")
+    field(EGU,  "s")
+    field(PREC, "0")
+    field(SCAN, "I/O Intr")
+}
+
+# High voltage reset
+record(bo,"$(P)$(R)HVReset") {
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET")
+    field(DESC, "Reset high voltage")
+    field(ZNAM, "Done")
+    field(ONAM, "Reset")
+}
+
+# High voltage state
+record(stringin, "$(P)$(R)HVState_RBV") {
+    field(DESC, "High voltage state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_STATE")
+    field(SCAN, "I/O Intr")
+}
+
+#####################
+# Acquisition Setup #
+#####################
+
 record(bo,"$(P)$(R)CountingMode") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
@@ -18,27 +66,6 @@ record(bi,"$(P)$(R)CountingMode_RBV") {
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_counting_mode")
     field(ZNAM, "Normal")
     field(ONAM, "Retrigger")
-    field(SCAN, "I/O Intr")
-}
-
-# Trigger Start Delay
-record(ao, "$(P)$(R)TriggerStartDelay")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
-    field(DESC, "Trigger start delay")
-    field(EGU,  "s")
-    field(PREC, "4")
-}
-
-record(ai, "$(P)$(R)TriggerStartDelay_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
-    field(DESC, "Trigger start delay")
-    field(EGU,  "s")
-    field(PREC, "4")
     field(SCAN, "I/O Intr")
 }
 
@@ -132,6 +159,31 @@ record(bi,"$(P)$(R)ThresholdDiffEnable_RBV") {
     field(OSV,  "MINOR")
 }
 
+#################
+# Trigger Setup #
+#################
+
+# Trigger Start Delay
+record(ao, "$(P)$(R)TriggerStartDelay")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
+    field(DESC, "Trigger start delay")
+    field(EGU,  "s")
+    field(PREC, "4")
+}
+
+record(ai, "$(P)$(R)TriggerStartDelay_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_START_DELAY")
+    field(DESC, "Trigger start delay")
+    field(EGU,  "s")
+    field(PREC, "4")
+    field(SCAN, "I/O Intr")
+}
+
 # Add external gate mode to the value in eigerBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
     field(FRVL,"4")
@@ -164,46 +216,6 @@ record(mbbi,"$(P)$(R)ExtGateMode_RBV") {
     field(ZRVL, "0")
     field(ONST, "HDR")
     field(ONVL, "1")
-    field(SCAN, "I/O Intr")
-}
-
-# High voltage reset time
-record(ao, "$(P)$(R)HVResetTime")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET_TIME")
-    field(DESC, "High voltage reset time")
-    field(VAL,  "30")
-    field(EGU,  "s")
-    field(PREC, "0")
-}
-
-record(ai, "$(P)$(R)HVResetTime_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET_TIME")
-    field(DESC, "High voltage reset time")
-    field(EGU,  "s")
-    field(PREC, "0")
-    field(SCAN, "I/O Intr")
-}
-
-# High voltage reset
-record(bo,"$(P)$(R)HVReset") {
-    field(PINI, "NO")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_RESET")
-    field(DESC, "Reset high voltage")
-    field(ZNAM, "Done")
-    field(ONAM, "Reset")
-}
-
-# High voltage state
-record(stringin, "$(P)$(R)HVState_RBV") {
-    field(DESC, "High voltage state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))HV_STATE")
     field(SCAN, "I/O Intr")
 }
 

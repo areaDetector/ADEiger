@@ -4,13 +4,9 @@
 
 include "eigerBase.template"
 
-# FileWriter clear all files
-record(ao, "$(P)$(R)FWClear") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
-    field(DESC, "Clear files in the detector")
-}
-
+###################
+# Detector Status #
+###################
 record(bi, "$(P)$(R)Link0_RBV")
 {
     field(DTYP, "asynInt32")
@@ -55,4 +51,15 @@ record(ai, "$(P)$(R)DCUBufferFree_RBV")
     field(SCAN, "I/O Intr")
     field(VAL,  "0")
     field(PREC, "1")
+}
+
+####################
+# FileWriter Setup #
+####################
+
+# FileWriter clear all files
+record(ao, "$(P)$(R)FWClear") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
+    field(DESC, "Clear files in the detector")
 }

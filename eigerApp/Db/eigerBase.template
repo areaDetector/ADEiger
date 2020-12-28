@@ -14,66 +14,161 @@ record(ao,"$(P)$(R)AcquirePeriod") {
     field(VAL, "1")
 }
 
-# Image Bit Depth
-record(longin, "$(P)$(R)BitDepthImage_RBV")
+########################
+# Detector Information #
+########################
+
+record(stringin, "$(P)$(R)Description_RBV")
+{
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DESCRIPTION")
+    field(DESC, "Detector Description")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)SensorThickness_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_sensor_thickness")
+    field(DESC, "Sensor Thickness")
+    field(EGU,  "m")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+record(stringin, "$(P)$(R)SensorMaterial_RBV")
+{
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCS_sensor_material")
+    field(DESC, "Sensor Material")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)CountCutoff_RBV")
 {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_bit_depth_image")
-    field(DESC, "Image Bit Depth")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_count_cutoff")
+    field(DESC, "Rate Correct Cutoff")
+    field(EGU,  "count")
     field(SCAN, "I/O Intr")
 }
 
-# Data source for the acquisition
-record(mbbo,"$(P)$(R)DataSource") {
+record(ai, "$(P)$(R)XPixelSize_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_x_pixel_size")
+    field(DESC, "X Pixel Size")
+    field(EGU,  "m")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)YPixelSize_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_y_pixel_size")
+    field(DESC, "Y Pixel Size")
+    field(EGU,  "m")
+    field(PREC, "6")
+    field(SCAN, "I/O Intr")
+}
+
+
+###################
+# Detector Status #
+###################
+
+record(busy, "$(P)$(R)Initialize") {
+   field(DTYP, "asynInt32")
+   field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))INITIALIZE")
+   field(ZNAM, "Done")
+   field(ONAM, "Initialize")
+}
+
+# Eiger State
+record(stringin, "$(P)$(R)State_RBV") {
+    field(DESC, "Operational state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STATE")
+    field(SCAN, "I/O Intr")
+}
+
+record(stringin, "$(P)$(R)Error_RBV") {
+    field(DESC, "Parameters causing error state")
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ERROR")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)Temp0_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_TEMP_0")
+    field(EGU,  "C")
+    field(SCAN, "I/O Intr")
+    field(VAL,  "0")
+    field(PREC, "1")
+}
+
+record(ai, "$(P)$(R)Humid0_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_HUMID_0")
+    field(EGU,  "%")
+    field(SCAN, "I/O Intr")
+    field(VAL,  "0")
+    field(PREC, "1")
+}
+
+#####################
+# Acquisition Setup #
+#####################
+
+# Photon energy
+record(ao, "$(P)$(R)PhotonEnergy")
+{
     field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DATA_SOURCE")
-    field(DESC, "Acquisition data source")
-    field(VAL,  "1")
-    field(ZRVL, "0")
-    field(ZRST, "None")
-    field(ONVL, "1")
-    field(ONST, "FileWriter")
-    field(TWVL, "2")
-    field(TWST, "Stream")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHOTON_ENERGY")
+    field(DESC, "Photon energy")
+    field(EGU,  "eV")
+    field(PREC, "3")
 }
 
-record(mbbi,"$(P)$(R)DataSource_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DATA_SOURCE")
-    field(DESC, "Acquisition data source")
+record(ai, "$(P)$(R)PhotonEnergy_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHOTON_ENERGY")
+    field(DESC, "Photon energy")
+    field(EGU,  "eV")
+    field(PREC, "3")
     field(SCAN, "I/O Intr")
-    field(ZRVL, "0")
-    field(ZRST, "None")
-    field(ONVL, "1")
-    field(ONST, "FileWriter")
-    field(TWVL, "2")
-    field(TWST, "Stream")
 }
 
-# Decompress stream data in driver
-record(bo,"$(P)$(R)StreamDecompress") {
+# Threshold energy
+record(ao, "$(P)$(R)ThresholdEnergy")
+{
     field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
-    field(DESC, "Decompress stream data")
-    field(VAL,  "1")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD")
+    field(DESC, "Energy threshold")
+    field(EGU,  "eV")
+    field(PREC, "3")
 }
 
-record(bi,"$(P)$(R)StreamDecompress_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
-    field(DESC, "Decompress stream data")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
+record(ai, "$(P)$(R)ThresholdEnergy_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD")
+    field(DESC, "Energy threshold")
+    field(EGU,  "eV")
+    field(PREC, "3")
     field(SCAN, "I/O Intr")
 }
+
+#################
+# Trigger Setup #
+#################
 
 # We redefine the states for the TriggerMode records defined in ADBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
@@ -168,6 +263,222 @@ record(ao, "$(P)$(R)Trigger") {
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER")
     field(DESC, "Trigger the detector")
 }
+
+
+#################
+# Readout Setup #
+#################
+
+# ROI Mode
+record(mbbo,"$(P)$(R)ROIMode") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
+    field(DESC, "ROI Mode")
+    field(VAL,  "0")
+    field(ZRST, "Disable")
+    field(ZRVL, "0")
+    field(ZRSV, "NO_ALARM")
+    field(ONST, "4M")
+    field(ONVL, "1")
+    field(ONSV, "MINOR")
+}
+
+record(mbbi,"$(P)$(R)ROIMode_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
+    field(DESC, "ROI Mode")
+    field(VAL,  "0")
+    field(ZRST, "Disable")
+    field(ZRVL, "0")
+    field(ZRSV, "NO_ALARM")
+    field(ONST, "4M")
+    field(ONVL, "1")
+    field(ONSV, "MINOR")
+}
+
+# Compression algorithm selection
+record(mbbo,"$(P)$(R)CompressionAlgo") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
+    field(DESC, "Compression Algorithm")
+    field(VAL,  "0")
+    field(ZRST, "LZ4")
+    field(ZRVL, "0")
+    field(ONST, "BS LZ4")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
+    field(DESC, "Compression Algorithm")
+    field(VAL,  "0")
+    field(ZRST, "LZ4")
+    field(ZRVL, "0")
+    field(ONST, "BS LZ4")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
+}
+
+# Data source for the acquisition
+record(mbbo,"$(P)$(R)DataSource") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DATA_SOURCE")
+    field(DESC, "Acquisition data source")
+    field(VAL,  "1")
+    field(ZRVL, "0")
+    field(ZRST, "None")
+    field(ONVL, "1")
+    field(ONST, "FileWriter")
+    field(TWVL, "2")
+    field(TWST, "Stream")
+}
+
+record(mbbi,"$(P)$(R)DataSource_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DATA_SOURCE")
+    field(DESC, "Acquisition data source")
+    field(SCAN, "I/O Intr")
+    field(ZRVL, "0")
+    field(ZRST, "None")
+    field(ONVL, "1")
+    field(ONST, "FileWriter")
+    field(TWVL, "2")
+    field(TWST, "Stream")
+}
+
+# Flatfield correction applied
+record(bo,"$(P)$(R)FlatfieldApplied") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
+    field(VAL,  "1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
+}
+
+# Countrate correction applied
+record(bo,"$(P)$(R)CountrateCorrApplied") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
+    field(DESC, "Apply countrate correction")
+    field(VAL,  "1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+record(bi,"$(P)$(R)CountrateCorrApplied_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
+    field(DESC, "Apply countrate correction")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
+}
+
+# Pixel mask applied
+record(bo,"$(P)$(R)PixelMaskApplied") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
+    field(DESC, "Apply pixel mask")
+    field(VAL,  "1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+record(bi,"$(P)$(R)PixelMaskApplied_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
+    field(DESC, "Apply pixel mask")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
+}
+
+# Enable Auto Summation
+record(bo,"$(P)$(R)AutoSummation") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
+    field(VAL,  "1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+record(bi,"$(P)$(R)AutoSummation_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
+}
+
+######################
+# Acquisition Status #
+######################
+
+# Image Bit Depth
+record(longin, "$(P)$(R)BitDepthImage_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_bit_depth_image")
+    field(DESC, "Image Bit Depth")
+    field(SCAN, "I/O Intr")
+}
+
+# Dead time between frames
+record(ai, "$(P)$(R)DeadTime_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_detector_readout_time")
+    field(DESC, "Dead time")
+    field(EGU,  "s")
+    field(PREC, "3")
+    field(SCAN, "I/O Intr")
+}
+
+# Armed flag, which indicates Eiger is ready for triggers
+record(bi, "$(P)$(R)Armed")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ARMED")
+    field(ZNAM, "Unarmed")
+    field(ONAM, "Armed")
+    field(SCAN, "I/O Intr")
+}
+
+####################
+# FileWriter Setup #
+####################
 
 # FileWriter API enable
 record(bo,"$(P)$(R)FWEnable") {
@@ -294,125 +605,81 @@ record(stringin, "$(P)$(R)FWState_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-record(stringin, "$(P)$(R)Description_RBV")
-{
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))DESCRIPTION")
-    field(DESC, "Detector Description")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)SensorThickness_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_sensor_thickness")
-    field(DESC, "Sensor Thickness")
-    field(EGU,  "m")
-    field(PREC, "6")
-    field(SCAN, "I/O Intr")
-}
-
-record(stringin, "$(P)$(R)SensorMaterial_RBV")
-{
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCS_sensor_material")
-    field(DESC, "Sensor Material")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)CountCutoff_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_count_cutoff")
-    field(DESC, "Rate Correct Cutoff")
-    field(EGU,  "count")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)XPixelSize_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_x_pixel_size")
-    field(DESC, "X Pixel Size")
-    field(EGU,  "m")
-    field(PREC, "6")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)YPixelSize_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_y_pixel_size")
-    field(DESC, "Y Pixel Size")
-    field(EGU,  "m")
-    field(PREC, "6")
-    field(SCAN, "I/O Intr")
-}
-
-# ROI Mode
-record(mbbo,"$(P)$(R)ROIMode") {
+# Save files locally
+record(bo,"$(P)$(R)SaveFiles") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
-    field(DESC, "ROI Mode")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
     field(VAL,  "0")
-    field(ZRST, "Disable")
-    field(ZRVL, "0")
-    field(ONST, "4M")
-    field(ONVL, "1")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
     field(ZSV,  "NO_ALARM")
     field(OSV,  "MINOR")
 }
 
-record(mbbi,"$(P)$(R)ROIMode_RBV") {
+record(bi,"$(P)$(R)SaveFiles_RBV") {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ROI_MODE")
-    field(DESC, "ROI Mode")
-    field(VAL,  "0")
-    field(ZRST, "Disabled")
-    field(ZRVL, "0")
-    field(ONST, "4M")
-    field(ONVL, "1")
-    field(SCAN, "I/O Intr")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
     field(ZSV,  "NO_ALARM")
     field(OSV,  "MINOR")
-}
-
-# Dead time between frames
-record(ai, "$(P)$(R)DeadTime_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCD_detector_readout_time")
-    field(DESC, "Dead time")
-    field(EGU,  "s")
-    field(PREC, "3")
     field(SCAN, "I/O Intr")
 }
 
-# Compression algorithm selection
-record(mbbo,"$(P)$(R)CompressionAlgo") {
+# Saved files owner
+record(stringout, "$(P)$(R)FileOwner") {
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER")
+    field(VAL,  "")
+}
+
+record(stringin, "$(P)$(R)FileOwner_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER")
+    field(SCAN, "I/O Intr")
+}
+
+# Saved files owner group
+record(stringout, "$(P)$(R)FileOwnerGrp") {
+    field(PINI, "YES")
+    field(DTYP, "asynOctetWrite")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER_GROUP")
+    field(VAL,  "")
+}
+
+record(stringin, "$(P)$(R)FileOwnerGrp_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER_GROUP")
+    field(SCAN, "I/O Intr")
+}
+
+# Saved files permissions
+record(ao,"$(P)$(R)FilePerms") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
-    field(DESC, "Compression Algorithm")
-    field(VAL,  "0")
-    field(ZRST, "LZ4")
-    field(ZRVL, "0")
-    field(ONST, "BS LZ4")
-    field(ONVL, "1")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_PERMISSIONS")
+    field(VAL,  "0644")
 }
 
-record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
+record(ai,"$(P)$(R)FilePerms_RBV") {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))COMPRESSION_ALGO")
-    field(DESC, "Compression Algorithm")
-    field(VAL,  "0")
-    field(ZRST, "LZ4")
-    field(ZRVL, "0")
-    field(ONST, "BS LZ4")
-    field(ONVL, "1")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_PERMISSIONS")
     field(SCAN, "I/O Intr")
 }
+
+record(longin, "$(P)$(R)SequenceId")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SEQ_ID")
+    field(DESC, "Image sequence number")
+    field(SCAN, "I/O Intr")
+}
+
+################
+# Stream Setup #
+################
 
 # Stream API enable
 record(bo,"$(P)$(R)StreamEnable") {
@@ -506,21 +773,23 @@ record(waveform, "$(P)$(R)StreamImgAppendix")
     info(autosaveFields, "VAL")
 }
 
-# Save files locally
-record(bo,"$(P)$(R)SaveFiles") {
+# Decompress stream data in driver
+record(bo,"$(P)$(R)StreamDecompress") {
     field(PINI, "YES")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
-    field(VAL,  "0")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
+    field(DESC, "Decompress stream data")
+    field(VAL,  "1")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(ZSV,  "NO_ALARM")
     field(OSV,  "MINOR")
 }
 
-record(bi,"$(P)$(R)SaveFiles_RBV") {
+record(bi,"$(P)$(R)StreamDecompress_RBV") {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SAVE_FILES")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_DECOMPRESS")
+    field(DESC, "Decompress stream data")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(ZSV,  "NO_ALARM")
@@ -528,178 +797,66 @@ record(bi,"$(P)$(R)SaveFiles_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-# Saved files owner
-record(stringout, "$(P)$(R)FileOwner") {
+#################
+# Monitor Setup #
+#################
+
+# Monitor API enable
+record(bo,"$(P)$(R)MonitorEnable") {
     field(PINI, "YES")
-    field(DTYP, "asynOctetWrite")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER")
-    field(VAL,  "")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_ENABLE")
+    field(DESC, "Enable usage of Monitor API")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
 }
 
-record(stringin, "$(P)$(R)FileOwner_RBV") {
+record(bi,"$(P)$(R)MonitorEnable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_ENABLE")
+    field(DESC, "Enable usage of Monitor API")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
+}
+
+# Monitor API polling period
+record(ao, "$(P)$(R)MonitorTimeout")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_TIMEOUT")
+    field(DESC, "Timeout for Monitor API")
+    field(EGU,  "ms")
+    field(PREC, "1")
+    field(VAL,  "500")
+}
+
+record(ai, "$(P)$(R)MonitorTimeout_RBV")
+{
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_TIMEOUT")
+    field(DESC, "Timeout for Monitor API")
+    field(EGU,  "ms")
+    field(PREC, "1")
+    field(SCAN, "I/O Intr")
+}
+
+# Monitor State
+record(stringin, "$(P)$(R)MonitorState_RBV") {
+    field(DESC, "Monitor operational state")
     field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_STATE")
     field(SCAN, "I/O Intr")
 }
 
-# Saved files owner group
-record(stringout, "$(P)$(R)FileOwnerGrp") {
-    field(PINI, "YES")
-    field(DTYP, "asynOctetWrite")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER_GROUP")
-    field(VAL,  "")
-}
-
-record(stringin, "$(P)$(R)FileOwnerGrp_RBV") {
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_OWNER_GROUP")
-    field(SCAN, "I/O Intr")
-}
-
-# Saved files permissions
-record(ao,"$(P)$(R)FilePerms") {
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_PERMISSIONS")
-    field(VAL,  "0644")
-}
-
-record(ai,"$(P)$(R)FilePerms_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FILE_PERMISSIONS")
-    field(SCAN, "I/O Intr")
-}
-
-# Flatfield correction applied
-record(bo,"$(P)$(R)FlatfieldApplied") {
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
-    field(VAL,  "1")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-}
-
-record(bi,"$(P)$(R)FlatfieldApplied_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_flatfield_correction_applied")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-    field(SCAN, "I/O Intr")
-}
-
-# Countrate correction applied
-record(bo,"$(P)$(R)CountrateCorrApplied") {
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
-    field(DESC, "Apply countrate correction")
-    field(VAL,  "1")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-}
-
-record(bi,"$(P)$(R)CountrateCorrApplied_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_countrate_correction_applied")
-    field(DESC, "Apply countrate correction")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-    field(SCAN, "I/O Intr")
-}
-
-# Pixel mask applied
-record(bo,"$(P)$(R)PixelMaskApplied") {
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
-    field(DESC, "Apply pixel mask")
-    field(VAL,  "1")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-}
-
-record(bi,"$(P)$(R)PixelMaskApplied_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_pixel_mask_applied")
-    field(DESC, "Apply pixel mask")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-    field(SCAN, "I/O Intr")
-}
-
-record(longin, "$(P)$(R)SequenceId")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SEQ_ID")
-    field(DESC, "Image sequence number")
-    field(SCAN, "I/O Intr")
-}
-
-
-# Photon energy
-record(ao, "$(P)$(R)PhotonEnergy")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHOTON_ENERGY")
-    field(DESC, "Photon energy")
-    field(EGU,  "eV")
-    field(PREC, "3")
-}
-
-record(ai, "$(P)$(R)PhotonEnergy_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PHOTON_ENERGY")
-    field(DESC, "Photon energy")
-    field(EGU,  "eV")
-    field(PREC, "3")
-    field(SCAN, "I/O Intr")
-}
-
-# Armed flag, which indicates Eiger is ready for triggers
-record(bi, "$(P)$(R)Armed")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ARMED")
-    field(ZNAM, "Unarmed")
-    field(ONAM, "Armed")
-    field(SCAN, "I/O Intr")
-}
-
-# Threshold energy
-record(ao, "$(P)$(R)ThresholdEnergy")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD")
-    field(DESC, "Energy threshold")
-    field(EGU,  "eV")
-    field(PREC, "3")
-}
-
-record(ai, "$(P)$(R)ThresholdEnergy_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD")
-    field(DESC, "Energy threshold")
-    field(EGU,  "eV")
-    field(PREC, "3")
-    field(SCAN, "I/O Intr")
-}
+#####################
+# Detector Metadata #
+#####################
 
 record(ao, "$(P)$(R)Wavelength")
 {
@@ -717,30 +874,6 @@ record(ai, "$(P)$(R)Wavelength_RBV")
     field(EGU,  "Angstroms")
     field(SCAN, "I/O Intr")
 }
-
-# Enable Auto Summation
-record(bo,"$(P)$(R)AutoSummation") {
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
-    field(VAL,  "1")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-}
-
-record(bi,"$(P)$(R)AutoSummation_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))AUTO_SUMMATION")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-    field(SCAN, "I/O Intr")
-}
-
-# ancillary information
 
 record(ao, "$(P)$(R)DetDist")
 {
@@ -978,58 +1111,6 @@ record(ai, "$(P)$(R)TwoThetaIncr_RBV")
     field(SCAN, "I/O Intr")
 }
 
-# Monitor API enable
-record(bo,"$(P)$(R)MonitorEnable") {
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_ENABLE")
-    field(DESC, "Enable usage of Monitor API")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-}
-
-record(bi,"$(P)$(R)MonitorEnable_RBV") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_ENABLE")
-    field(DESC, "Enable usage of Monitor API")
-    field(ZNAM, "Disable")
-    field(ONAM, "Enable")
-    field(ZSV,  "NO_ALARM")
-    field(OSV,  "MINOR")
-    field(SCAN, "I/O Intr")
-}
-
-# Monitor API polling period
-record(ao, "$(P)$(R)MonitorTimeout")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_TIMEOUT")
-    field(DESC, "Timeout for Monitor API")
-    field(EGU,  "ms")
-    field(PREC, "1")
-    field(VAL,  "500")
-}
-
-record(ai, "$(P)$(R)MonitorTimeout_RBV")
-{
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_TIMEOUT")
-    field(DESC, "Timeout for Monitor API")
-    field(EGU,  "ms")
-    field(PREC, "1")
-    field(SCAN, "I/O Intr")
-}
-
-# Monitor State
-record(stringin, "$(P)$(R)MonitorState_RBV") {
-    field(DESC, "Monitor operational state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))MONITOR_STATE")
-    field(SCAN, "I/O Intr")
-}
 
 # Set DISA for PVs in ADBase that do not apply to Eiger
 
@@ -1113,46 +1194,3 @@ record(bi, "$(P)$(R)ReverseY_RBV")
 {
     field(DISA, "1")
 }
-
-record(busy, "$(P)$(R)Initialize") {
-   field(DTYP, "asynInt32")
-   field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))INITIALIZE")
-   field(ZNAM, "Done")
-   field(ONAM, "Initialize")
-}
-
-# Eiger State
-record(stringin, "$(P)$(R)State_RBV") {
-    field(DESC, "Operational state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STATE")
-    field(SCAN, "I/O Intr")
-}
-
-record(stringin, "$(P)$(R)Error_RBV") {
-    field(DESC, "Parameters causing error state")
-    field(DTYP, "asynOctetRead")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ERROR")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai, "$(P)$(R)Temp0_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_TEMP_0")
-    field(EGU,  "C")
-    field(SCAN, "I/O Intr")
-    field(VAL,  "0")
-    field(PREC, "1")
-}
-
-record(ai, "$(P)$(R)Humid0_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_HUMID_0")
-    field(EGU,  "%")
-    field(SCAN, "I/O Intr")
-    field(VAL,  "0")
-    field(PREC, "1")
-}
-
