@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>eigerDetector</name>
-  <x>143</x>
-  <y>113</y>
+  <x>-101</x>
+  <y>64</y>
   <width>1425</width>
   <height>910</height>
   <background_color>
@@ -109,7 +109,7 @@
     <name>composite #28</name>
     <file>ADBuffers.bob</file>
     <x>360</x>
-    <y>730</y>
+    <y>745</y>
     <width>350</width>
     <height>160</height>
   </widget>
@@ -143,15 +143,15 @@
     <x>360</x>
     <y>200</y>
     <width>350</width>
-    <height>130</height>
+    <height>155</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #38</name>
     <file>eigerAcquisitionStatus.bob</file>
     <x>360</x>
-    <y>335</y>
+    <y>360</y>
     <width>350</width>
-    <height>390</height>
+    <height>380</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #40</name>

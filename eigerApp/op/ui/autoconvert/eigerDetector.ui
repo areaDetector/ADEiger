@@ -4,8 +4,8 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>143</x>
-            <y>113</y>
+            <x>-101</x>
+            <y>64</y>
             <width>1425</width>
             <height>910</height>
         </rect>
@@ -371,7 +371,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>730</y>
+                    <y>745</y>
                     <width>354</width>
                     <height>164</height>
                 </rect>
@@ -379,7 +379,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>730</y>
+                    <y>745</y>
                     <width>352</width>
                     <height>162</height>
                 </rect>
@@ -469,7 +469,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>200</y>
                     <width>352</width>
-                    <height>132</height>
+                    <height>157</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -477,7 +477,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>200</y>
                     <width>350</width>
-                    <height>130</height>
+                    <height>155</height>
                 </rect>
             </property>
             <property name="filename">
@@ -491,17 +491,17 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>335</y>
+                    <y>360</y>
                     <width>352</width>
-                    <height>392</height>
+                    <height>382</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>335</y>
+                    <y>360</y>
                     <width>350</width>
-                    <height>390</height>
+                    <height>380</height>
                 </rect>
             </property>
             <property name="filename">

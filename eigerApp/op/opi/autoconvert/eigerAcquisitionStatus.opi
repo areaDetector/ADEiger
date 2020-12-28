@@ -14,7 +14,7 @@
     <color red="0" green="0" blue="0" />
   </foreground_color>
   <grid_space>5</grid_space>
-  <height>390</height>
+  <height>380</height>
   <macros>
     <include_parent_macros>true</include_parent_macros>
   </macros>
@@ -61,7 +61,7 @@
       <color red="0" green="0" blue="0" />
     </foreground_color>
     <gradient>false</gradient>
-    <height>390</height>
+    <height>380</height>
     <horizontal_fill>true</horizontal_fill>
     <line_color>
       <color red="0" green="0" blue="0" />
@@ -182,7 +182,7 @@ $(pv_value)</tooltip>
     <widget_type>Grouping Container</widget_type>
     <width>245</width>
     <x>35</x>
-    <y>65</y>
+    <y>55</y>
     <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
       <actions hook="false" hook_all="false" />
       <auto_size>false</auto_size>
@@ -362,7 +362,7 @@ $(pv_value)</tooltip>
     <widget_type>Grouping Container</widget_type>
     <width>70</width>
     <x>180</x>
-    <y>215</y>
+    <y>205</y>
     <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
       <actions hook="false" hook_all="false" />
       <auto_size>false</auto_size>
@@ -482,7 +482,7 @@ $(pv_value)</tooltip>
     <foreground_color>
       <color red="0" green="0" blue="0" />
     </foreground_color>
-    <height>30</height>
+    <height>20</height>
     <lock_children>false</lock_children>
     <macros>
       <include_parent_macros>true</include_parent_macros>
@@ -500,66 +500,9 @@ $(pv_value)</tooltip>
     <transparent>true</transparent>
     <visible>true</visible>
     <widget_type>Grouping Container</widget_type>
-    <width>80</width>
-    <x>18</x>
+    <width>220</width>
+    <x>105</x>
     <y>30</y>
-    <widget typeId="org.csstudio.opibuilder.widgets.Rectangle" version="1.0.0">
-      <actions hook="false" hook_all="false" />
-      <alarm_pulsing>false</alarm_pulsing>
-      <alpha>255</alpha>
-      <anti_alias>true</anti_alias>
-      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-      <background_color>
-        <color red="30" green="144" blue="255" />
-      </background_color>
-      <bg_gradient_color>
-        <color red="255" green="255" blue="255" />
-      </bg_gradient_color>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-      <border_color>
-        <color red="0" green="128" blue="255" />
-      </border_color>
-      <border_style>0</border_style>
-      <border_width>1</border_width>
-      <enabled>true</enabled>
-      <fg_gradient_color>
-        <color red="255" green="255" blue="255" />
-      </fg_gradient_color>
-      <fill_level>100.0</fill_level>
-      <font>
-        <opifont.name fontName="Sans" height="10" style="0" pixels="false">Default</opifont.name>
-      </font>
-      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-      <foreground_color>
-        <color red="218" green="218" blue="218" />
-      </foreground_color>
-      <gradient>false</gradient>
-      <height>30</height>
-      <horizontal_fill>true</horizontal_fill>
-      <line_color>
-        <color red="128" green="0" blue="255" />
-      </line_color>
-      <line_style>0</line_style>
-      <line_width>0</line_width>
-      <name>Rectangle</name>
-      <pv_name></pv_name>
-      <pv_value />
-      <rules />
-      <scale_options>
-        <width_scalable>true</width_scalable>
-        <height_scalable>true</height_scalable>
-        <keep_wh_ratio>false</keep_wh_ratio>
-      </scale_options>
-      <scripts />
-      <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-      <transparent>false</transparent>
-      <visible>true</visible>
-      <widget_type>Rectangle</widget_type>
-      <width>80</width>
-      <x>0</x>
-      <y>0</y>
-    </widget>
     <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
       <actions hook="false" hook_all="false" />
       <auto_size>false</auto_size>
@@ -576,7 +519,7 @@ $(pv_value)</tooltip>
         <fontdata fontName="Sans" height="11" style="0" pixels="false" />
       </font>
       <foreground_color>
-        <color red="10" green="0" blue="184" />
+        <color red="0" green="0" blue="0" />
       </foreground_color>
       <height>20</height>
       <horizontal_alignment>0</horizontal_alignment>
@@ -597,8 +540,114 @@ $(pv_value)</tooltip>
       <widget_type>Label</widget_type>
       <width>70</width>
       <wrap_words>false</wrap_words>
-      <x>5</x>
-      <y>5</y>
+      <x>0</x>
+      <y>0</y>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+      <actions hook="false" hook_all="false">
+        <action type="WRITE_PV">
+          <pv_name>$(P)$(R)Acquire</pv_name>
+          <value>1</value>
+          <timeout>10</timeout>
+          <confirm_message></confirm_message>
+          <description></description>
+        </action>
+      </actions>
+      <alarm_pulsing>false</alarm_pulsing>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="30" green="187" blue="0" />
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <border_style>0</border_style>
+      <border_width>1</border_width>
+      <enabled>true</enabled>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0" pixels="false">Default</opifont.name>
+      </font>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <height>20</height>
+      <image></image>
+      <name>Action Button</name>
+      <push_action_index>0</push_action_index>
+      <pv_name>$(P)$(R)Acquire</pv_name>
+      <pv_value />
+      <rules />
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <scripts />
+      <style>0</style>
+      <text>Start</text>
+      <toggle_button>false</toggle_button>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <visible>true</visible>
+      <widget_type>Action Button</widget_type>
+      <width>70</width>
+      <x>75</x>
+      <y>0</y>
+    </widget>
+    <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+      <actions hook="false" hook_all="false">
+        <action type="WRITE_PV">
+          <pv_name>$(P)$(R)Acquire</pv_name>
+          <value>0</value>
+          <timeout>10</timeout>
+          <confirm_message></confirm_message>
+          <description></description>
+        </action>
+      </actions>
+      <alarm_pulsing>false</alarm_pulsing>
+      <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+      <background_color>
+        <color red="222" green="19" blue="9" />
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+      <border_color>
+        <color red="0" green="128" blue="255" />
+      </border_color>
+      <border_style>0</border_style>
+      <border_width>1</border_width>
+      <enabled>true</enabled>
+      <font>
+        <opifont.name fontName="Sans" height="10" style="0" pixels="false">Default</opifont.name>
+      </font>
+      <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+      <foreground_color>
+        <color red="0" green="0" blue="0" />
+      </foreground_color>
+      <height>20</height>
+      <image></image>
+      <name>Action Button</name>
+      <push_action_index>0</push_action_index>
+      <pv_name>$(P)$(R)Acquire</pv_name>
+      <pv_value />
+      <rules />
+      <scale_options>
+        <width_scalable>true</width_scalable>
+        <height_scalable>true</height_scalable>
+        <keep_wh_ratio>false</keep_wh_ratio>
+      </scale_options>
+      <scripts />
+      <style>0</style>
+      <text>Stop</text>
+      <toggle_button>false</toggle_button>
+      <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+      <visible>true</visible>
+      <widget_type>Action Button</widget_type>
+      <width>70</width>
+      <x>150</x>
+      <y>0</y>
     </widget>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -679,7 +728,7 @@ $(pv_value)</tooltip>
     <width>170</width>
     <wrap_words>false</wrap_words>
     <x>5</x>
-    <y>315</y>
+    <y>305</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -719,7 +768,7 @@ $(pv_value)</tooltip>
     <width>150</width>
     <wrap_words>false</wrap_words>
     <x>25</x>
-    <y>90</y>
+    <y>80</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -770,7 +819,7 @@ $(pv_value)</tooltip>
     <width>60</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>91</y>
+    <y>81</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -810,7 +859,7 @@ $(pv_value)</tooltip>
     <width>160</width>
     <wrap_words>false</wrap_words>
     <x>15</x>
-    <y>115</y>
+    <y>105</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.MenuButton" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -854,7 +903,7 @@ $(pv_value)</tooltip>
     <widget_type>Menu Button</widget_type>
     <width>80</width>
     <x>180</x>
-    <y>115</y>
+    <y>105</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -894,7 +943,7 @@ $(pv_value)</tooltip>
     <width>120</width>
     <wrap_words>false</wrap_words>
     <x>55</x>
-    <y>140</y>
+    <y>130</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -945,7 +994,7 @@ $(pv_value)</tooltip>
     <width>160</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>141</y>
+    <y>131</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -985,7 +1034,7 @@ $(pv_value)</tooltip>
     <width>150</width>
     <wrap_words>false</wrap_words>
     <x>25</x>
-    <y>165</y>
+    <y>155</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1036,7 +1085,7 @@ $(pv_value)</tooltip>
     <width>160</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>166</y>
+    <y>156</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1076,7 +1125,7 @@ $(pv_value)</tooltip>
     <width>140</width>
     <wrap_words>false</wrap_words>
     <x>35</x>
-    <y>190</y>
+    <y>180</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1127,7 +1176,7 @@ $(pv_value)</tooltip>
     <width>160</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>191</y>
+    <y>181</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1167,166 +1216,7 @@ $(pv_value)</tooltip>
     <width>140</width>
     <wrap_words>false</wrap_words>
     <x>35</x>
-    <y>215</y>
-  </widget>
-  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
-    <actions hook="false" hook_all="false">
-      <action type="WRITE_PV">
-        <pv_name>$(P)$(R)Acquire</pv_name>
-        <value>1</value>
-        <timeout>10</timeout>
-        <confirm_message></confirm_message>
-        <description></description>
-      </action>
-    </actions>
-    <alarm_pulsing>false</alarm_pulsing>
-    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-    <background_color>
-      <color red="30" green="187" blue="0" />
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-    <border_color>
-      <color red="0" green="128" blue="255" />
-    </border_color>
-    <border_style>0</border_style>
-    <border_width>1</border_width>
-    <enabled>true</enabled>
-    <font>
-      <opifont.name fontName="Sans" height="10" style="0" pixels="false">Default</opifont.name>
-    </font>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-    <foreground_color>
-      <color red="0" green="0" blue="0" />
-    </foreground_color>
-    <height>30</height>
-    <image></image>
-    <name>Action Button</name>
-    <push_action_index>0</push_action_index>
-    <pv_name>$(P)$(R)Acquire</pv_name>
-    <pv_value />
-    <rules />
-    <scale_options>
-      <width_scalable>true</width_scalable>
-      <height_scalable>true</height_scalable>
-      <keep_wh_ratio>false</keep_wh_ratio>
-    </scale_options>
-    <scripts />
-    <style>0</style>
-    <text>Start</text>
-    <toggle_button>false</toggle_button>
-    <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-    <visible>true</visible>
-    <widget_type>Action Button</widget_type>
-    <width>70</width>
-    <x>103</x>
-    <y>30</y>
-  </widget>
-  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
-    <actions hook="false" hook_all="false">
-      <action type="WRITE_PV">
-        <pv_name>$(P)$(R)Acquire</pv_name>
-        <value>0</value>
-        <timeout>10</timeout>
-        <confirm_message></confirm_message>
-        <description></description>
-      </action>
-    </actions>
-    <alarm_pulsing>false</alarm_pulsing>
-    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-    <background_color>
-      <color red="222" green="19" blue="9" />
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-    <border_color>
-      <color red="0" green="128" blue="255" />
-    </border_color>
-    <border_style>0</border_style>
-    <border_width>1</border_width>
-    <enabled>true</enabled>
-    <font>
-      <opifont.name fontName="Sans" height="10" style="0" pixels="false">Default</opifont.name>
-    </font>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-    <foreground_color>
-      <color red="0" green="0" blue="0" />
-    </foreground_color>
-    <height>30</height>
-    <image></image>
-    <name>Action Button</name>
-    <push_action_index>0</push_action_index>
-    <pv_name>$(P)$(R)Acquire</pv_name>
-    <pv_value />
-    <rules />
-    <scale_options>
-      <width_scalable>true</width_scalable>
-      <height_scalable>true</height_scalable>
-      <keep_wh_ratio>false</keep_wh_ratio>
-    </scale_options>
-    <scripts />
-    <style>0</style>
-    <text>Stop</text>
-    <toggle_button>false</toggle_button>
-    <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-    <visible>true</visible>
-    <widget_type>Action Button</widget_type>
-    <width>70</width>
-    <x>178</x>
-    <y>30</y>
-  </widget>
-  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
-    <actions hook="false" hook_all="false">
-      <action type="WRITE_PV">
-        <pv_name>$(P)$(R)Trigger</pv_name>
-        <value>0</value>
-        <timeout>10</timeout>
-        <confirm_message></confirm_message>
-        <description></description>
-      </action>
-    </actions>
-    <alarm_pulsing>false</alarm_pulsing>
-    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
-    <background_color>
-      <color red="30" green="187" blue="0" />
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-    <border_color>
-      <color red="0" green="128" blue="255" />
-    </border_color>
-    <border_style>0</border_style>
-    <border_width>1</border_width>
-    <enabled>true</enabled>
-    <font>
-      <opifont.name fontName="Sans" height="10" style="0" pixels="false">Default</opifont.name>
-    </font>
-    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
-    <foreground_color>
-      <color red="0" green="0" blue="0" />
-    </foreground_color>
-    <height>30</height>
-    <image></image>
-    <name>Action Button</name>
-    <push_action_index>0</push_action_index>
-    <pv_name>$(P)$(R)Trigger</pv_name>
-    <pv_value />
-    <rules />
-    <scale_options>
-      <width_scalable>true</width_scalable>
-      <height_scalable>true</height_scalable>
-      <keep_wh_ratio>false</keep_wh_ratio>
-    </scale_options>
-    <scripts />
-    <style>0</style>
-    <text>Trigger</text>
-    <toggle_button>false</toggle_button>
-    <tooltip>$(pv_name)
-$(pv_value)</tooltip>
-    <visible>true</visible>
-    <widget_type>Action Button</widget_type>
-    <width>80</width>
-    <x>253</x>
-    <y>30</y>
+    <y>205</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1377,7 +1267,7 @@ $(pv_value)</tooltip>
     <width>100</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>291</y>
+    <y>281</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1417,7 +1307,7 @@ $(pv_value)</tooltip>
     <width>110</width>
     <wrap_words>false</wrap_words>
     <x>65</x>
-    <y>290</y>
+    <y>280</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextInput" version="2.0.0">
     <actions hook="false" hook_all="false" />
@@ -1479,7 +1369,7 @@ $(pv_value)</tooltip>
     <widget_type>Text Input</widget_type>
     <width>60</width>
     <x>180</x>
-    <y>343</y>
+    <y>333</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1519,7 +1409,7 @@ $(pv_value)</tooltip>
     <width>130</width>
     <wrap_words>false</wrap_words>
     <x>45</x>
-    <y>343</y>
+    <y>333</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1570,7 +1460,7 @@ $(pv_value)</tooltip>
     <width>80</width>
     <wrap_words>false</wrap_words>
     <x>245</x>
-    <y>344</y>
+    <y>334</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1610,7 +1500,7 @@ $(pv_value)</tooltip>
     <width>100</width>
     <wrap_words>false</wrap_words>
     <x>75</x>
-    <y>368</y>
+    <y>358</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1661,7 +1551,7 @@ $(pv_value)</tooltip>
     <width>100</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>369</y>
+    <y>359</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1712,7 +1602,7 @@ $(pv_value)</tooltip>
     <width>80</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>316</y>
+    <y>306</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1763,7 +1653,7 @@ $(pv_value)</tooltip>
     <width>100</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>266</y>
+    <y>256</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1803,7 +1693,7 @@ $(pv_value)</tooltip>
     <width>120</width>
     <wrap_words>false</wrap_words>
     <x>55</x>
-    <y>265</y>
+    <y>255</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1854,7 +1744,7 @@ $(pv_value)</tooltip>
     <width>100</width>
     <wrap_words>false</wrap_words>
     <x>180</x>
-    <y>241</y>
+    <y>231</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -1894,6 +1784,6 @@ $(pv_value)</tooltip>
     <width>150</width>
     <wrap_words>false</wrap_words>
     <x>25</x>
-    <y>240</y>
+    <y>230</y>
   </widget>
 </display>

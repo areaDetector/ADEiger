@@ -6,7 +6,7 @@ release 1
 x 566
 y 159
 w 350
-h 390
+h 380
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 390
+h 380
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -82,7 +82,7 @@ major 4
 minor 1
 release 1
 x 5
-y 315
+y 305
 w 170
 h 20
 font "helvetica-medium-r-14.0"
@@ -102,7 +102,7 @@ major 4
 minor 0
 release 0
 x 35
-y 65
+y 55
 w 245
 h 20
 
@@ -115,7 +115,7 @@ major 4
 minor 1
 release 1
 x 180
-y 65
+y 55
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -138,7 +138,7 @@ major 4
 minor 1
 release 1
 x 183
-y 65
+y 55
 w 48
 h 20
 font "helvetica-medium-r-14.0"
@@ -160,7 +160,7 @@ major 4
 minor 1
 release 1
 x 35
-y 65
+y 55
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -185,7 +185,7 @@ major 4
 minor 1
 release 1
 x 25
-y 90
+y 80
 w 150
 h 20
 font "helvetica-medium-r-14.0"
@@ -205,7 +205,7 @@ major 4
 minor 7
 release 0
 x 180
-y 91
+y 81
 w 60
 h 18
 controlPv "$(P)$(R)NumQueuedArrays"
@@ -229,7 +229,7 @@ major 4
 minor 1
 release 1
 x 15
-y 115
+y 105
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -249,7 +249,7 @@ major 4
 minor 1
 release 1
 x 55
-y 140
+y 130
 w 120
 h 20
 font "helvetica-medium-r-14.0"
@@ -269,7 +269,7 @@ major 4
 minor 7
 release 0
 x 180
-y 141
+y 131
 w 160
 h 18
 controlPv "$(P)$(R)AcquireBusy"
@@ -294,7 +294,7 @@ major 4
 minor 1
 release 1
 x 25
-y 165
+y 155
 w 150
 h 20
 font "helvetica-medium-r-14.0"
@@ -314,7 +314,7 @@ major 4
 minor 7
 release 0
 x 180
-y 166
+y 156
 w 160
 h 18
 controlPv "$(P)$(R)StatusMessage_RBV"
@@ -338,7 +338,7 @@ major 4
 minor 1
 release 1
 x 35
-y 190
+y 180
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -358,7 +358,7 @@ major 4
 minor 7
 release 0
 x 180
-y 191
+y 181
 w 160
 h 18
 controlPv "$(P)$(R)DetectorState_RBV"
@@ -383,7 +383,7 @@ major 4
 minor 1
 release 1
 x 35
-y 215
+y 205
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -403,7 +403,7 @@ major 4
 minor 0
 release 0
 x 180
-y 215
+y 205
 w 70
 h 20
 
@@ -416,7 +416,7 @@ major 4
 minor 1
 release 1
 x 180
-y 215
+y 205
 w 57
 h 20
 font "helvetica-medium-r-14.0"
@@ -439,7 +439,7 @@ major 4
 minor 1
 release 1
 x 180
-y 215
+y 205
 w 72
 h 20
 font "helvetica-medium-r-14.0"
@@ -459,59 +459,6 @@ endGroup
 endObjectProperties
 
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 18
-y 30
-w 80
-h 30
-
-beginGroup
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 18
-y 30
-w 79
-h 29
-lineColor rgb 55808 55808 55808
-fill
-fillColor rgb 55808 55808 55808
-lineWidth 0
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 23
-y 35
-w 70
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 2560 0 47104
-bgColor index 3
-useDisplayBg
-value {
-  "Acquire"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -519,7 +466,7 @@ major 4
 minor 7
 release 0
 x 180
-y 291
+y 281
 w 100
 h 18
 controlPv "$(P)$(R)CountCutoff_RBV"
@@ -543,7 +490,7 @@ major 4
 minor 1
 release 1
 x 65
-y 290
+y 280
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -563,7 +510,7 @@ major 4
 minor 7
 release 0
 x 180
-y 343
+y 333
 w 60
 h 20
 controlPv "$(P)$(R)ArrayCounter"
@@ -589,7 +536,7 @@ major 4
 minor 1
 release 1
 x 45
-y 343
+y 333
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -609,7 +556,7 @@ major 4
 minor 7
 release 0
 x 245
-y 344
+y 334
 w 80
 h 18
 controlPv "$(P)$(R)ArrayCounter_RBV"
@@ -633,7 +580,7 @@ major 4
 minor 1
 release 1
 x 75
-y 368
+y 358
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -653,7 +600,7 @@ major 4
 minor 7
 release 0
 x 180
-y 369
+y 359
 w 100
 h 18
 controlPv "$(P)$(R)ArrayRate_RBV"
@@ -677,7 +624,7 @@ major 4
 minor 7
 release 0
 x 180
-y 316
+y 306
 w 80
 h 18
 controlPv "$(P)$(R)NumImagesCounter_RBV"
@@ -701,7 +648,7 @@ major 4
 minor 7
 release 0
 x 180
-y 266
+y 256
 w 100
 h 18
 controlPv "$(P)$(R)DeadTime_RBV"
@@ -725,7 +672,7 @@ major 4
 minor 1
 release 1
 x 55
-y 265
+y 255
 w 120
 h 20
 font "helvetica-medium-r-14.0"
@@ -745,7 +692,7 @@ major 4
 minor 7
 release 0
 x 180
-y 241
+y 231
 w 100
 h 18
 controlPv "$(P)$(R)BitDepthImage_RBV"
@@ -769,7 +716,7 @@ major 4
 minor 1
 release 1
 x 25
-y 240
+y 230
 w 150
 h 20
 font "helvetica-medium-r-14.0"
@@ -781,6 +728,43 @@ value {
   "Image Bit Depth"
 }
 endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 105
+y 30
+w 220
+h 20
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 105
+y 30
+w 70
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Acquire"
+}
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -788,7 +772,7 @@ major 4
 minor 0
 release 0
 x 35
-y 65
+y 55
 w 245
 h 20
 
@@ -806,7 +790,7 @@ major 4
 minor 0
 release 0
 x 180
-y 115
+y 105
 w 80
 h 20
 fgColor rgb 0 0 0
@@ -825,7 +809,7 @@ major 4
 minor 0
 release 0
 x 180
-y 215
+y 205
 w 70
 h 20
 
@@ -841,17 +825,12 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 18
+x 105
 y 30
-w 80
-h 30
+w 220
+h 20
 
 beginGroup
-
-endGroup
-
-endObjectProperties
-
 
 # (Message Button)
 object activeMessageButtonClass
@@ -859,10 +838,10 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 103
+x 180
 y 30
 w 70
-h 30
+h 20
 fgColor rgb 0 0 0
 onColor rgb 7680 47872 0
 offColor rgb 7680 47872 0
@@ -875,7 +854,7 @@ onLabel "Start"
 offLabel "Start"
 3d
 useEnumNumeric
-font "helvetica-medium-r-18.0"
+font "helvetica-medium-r-12.0"
 endObjectProperties
 
 # (Message Button)
@@ -884,10 +863,10 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 178
+x 255
 y 30
 w 70
-h 30
+h 20
 fgColor rgb 0 0 0
 onColor rgb 56832 4864 2304
 offColor rgb 56832 4864 2304
@@ -900,31 +879,11 @@ onLabel "Stop"
 offLabel "Stop"
 3d
 useEnumNumeric
-font "helvetica-medium-r-18.0"
+font "helvetica-medium-r-12.0"
 endObjectProperties
 
-# (Message Button)
-object activeMessageButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 253
-y 30
-w 80
-h 30
-fgColor rgb 0 0 0
-onColor rgb 7680 47872 0
-offColor rgb 7680 47872 0
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)Trigger"
-pressValue "0"
-releaseValue 
-onLabel "Trigger"
-offLabel "Trigger"
-3d
-useEnumNumeric
-font "helvetica-medium-r-18.0"
+endGroup
+
 endObjectProperties
+
 

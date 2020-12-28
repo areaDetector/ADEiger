@@ -4,7 +4,7 @@
   <x>566</x>
   <y>159</y>
   <width>350</width>
-  <height>390</height>
+  <height>380</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -14,7 +14,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #6</name>
     <width>350</width>
-    <height>390</height>
+    <height>380</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -61,7 +61,7 @@
     <name>text #15</name>
     <text># Images Complete</text>
     <x>5</x>
-    <y>315</y>
+    <y>305</y>
     <width>170</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -72,7 +72,7 @@
   <widget type="group" version="2.0.0">
     <name>composite #18</name>
     <x>35</x>
-    <y>65</y>
+    <y>55</y>
     <width>245</width>
     <height>20</height>
     <style>3</style>
@@ -137,7 +137,7 @@
     <name>text #32</name>
     <text># Queued arrays</text>
     <x>25</x>
-    <y>90</y>
+    <y>80</y>
     <width>150</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -149,7 +149,7 @@
     <name>text update #35</name>
     <pv_name>$(P)$(R)NumQueuedArrays</pv_name>
     <x>180</x>
-    <y>91</y>
+    <y>81</y>
     <width>60</width>
     <height>18</height>
     <font>
@@ -172,7 +172,7 @@
     <name>text #39</name>
     <text>Wait for plugins</text>
     <x>15</x>
-    <y>115</y>
+    <y>105</y>
     <width>160</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -184,7 +184,7 @@
     <name>menu #42</name>
     <pv_name>$(P)$(R)WaitForPlugins</pv_name>
     <x>180</x>
-    <y>115</y>
+    <y>105</y>
     <width>80</width>
     <height>20</height>
     <background_color>
@@ -197,7 +197,7 @@
     <name>text #45</name>
     <text>Acquire busy</text>
     <x>55</x>
-    <y>140</y>
+    <y>130</y>
     <width>120</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -209,7 +209,7 @@
     <name>text update #48</name>
     <pv_name>$(P)$(R)AcquireBusy</pv_name>
     <x>180</x>
-    <y>141</y>
+    <y>131</y>
     <width>160</width>
     <height>18</height>
     <font>
@@ -231,7 +231,7 @@
     <name>text #52</name>
     <text>Acquire Message</text>
     <x>25</x>
-    <y>165</y>
+    <y>155</y>
     <width>150</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -243,7 +243,7 @@
     <name>text update #55</name>
     <pv_name>$(P)$(R)StatusMessage_RBV</pv_name>
     <x>180</x>
-    <y>166</y>
+    <y>156</y>
     <width>160</width>
     <height>18</height>
     <font>
@@ -266,7 +266,7 @@
     <name>text #59</name>
     <text>Detector State</text>
     <x>35</x>
-    <y>190</y>
+    <y>180</y>
     <width>140</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -278,7 +278,7 @@
     <name>text update #62</name>
     <pv_name>$(P)$(R)DetectorState_RBV</pv_name>
     <x>180</x>
-    <y>191</y>
+    <y>181</y>
     <width>160</width>
     <height>18</height>
     <font>
@@ -300,7 +300,7 @@
     <name>text #66</name>
     <text>Detector Armed</text>
     <x>35</x>
-    <y>215</y>
+    <y>205</y>
     <width>140</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -311,7 +311,7 @@
   <widget type="group" version="2.0.0">
     <name>composite #69</name>
     <x>180</x>
-    <y>215</y>
+    <y>205</y>
     <width>70</width>
     <height>20</height>
     <style>3</style>
@@ -361,106 +361,11 @@
       </rules>
     </widget>
   </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #80</name>
-    <x>18</x>
-    <y>30</y>
-    <width>80</width>
-    <height>30</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="rectangle" version="2.0.0">
-      <name>rectangle #83</name>
-      <width>80</width>
-      <height>30</height>
-      <line_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </line_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #86</name>
-      <text>Acquire</text>
-      <x>5</x>
-      <y>5</y>
-      <width>70</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <auto_size>true</auto_size>
-    </widget>
-  </widget>
-  <widget type="action_button" version="3.0.0">
-    <name>message button #89</name>
-    <actions>
-      <action type="write_pv">
-        <pv_name>$(P)$(R)Acquire</pv_name>
-        <value>1</value>
-        <description>Write</description>
-      </action>
-    </actions>
-    <pv_name>$(P)$(R)Acquire</pv_name>
-    <text>Start</text>
-    <x>103</x>
-    <y>30</y>
-    <width>70</width>
-    <background_color>
-      <color red="30" green="187" blue="0">
-      </color>
-    </background_color>
-  </widget>
-  <widget type="action_button" version="3.0.0">
-    <name>message button #92</name>
-    <actions>
-      <action type="write_pv">
-        <pv_name>$(P)$(R)Acquire</pv_name>
-        <value>0</value>
-        <description>Write</description>
-      </action>
-    </actions>
-    <pv_name>$(P)$(R)Acquire</pv_name>
-    <text>Stop</text>
-    <x>178</x>
-    <y>30</y>
-    <width>70</width>
-    <background_color>
-      <color red="222" green="19" blue="9">
-      </color>
-    </background_color>
-  </widget>
-  <widget type="action_button" version="3.0.0">
-    <name>message button #95</name>
-    <actions>
-      <action type="write_pv">
-        <pv_name>$(P)$(R)Trigger</pv_name>
-        <value>0</value>
-        <description>Write</description>
-      </action>
-    </actions>
-    <pv_name>$(P)$(R)Trigger</pv_name>
-    <text>Trigger</text>
-    <x>253</x>
-    <y>30</y>
-    <width>80</width>
-    <background_color>
-      <color red="30" green="187" blue="0">
-      </color>
-    </background_color>
-  </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #98</name>
+    <name>text update #80</name>
     <pv_name>$(P)$(R)CountCutoff_RBV</pv_name>
     <x>180</x>
-    <y>291</y>
+    <y>281</y>
     <height>18</height>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -479,10 +384,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #102</name>
+    <name>text #84</name>
     <text>Rate Cutoff</text>
     <x>65</x>
-    <y>290</y>
+    <y>280</y>
     <width>110</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -491,10 +396,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #105</name>
+    <name>text entry #87</name>
     <pv_name>$(P)$(R)ArrayCounter</pv_name>
     <x>180</x>
-    <y>343</y>
+    <y>333</y>
     <width>60</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -509,10 +414,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #109</name>
+    <name>text #91</name>
     <text>Image counter</text>
     <x>45</x>
-    <y>343</y>
+    <y>333</y>
     <width>130</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -521,10 +426,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #112</name>
+    <name>text update #94</name>
     <pv_name>$(P)$(R)ArrayCounter_RBV</pv_name>
     <x>245</x>
-    <y>344</y>
+    <y>334</y>
     <width>80</width>
     <height>18</height>
     <font>
@@ -544,10 +449,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #116</name>
+    <name>text #98</name>
     <text>Image rate</text>
     <x>75</x>
-    <y>368</y>
+    <y>358</y>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -555,10 +460,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #119</name>
+    <name>text update #101</name>
     <pv_name>$(P)$(R)ArrayRate_RBV</pv_name>
     <x>180</x>
-    <y>369</y>
+    <y>359</y>
     <height>18</height>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -577,10 +482,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #123</name>
+    <name>text update #105</name>
     <pv_name>$(P)$(R)NumImagesCounter_RBV</pv_name>
     <x>180</x>
-    <y>316</y>
+    <y>306</y>
     <width>80</width>
     <height>18</height>
     <font>
@@ -600,10 +505,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #127</name>
+    <name>text update #109</name>
     <pv_name>$(P)$(R)DeadTime_RBV</pv_name>
     <x>180</x>
-    <y>266</y>
+    <y>256</y>
     <height>18</height>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -622,10 +527,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #131</name>
+    <name>text #113</name>
     <text>Readout Time</text>
     <x>55</x>
-    <y>265</y>
+    <y>255</y>
     <width>120</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -634,10 +539,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #134</name>
+    <name>text update #116</name>
     <pv_name>$(P)$(R)BitDepthImage_RBV</pv_name>
     <x>180</x>
-    <y>241</y>
+    <y>231</y>
     <height>18</height>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -656,15 +561,72 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #138</name>
+    <name>text #120</name>
     <text>Image Bit Depth</text>
     <x>25</x>
-    <y>240</y>
+    <y>230</y>
     <width>150</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
     </font>
     <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #123</name>
+    <x>105</x>
+    <y>30</y>
+    <width>220</width>
+    <height>20</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #126</name>
+      <text>Acquire</text>
+      <width>70</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="action_button" version="3.0.0">
+      <name>message button #129</name>
+      <actions>
+        <action type="write_pv">
+          <pv_name>$(P)$(R)Acquire</pv_name>
+          <value>1</value>
+          <description>Write</description>
+        </action>
+      </actions>
+      <pv_name>$(P)$(R)Acquire</pv_name>
+      <text>Start</text>
+      <x>75</x>
+      <width>70</width>
+      <height>20</height>
+      <background_color>
+        <color red="30" green="187" blue="0">
+        </color>
+      </background_color>
+    </widget>
+    <widget type="action_button" version="3.0.0">
+      <name>message button #132</name>
+      <actions>
+        <action type="write_pv">
+          <pv_name>$(P)$(R)Acquire</pv_name>
+          <value>0</value>
+          <description>Write</description>
+        </action>
+      </actions>
+      <pv_name>$(P)$(R)Acquire</pv_name>
+      <text>Stop</text>
+      <x>150</x>
+      <width>70</width>
+      <height>20</height>
+      <background_color>
+        <color red="222" green="19" blue="9">
+        </color>
+      </background_color>
+    </widget>
   </widget>
 </display>

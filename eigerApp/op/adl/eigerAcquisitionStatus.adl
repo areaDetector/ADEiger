@@ -8,7 +8,7 @@ display {
 		x=566
 		y=159
 		width=350
-		height=390
+		height=380
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=390
+		height=380
 	}
 	"basic attribute" {
 		clr=14
@@ -126,7 +126,7 @@ text {
 text {
 	object {
 		x=5
-		y=315
+		y=305
 		width=170
 		height=20
 	}
@@ -139,7 +139,7 @@ text {
 composite {
 	object {
 		x=35
-		y=65
+		y=55
 		width=245
 		height=20
 	}
@@ -148,7 +148,7 @@ composite {
 		text {
 			object {
 				x=180
-				y=65
+				y=55
 				width=100
 				height=20
 			}
@@ -165,7 +165,7 @@ composite {
 		text {
 			object {
 				x=183
-				y=65
+				y=55
 				width=40
 				height=20
 			}
@@ -182,7 +182,7 @@ composite {
 		text {
 			object {
 				x=35
-				y=65
+				y=55
 				width=140
 				height=20
 			}
@@ -197,7 +197,7 @@ composite {
 text {
 	object {
 		x=25
-		y=90
+		y=80
 		width=150
 		height=20
 	}
@@ -210,7 +210,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=91
+		y=81
 		width=60
 		height=18
 	}
@@ -225,7 +225,7 @@ text {
 text {
 	object {
 		x=15
-		y=115
+		y=105
 		width=160
 		height=20
 	}
@@ -238,7 +238,7 @@ text {
 menu {
 	object {
 		x=180
-		y=115
+		y=105
 		width=80
 		height=20
 	}
@@ -251,7 +251,7 @@ menu {
 text {
 	object {
 		x=55
-		y=140
+		y=130
 		width=120
 		height=20
 	}
@@ -264,7 +264,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=141
+		y=131
 		width=160
 		height=18
 	}
@@ -281,7 +281,7 @@ text {
 text {
 	object {
 		x=25
-		y=165
+		y=155
 		width=150
 		height=20
 	}
@@ -294,7 +294,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=166
+		y=156
 		width=160
 		height=18
 	}
@@ -310,7 +310,7 @@ text {
 text {
 	object {
 		x=35
-		y=190
+		y=180
 		width=140
 		height=20
 	}
@@ -323,7 +323,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=191
+		y=181
 		width=160
 		height=18
 	}
@@ -339,7 +339,7 @@ text {
 text {
 	object {
 		x=35
-		y=215
+		y=205
 		width=140
 		height=20
 	}
@@ -352,7 +352,7 @@ text {
 composite {
 	object {
 		x=180
-		y=215
+		y=205
 		width=70
 		height=20
 	}
@@ -361,7 +361,7 @@ composite {
 		text {
 			object {
 				x=180
-				y=215
+				y=205
 				width=50
 				height=20
 			}
@@ -377,7 +377,7 @@ composite {
 		text {
 			object {
 				x=180
-				y=215
+				y=205
 				width=70
 				height=20
 			}
@@ -392,89 +392,10 @@ composite {
 		}
 	}
 }
-composite {
-	object {
-		x=18
-		y=30
-		width=80
-		height=30
-	}
-	"composite name"=""
-	children {
-		rectangle {
-			object {
-				x=18
-				y=30
-				width=80
-				height=30
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		text {
-			object {
-				x=23
-				y=35
-				width=70
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="Acquire"
-		}
-	}
-}
-"message button" {
-	object {
-		x=103
-		y=30
-		width=70
-		height=30
-	}
-	control {
-		chan="$(P)$(R)Acquire"
-		clr=14
-		bclr=16
-	}
-	label="Start"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=178
-		y=30
-		width=70
-		height=30
-	}
-	control {
-		chan="$(P)$(R)Acquire"
-		clr=14
-		bclr=21
-	}
-	label="Stop"
-	press_msg="0"
-}
-"message button" {
-	object {
-		x=253
-		y=30
-		width=80
-		height=30
-	}
-	control {
-		chan="$(P)$(R)Trigger"
-		clr=14
-		bclr=16
-	}
-	label="Trigger"
-	press_msg="0"
-}
 "text update" {
 	object {
 		x=180
-		y=291
+		y=281
 		width=100
 		height=18
 	}
@@ -490,7 +411,7 @@ composite {
 text {
 	object {
 		x=65
-		y=290
+		y=280
 		width=110
 		height=20
 	}
@@ -503,7 +424,7 @@ text {
 "text entry" {
 	object {
 		x=180
-		y=343
+		y=333
 		width=60
 		height=20
 	}
@@ -518,7 +439,7 @@ text {
 text {
 	object {
 		x=45
-		y=343
+		y=333
 		width=130
 		height=20
 	}
@@ -531,7 +452,7 @@ text {
 "text update" {
 	object {
 		x=245
-		y=344
+		y=334
 		width=80
 		height=18
 	}
@@ -546,7 +467,7 @@ text {
 text {
 	object {
 		x=75
-		y=368
+		y=358
 		width=100
 		height=20
 	}
@@ -559,7 +480,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=369
+		y=359
 		width=100
 		height=18
 	}
@@ -574,7 +495,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=316
+		y=306
 		width=80
 		height=18
 	}
@@ -589,7 +510,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=266
+		y=256
 		width=100
 		height=18
 	}
@@ -605,7 +526,7 @@ text {
 text {
 	object {
 		x=55
-		y=265
+		y=255
 		width=120
 		height=20
 	}
@@ -618,7 +539,7 @@ text {
 "text update" {
 	object {
 		x=180
-		y=241
+		y=231
 		width=100
 		height=18
 	}
@@ -633,7 +554,7 @@ text {
 text {
 	object {
 		x=25
-		y=240
+		y=230
 		width=150
 		height=20
 	}
@@ -642,4 +563,57 @@ text {
 	}
 	textix="Image Bit Depth"
 	align="horiz. right"
+}
+composite {
+	object {
+		x=105
+		y=30
+		width=220
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=105
+				y=30
+				width=70
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Acquire"
+		}
+		"message button" {
+			object {
+				x=180
+				y=30
+				width=70
+				height=20
+			}
+			control {
+				chan="$(P)$(R)Acquire"
+				clr=14
+				bclr=16
+			}
+			label="Start"
+			press_msg="1"
+		}
+		"message button" {
+			object {
+				x=255
+				y=30
+				width=70
+				height=20
+			}
+			control {
+				chan="$(P)$(R)Acquire"
+				clr=14
+				bclr=21
+			}
+			label="Stop"
+			press_msg="0"
+		}
+	}
 }

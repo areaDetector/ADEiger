@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>eiger2Detector</name>
-  <x>488</x>
-  <y>98</y>
+  <x>352</x>
+  <y>88</y>
   <width>1425</width>
-  <height>935</height>
+  <height>945</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -141,9 +141,9 @@
     <name>composite #36</name>
     <file>eigerAcquisitionStatus.bob</file>
     <x>360</x>
-    <y>535</y>
+    <y>560</y>
     <width>350</width>
-    <height>390</height>
+    <height>380</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #38</name>
@@ -151,7 +151,7 @@
     <x>360</x>
     <y>350</y>
     <width>350</width>
-    <height>180</height>
+    <height>205</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #40</name>

@@ -4,7 +4,7 @@
   <x>1151</x>
   <y>186</y>
   <width>350</width>
-  <height>130</height>
+  <height>155</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -14,7 +14,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #6</name>
     <width>350</width>
-    <height>130</height>
+    <height>155</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -206,7 +206,7 @@
     <name>text #46</name>
     <text># Triggers</text>
     <x>50</x>
-    <y>105</y>
+    <y>130</y>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -217,7 +217,7 @@
     <name>text update #49</name>
     <pv_name>$(P)$(R)NumTriggers_RBV</pv_name>
     <x>260</x>
-    <y>106</y>
+    <y>131</y>
     <width>80</width>
     <height>18</height>
     <font>
@@ -240,7 +240,7 @@
     <name>text entry #53</name>
     <pv_name>$(P)$(R)NumTriggers</pv_name>
     <x>155</x>
-    <y>105</y>
+    <y>130</y>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -252,5 +252,36 @@
     <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>message button #57</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P)$(R)Trigger</pv_name>
+        <value>0</value>
+        <description>Write</description>
+      </action>
+    </actions>
+    <pv_name>$(P)$(R)Trigger</pv_name>
+    <text>Trigger</text>
+    <x>155</x>
+    <y>105</y>
+    <height>20</height>
+    <background_color>
+      <color red="30" green="187" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #60</name>
+    <text>Software Trig.</text>
+    <x>10</x>
+    <y>105</y>
+    <width>140</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
   </widget>
 </display>

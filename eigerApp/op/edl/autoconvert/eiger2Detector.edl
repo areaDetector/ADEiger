@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 488
-y 98
+x 352
+y 88
 w 1425
-h 935
+h 945
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -355,9 +355,9 @@ major 4
 minor 0
 release 0
 x 360
-y 535
+y 560
 w 350
-h 390
+h 380
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -381,7 +381,7 @@ release 0
 x 360
 y 350
 w 350
-h 180
+h 205
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280

@@ -28,8 +28,8 @@
   <snap_to_geometry>false</snap_to_geometry>
   <widget_type>Display</widget_type>
   <width>1425</width>
-  <x>143</x>
-  <y>113</y>
+  <x>-101</x>
+  <y>64</y>
   <widget typeId="org.csstudio.opibuilder.widgets.Rectangle" version="1.0.0">
     <actions hook="false" hook_all="false" />
     <alarm_pulsing>false</alarm_pulsing>
@@ -436,7 +436,7 @@ $(pv_value)</tooltip>
     <widget_type>Linking Container</widget_type>
     <width>350</width>
     <x>360</x>
-    <y>730</y>
+    <y>745</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.linkingContainer" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -573,7 +573,7 @@ $(pv_value)</tooltip>
       <color red="0" green="0" blue="0" />
     </foreground_color>
     <group_name></group_name>
-    <height>130</height>
+    <height>155</height>
     <macros>
       <include_parent_macros>true</include_parent_macros>
     </macros>
@@ -612,7 +612,7 @@ $(pv_value)</tooltip>
       <color red="0" green="0" blue="0" />
     </foreground_color>
     <group_name></group_name>
-    <height>390</height>
+    <height>380</height>
     <macros>
       <include_parent_macros>true</include_parent_macros>
     </macros>
@@ -631,7 +631,7 @@ $(pv_value)</tooltip>
     <widget_type>Linking Container</widget_type>
     <width>350</width>
     <x>360</x>
-    <y>335</y>
+    <y>360</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.linkingContainer" version="1.0.0">
     <actions hook="false" hook_all="false" />

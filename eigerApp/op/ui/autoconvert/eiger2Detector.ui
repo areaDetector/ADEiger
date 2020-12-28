@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>488</x>
-            <y>98</y>
+            <x>352</x>
+            <y>88</y>
             <width>1425</width>
-            <height>935</height>
+            <height>945</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -467,17 +467,17 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>535</y>
+                    <y>560</y>
                     <width>352</width>
-                    <height>392</height>
+                    <height>382</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>535</y>
+                    <y>560</y>
                     <width>350</width>
-                    <height>390</height>
+                    <height>380</height>
                 </rect>
             </property>
             <property name="filename">
@@ -493,7 +493,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>350</y>
                     <width>352</width>
-                    <height>182</height>
+                    <height>207</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -501,7 +501,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>350</y>
                     <width>350</width>
-                    <height>180</height>
+                    <height>205</height>
                 </rect>
             </property>
             <property name="filename">
