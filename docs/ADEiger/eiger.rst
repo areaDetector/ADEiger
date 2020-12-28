@@ -234,14 +234,14 @@ Implementation of standard driver parameters
 --------------------------------------------
 
 The following table describes how the Eiger driver implements some of
-the standard driver parameters.
+the standard driver parameters defined in asynNDArrayDriver.h and ADDriver.h, 
+ADBase.template and NDFile.template
 
 .. cssclass:: table-bordered table-striped table-hover
-.. flat-table::
-  :header-rows: 2
+.. list-table::
+  :header-rows: 1
   :widths: 10 10 80
 
-  * - Implementation of Parameters in asynNDArrayDriver.h and ADDriver.h, and EPICS Record Definitions in ADBase.template and NDFile.template
   * - EPICS record name
     - Eiger Parameter
     - Description
@@ -310,26 +310,25 @@ the standard driver parameters.
     - N.A
     - This driver's version
 
-Eiger specific parameters common to Eiger1 and Eiger2
------------------------------------------------------
+Eiger specific parameters
+-------------------------
 
-The Eiger driver implements the following parameters in addition to
-those in asynNDArrayDriver.h and ADDriver.h.
+The Eiger driver implements the following parameters in addition to those in asynNDArrayDriver.h and ADDriver.h.
+Most records are in eigerBase.template, and are common to both the Eiger1 and Eiger2.
+The records specific to the Eiger1 are in eiger1.template, and those specific to the Eiger2 are in eiger2.template.
+exist on the Eiger1, and some only on the Eiger2.  This is noted in the tables.
 
+Detector Information
+~~~~~~~~~~~~~~~~~~~~
 .. cssclass:: table-bordered table-striped table-hover
-.. flat-table::
-  :header-rows: 2
+.. list-table::
+  :header-rows: 1
   :widths: 10 70 10 10
 
-
-  * -
-    - Parameter Definitions in eigerDetector.cpp and EPICS Record Definitions in eiger.template
   * - Eiger Parameter
     - Description
     - EPICS record name
     - EPICS record type
-  * -
-    - **Detector Information**
   * - detector/config/description
     - Detector's manufacturer and model
     - Description_RBV
@@ -355,8 +354,19 @@ those in asynNDArrayDriver.h and ADDriver.h.
       Energies.
     - DeadTime_RBV
     - ai
-  * -
-    - **Detector Status Parameters**
+
+Detector Status
+~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - N.A.
     - Initializes the detector DCU.  This command takes many seconds.
     - Initialize
@@ -400,8 +410,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
       State of the high voltage. Eiger2 only.
     - HVState_RBV
     - stringin
-  * -
-    - **Acquisition Setup**
+
+Acquisition Setup
+~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - detector/config/threshold_energy
     - Energy threshold 1 for the acquisition. This is the only threshold on the Eiger1.
     - Threshold, Threshold_RBV
@@ -430,8 +450,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
     - Counting mode, "Normal" or "Retrigger". Eiger2 only.
     - CountingMode, CountingMode_RBV
     - bo, bi
-  * -
-    - **Trigger Setup**
+
+Trigger Setup
+~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - detector/config/extg_mode
     - Mode to be used when TriggerMode=External Gate.
       Choices are "Pump & Probe" and "HDR".  Eiger2 with 2021 firmware only.
@@ -458,8 +488,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
     - Delay time in second after receipt of trigger signal before taking action. Eiger2 only.
     - TriggerStartDelay, TriggerStartDelay_RBV
     - ao, ai
-  * -
-    - **Readout Control**
+
+Readout Setup
+~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - detector/config/roi_mode
     - Which ROI mode to use. **Only supported on Eiger 9M and 16M.** Options are:
         * Disabled
@@ -499,8 +539,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
         * Stream
     - DataSource, DataSource_RBV
     - mbbo, mbbi
-  * -
-    - **Acquisition Status**
+
+Acquisition Status
+~~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - N.A.
     - Armed state of the detector
     - Armed
@@ -509,12 +559,23 @@ those in asynNDArrayDriver.h and ADDriver.h.
     - The bit depth of the image data. If AcquireTime results in less than 50Hz, this
       will have the value 16, otherwise 32.
     - $(P)$(R)BitDepthImage_RBV
+    - longin
   * - detector/config/countrate_correction_count_cutoff
     - Number of counts after which the detector will cutoff due to the count rate correction.
     - CountCutoff_RBV
     - ai
-  * -
-    - **FileWriter Control**
+
+FileWriter Interface
+~~~~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - filewriter/config/mode
     - Enables or disables the FileWriter module
     - FWEnable, FWEnable_RBV
@@ -580,8 +641,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
     - Writing to this PV clears *all* files on the detector server disk. Eiger1 only.
     - FWClear
     - ao
-  * -
-    - **Stream Control**
+
+Stream Interface
+~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - stream/config/mode
     - Enables or disables the Stream module
     - StreamEnable, StreamEnable_RBV
@@ -614,8 +685,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
     - Indicates how many images were dropped in the last acquisition
     - StreamDropped_RBV
     - ai
-  * -
-    - **Monitor Control**
+
+Monitor Interface
+~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - monitor/config/mode
     - Enables or disables the Monitor module
     - MonitorEnable, MonitorEnable_RBV
@@ -628,8 +709,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
     - Timeout for queries on the Monitor interface for new images
     - MonitorTimeout, MonitorTimeout_RBV
     - ao, ai
-  * -
-    - **Acquisition Metadata**
+
+Acquisition Metadata
+~~~~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - detector/config/beam_center_x
     - X position of the beam
     - BeamX, BeamX_RBV
@@ -647,8 +738,18 @@ those in asynNDArrayDriver.h and ADDriver.h.
       changes
     - Wavelength, Wavelength_RBV
     - ao, ai
-  * -
-    - **Detector Metadata**
+
+Detector Metadata
+~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
   * - detector/config/chi_start
     - Start value of the Chi angle
     - ChiStart, ChiStart_RBV
@@ -693,8 +794,7 @@ those in asynNDArrayDriver.h and ADDriver.h.
 Unsupported standard driver parameters
 --------------------------------------
 
-All standard parameters not mentioned in this document are not
-supported.
+All standard parameters not mentioned in this document are not supported.
 
 Configuration
 -------------
@@ -713,20 +813,61 @@ constructor for the `eigerDetector class`_
 There an example IOC boot directory and startup script provided with
 areaDetector.
 
+medm screens
+------------
 
+The following shows the medm screens that are used to control the Eiger
+and Eiger2 detectors. Note that the general purpose screen ADBase.adl can be used,
+but it exposes a few PVs that are not applicable to the Eiger,
+and lacks many PVs that are important for the Eiger.
 
+`eigerDetector.adl` is the screen used to control the Eiger1 detector.
 
-medm screen
------------
+.. image:: eiger1.png
+    :width: 100%
+    :align: center
 
-The following shows the medm screen that is used to control the Eiger
-detector. Note that the general purpose screen ADBase.adl can be used,
-but it exposes a few controls that are not applicable to the Eiger,
-and lacks some fields that are important for the Eiger.
+`eiger2Detector.adl` is the screen used to control the Eiger2 detector.
 
-`eigerDetector.adl` is the screen used to control the Eiger driver.
+.. image:: eiger2.png
+    :width: 100%
+    :align: center
 
-.. image:: eiger.png
+Using 2 energy thresholds
+-------------------------
+
+The Eiger2 detector supports 2 energy thresholds.  Threshold1 must always be lower in energy
+than threshold2.  These can be independently enabled, but at least one of the thresholds
+must be enabled. If both are enabled then enabling ThresholdDiffEnable will result in the image being
+the difference of threshold1 - threshold2.
+
+The following images were acquired with two radioactive sources placed in front of the detector.
+On the left is Fe55 which generates Mn Ka x-rays at about 5.9 keV.  On the right is Cd109 which
+generates Ag Ka x-rays at about 23 keV.  Threshold1 was set to 3.0 keV, about 50% of the Fe55 x-ray energy.
+Threshold2 was set to 11 keV, about 50% of the Cd109 x-ray energy.
+
+This image was acquired with Threshold1Enable=Enable and Threshold2Enable=Disable.  Note that both sources
+are detected because both are above 3 keV.
+
+.. image:: eigerThreshold1.png
+    :width: 100%
+    :align: center
+
+|
+
+This image was acquired with Threshold1Enable=Disable and Threshold2Enable=Enable.  Note that the Fe55
+source is not detected because it is below 11 keV.
+
+.. image:: eigerThreshold2.png
+    :width: 100%
+    :align: center
+
+|
+
+This image was acquired with Threshold1Enable=Enable and Threshold2Enable=Enable, and ThresholdDiffEnable=Enable.
+Note that only the Fe55 source is detected because any events that were above both 3 keV and 11 keV are discarded.
+
+.. image:: eigerThresholdDiff.png
     :width: 100%
     :align: center
 
