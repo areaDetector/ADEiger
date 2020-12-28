@@ -4,4 +4,6 @@ $(P)$(R)Threshold2Energy
 $(P)$(R)Threshold2Enable
 $(P)$(R)ThresholdDiffEnable
 $(P)$(R)ExtGateMode
+$(P)$(R)CountingMode
+$(P)$(R)TriggerStartDelay
 $(P)$(R)HVResetTime
