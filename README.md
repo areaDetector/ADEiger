@@ -28,15 +28,15 @@ Before compiling:
 HDF5 Plugins:
 -------------
 
-If you want HDF5 applications to decompress files produced by the detector, you will need to have the bitshuffle and LZ4 decompression
-plugins available.  These are built in ADSupport.
+If you want HDF5 applications to decompress LZ4 or BSLZ4 compressed files produced by the detector,
+you will need to have the bitshuffle and LZ4 decompression plugins available. These are built in ADSupport.
 
 The environment variable `HDF5_PLUGIN_PATH` should be set to `[your_path]/ADSupport/lib/linux-x86_64`.
 
 How to run:
 -----------
 
-* Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger/` there is already a ready to use IOC for the Eiger1, and in iocEiger2/ for the Eiger2:
+* Under `ADEiger/iocs/eigerIOC/iocBoot/iocEiger1/` there is already a ready to use IOC for the Eiger1, and in iocEiger2/ for the Eiger2:
   - Change the IP address in `st.cmd`.
   - Run `./st.cmd`.
 * There are medm, edm, caQtDM, CSS-Boy, and CSS-Phoebus screens under `areaDetector/ADEiger/eigerApp/op/`.
