@@ -4,7 +4,7 @@
   <x>192</x>
   <y>324</y>
   <width>350</width>
-  <height>455</height>
+  <height>480</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -14,7 +14,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #6</name>
     <width>350</width>
-    <height>455</height>
+    <height>480</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -29,7 +29,7 @@
   <widget type="group" version="2.0.0">
     <name>composite #9</name>
     <x>75</x>
-    <y>430</y>
+    <y>455</y>
     <width>198</width>
     <height>20</height>
     <style>3</style>
@@ -66,7 +66,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #18</name>
     <width>350</width>
-    <height>455</height>
+    <height>480</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -111,111 +111,6 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #27</name>
-    <text>File Name Pattern</text>
-    <x>5</x>
-    <y>105</y>
-    <width>170</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #30</name>
-    <pv_name>$(P)$(R)FWNamePattern</pv_name>
-    <x>180</x>
-    <y>105</y>
-    <width>160</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #34</name>
-    <pv_name>$(P)$(R)FWNamePattern_RBV</pv_name>
-    <x>180</x>
-    <y>131</y>
-    <width>160</width>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #38</name>
-    <text>Local Path</text>
-    <x>5</x>
-    <y>205</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #41</name>
-    <pv_name>$(P)$(R)FilePath</pv_name>
-    <x>110</x>
-    <y>205</y>
-    <width>230</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #45</name>
-    <pv_name>$(P)$(R)FilePath_RBV</pv_name>
-    <x>110</x>
-    <y>231</y>
-    <width>230</width>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #49</name>
     <text>Enable</text>
     <x>115</x>
     <y>30</y>
@@ -227,7 +122,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #52</name>
+    <name>text update #30</name>
     <pv_name>$(P)$(R)FWEnable_RBV</pv_name>
     <x>265</x>
     <y>31</y>
@@ -249,7 +144,7 @@
     <show_units>false</show_units>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #56</name>
+    <name>text #34</name>
     <text>State</text>
     <x>125</x>
     <y>55</y>
@@ -261,7 +156,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #59</name>
+    <name>text update #37</name>
     <pv_name>$(P)$(R)FWState_RBV</pv_name>
     <x>178</x>
     <y>56</y>
@@ -284,7 +179,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #63</name>
+    <name>menu #41</name>
     <pv_name>$(P)$(R)FWEnable</pv_name>
     <x>180</x>
     <y>30</y>
@@ -296,198 +191,18 @@
     </background_color>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #66</name>
-    <text>Current seq. id</text>
-    <x>25</x>
-    <y>155</y>
-    <width>150</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #69</name>
-    <pv_name>$(P)$(R)SequenceId</pv_name>
-    <x>180</x>
-    <y>156</y>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #73</name>
-    <text>Save Files Local</text>
-    <x>15</x>
-    <y>180</y>
-    <width>160</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="combo" version="2.0.0">
-    <name>menu #76</name>
-    <pv_name>$(P)$(R)SaveFiles</pv_name>
-    <x>180</x>
-    <y>180</y>
-    <width>80</width>
-    <height>20</height>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #79</name>
-    <pv_name>$(P)$(R)SaveFiles_RBV</pv_name>
-    <x>265</x>
-    <y>181</y>
-    <width>80</width>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="70" green="70" blue="70">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #83</name>
-    <text>(e.g. testA_$id)</text>
-    <x>15</x>
-    <y>130</y>
-    <width>160</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #86</name>
-    <text>Images/File</text>
-    <x>65</x>
-    <y>80</y>
-    <width>110</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #89</name>
-    <pv_name>$(P)$(R)FWNImagesPerFile</pv_name>
-    <x>180</x>
-    <y>80</y>
-    <width>60</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #93</name>
-    <pv_name>$(P)$(R)FWNImagesPerFile_RBV</pv_name>
-    <x>245</x>
-    <y>81</y>
-    <width>60</width>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #97</name>
+    <name>composite #44</name>
     <x>5</x>
-    <y>255</y>
-    <width>215</width>
-    <height>20</height>
+    <y>105</y>
+    <width>340</width>
+    <height>345</height>
     <style>3</style>
     <transparent>true</transparent>
     <widget type="label" version="2.0.0">
-      <name>text #100</name>
-      <text>Local Path Exists</text>
-      <width>170</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <auto_size>true</auto_size>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #103</name>
-      <pv_name>$(P)$(R)FilePathExists_RBV</pv_name>
-      <x>175</x>
-      <width>40</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-    </widget>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #107</name>
-    <x>5</x>
-    <y>280</y>
-    <width>324</width>
-    <height>20</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="label" version="2.0.0">
-      <name>text #110</name>
-      <text>Create dir. depth</text>
+      <name>text #47</name>
+      <text>File Name Pattern</text>
+      <y>25</y>
       <width>170</width>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -496,10 +211,11 @@
       <horizontal_alignment>2</horizontal_alignment>
     </widget>
     <widget type="textentry" version="3.0.0">
-      <name>text entry #113</name>
-      <pv_name>$(P)$(R)CreateDirectory</pv_name>
+      <name>text entry #50</name>
+      <pv_name>$(P)$(R)FWNamePattern</pv_name>
       <x>175</x>
-      <width>40</width>
+      <y>25</y>
+      <width>160</width>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
@@ -508,16 +224,101 @@
         <color red="115" green="223" blue="255">
         </color>
       </background_color>
-      <format>1</format>
+      <format>6</format>
       <show_units>false</show_units>
       <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
     <widget type="textupdate" version="2.0.0">
-      <name>text update #117</name>
-      <pv_name>$(P)$(R)CreateDirectory_RBV</pv_name>
-      <x>220</x>
-      <y>1</y>
-      <width>40</width>
+      <name>text update #54</name>
+      <pv_name>$(P)$(R)FWNamePattern_RBV</pv_name>
+      <x>175</x>
+      <y>51</y>
+      <width>160</width>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #58</name>
+      <text>Local Path</text>
+      <y>125</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #61</name>
+      <pv_name>$(P)$(R)FilePath</pv_name>
+      <x>105</x>
+      <y>125</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #65</name>
+      <pv_name>$(P)$(R)FilePath_RBV</pv_name>
+      <x>105</x>
+      <y>151</y>
+      <width>230</width>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #69</name>
+      <text>Current seq. id</text>
+      <x>20</x>
+      <y>75</y>
+      <width>150</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #72</name>
+      <pv_name>$(P)$(R)SequenceId</pv_name>
+      <x>175</x>
+      <y>76</y>
       <height>18</height>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -535,63 +336,471 @@
       <show_units>false</show_units>
       <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
-    <widget type="action_button" version="3.0.0">
-      <name>related display #121</name>
-      <actions>
-        <action type="open_display">
-          <file>createDirectoryHelp.opi</file>
-          <target>tab</target>
-        </action>
-      </actions>
-      <text>Help</text>
-      <x>265</x>
-      <width>59</width>
+    <widget type="label" version="2.0.0">
+      <name>text #76</name>
+      <text>Save Files Local</text>
+      <x>10</x>
+      <y>100</y>
+      <width>160</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #79</name>
+      <pv_name>$(P)$(R)SaveFiles</pv_name>
+      <x>175</x>
+      <y>100</y>
+      <width>80</width>
       <height>20</height>
       <background_color>
         <color red="115" green="223" blue="255">
         </color>
       </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #82</name>
+      <pv_name>$(P)$(R)SaveFiles_RBV</pv_name>
+      <x>260</x>
+      <y>101</y>
+      <width>80</width>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="70" green="70" blue="70">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #86</name>
+      <text>(e.g. testA_$id)</text>
+      <x>10</x>
+      <y>50</y>
+      <width>160</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #89</name>
+      <text>Images/File</text>
+      <x>60</x>
+      <width>110</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #92</name>
+      <pv_name>$(P)$(R)FWNImagesPerFile</pv_name>
+      <x>175</x>
+      <width>60</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #96</name>
+      <pv_name>$(P)$(R)FWNImagesPerFile_RBV</pv_name>
+      <x>240</x>
+      <y>1</y>
+      <width>60</width>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #100</name>
+      <y>175</y>
+      <width>215</width>
+      <height>20</height>
+      <style>3</style>
+      <transparent>true</transparent>
+      <widget type="label" version="2.0.0">
+        <name>text #103</name>
+        <text>Local Path Exists</text>
+        <width>170</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <auto_size>true</auto_size>
+      </widget>
+      <widget type="textupdate" version="2.0.0">
+        <name>text update #106</name>
+        <pv_name>$(P)$(R)FilePathExists_RBV</pv_name>
+        <x>175</x>
+        <width>40</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <background_color>
+          <color red="218" green="218" blue="218">
+          </color>
+        </background_color>
+        <format>6</format>
+        <show_units>false</show_units>
+      </widget>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #110</name>
+      <y>200</y>
+      <width>324</width>
+      <height>20</height>
+      <style>3</style>
+      <transparent>true</transparent>
+      <widget type="label" version="2.0.0">
+        <name>text #113</name>
+        <text>Create dir. depth</text>
+        <width>170</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <horizontal_alignment>2</horizontal_alignment>
+      </widget>
+      <widget type="textentry" version="3.0.0">
+        <name>text entry #116</name>
+        <pv_name>$(P)$(R)CreateDirectory</pv_name>
+        <x>175</x>
+        <width>40</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <background_color>
+          <color red="115" green="223" blue="255">
+          </color>
+        </background_color>
+        <format>1</format>
+        <show_units>false</show_units>
+        <border_alarm_sensitive>false</border_alarm_sensitive>
+      </widget>
+      <widget type="textupdate" version="2.0.0">
+        <name>text update #120</name>
+        <pv_name>$(P)$(R)CreateDirectory_RBV</pv_name>
+        <x>220</x>
+        <y>1</y>
+        <width>40</width>
+        <height>18</height>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <foreground_color>
+          <color red="10" green="0" blue="184">
+          </color>
+        </foreground_color>
+        <background_color>
+          <color red="187" green="187" blue="187">
+          </color>
+        </background_color>
+        <format>1</format>
+        <show_units>false</show_units>
+        <border_alarm_sensitive>false</border_alarm_sensitive>
+      </widget>
+      <widget type="action_button" version="3.0.0">
+        <name>related display #124</name>
+        <actions>
+          <action type="open_display">
+            <file>createDirectoryHelp.opi</file>
+            <target>tab</target>
+          </action>
+        </actions>
+        <text>Help</text>
+        <x>265</x>
+        <width>59</width>
+        <height>20</height>
+        <background_color>
+          <color red="115" green="223" blue="255">
+          </color>
+        </background_color>
+      </widget>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #127</name>
+      <text>DCU RAM Disk Free</text>
+      <y>300</y>
+      <width>170</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #130</name>
+      <pv_name>$(P)$(R)FWFree_RBV</pv_name>
+      <x>175</x>
+      <y>301</y>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #134</name>
+      <text>Auto Remove</text>
+      <x>60</x>
+      <y>325</y>
+      <width>110</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #137</name>
+      <pv_name>$(P)$(R)FWAutoRemove</pv_name>
+      <x>175</x>
+      <y>324</y>
+      <width>80</width>
+      <height>20</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #140</name>
+      <pv_name>$(P)$(R)FWAutoRemove_RBV</pv_name>
+      <x>260</x>
+      <y>325</y>
+      <width>80</width>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="70" green="70" blue="70">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #144</name>
+      <text>GB</text>
+      <x>280</x>
+      <y>300</y>
+      <width>20</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #147</name>
+      <text>File Owner</text>
+      <x>10</x>
+      <y>225</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #150</name>
+      <pv_name>$(P)$(R)FileOwner</pv_name>
+      <x>115</x>
+      <y>225</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #154</name>
+      <pv_name>$(P)$(R)FileOwner_RBV</pv_name>
+      <x>220</x>
+      <y>226</y>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #158</name>
+      <text>File Group</text>
+      <x>10</x>
+      <y>250</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #161</name>
+      <pv_name>$(P)$(R)FileOwnerGrp</pv_name>
+      <x>115</x>
+      <y>250</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #165</name>
+      <pv_name>$(P)$(R)FileOwnerGrp_RBV</pv_name>
+      <x>220</x>
+      <y>251</y>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #169</name>
+      <text>File Perms.</text>
+      <x>10</x>
+      <y>275</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #172</name>
+      <pv_name>$(P)$(R)FilePerms</pv_name>
+      <x>115</x>
+      <y>275</y>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #176</name>
+      <pv_name>$(P)$(R)FilePerms_RBV</pv_name>
+      <x>220</x>
+      <y>276</y>
+      <height>18</height>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #124</name>
-    <text>DCU RAM Disk Free</text>
-    <x>5</x>
-    <y>380</y>
-    <width>170</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #127</name>
-    <pv_name>$(P)$(R)FWFree_RBV</pv_name>
-    <x>180</x>
-    <y>381</y>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #131</name>
-    <text>Auto Remove</text>
+    <name>text #180</name>
+    <text>Compression</text>
     <x>65</x>
-    <y>405</y>
+    <y>80</y>
     <width>110</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -600,10 +809,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #134</name>
-    <pv_name>$(P)$(R)FWAutoRemove</pv_name>
+    <name>menu #183</name>
+    <pv_name>$(P)$(R)FWCompression</pv_name>
     <x>180</x>
-    <y>404</y>
+    <y>80</y>
     <width>80</width>
     <height>20</height>
     <background_color>
@@ -613,10 +822,10 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #137</name>
-    <pv_name>$(P)$(R)FWAutoRemove_RBV</pv_name>
+    <name>text update #186</name>
+    <pv_name>$(P)$(R)FWCompression_RBV</pv_name>
     <x>265</x>
-    <y>405</y>
+    <y>81</y>
     <width>80</width>
     <height>18</height>
     <font>
@@ -633,165 +842,5 @@
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #141</name>
-    <text>GB</text>
-    <x>285</x>
-    <y>380</y>
-    <width>20</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #144</name>
-    <text>File Owner</text>
-    <x>15</x>
-    <y>305</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #147</name>
-    <pv_name>$(P)$(R)FileOwner</pv_name>
-    <x>120</x>
-    <y>305</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #151</name>
-    <pv_name>$(P)$(R)FileOwner_RBV</pv_name>
-    <x>225</x>
-    <y>306</y>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #155</name>
-    <text>File Group</text>
-    <x>15</x>
-    <y>330</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #158</name>
-    <pv_name>$(P)$(R)FileOwnerGrp</pv_name>
-    <x>120</x>
-    <y>330</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #162</name>
-    <pv_name>$(P)$(R)FileOwnerGrp_RBV</pv_name>
-    <x>225</x>
-    <y>331</y>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <format>1</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #166</name>
-    <text>File Perms.</text>
-    <x>15</x>
-    <y>355</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #169</name>
-    <pv_name>$(P)$(R)FilePerms</pv_name>
-    <x>120</x>
-    <y>355</y>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textupdate" version="2.0.0">
-    <name>text update #173</name>
-    <pv_name>$(P)$(R)FilePerms_RBV</pv_name>
-    <x>225</x>
-    <y>356</y>
-    <height>18</height>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <background_color>
-      <color red="187" green="187" blue="187">
-      </color>
-    </background_color>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
 </display>

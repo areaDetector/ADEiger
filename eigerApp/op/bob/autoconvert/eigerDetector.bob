@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>eigerDetector</name>
-  <x>403</x>
-  <y>178</y>
+  <x>143</x>
+  <y>113</y>
   <width>1425</width>
-  <height>895</height>
+  <height>910</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -61,7 +61,7 @@
     <name>composite #16</name>
     <file>eigerStream.bob</file>
     <x>715</x>
-    <y>500</y>
+    <y>525</y>
     <width>350</width>
     <height>155</height>
   </widget>
@@ -85,7 +85,7 @@
     <name>composite #22</name>
     <file>eigerMonitor.bob</file>
     <x>715</x>
-    <y>660</y>
+    <y>685</y>
     <width>350</width>
     <height>105</height>
   </widget>
@@ -95,7 +95,7 @@
     <x>715</x>
     <y>40</y>
     <width>350</width>
-    <height>455</height>
+    <height>480</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #26</name>
@@ -125,7 +125,7 @@
     <name>composite #32</name>
     <file>ADAttrFile.bob</file>
     <x>715</x>
-    <y>770</y>
+    <y>795</y>
     <width>350</width>
     <height>110</height>
   </widget>
@@ -159,6 +159,6 @@
     <x>1070</x>
     <y>575</y>
     <width>350</width>
-    <height>255</height>
+    <height>230</height>
   </widget>
 </display>

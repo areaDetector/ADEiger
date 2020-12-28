@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>403</x>
-            <y>178</y>
+            <x>143</x>
+            <y>113</y>
             <width>1425</width>
-            <height>895</height>
+            <height>910</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -227,7 +227,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>500</y>
+                    <y>525</y>
                     <width>352</width>
                     <height>157</height>
                 </rect>
@@ -235,7 +235,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>500</y>
+                    <y>525</y>
                     <width>350</width>
                     <height>155</height>
                 </rect>
@@ -299,7 +299,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>660</y>
+                    <y>685</y>
                     <width>352</width>
                     <height>107</height>
                 </rect>
@@ -307,7 +307,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>660</y>
+                    <y>685</y>
                     <width>350</width>
                     <height>105</height>
                 </rect>
@@ -325,7 +325,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>457</height>
+                    <height>482</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -333,7 +333,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>455</height>
+                    <height>480</height>
                 </rect>
             </property>
             <property name="filename">
@@ -419,7 +419,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>770</y>
+                    <y>795</y>
                     <width>354</width>
                     <height>114</height>
                 </rect>
@@ -427,7 +427,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>770</y>
+                    <y>795</y>
                     <width>352</width>
                     <height>112</height>
                 </rect>
@@ -517,7 +517,7 @@ border-radius: 2px;
                     <x>1070</x>
                     <y>575</y>
                     <width>352</width>
-                    <height>257</height>
+                    <height>232</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -525,7 +525,7 @@ border-radius: 2px;
                     <x>1070</x>
                     <y>575</y>
                     <width>350</width>
-                    <height>255</height>
+                    <height>230</height>
                 </rect>
             </property>
             <property name="filename">

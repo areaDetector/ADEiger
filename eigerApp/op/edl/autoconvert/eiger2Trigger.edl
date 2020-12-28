@@ -6,7 +6,7 @@ release 1
 x 1151
 y 186
 w 350
-h 155
+h 180
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 155
+h 180
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -74,19 +74,6 @@ value {
   "Trigger Setup"
 }
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 30
-w 320
-h 20
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -132,24 +119,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 55
-w 330
-h 20
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -157,7 +126,7 @@ major 4
 minor 1
 release 1
 x 10
-y 55
+y 80
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -177,7 +146,7 @@ major 4
 minor 7
 release 0
 x 260
-y 56
+y 81
 w 80
 h 18
 controlPv "$(P)$(R)ExtGateMode_RBV"
@@ -194,10 +163,120 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 30
+y 130
+w 120
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Manual Trig."
+}
 endObjectProperties
 
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 260
+y 131
+w 80
+h 18
+controlPv "$(P)$(R)ManualTrigger_RBV"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 50
+y 155
+w 100
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "# Triggers"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 260
+y 156
+w 80
+h 18
+controlPv "$(P)$(R)NumTriggers_RBV"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 155
+y 155
+w 100
+h 20
+controlPv "$(P)$(R)NumTriggers"
+format "decimal"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
 
 # (Static Text)
 object activeXTextClass
@@ -206,7 +285,7 @@ major 4
 minor 1
 release 1
 x 10
-y 80
+y 105
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -226,7 +305,7 @@ major 4
 minor 7
 release 0
 x 155
-y 80
+y 105
 w 100
 h 20
 controlPv "$(P)$(R)TriggerExposure"
@@ -252,7 +331,7 @@ major 4
 minor 7
 release 0
 x 260
-y 81
+y 106
 w 80
 h 18
 controlPv "$(P)$(R)TriggerExposure_RBV"
@@ -275,9 +354,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 30
-y 105
-w 120
+x 10
+y 55
+w 140
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -285,77 +364,8 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Manual Trig."
+  "Start Delay"
 }
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 260
-y 106
-w 80
-h 18
-controlPv "$(P)$(R)ManualTrigger_RBV"
-format "string"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 0 65535 0
-fgAlarm
-bgColor rgb 17920 17920 17920
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 50
-y 130
-w 100
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "# Triggers"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 260
-y 131
-w 80
-h 18
-controlPv "$(P)$(R)NumTriggers_RBV"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
 endObjectProperties
 
 # (Text Control)
@@ -365,11 +375,11 @@ major 4
 minor 7
 release 0
 x 155
-y 130
+y 55
 w 100
 h 20
-controlPv "$(P)$(R)NumTriggers"
-format "decimal"
+controlPv "$(P)$(R)TriggerStartDelay"
+format "exponential"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -383,18 +393,30 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-# (Group)
-object activeGroupClass
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 0
+minor 7
 release 0
-x 20
-y 30
-w 320
-h 20
-
-beginGroup
+x 260
+y 56
+w 80
+h 18
+controlPv "$(P)$(R)TriggerStartDelay_RBV"
+format "exponential"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
 
 # (Menu Button)
 object activeMenuButtonClass
@@ -416,23 +438,6 @@ indicatorPv "$(P)$(R)TriggerMode"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 55
-w 330
-h 20
-
-beginGroup
-
 # (Menu Button)
 object activeMenuButtonClass
 beginObjectProperties
@@ -440,7 +445,7 @@ major 4
 minor 0
 release 0
 x 155
-y 55
+y 80
 w 100
 h 20
 fgColor rgb 0 0 0
@@ -453,11 +458,6 @@ indicatorPv "$(P)$(R)ExtGateMode"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Menu Button)
 object activeMenuButtonClass
 beginObjectProperties
@@ -465,7 +465,7 @@ major 4
 minor 0
 release 0
 x 155
-y 105
+y 130
 w 100
 h 20
 fgColor rgb 0 0 0

@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=403
-		y=178
+		x=143
+		y=113
 		width=1425
-		height=895
+		height=910
 	}
 	clr=14
 	bclr=4
@@ -134,7 +134,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=500
+		y=525
 		width=350
 		height=155
 	}
@@ -164,7 +164,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=660
+		y=685
 		width=350
 		height=105
 	}
@@ -176,7 +176,7 @@ composite {
 		x=715
 		y=40
 		width=350
-		height=455
+		height=480
 	}
 	"composite name"=""
 	"composite file"="eiger1FileWriter.adl"
@@ -214,7 +214,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=770
+		y=795
 		width=350
 		height=110
 	}
@@ -256,7 +256,7 @@ composite {
 		x=1070
 		y=575
 		width=350
-		height=255
+		height=230
 	}
 	"composite name"=""
 	"composite file"="eigerReadout.adl"
