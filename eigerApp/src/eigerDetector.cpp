@@ -290,24 +290,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mThreshold        = mParams.create(EigThresholdStr,       asynParamFloat64, SSDetConfig, "threshold_energy");
     mThreshold->setEpsilon(ENERGY_EPSILON);
     mNTriggers        = mParams.create(EigNTriggersStr,       asynParamInt32,   SSDetConfig, "ntrigger");
-    // Work around 'allowed_values' change between 1.6.0 and 1.8.0 and
-    // ordering change in 1.8.0 as of EIGER2 v2020.1
-    vector<string> compressionEnum;
-    if (mAPIVersion == API_1_6_0)
-    {
-        compressionEnum.reserve(2);
-        compressionEnum.push_back("lz4");
-        compressionEnum.push_back("bslz4");
-    }
-    else if (mAPIVersion == API_1_8_0)
-    {
-        compressionEnum.reserve(3);
-        compressionEnum.push_back("bslz4");
-        compressionEnum.push_back("lz4");
-        compressionEnum.push_back("none");
-    }
     mCompressionAlgo  = mParams.create(EigCompressionAlgoStr, asynParamInt32,   SSDetConfig, "compression");
-    mCompressionAlgo->setEnumValues(compressionEnum);
     mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
     mAutoSummation    = mParams.create(EigAutoSummationStr,   asynParamInt32,   SSDetConfig, "auto_summation");
 
