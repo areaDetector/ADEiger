@@ -219,28 +219,26 @@ record(mbbi,"$(P)$(R)ExtGateMode_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-## Reorder Enums ##
+#################
+# Readout Setup #
+#################
 
-# Compression algorithm selection
+# Compression algorithm selection add "None" choice
 record(mbbo,"$(P)$(R)CompressionAlgo") {
-    field(ZRST, "BSLZ4")
-    field(ZRVL, "0")
-    field(ONST, "LZ4")
-    field(ONVL, "1")
     field(TWST, "None")
     field(TWVL, "2")
 }
 
 record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
-    field(ZRST, "BSLZ4")
-    field(ZRVL, "0")
-    field(ONST, "LZ4")
-    field(ONVL, "1")
     field(TWST, "None")
     field(TWVL, "2")
 }
 
-# Stream Header Detail Selection
+################
+# Stream Setup #
+################
+
+# Stream Header Detail Selection enums are in the opposite order in API 1.8.0 from 1.6.0
 record(mbbo,"$(P)$(R)StreamHdrDetail") {
     field(ZRST, "None")
     field(ZRVL, "0")
