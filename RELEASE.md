@@ -49,6 +49,13 @@ R2-8 (January XXX, 2021)
   - TriggerMode has an additional option, ExternalGate.
   - ExtGateMode (selects "Pump & Probe" or "HDR" for high dynamic range)
   - NumExposures (selects the number of exposures per image)
+* Fixed an issue with acquisition not stopping automatically when TriggerMode=External Series or External Enable.
+  - Previously it was necessary to manually set Acquire=0 to stop acquisition in these modes.
+  - Now acquisition will automatically stop when the value of NumImagesCounter_RBV equals the expected
+    number of images to be collected, which is NumTriggers_RBV * NumImages_RBV.
+    This mechanism has been tested in both External Series and External Enable mode, with DataSource=Stream or
+    DataSource=FileWriter.  It will not work with DataSource=None because then there is nothing updating
+    NumImagesCounter_RBV.  In that case manually setting Acquire=0 is still necessary.
 * The PREC fields for a number of records with units of time were decreased, and the OPI screens were
   changed to use exponential notation, which is easier to read and modify.
 * The enum choices for records that enable/disable a feature were not consistent.
