@@ -1258,16 +1258,27 @@ void eigerDetector::monitorTask (void)
 void eigerDetector::streamTask (void)
 {
     const char *functionName = "streamTask";
+
+    lock();
     for(;;)
     {
+        unlock();
         mStreamEvent.wait();
+        lock();
 
         StreamAPI api(mHostname);
 
         int err;
         stream_header_t header = {};
-        while((err = api.getHeader(&header, 1)))
+        for(;;)
         {
+            unlock();
+            err = api.getHeader(&header, 1);
+            lock();
+            if (err == 0)
+            {
+                break;
+            }
             if(err == STREAM_WRONG_HTYPE)
             {
                 ERR("got stray packet, ignoring");
@@ -1287,8 +1298,15 @@ void eigerDetector::streamTask (void)
         for(;;)
         {
             stream_frame_t frame = {};
-            while((err = api.getFrame(&frame, 1)))
+            for(;;)
             {
+                unlock();
+                err = api.getFrame(&frame, 1);
+                lock();
+                if (err == 0)
+                {
+                    break;
+                }
                 if(err == STREAM_ERROR)
                 {
                     ERR("failed to get frame packet");
@@ -1318,12 +1336,10 @@ void eigerDetector::streamTask (void)
             }
 
             int imageCounter, numImagesCounter, arrayCallbacks, decompress;
-            lock();
             getIntegerParam(NDArrayCounter, &imageCounter);
             getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
             mStreamDecompress->get(decompress);
-            unlock();
 
             if (decompress) {
                 StreamAPI::uncompress(&frame, (char*)pArray->pData);
@@ -1365,19 +1381,15 @@ void eigerDetector::streamTask (void)
             if (arrayCallbacks)
                 doCallbacksGenericPointer(pArray, NDArrayData, 0);
 
-            lock();
             setIntegerParam(NDArrayCounter, ++imageCounter);
             setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
-            unlock();
 
             callParamCallbacks();
             pArray->release();
         }
 
 end:
-        lock();
         mStreamDropped->fetch();
-        unlock();
 
         mStreamDoneEvent.signal();
     }
