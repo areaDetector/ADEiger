@@ -897,10 +897,20 @@ void eigerDetector::controlTask (void)
         }
         else // TMExternalSeries or TMExternalEnable
         {
-            FLOW("waiting for stop event");
-            unlock();
-            mStopEvent.wait();
-            lock();
+            // The Eiger does not indicate when acquisition is complete.
+            // Wait either until the NumImagesCounter is the expected value or
+            // until there is a manual stop event.
+            int expectedImages = numImages * numTriggers;
+            int numImagesCounter;
+            for(;;)
+            {
+                getIntegerParam(ADNumImagesCounter, &numImagesCounter);
+                if (numImagesCounter >= expectedImages) break;
+                if (mStopEvent.tryWait()) break;
+                unlock();
+                epicsThreadSleep(0.1);
+                lock();
+            }
         }
 
         // All triggers issued, disarm the detector
