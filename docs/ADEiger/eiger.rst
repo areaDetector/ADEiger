@@ -825,13 +825,15 @@ and Eiger2 detectors. Note that the general purpose screen ADBase.adl can be use
 but it exposes a few PVs that are not applicable to the Eiger,
 and lacks many PVs that are important for the Eiger.
 
-`eigerDetector.adl` is the screen used to control the Eiger1 detector.
+eigerDetector.adl is the screen used to control the Eiger1 detector.
 
 .. image:: eiger1.png
     :width: 100%
     :align: center
 
-`eiger2Detector.adl` is the screen used to control the Eiger2 detector.
+|
+
+eiger2Detector.adl is the screen used to control the Eiger2 detector.
 
 .. image:: eiger2.png
     :width: 100%
