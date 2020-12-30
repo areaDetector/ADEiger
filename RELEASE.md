@@ -49,6 +49,9 @@ R2-8 (January XXX, 2021)
     - TriggerMode has an additional option, ExternalGate.
     - ExtGateMode (selects "Pump & Probe" or "HDR" for high dynamic range)
     - NumExposures (selects the number of exposures per image)
+  * Created new top-level medm screen, eiger2Detector.adl, and also the auto-converted OPI screens.
+  * Created new eiger1_settings.req and eiger2_settings.req for autosave.
+    These both load eigerBase_settings.req for records common to both models.
 * Added support for frames with UInt8 datatype.  At very high frame rates the Eiger sends 8-bit data,
   but the driver was not handling this, and would crash.
 * Fixed an issue with acquisition not stopping automatically when TriggerMode=External Series or External Enable.
@@ -68,13 +71,10 @@ R2-8 (January XXX, 2021)
   The numeric values associated with the logical states have not changed, 0=Disable, 1=Enable. 
   NOTE: This may break backwards compatibility with clients if they use the strings rather than
   the numeric value to set the state.
-* Created new eiger1_settings.req and eiger2_settings.req for autosave.
-  These both load eigerBase_settings.req for records common to both models.
 * Added additional records to the OPI screens that were already present in the template files:
   - FileOwner, FileOwnerGrp, FilePerms
   - DeadTime_RBV
   - StreamHdrDetail
-* Created new top-level medm screen, eiger2Detector.adl (and the auto-converted OPI screens)
 * Improved the layout of eigerDetector.adl, with new widgets and new sub-screens,
   some of which are common to the Eiger2 and some specific to the Eiger1.
 
