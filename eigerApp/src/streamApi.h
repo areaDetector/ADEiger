@@ -21,7 +21,7 @@ typedef struct stream_frame
     bool end;
     size_t series, frame;
     size_t shape[2];
-    enum { UINT16, UINT32 } type;
+    enum { UINT8, UINT16, UINT32 } type;
 
     char encoding[32];
     size_t compressedSize, uncompressedSize;

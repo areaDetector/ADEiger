@@ -286,15 +286,28 @@ int StreamAPI::getFrame (stream_frame_t *frame, int timeout)
         // Calculate uncompressed size
         frame->uncompressedSize = frame->shape[0]*frame->shape[1];
 
-        if(!strncmp(dataType, "uint16", 6))
+        if(!strncmp(dataType, "uint32", 6))
+        {
+            frame->type = stream_frame_t::UINT32;
+            frame->uncompressedSize *= 4;
+        }
+        else if (!strncmp(dataType, "uint16", 6))
         {
             frame->type = stream_frame_t::UINT16;
             frame->uncompressedSize *= 2;
+        }
+        else if (!strncmp(dataType, "uint8", 5))
+        {
+            frame->type = stream_frame_t::UINT8;
+            frame->uncompressedSize *= 1;
         }
         else
         {
             frame->type = stream_frame_t::UINT32;
             frame->uncompressedSize *= 4;
+            ERR_ARGS("unknown dataType %s", dataType);
+            err = STREAM_ERROR;
+            goto closeShape;
         }
 
         frame->data = malloc(frame->compressedSize);
@@ -342,10 +355,19 @@ int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
         }
     } 
     else if ((strcmp(frame->encoding, "bs32-lz4<") == 0) ||
-             (strcmp(frame->encoding, "bs16-lz4<") == 0)) {
+             (strcmp(frame->encoding, "bs16-lz4<") == 0) ||
+             (strcmp(frame->encoding, "bs8-lz4<") == 0)) {
         pInput += 12;   // compressed sdata is 12 bytes into buffer
-        size_t elemSize = 4;
-        if (frame->type == stream_frame_t::UINT16) elemSize = 2;
+        size_t elemSize;
+        switch (frame->type) 
+        {
+            case stream_frame_t::UINT32: elemSize=4; break;
+            case stream_frame_t::UINT16: elemSize=2; break;
+            case stream_frame_t::UINT8:  elemSize=1; break;
+            default:
+                ERR_ARGS("unknown frame type=%d", frame->type);
+                return STREAM_ERROR;
+        }
         size_t numElements = frame->uncompressedSize/elemSize;
         int result = bshuf_decompress_lz4(pInput, dest, numElements, elemSize, 0);
         if (result < 0)

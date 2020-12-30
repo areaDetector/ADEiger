@@ -1336,7 +1336,17 @@ void eigerDetector::streamTask (void)
 
             NDArray *pArray;
             size_t *dims = frame.shape;
-            NDDataType_t type = frame.type == stream_frame_t::UINT16 ? NDUInt16 : NDUInt32;
+            NDDataType_t type;
+            switch (frame.type) 
+            {
+                case stream_frame_t::UINT32:  type = NDUInt32; break;
+                case stream_frame_t::UINT16:  type = NDUInt16; break;
+                case stream_frame_t::UINT8:   type = NDUInt8; break;
+                default:
+                    ERR_ARGS("unknown frame type=%d", frame.type);
+                    free(frame.data);
+                    continue;
+            }
 
             if(!(pArray = pNDArrayPool->alloc(2, dims, type, 0, NULL)))
             {
@@ -1562,6 +1572,8 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         ndType = NDUInt32;
     else if(H5Tequal(dType, H5T_NATIVE_UINT16) > 0)
         ndType = NDUInt16;
+    else if(H5Tequal(dType, H5T_NATIVE_UINT8) > 0)
+        ndType = NDUInt8;
     else
     {
         ERR("invalid data type");
