@@ -271,12 +271,12 @@ ADBase.template and NDFile.template
       The resulting frame rate will be 1/AcquirePeriod.
   * - $(P)$(R)DataType_RBV
     - N.A
-    - The data type of the image data. If AcquireTime results in less than 50Hz, this
-      will have the value UInt16, otherwise UInt32.
-  * - $(P)$(R)DataType_RBV
-    - N.A
-    - The data type of the image data. If AcquireTime results in less than 50Hz, this
-      will have the value UInt16, otherwise UInt32.
+    - The data type of the image data. This depends both on the AcquirePeriod (frame rate) and
+      the AcquireTime (exposure time). 
+      
+      - AcquireTime > 0.0066 ms: DataType_RBV=UInt32
+      - AcquirePeriod <  .00045 (2200 frames/s): DataType_RBV=UInt8
+      - Neither of above conditions: DataType_RBV=UInt16
   * - $(P)$(R)TemperatureActual
     - detector/status/board_000/th0_temp
     - Reads the actual temperature of the detector.
@@ -556,8 +556,12 @@ Acquisition Status
     - Armed
     - bi
   * - detector/config/bit_depth_image
-    - The bit depth of the image data. If AcquireTime results in less than 50Hz, this
-      will have the value 16, otherwise 32.
+    - The bit depth of the image data. This depends both on the AcquirePeriod (frame rate) and
+      the AcquireTime (exposure time). 
+      
+      - AcquireTime > 0.0066 ms: BitDepthImage_RBV=32
+      - AcquirePeriod <  .00045 (2200 frames/s): BitDepthImage_RBV=8
+      - Neither of above conditions: BitDepthImage_RBV=16
     - $(P)$(R)BitDepthImage_RBV
     - longin
   * - detector/config/countrate_correction_count_cutoff
