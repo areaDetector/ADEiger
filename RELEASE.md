@@ -9,7 +9,7 @@ https://github.com/areaDetector/ADEiger/releases.
 
 Release Notes
 =============
-R2-8 (January XXX, 2021)
+R3-0 (January XXX, 2021)
 ----
 * Added support for Eiger2 detectors.
   These use a different version of the Simplon API (1.8.0) from most Eiger1 detectors which use 1.6.0.
