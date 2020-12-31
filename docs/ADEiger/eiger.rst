@@ -271,8 +271,9 @@ ADBase.template and NDFile.template
       The resulting frame rate will be 1/AcquirePeriod.
   * - $(P)$(R)DataType_RBV
     - N.A
-    - The data type of the image data. This depends both on the AcquirePeriod (frame rate) and
-      the AcquireTime (exposure time). 
+    - The data type of the image data. This depends on the Eiger model, the AcquirePeriod (frame rate) and
+      the AcquireTime (exposure time). At long exposure times it is UInt32, at intermediate frame rates it
+      is UInt16, and at very high frame rates it is UInt8.  For example, on an Eiger2 500K:
       
       - AcquireTime > 0.0066 ms: DataType_RBV=UInt32
       - AcquirePeriod <  .00045 (2200 frames/s): DataType_RBV=UInt8
@@ -556,8 +557,9 @@ Acquisition Status
     - Armed
     - bi
   * - detector/config/bit_depth_image
-    - The bit depth of the image data. This depends both on the AcquirePeriod (frame rate) and
-      the AcquireTime (exposure time). 
+    - The bit depth of the image data. This depends on the Eiger model, the AcquirePeriod (frame rate) and
+      the AcquireTime (exposure time). At long exposure times it is 32, at intermediate frame rates it
+      is 16, and at very high frame rates it is 8.  For example, on an Eiger2 500K:
       
       - AcquireTime > 0.0066 ms: BitDepthImage_RBV=32
       - AcquirePeriod <  .00045 (2200 frames/s): BitDepthImage_RBV=8
