@@ -201,9 +201,9 @@ record(mbbo,"$(P)$(R)ExtGateMode") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
     field(DESC, "External gate mode")
-    field(ZRST, "Pump & Probe")
+    field(ZRST, "HDR")
     field(ZRVL, "0")
-    field(ONST, "HDR")
+    field(ONST, "Pump & Probe")
     field(ONVL, "1")
 }
 
@@ -212,9 +212,9 @@ record(mbbi,"$(P)$(R)ExtGateMode_RBV") {
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
     field(DESC, "ROI Mode")
     field(DESC, "External gate mode")
-    field(ZRST, "Pump & Probe")
+    field(ZRST, "HDR")
     field(ZRVL, "0")
-    field(ONST, "HDR")
+    field(ONST, "Pump & Probe")
     field(ONVL, "1")
     field(SCAN, "I/O Intr")
 }
