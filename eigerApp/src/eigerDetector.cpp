@@ -347,7 +347,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mNDArraySizeX      = mParams.create(NDArraySizeXString,        asynParamInt32,   SSDetConfig, "x_pixels_in_detector");
     mNDArraySizeY      = mParams.create(NDArraySizeYString,        asynParamInt32,   SSDetConfig, "y_pixels_in_detector");
 
-    if (mEigerModel == Eiger1)
+    if (mAPIVersion == API_1_6_0)
     {
         // Work around missing 'allowed_values'
         vector<string> linkEnum;
@@ -1780,7 +1780,7 @@ asynStatus eigerDetector::eigerStatus (void)
     status |= mThHumid0->fetch();
 
     // Read a few more interesting parameters
-    if (mEigerModel == Eiger1)
+    if (mAPIVersion == API_1_6_0)
     {
         // Read the status of each individual link between the head and the server
         status |= mLink0->fetch();
