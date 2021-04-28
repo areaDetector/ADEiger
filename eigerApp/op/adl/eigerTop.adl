@@ -1,7 +1,7 @@
 
 file {
-	name="/beamline/epics/support/areaDetector-R2-4/ADEiger-R2-1/eigerApp/op/adl/eigerTop.adl"
-	version=030107
+	name="/home/epics/devel/areaDetector-3-10/ADEiger/eigerApp/op/adl/eigerTop.adl"
+	version=030109
 }
 display {
 	object {
@@ -127,7 +127,7 @@ text {
 	display[1] {
 		label="Eiger Detector Control"
 		name="eigerDetector.adl"
-		args="P=3EIG1:, R=cam1:"
+		args="P=13EIG1:, R=cam1:"
 	}
 	display[2] {
 		label="----------------------------------------------"
@@ -141,7 +141,7 @@ text {
 	display[5] {
 		label="ADCore ADBase screen"
 		name="ADBase.adl"
-		args="P=3EIG1:, R=cam1:"
+		args="P=13EIG1:, R=cam1:"
 	}
 	display[6] {
 		label="----------------------------------------------"
