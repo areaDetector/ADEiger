@@ -47,7 +47,7 @@
       <action type="open_display">
         <file>eigerDetector.opi</file>
         <macros>
-          <P>3EIG1:</P>
+          <P>13EIG1:</P>
           <R>cam1:</R>
         </macros>
         <target>tab</target>
@@ -65,7 +65,7 @@
       <action type="open_display">
         <file>ADBase.opi</file>
         <macros>
-          <P>3EIG1:</P>
+          <P>13EIG1:</P>
           <R>cam1:</R>
         </macros>
         <target>tab</target>
