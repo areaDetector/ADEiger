@@ -330,13 +330,13 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     // Map Trigger Mode ordering
     vector<string> triggerModeEnum;
     triggerModeEnum.reserve(5);
-    triggerModeEnum.push_back("ints");
-    triggerModeEnum.push_back("inte");
-    triggerModeEnum.push_back("exts");
-    triggerModeEnum.push_back("exte");
+    triggerModeEnum[TRIGGER_MODE_INTS] = "ints";
+    triggerModeEnum[TRIGGER_MODE_INTE] = "inte";
+    triggerModeEnum[TRIGGER_MODE_EXTS] = "exts";
+    triggerModeEnum[TRIGGER_MODE_EXTE] = "exte";
 #ifdef HAVE_EXTG_FIRMWARE
     if (mEigerModel == Eiger2) {
-        triggerModeEnum.push_back("extg");
+        triggerModeEnum[TRIGGER_MODE_EXTG] = "extg";
     }
 #endif
     mTriggerMode->setEnumValues(triggerModeEnum);
@@ -493,6 +493,12 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         double resetTime;
         mHVResetTime->get(resetTime);
         mApi.hvReset((int)resetTime);
+    }
+    else if(function == mTriggerMode->getIndex()) {
+        if(value == TRIGGER_MODE_INTE || value == TRIGGER_MODE_EXTE) {
+            mNumImages->put(1);
+        }
+        status = (asynStatus) mTriggerMode->put(value);
     }
     else if((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);

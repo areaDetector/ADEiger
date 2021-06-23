@@ -129,6 +129,15 @@ public:
         COMP_ALGO_LZ4,
         COMP_ALGO_BSLZ4
     };
+    
+    enum trigger_mode
+    {
+        TRIGGER_MODE_INTS,
+        TRIGGER_MODE_INTE,
+        TRIGGER_MODE_EXTS,
+        TRIGGER_MODE_EXTE,
+        TRIGGER_MODE_EXTG
+    };
 
 protected:
     // Driver-only parameters
