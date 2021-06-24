@@ -329,7 +329,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
     // Map Trigger Mode ordering
     vector<string> triggerModeEnum;
-    triggerModeEnum.reserve(5);
+    triggerModeEnum.resize(5);
     triggerModeEnum[TRIGGER_MODE_INTS] = "ints";
     triggerModeEnum[TRIGGER_MODE_INTE] = "inte";
     triggerModeEnum[TRIGGER_MODE_EXTS] = "exts";
