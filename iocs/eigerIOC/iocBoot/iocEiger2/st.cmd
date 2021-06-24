@@ -14,7 +14,7 @@ epicsEnvSet("YSIZE",  "1065")
 epicsEnvSet("NCHANS", "2048")
 epicsEnvSet("CBUFFS", "500")
 # This is an Eiger2 500K
-epicsEnvSet("EIGERIP", "164.54.160.41")
+epicsEnvSet("EIGERIP", "10.54.160.13")
 epicsEnvSet("EPICS_DB_INCLUDE_PATH", "$(ADCORE)/db:$(ADEIGER)/db")
 epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "5000000")
 
