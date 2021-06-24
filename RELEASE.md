@@ -9,7 +9,7 @@ https://github.com/areaDetector/ADEiger/releases.
 
 Release Notes
 =============
-R3-0 (January XXX, 2021)
+R3-0 (July XXX, 2021)
 ----
 * Added support for Eiger2 detectors.
   These use a different version of the Simplon API (1.8.0) from most Eiger1 detectors which use 1.6.0.
@@ -75,6 +75,9 @@ R3-0 (January XXX, 2021)
   - FileOwner, FileOwnerGrp, FilePerms
   - DeadTime_RBV
   - StreamHdrDetail
+* Fixed a problem that occurs with 2020.2.2 firmware on the Eiger2.  
+  Changing the TriggerMode to Internal Enable ("inte") or External Enable ("exte") fails if NumImages is not 1.
+  The driver was changed to set NumImages=1 just before changing TriggerMode to either of these values.
 * Improved the layout of eigerDetector.adl, with new widgets and new sub-screens,
   some of which are common to the Eiger2 and some specific to the Eiger1.
 
