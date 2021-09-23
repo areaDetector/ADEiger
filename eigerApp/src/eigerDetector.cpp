@@ -266,6 +266,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mHVResetTime    = mParams.create(EigHVResetTimeStr,    asynParamFloat64);
     mHVReset        = mParams.create(EigHVResetStr,        asynParamInt32);
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
+    mWavelengthEpsilon = mParams.create(EigWavelengthEpsilonStr, asynParamFloat64);
+    mEnergyEpsilon  = mParams.create(EigEnergyEpsilonStr,  asynParamFloat64);
 
     // Metadata
     mDescription = mParams.create(EigDescriptionStr, asynParamOctet, SSDetConfig, "description");
@@ -567,6 +569,20 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         callParamCallbacks();
         mWavelength->put(value);
         setStringParam(ADStatusMessage, "Wavelength set");
+    }
+    else if (function == mWavelengthEpsilon->getIndex())
+    {
+        mWavelengthEpsilon->put(value);
+        mWavelength->setEpsilon(value);
+    }
+    else if (function == mEnergyEpsilon->getIndex())
+    {
+        mEnergyEpsilon->put(value);
+        mPhotonEnergy->setEpsilon(value);
+        mThreshold->setEpsilon(value);
+        if (mEigerModel == Eiger2)
+            mThreshold2->setEpsilon(value);
+
     }
     else if((p = mParams.getByIndex(function)))
         status = (asynStatus) p->put(value);

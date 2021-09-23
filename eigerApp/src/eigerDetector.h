@@ -91,6 +91,10 @@ typedef enum {
 #define EigStreamStateStr          "STREAM_STATE"
 #define EigStreamDecompressStr     "STREAM_DECOMPRESS"
 
+// Epsilon Parameters (minimum amount of change allowed)
+#define EigWavelengthEpsilonStr    "WAVELENGTH_EPSILON"
+#define EigEnergyEpsilonStr        "ENERGY_EPSILON"
+
 //  Driver for the Dectris' Eiger pixel array detector using their REST server
 class eigerDetector : public ADDriver
 {
@@ -159,6 +163,8 @@ protected:
     EigerParam *mInitialize;
     EigerParam *mHVResetTime;
     EigerParam *mHVReset;
+    EigerParam *mWavelengthEpsilon;
+    EigerParam *mEnergyEpsilon;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;

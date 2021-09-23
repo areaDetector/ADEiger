@@ -1732,6 +1732,52 @@
           mbbo<br />
           mbbi</td>
       </tr>
+      <tr>
+        <td align="center" colspan="8">
+          <b>Minimum change allowed</b> </td>
+      </tr>
+      <tr>
+        <td>
+          EigerWavelengthEpsilon</td>
+        <td>
+        </td>
+        <td>
+          asynFloat64</td>
+        <td>
+          R/W</td>
+        <td>
+          Minimum amount of change allowed in Wavelength, in Angstroms.
+        </td>
+        <td>
+          WAVELENGTH_EPSILON</td>
+        <td>
+          WavelengthEps<br />
+          WavelengthEps_RBV</td>
+        <td>
+          ao<br />
+          ai</td>
+      </tr>
+      <tr>
+        <td>
+          EigerEnergyEpsilon</td>
+        <td>
+        </td>
+        <td>
+          asynFloat64</td>
+        <td>
+          R/W</td>
+        <td>
+          Minimum amount of change allowed in PhotonEnergy, Theshold and Threshold2, in eV.
+        </td>
+        <td>
+          ENERGY_EPSILON</td>
+        <td>
+          EnergyEps<br />
+          EnergyEps_RBV</td>
+        <td>
+          ao<br />
+          ai</td>
+      </tr>
     </tbody>
   </table>
   <h2 id="Unsupported" style="text-align: left">
@@ -1779,6 +1825,14 @@
     size. On the 16M it takes around ten seconds. Other parameters also take this long
     because they also affect the Photon Energy, namely Threshold Energy and Wavelength.
     The StatusMessage PV indicates when setting any of these parameters start and finish.
+  </p>
+  <p>
+    In order to prevent minute or accidental changes to Energy and Wavelength from taking
+    too long to be applied, their values are only updated if the difference between the
+    desired and current value is greater than some configurable parameters. Specifically,
+    changes in Wavelength only take effect if they result in a difference greater than
+    WavelengthEps (default: 0.0005 Angstroms). Similarly, changes to PhotonEnergy, Threshold
+    and Threshold2 only take effect if they are greater than EnergyEps (default: 0.05 eV).
   </p>
   <h3 id="Status_Parameters_Polling">
     Status Parameters Polling</h3>
