@@ -69,3 +69,9 @@ $(P)$(R)OmegaStart
 $(P)$(R)OmegaIncr
 $(P)$(R)TwoThetaStart
 $(P)$(R)TwoThetaIncr
+
+##################################################
+# Minimum adjustment size to wavelength / energy #
+##################################################
+$(P)$(R)WavelengthEps
+$(P)$(R)EnergyEps
