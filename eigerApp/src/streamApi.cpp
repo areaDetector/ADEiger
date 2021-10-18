@@ -171,7 +171,7 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
 
         if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
         {
-            ERR("failed to parse JSON");
+            ERR_ARGS("failed to parse JSON, data=%s", data);
             err = STREAM_ERROR;
             goto exit;
         }
@@ -182,6 +182,7 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
         string expectedHType("dheader");
         if(htype.compare(0, expectedHType.length(), expectedHType))
         {
+            ERR_ARGS("wrong header type, htype=%s", htype.c_str());
             err = STREAM_WRONG_HTYPE;
             goto exit;
         }
