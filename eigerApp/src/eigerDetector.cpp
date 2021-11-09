@@ -1278,11 +1278,11 @@ void eigerDetector::streamTask (void)
     lock();
     for(;;)
     {
+        StreamAPI api(mHostname);
+
         unlock();
         mStreamEvent.wait();
         lock();
-
-        StreamAPI api(mHostname);
 
         int err;
         stream_header_t header = {};
