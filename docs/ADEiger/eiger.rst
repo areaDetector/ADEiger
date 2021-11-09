@@ -22,9 +22,9 @@ Introduction
 This is an `EPICS`_ `areaDetector`_ driver for the Eiger and Eiger2 detectors
 from `Dectris`_. It has been tested on the Eiger 500K, 1M, 4M and 16M
 with the firmware version 1.6.4+, and Eiger2 with firmware 2020.2.
-The driver communicates with the detector via its SIMPLON REST interface, 
+The driver communicates with the detector via its SIMPLON REST interface,
 so no library from Dectris is required. The images can pulled from the detector
-as HDF5 files, as a ZeroMQ stream or both. 
+as HDF5 files, as a ZeroMQ stream or both.
 The files can be both saved to disk and passed to the areaDetector pipeline at the same time.
 
 All trigger modes are supported, although Internal Enable mode seems
@@ -107,7 +107,7 @@ There are five trigger modes available:
 * **Internal Enable**: one internal trigger pulse generates one image
 * **External Series**: one external trigger pulse generates N images
 * **External Enable**: one external trigger pulse generates one image
-* **External Gate**: This mode is used only with new firmware on the Eiger2 
+* **External Gate**: This mode is used only with new firmware on the Eiger2
     which has 2 counters per pixel.  The behavior depend on the setting
     the ExtGateMode PV.
 
@@ -234,7 +234,7 @@ Implementation of standard driver parameters
 --------------------------------------------
 
 The following table describes how the Eiger driver implements some of
-the standard driver parameters defined in asynNDArrayDriver.h and ADDriver.h, 
+the standard driver parameters defined in asynNDArrayDriver.h and ADDriver.h,
 ADBase.template and NDFile.template
 
 .. cssclass:: table-bordered table-striped table-hover
@@ -274,7 +274,7 @@ ADBase.template and NDFile.template
     - The data type of the image data. This depends on the Eiger model, the AcquirePeriod (frame rate) and
       the AcquireTime (exposure time). At long exposure times it is UInt32, at intermediate frame rates it
       is UInt16, and at very high frame rates it is UInt8.  For example, on an Eiger2 500K:
-      
+
       - AcquireTime > 0.0066 ms: DataType_RBV=UInt32
       - AcquirePeriod <  .00045 (2200 frames/s): DataType_RBV=UInt8
       - Neither of above conditions: DataType_RBV=UInt16
@@ -528,7 +528,7 @@ Readout Setup
         * lz4
         * bslz4 (bitshuffle lz4)
         * None (API 1.8.0 only)
- 
+
       The selected algorithm will always be used on the Stream ZMQ interface. It will
       also be used for HDF5 files written by the FileWriter interface if FWCompression=Enabled.
     - CompressionAlgo, CompressionAlgo_RBV
@@ -560,7 +560,7 @@ Acquisition Status
     - The bit depth of the image data. This depends on the Eiger model, the AcquirePeriod (frame rate) and
       the AcquireTime (exposure time). At long exposure times it is 32, at intermediate frame rates it
       is 16, and at very high frame rates it is 8.  For example, on an Eiger2 500K:
-      
+
       - AcquireTime > 0.0066 ms: BitDepthImage_RBV=32
       - AcquirePeriod <  .00045 (2200 frames/s): BitDepthImage_RBV=8
       - Neither of above conditions: BitDepthImage_RBV=16
@@ -631,8 +631,8 @@ FileWriter Interface
     - FileOwnerGrp, FileOwnerGrp_RBV
     - stringout, stringin
   * - N.A.
-    - Controls the permissions for the files saved to disk. 
-      Normal Linux octal bitmask format, for Owner/Group/World, e.g. 0666 is r+w owner, group, and world. 
+    - Controls the permissions for the files saved to disk.
+      Normal Linux octal bitmask format, for Owner/Group/World, e.g. 0666 is r+w owner, group, and world.
     - FilePerms
     - ao
   * - filewriter/status/buffer_free
@@ -797,6 +797,26 @@ Detector Metadata
     - TwoThetaIncr, TwoThetaIncr_RBV
     - ao, ai
 
+Minimum change allowed
+~~~~~~~~~~~~~~~~~~~~~~
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 10 70 10 10
+
+  * - Eiger Parameter
+    - Description
+    - EPICS record name
+    - EPICS record type
+  * - N.A.
+    - Minimum amount of change allowed to Wavelength, in Angstroms
+    - WavelengthEps, WavelengthEps_RBV
+    - ao, ai
+  * - N.A.
+    - Minimum amount of change allowed to PhotonEnergy, Threshold and Threshold2, in eV
+    - EnergyEps, EnergyEps_RBV
+    - ao, ai
+
 Unsupported standard driver parameters
 --------------------------------------
 
@@ -890,6 +910,13 @@ on the detector size. On the 16M it takes around ten seconds. Other
 parameters also take this long because they also affect the Photon
 Energy, namely Threshold Energy and Wavelength. The StatusMessage PV
 indicates when setting any of these parameters start and finish.
+
+In order to prevent minute or accidental changes to Energy and Wavelength from taking
+too long to be applied, their values are only updated if the difference between the
+desired and current value is greater than some configurable parameters. Specifically,
+changes in Wavelength only take effect if they result in a difference greater than
+WavelengthEps (default: 0.0005 Angstroms). Similarly, changes to PhotonEnergy, Threshold
+and Threshold2 only take effect if they are greater than EnergyEps (default: 0.05 eV).
 
 Status Parameters Polling
 ~~~~~~~~~~~~~~~~~~~~~~~~~

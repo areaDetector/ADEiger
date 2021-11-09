@@ -1111,6 +1111,53 @@ record(ai, "$(P)$(R)TwoThetaIncr_RBV")
     field(SCAN, "I/O Intr")
 }
 
+##############################
+# Minimum change in settings #
+##############################
+
+record(ao, "$(P)$(R)WavelengthEps")
+{
+    field(DESC, "Min change allowed to wavelength")
+    field(DTYP, "asynFloat64")
+    field(PREC, "6")
+    field(EGU,  "Angstroms")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH_EPSILON")
+    field(VAL,  "$(WAVELENGTH_EPSILON=0.0005)")
+    field(PINI, "YES")
+    field(FLNK, "$(P)$(R)WavelengthEps_RBV")
+}
+
+record(ai, "$(P)$(R)WavelengthEps_RBV")
+{
+    field(DESC, "Min change allowed to wavelength")
+    field(DTYP, "asynFloat64")
+    field(PREC, "6")
+    field(EGU,  "Angstroms")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))WAVELENGTH_EPSILON")
+    field(PINI, "YES")
+}
+
+record(ao, "$(P)$(R)EnergyEps")
+{
+    field(DESC, "Min change allowed to energy and thres")
+    field(DTYP, "asynFloat64")
+    field(PREC, "3")
+    field(EGU,  "eV")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ENERGY_EPSILON")
+    field(VAL,  "$(ENERGY_EPSILON=0.05)")
+    field(PINI, "YES")
+    field(FLNK, "$(P)$(R)EnergyEps_RBV")
+}
+
+record(ai, "$(P)$(R)EnergyEps_RBV")
+{
+    field(DESC, "Min change allowed to energy and thres")
+    field(DTYP, "asynFloat64")
+    field(PREC, "3")
+    field(EGU,  "eV")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ENERGY_EPSILON")
+    field(PINI, "YES")
+}
 
 # Set DISA for PVs in ADBase that do not apply to Eiger
 
