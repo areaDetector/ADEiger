@@ -9,6 +9,14 @@ https://github.com/areaDetector/ADEiger/releases.
 
 Release Notes
 =============
+R3-1 (November XXX, 2021)
+----
+* Fixed a race condition with the Stream interface.
+  - The detector sends the first message over the ZMQ socket as soon as the "arm" command is sent when starting acquisition.
+  - However, the driver was not creating the ZMQ socket to receive those messages until after the "arm" command was sent.
+    This was a race condition.  It was failing on an Eiger2 at APS sector 34.
+  - This release creates the ZMQ socket before acquisition begins.
+
 R3-0 (June 25, 2021)
 ----
 * Added support for Eiger2 detectors.
