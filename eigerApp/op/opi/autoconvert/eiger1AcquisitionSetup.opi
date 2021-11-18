@@ -1017,7 +1017,7 @@ $(pv_value)</tooltip>
     <name>Text Update</name>
     <precision>0</precision>
     <precision_from_pv>true</precision_from_pv>
-    <pv_name>$(P)$(R)PhotonEnergyEps_RBV</pv_name>
+    <pv_name>$(P)$(R)EnergyEps_RBV</pv_name>
     <pv_value />
     <rotation_angle>0.0</rotation_angle>
     <rules />
@@ -1075,7 +1075,7 @@ $(pv_value)</tooltip>
     <password_input>false</password_input>
     <precision>0</precision>
     <precision_from_pv>true</precision_from_pv>
-    <pv_name>$(P)$(R)PhotonEnergyEps</pv_name>
+    <pv_name>$(P)$(R)EnergyEps</pv_name>
     <pv_value />
     <read_only>false</read_only>
     <rotation_angle>0.0</rotation_angle>

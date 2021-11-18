@@ -966,7 +966,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)PhotonEnergyEps_RBV</string>
+                <string>$(P)$(R)EnergyEps_RBV</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -1020,7 +1020,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)PhotonEnergyEps</string>
+                <string>$(P)$(R)EnergyEps</string>
             </property>
             <property name="foreground">
                 <color alpha="255">

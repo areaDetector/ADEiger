@@ -455,7 +455,7 @@ x 265
 y 81
 w 80
 h 18
-controlPv "$(P)$(R)PhotonEnergyEps_RBV"
+controlPv "$(P)$(R)EnergyEps_RBV"
 format "decimal"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
@@ -479,7 +479,7 @@ x 190
 y 80
 w 70
 h 20
-controlPv "$(P)$(R)PhotonEnergyEps"
+controlPv "$(P)$(R)EnergyEps"
 format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"

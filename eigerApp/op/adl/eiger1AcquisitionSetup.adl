@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger1AcquisitionSetup.adl"
+	name="/home/epics/devel/areaDetector-3-11/ADEiger/eigerApp/op/adl/eiger1AcquisitionSetup.adl"
 	version=030109
 }
 display {
@@ -363,7 +363,7 @@ text {
 		height=18
 	}
 	monitor {
-		chan="$(P)$(R)PhotonEnergyEps_RBV"
+		chan="$(P)$(R)EnergyEps_RBV"
 		clr=54
 		bclr=4
 	}
@@ -378,7 +378,7 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)PhotonEnergyEps"
+		chan="$(P)$(R)EnergyEps"
 		clr=14
 		bclr=51
 	}

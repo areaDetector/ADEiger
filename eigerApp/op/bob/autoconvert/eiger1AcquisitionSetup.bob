@@ -336,7 +336,7 @@
   </widget>
   <widget type="textupdate" version="2.0.0">
     <name>text update #73</name>
-    <pv_name>$(P)$(R)PhotonEnergyEps_RBV</pv_name>
+    <pv_name>$(P)$(R)EnergyEps_RBV</pv_name>
     <x>265</x>
     <y>81</y>
     <width>80</width>
@@ -359,7 +359,7 @@
   </widget>
   <widget type="textentry" version="3.0.0">
     <name>text entry #77</name>
-    <pv_name>$(P)$(R)PhotonEnergyEps</pv_name>
+    <pv_name>$(P)$(R)EnergyEps</pv_name>
     <x>190</x>
     <y>80</y>
     <width>70</width>
