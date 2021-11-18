@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=793
-		y=72
+		x=609
+		y=109
 		width=350
-		height=305
+		height=330
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=305
+		height=330
 	}
 	"basic attribute" {
 		clr=14
@@ -168,32 +168,6 @@ text {
 }
 text {
 	object {
-		x=15
-		y=180
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Exposure time (s)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=5
-		y=205
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Acquire period (s)"
-	align="horiz. right"
-}
-text {
-	object {
 		x=5
 		y=155
 		width=180
@@ -208,38 +182,6 @@ text {
 "text update" {
 	object {
 		x=265
-		y=181
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)AcquireTime_RBV"
-		clr=54
-		bclr=4
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=265
-		y=206
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)AcquirePeriod_RBV"
-		clr=54
-		bclr=4
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=265
 		y=156
 		width=80
 		height=18
@@ -249,38 +191,6 @@ text {
 		clr=54
 		bclr=4
 	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=190
-		y=180
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AcquireTime"
-		clr=14
-		bclr=51
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=190
-		y=205
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AcquirePeriod"
-		clr=14
-		bclr=51
-	}
-	format="exponential"
 	limits {
 	}
 }
@@ -387,145 +297,6 @@ menu {
 }
 text {
 	object {
-		x=45
-		y=280
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Counting mode"
-	align="horiz. right"
-}
-menu {
-	object {
-		x=180
-		y=280
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CountingMode"
-		clr=14
-		bclr=51
-	}
-}
-"text update" {
-	object {
-		x=265
-		y=281
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)CountingMode_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-composite {
-	object {
-		x=105
-		y=230
-		width=240
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=105
-				y=230
-				width=80
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="# Images"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=190
-				y=230
-				width=70
-				height=20
-			}
-			control {
-				chan="$(P)$(R)NumImages"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=231
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)NumImages_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-	}
-}
-text {
-	object {
-		x=15
-		y=255
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Exposures/image"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=190
-		y=255
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)NumExposures"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=265
-		y=256
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)NumExposures_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-text {
-	object {
 		x=5
 		y=105
 		width=180
@@ -608,5 +379,277 @@ menu {
 		chan="$(P)$(R)Threshold1Enable"
 		clr=14
 		bclr=51
+	}
+}
+text {
+	object {
+		x=15
+		y=205
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exposure time (s)"
+	align="horiz. right"
+}
+text {
+	object {
+		x=5
+		y=230
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Acquire period (s)"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=265
+		y=206
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquireTime_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=231
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquirePeriod_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=205
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquireTime"
+		clr=14
+		bclr=51
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=230
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquirePeriod"
+		clr=14
+		bclr=51
+	}
+	format="exponential"
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=305
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Counting mode"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=180
+		y=305
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CountingMode"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=306
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CountingMode_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+composite {
+	object {
+		x=105
+		y=255
+		width=240
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=105
+				y=255
+				width=80
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="# Images"
+			align="horiz. right"
+		}
+		"text entry" {
+			object {
+				x=190
+				y=255
+				width=70
+				height=20
+			}
+			control {
+				chan="$(P)$(R)NumImages"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=265
+				y=256
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)NumImages_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+	}
+}
+text {
+	object {
+		x=15
+		y=280
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Exposures/image"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=190
+		y=280
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumExposures"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=281
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumExposures_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=180
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Energy Epsil. (eV)"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=190
+		y=180
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PhotonEnergyEps"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=181
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PhotonEnergyEps_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
 	}
 }

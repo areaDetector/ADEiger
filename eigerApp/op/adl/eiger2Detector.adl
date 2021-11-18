@@ -8,7 +8,7 @@ display {
 		x=352
 		y=88
 		width=1425
-		height=945
+		height=970
 	}
 	clr=14
 	bclr=4
@@ -144,7 +144,7 @@ composite {
 composite {
 	object {
 		x=1070
-		y=415
+		y=440
 		width=350
 		height=155
 	}
@@ -186,7 +186,7 @@ composite {
 		x=1070
 		y=40
 		width=350
-		height=370
+		height=395
 	}
 	"composite name"=""
 	"composite file"="eigerDetectorMetadata.adl"
@@ -214,7 +214,7 @@ composite {
 composite {
 	object {
 		x=1070
-		y=810
+		y=835
 		width=350
 		height=110
 	}
@@ -226,7 +226,7 @@ composite {
 		x=360
 		y=40
 		width=350
-		height=305
+		height=330
 	}
 	"composite name"=""
 	"composite file"="eiger2AcquisitionSetup.adl"
@@ -234,7 +234,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=560
+		y=585
 		width=350
 		height=380
 	}
@@ -244,7 +244,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=350
+		y=375
 		width=350
 		height=205
 	}
@@ -254,7 +254,7 @@ composite {
 composite {
 	object {
 		x=1070
-		y=575
+		y=600
 		width=350
 		height=230
 	}

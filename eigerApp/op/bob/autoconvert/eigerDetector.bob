@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>eigerDetector</name>
-  <x>-101</x>
+  <x>10</x>
   <y>64</y>
   <width>1425</width>
-  <height>910</height>
+  <height>935</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -69,7 +69,7 @@
     <name>composite #18</name>
     <file>eigerDetectorInfo.bob</file>
     <x>1070</x>
-    <y>415</y>
+    <y>440</y>
     <width>350</width>
     <height>155</height>
   </widget>
@@ -103,13 +103,13 @@
     <x>1070</x>
     <y>40</y>
     <width>350</width>
-    <height>370</height>
+    <height>395</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #28</name>
     <file>ADBuffers.bob</file>
     <x>360</x>
-    <y>745</y>
+    <y>770</y>
     <width>350</width>
     <height>160</height>
   </widget>
@@ -135,13 +135,13 @@
     <x>360</x>
     <y>40</y>
     <width>350</width>
-    <height>155</height>
+    <height>180</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #36</name>
     <file>eiger1Trigger.bob</file>
     <x>360</x>
-    <y>200</y>
+    <y>225</y>
     <width>350</width>
     <height>155</height>
   </widget>
@@ -149,7 +149,7 @@
     <name>composite #38</name>
     <file>eigerAcquisitionStatus.bob</file>
     <x>360</x>
-    <y>360</y>
+    <y>385</y>
     <width>350</width>
     <height>380</height>
   </widget>
@@ -157,7 +157,7 @@
     <name>composite #40</name>
     <file>eigerReadout.bob</file>
     <x>1070</x>
-    <y>575</y>
+    <y>600</y>
     <width>350</width>
     <height>230</height>
   </widget>

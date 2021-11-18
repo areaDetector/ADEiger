@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eigerDetectorMetadata.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerDetectorMetadata.adl"
 	version=030109
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=1144
 		y=67
 		width=350
-		height=370
+		height=395
 	}
 	clr=14
 	bclr=4
@@ -116,7 +116,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=370
+		height=395
 	}
 	"basic attribute" {
 		clr=14
@@ -148,62 +148,6 @@ text {
 	}
 	textix="Beam Center Y"
 	align="horiz. right"
-}
-text {
-	object {
-		x=35
-		y=80
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Wavelength"
-	align="horiz. right"
-}
-text {
-	object {
-		x=5
-		y=105
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Det. distance"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=140
-		y=80
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)Wavelength"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=140
-		y=105
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DetDist"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
 }
 "text entry" {
 	object {
@@ -250,30 +194,6 @@ text {
 text {
 	object {
 		x=300
-		y=80
-		width=40
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Ang."
-}
-text {
-	object {
-		x=300
-		y=105
-		width=20
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="mm"
-}
-text {
-	object {
-		x=300
 		y=55
 		width=40
 		height=20
@@ -313,6 +233,551 @@ text {
 	limits {
 	}
 }
+text {
+	object {
+		x=5
+		y=130
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Det. distance"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=140
+		y=130
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DetDist"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=300
+		y=130
+		width=20
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="mm"
+}
+"text update" {
+	object {
+		x=226
+		y=131
+		width=69
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DetDist_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=346
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Two Theta"
+	align="horiz. right"
+}
+text {
+	object {
+		x=55
+		y=259
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Omega"
+	align="horiz. right"
+}
+text {
+	object {
+		x=55
+		y=217
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Kappa"
+	align="horiz. right"
+}
+text {
+	object {
+		x=75
+		y=301
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Phi"
+	align="horiz. right"
+}
+text {
+	object {
+		x=75
+		y=175
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Chi"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=117
+		y=346
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)TwoThetaStart"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=117
+		y=259
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)OmegaStart"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=117
+		y=217
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)KappaStart"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=117
+		y=301
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PhiStart"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=117
+		y=175
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ChiStart"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=300
+		y=348
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="deg"
+}
+text {
+	object {
+		x=300
+		y=261
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="deg"
+}
+text {
+	object {
+		x=300
+		y=219
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="deg"
+}
+text {
+	object {
+		x=300
+		y=303
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="deg"
+}
+text {
+	object {
+		x=300
+		y=177
+		width=30
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="deg"
+}
+"text update" {
+	object {
+		x=117
+		y=197
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ChiStart_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=117
+		y=239
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)KappaStart_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=117
+		y=281
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)OmegaStart_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=117
+		y=323
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PhiStart_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=117
+		y=368
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)TwoThetaStart_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=117
+		y=155
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Start"
+}
+text {
+	object {
+		x=210
+		y=155
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Increment"
+}
+"text entry" {
+	object {
+		x=212
+		y=175
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ChiIncr"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=212
+		y=197
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ChiIncr_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=212
+		y=217
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)KappaIncr"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=212
+		y=239
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)KappaIncr_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=212
+		y=259
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)OmegaIncr"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=212
+		y=281
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)OmegaIncr_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=212
+		y=301
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PhiIncr"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=212
+		y=323
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PhiIncr_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=212
+		y=346
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)TwoThetaIncr"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=212
+		y=368
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)TwoThetaIncr_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=55
+		y=155
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Angle"
+	align="horiz. right"
+}
+text {
+	object {
+		x=35
+		y=80
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Wavelength"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=140
+		y=80
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Wavelength"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
 "text update" {
 	object {
 		x=226
@@ -328,6 +793,46 @@ text {
 	limits {
 	}
 }
+text {
+	object {
+		x=300
+		y=80
+		width=40
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Ang."
+}
+text {
+	object {
+		x=15
+		y=105
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Wavelen. Eps."
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=140
+		y=105
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)WavelengthEps"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
 "text update" {
 	object {
 		x=226
@@ -336,483 +841,22 @@ text {
 		height=18
 	}
 	monitor {
-		chan="$(P)$(R)DetDist_RBV"
+		chan="$(P)$(R)WavelengthEps_RBV"
 		clr=54
 		bclr=4
 	}
 	limits {
 	}
 }
-composite {
+text {
 	object {
-		x=15
-		y=130
-		width=315
-		height=231
+		x=300
+		y=105
+		width=40
+		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=15
-				y=321
-				width=90
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Two Theta"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=55
-				y=234
-				width=50
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Omega"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=55
-				y=192
-				width=50
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Kappa"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=75
-				y=276
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Phi"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=75
-				y=150
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Chi"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=117
-				y=321
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)TwoThetaStart"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=117
-				y=234
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)OmegaStart"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=117
-				y=192
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)KappaStart"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=117
-				y=276
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)PhiStart"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=117
-				y=150
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ChiStart"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=300
-				y=323
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="deg"
-		}
-		text {
-			object {
-				x=300
-				y=236
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="deg"
-		}
-		text {
-			object {
-				x=300
-				y=194
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="deg"
-		}
-		text {
-			object {
-				x=300
-				y=278
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="deg"
-		}
-		text {
-			object {
-				x=300
-				y=152
-				width=30
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="deg"
-		}
-		"text update" {
-			object {
-				x=117
-				y=172
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ChiStart_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=117
-				y=214
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)KappaStart_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=117
-				y=256
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)OmegaStart_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=117
-				y=298
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)PhiStart_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=117
-				y=343
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)TwoThetaStart_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=117
-				y=130
-				width=50
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Start"
-		}
-		text {
-			object {
-				x=210
-				y=130
-				width=90
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Increment"
-		}
-		"text entry" {
-			object {
-				x=212
-				y=150
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ChiIncr"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=212
-				y=172
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ChiIncr_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=212
-				y=192
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)KappaIncr"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=212
-				y=214
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)KappaIncr_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=212
-				y=234
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)OmegaIncr"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=212
-				y=256
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)OmegaIncr_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=212
-				y=276
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)PhiIncr"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=212
-				y=298
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)PhiIncr_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=212
-				y=321
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)TwoThetaIncr"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=212
-				y=343
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)TwoThetaIncr_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=55
-				y=130
-				width=50
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Angle"
-			align="horiz. right"
-		}
+	"basic attribute" {
+		clr=14
 	}
+	textix="Ang."
 }

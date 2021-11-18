@@ -8,7 +8,7 @@ display {
 		x=793
 		y=72
 		width=350
-		height=155
+		height=180
 	}
 	clr=14
 	bclr=4
@@ -92,51 +92,12 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=155
+		height=180
 	}
 	"basic attribute" {
 		clr=14
 		fill="outline"
 	}
-}
-text {
-	object {
-		x=15
-		y=80
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Exposure time (s)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=5
-		y=105
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Acquire period (s)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=105
-		y=130
-		width=80
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Images"
-	align="horiz. right"
 }
 text {
 	object {
@@ -150,66 +111,6 @@ text {
 	}
 	textix="Threshold (eV)"
 	align="horiz. right"
-}
-text {
-	object {
-		x=5
-		y=55
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Photon energy (eV)"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=265
-		y=81
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)AcquireTime_RBV"
-		clr=54
-		bclr=4
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=265
-		y=106
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)AcquirePeriod_RBV"
-		clr=54
-		bclr=4
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=265
-		y=131
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)NumImages_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
 }
 "text update" {
 	object {
@@ -226,68 +127,6 @@ text {
 	limits {
 	}
 }
-"text update" {
-	object {
-		x=265
-		y=56
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)PhotonEnergy_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=190
-		y=80
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AcquireTime"
-		clr=14
-		bclr=51
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=190
-		y=105
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AcquirePeriod"
-		clr=14
-		bclr=51
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=190
-		y=130
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)NumImages"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
 "text entry" {
 	object {
 		x=190
@@ -297,21 +136,6 @@ text {
 	}
 	control {
 		chan="$(P)$(R)ThresholdEnergy"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=190
-		y=55
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhotonEnergy"
 		clr=14
 		bclr=51
 	}
@@ -341,4 +165,223 @@ text {
 	}
 	textix="Acquisition Setup"
 	align="horiz. centered"
+}
+text {
+	object {
+		x=15
+		y=105
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exposure time (s)"
+	align="horiz. right"
+}
+text {
+	object {
+		x=5
+		y=130
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Acquire period (s)"
+	align="horiz. right"
+}
+text {
+	object {
+		x=105
+		y=155
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Images"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=265
+		y=106
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquireTime_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=131
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquirePeriod_RBV"
+		clr=54
+		bclr=4
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=156
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumImages_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=105
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquireTime"
+		clr=14
+		bclr=51
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=130
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquirePeriod"
+		clr=14
+		bclr=51
+	}
+	format="exponential"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=155
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumImages"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=55
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Photon energy (eV)"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=265
+		y=56
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PhotonEnergy_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=55
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PhotonEnergy"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=80
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Energy Epsil. (eV)"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=265
+		y=81
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PhotonEnergyEps_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=190
+		y=80
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PhotonEnergyEps"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
 }
