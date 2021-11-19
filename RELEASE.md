@@ -9,13 +9,21 @@ https://github.com/areaDetector/ADEiger/releases.
 
 Release Notes
 =============
-R3-1 (November XXX, 2021)
+R3-1 (November 18, 2021)
 ----
 * Fixed a race condition with the Stream interface.
   - The detector sends the first message over the ZMQ socket as soon as the "arm" command is sent when starting acquisition.
   - However, the driver was not creating the ZMQ socket to receive those messages until after the "arm" command was sent.
     This was a race condition.  It was failing on an Eiger2 at APS sector 34.
   - This release creates the ZMQ socket before acquisition begins.
+* Added "epsilon" PVs EnergyEps and WavelengthEps. Thanks to Bruno Martins for this.
+  - These are used to prevent minute or accidental changes to Energy and Wavelength from taking
+    too long to be applied.  Their values are now only updated if the difference between the
+    desired and current value is greater than some configurable parameters. Specifically,
+    changes in Wavelength only take effect if they result in a difference greater than
+    WavelengthEps (default: 0.0005 Angstroms). Similarly, changes to PhotonEnergy, Threshold
+    and Threshold2 only take effect if they are greater than EnergyEps (default: 0.05 eV).
+* Improved the error diagnostic messages in the Stream API.
 
 R3-0 (June 25, 2021)
 ----
