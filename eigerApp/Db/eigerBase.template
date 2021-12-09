@@ -588,7 +588,7 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
 # FileWriter free buffer space
 record(ai, "$(P)$(R)FWFree_RBV")
 {
-    field(DTYP, "asynInt32")
+    field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FW_FREE")
     field(DESC, "Free disk space")
     field(EGU,  "GB")
