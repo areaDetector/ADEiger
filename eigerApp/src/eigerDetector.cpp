@@ -180,6 +180,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname, 80),
+    mStreamAPI(0),
     mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -502,10 +503,22 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         }
         status = (asynStatus) mTriggerMode->put(value);
     }
+    else if (function == mStreamEnable->getIndex()) {
+        if (value && !mStreamAPI) {
+            mStreamAPI = new StreamAPI(mHostname);
+        }
+        else if (!value && mStreamAPI) {
+            delete mStreamAPI;
+            mStreamAPI = 0;
+        }
+        mStreamEnable->put(value);
+    }
     else if((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
         // When switching DataSource to stream it seems to be necessary to disable and enable stream
-        if ((p == mDataSource) && (value == SOURCE_STREAM)) {
+        int streamEnabled;
+        mStreamEnable->get(streamEnabled);
+        if (streamEnabled && (p == mDataSource) && (value == SOURCE_STREAM)) {
             mStreamEnable->put(0);
             mStreamEnable->put(1);
         }
@@ -1294,18 +1307,20 @@ void eigerDetector::streamTask (void)
     lock();
     for(;;)
     {
-        StreamAPI api(mHostname);
-
         unlock();
         mStreamEvent.wait();
         lock();
 
+        if (!mStreamAPI) {
+            ERR("mStreamAPI is null, Stream API not enabled?");
+            continue;
+        }
         int err;
         stream_header_t header = {};
         for(;;)
         {
             unlock();
-            err = api.getHeader(&header, 1);
+            err = mStreamAPI->getHeader(&header, 1);
             lock();
             if (err == 0)
             {
@@ -1333,7 +1348,7 @@ void eigerDetector::streamTask (void)
             for(;;)
             {
                 unlock();
-                err = api.getFrame(&frame, 1);
+                err = mStreamAPI->getFrame(&frame, 1);
                 lock();
                 if (err == 0)
                 {

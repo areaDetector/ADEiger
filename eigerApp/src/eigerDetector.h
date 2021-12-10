@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "restApi.h"
+#include "streamApi.h"
 #include "eigerParam.h"
 
 typedef enum {
@@ -231,6 +232,7 @@ protected:
 private:
     char mHostname[512];
     RestAPI mApi;
+    StreamAPI *mStreamAPI;
     eigerModel_t mEigerModel;
     eigerAPIVersion_t mAPIVersion;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
