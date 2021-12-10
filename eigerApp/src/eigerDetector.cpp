@@ -311,7 +311,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFWNImgsPerFile = mParams.create(EigFWNImgsPerFileStr, asynParamInt32, SSFWConfig,  "nimages_per_file");
     mFWImgNumStart  = mParams.create(EigFWImgNumStartStr,  asynParamInt32, SSFWConfig,  "image_nr_start");
     mFWState        = mParams.create(EigFWStateStr,        asynParamOctet, SSFWStatus,  "state");
-    mFWFree         = mParams.create(EigFWFreeStr,         asynParamInt32, SSFWStatus,  "buffer_free");
+    mFWFree         = mParams.create(EigFWFreeStr,       asynParamFloat64, SSFWStatus,  "buffer_free");
 
     // Monitor API Parameters
     mMonitorEnable  = mParams.create(EigMonitorEnableStr,  asynParamInt32, SSMonConfig, "mode");
