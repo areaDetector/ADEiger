@@ -457,7 +457,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     getIntegerParam(ADStatus, &adStatus);
     mArmed->get(armed);
 
-    if(function == ADAcquire)
+    if (function == ADAcquire)
     {
         // Start
         if(value && adStatus != ADStatusAcquire)
@@ -497,30 +497,32 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mHVResetTime->get(resetTime);
         mApi.hvReset((int)resetTime);
     }
-    else if(function == mTriggerMode->getIndex()) {
+    else if (function == mTriggerMode->getIndex()) {
         if(value == TRIGGER_MODE_INTE || value == TRIGGER_MODE_EXTE) {
             mNumImages->put(1);
         }
         status = (asynStatus) mTriggerMode->put(value);
     }
-    else if (function == mStreamEnable->getIndex()) {
-        if (value && !mStreamAPI) {
-            mStreamAPI = new StreamAPI(mHostname);
-        }
-        else if (!value && mStreamAPI) {
-            delete mStreamAPI;
-            mStreamAPI = 0;
-        }
-        mStreamEnable->put(value);
-    }
-    else if((p = mParams.getByIndex(function))) {
+    else if ((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
-        // When switching DataSource to stream it seems to be necessary to disable and enable stream
-        int streamEnabled;
-        mStreamEnable->get(streamEnabled);
-        if (streamEnabled && (p == mDataSource) && (value == SOURCE_STREAM)) {
-            mStreamEnable->put(0);
-            mStreamEnable->put(1);
+        if (p == mDataSource) {
+            if (value == SOURCE_STREAM) {
+                // When switching DataSource to stream we need to create a StreamAPI object if it does not exist
+                if (!mStreamAPI) {
+                    mStreamAPI = new StreamAPI(mHostname);
+                }
+                // It also seems to be necessary to disable and enable stream
+                mStreamEnable->put(0);
+                mStreamEnable->put(1);
+            } else {
+                // When switching DataSource to anything other than stream we need to delete the StreamAPI object
+                // if it exists, so that we are no longer receiving zmq messages.
+                // This allows other clients to receive all messages from the zmq stream.
+                if (mStreamAPI) {
+                    delete mStreamAPI;
+                    mStreamAPI = 0;
+                }
+            }
         }
     }
     else if(function < mFirstParam)
