@@ -778,9 +778,9 @@ void eigerDetector::controlTask (void)
             err = "FileWriter API is disabled";
         else if(dataSource == SOURCE_STREAM && !streamEnable)
             err = "Stream API is disabled";
-//        else if(dataSource == SOURCE_FILEWRITER && compression &&
-//                compressionAlgo == "bslz4")
-//            err = "Driver can't decode BSLZ4 HDF5 files";
+        // If the files are encoded with bxlz4 then HDF5_PLUGIN_PATH must be set to find the decompression libraries
+        // This is typically in ADSupport/lib/linux-x86_64 or ADSupport/bin/windows-x64.
+
 
         // If saving files, check if the File Path is valid
         if(fwEnable && saveFiles)
