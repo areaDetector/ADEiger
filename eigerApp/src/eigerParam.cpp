@@ -623,7 +623,8 @@ int EigerParam::fetch (double & value, int timeout)
     const char *functionName = "fetch<double>";
     if(mRemote && mType != EIGER_P_COMMAND)
     {
-        if(mType != EIGER_P_DOUBLE && mType != EIGER_P_UNINIT)
+        // We allow mType to be int or uint because the Eiger can return integers > 2^32 so we convert to double
+        if(mType != EIGER_P_DOUBLE && mType != EIGER_P_INT && mType != EIGER_P_UINT && mType != EIGER_P_UNINIT)
         {
             ERR_ARGS("[param=%s] unexpected type %d", mAsynName.c_str(),
                     mType);
