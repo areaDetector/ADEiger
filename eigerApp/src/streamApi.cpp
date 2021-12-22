@@ -179,7 +179,7 @@ int StreamAPI::getHeader (stream_header_t *header, int timeout)
         if((err = readToken(tokens, "htype", htype)))
             goto exit;
 
-        string expectedHType("dheader");
+        string expectedHType("dheader-1.0");
         if(htype.compare(0, expectedHType.length(), expectedHType))
         {
             ERR_ARGS("wrong header type, htype=%s", htype.c_str());
