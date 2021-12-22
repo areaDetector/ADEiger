@@ -642,6 +642,15 @@ int EigerParam::fetch (double & value, int timeout)
         if(parseValue(rawValue, value))
             return EXIT_FAILURE;
 
+        // This is a bit ugly, but we need to handle FW_FREE specially because the units depend on the API version
+        if (mAsynName.compare("FW_FREE") == 0) {
+            if (mSet->getApi()->getAPIVersion() == API_1_6_0) {
+                // 1.6.0 returns size in KB
+                value = value * 1024 / 1e9;
+            } else {
+                value = value / 1e9;
+            }
+        }
         if(setParam(value))
         {
             ERR_ARGS("[param=%s] failed to set asyn parameter",
