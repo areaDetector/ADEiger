@@ -5,10 +5,34 @@ The latest untagged master branch can be obtained at
 https://github.com/areaDetector/ADEiger.
 
 Tagged source code can be obtained at
-https://github.com/areaDetector/ADEiger/releases.
+https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
+R3-2 (January XXX, 2022)
+----
+* Improved the R3-1 fix for the race condition with the Stream interface.
+  In R3-1 the ZMQ socket was always created, whether or not DataSource was set to Stream.
+  This introduced a problem for users who want to use ADEiger to control the detector,
+  but use another ZMQ client to receive the data.
+  It caused the other client to only receive every other ZMQ message.
+  Now the ZMQ socket is only created when DataSource is set to Stream, and it is
+  deleted when DataSource is set to anything except Stream.  This allows use of other ZMQ clients.
+* Changed FWFree_RBV from asynInt32 to asynFloat64 interface.  The previous version had 2 problems:
+  - There was integer overflow if the free disk space exceeded 2^32.
+  - The scaling from device units to GB was done in the record with a fixed value of the ASLO field.
+    This does not work because the device units are kilobytes for the 1.6.0 API, but bytes for the 1.8.0 API.
+    The conversion to GB is now done in the driver, because it knows which API is in use.
+* The FileWriter interface can now handle HDF5 files compressed with the bslz4 codec.
+  Previously it was an error to set DataSource=FileWriter, FWCompression=Enabled, and CompressionAlgo=bslz4.
+  This was because ADEiger did not know how to decompress such HDF5 files.
+  However, the required decompressor is actually built as part of ADSupport, if it is built with HDF_EXTERNAL=NO.
+  Now if the files are encoded with bxlz4 then the environment variable HDF5_PLUGIN_PATH must be set to find 
+  the decompression libraries. This is typically ADSupport/lib/linux-x86_64 or ADSupport/bin/windows-x64.
+  The HDF5 library will then decompress the HDF5 file correctly using those libraries.
+* Changed WavelengthEps_RBV and EnergyEps_RBV to have SCAN=I/O Intr and remove PINI=YES and FLNK from
+  the ao records.  The previous version gave warnings at iocInit.
+
 R3-1 (November 18, 2021)
 ----
 * Fixed a race condition with the Stream interface.
