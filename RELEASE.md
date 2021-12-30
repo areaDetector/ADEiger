@@ -27,7 +27,7 @@ R3-2 (January XXX, 2022)
   Previously it was an error to set DataSource=FileWriter, FWCompression=Enabled, and CompressionAlgo=bslz4.
   This was because ADEiger did not know how to decompress such HDF5 files.
   However, the required decompressor is actually built as part of ADSupport, if it is built with HDF_EXTERNAL=NO.
-  Now if the files are encoded with bxlz4 then the environment variable HDF5_PLUGIN_PATH must be set to find 
+  Now if the files are encoded with bslz4 then the environment variable HDF5_PLUGIN_PATH must be set to find 
   the decompression libraries. This is typically ADSupport/lib/linux-x86_64 or ADSupport/bin/windows-x64.
   The HDF5 library will then decompress the HDF5 file correctly using those libraries.
 * Changed WavelengthEps_RBV and EnergyEps_RBV to have SCAN=I/O Intr and remove PINI=YES and FLNK from
