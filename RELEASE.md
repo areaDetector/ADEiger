@@ -9,7 +9,7 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
-R3-2 (January XXX, 2022)
+R3-2 (January 22, 2022)
 ----
 * Improved the R3-1 fix for the race condition with the Stream interface.
   In R3-1 the ZMQ socket was always created, whether or not DataSource was set to Stream.
