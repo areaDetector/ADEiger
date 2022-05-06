@@ -1323,7 +1323,6 @@ void eigerDetector::streamTask (void)
         {
             unlock();
             err = mStreamAPI->getHeader(&header, 1);
-            printf("getHeader returned %d\n", err);
             lock();
             if ( err == STREAM_SUCCESS) {
                 break;
@@ -1364,7 +1363,6 @@ void eigerDetector::streamTask (void)
             {
                 unlock();
                 err = mStreamAPI->getFrame(&frame, 1);
-                printf("getFrame returned %d\n", err);
                 lock();
                 if (err == STREAM_SUCCESS) {
                     break;
@@ -1378,7 +1376,6 @@ void eigerDetector::streamTask (void)
                     {
                         // This means acquisition was stopped during a series
                         // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
-                        printf("Waiting for frame, acquiring() is false, restarting streamAP\n");
                         delete mStreamAPI;
                         mStreamAPI = new StreamAPI(mHostname);
                         goto end;
