@@ -1323,26 +1323,26 @@ void eigerDetector::streamTask (void)
         {
             unlock();
             err = mStreamAPI->getHeader(&header, 1);
+            printf("getHeader returned %d\n", err);
             lock();
-            switch (err)
-            {
-                case STREAM_SUCCESS:
-                    break;
-                case STREAM_WRONG_HTYPE:
-                    ERR("got stray packet, ignoring");
-                    continue;
-                case STREAM_ERROR:
-                    ERR("failed to get header packet");
-                    goto end;
-                case STREAM_TIMEOUT:
-                    FLOW("got stream timeout");
-                    continue;
-                default:
-                    ERR("unknown err from mStreamAPI->getHeader()");
-                    goto end;
+            if ( err == STREAM_SUCCESS) {
+                break;
+            } else if (err == STREAM_WRONG_HTYPE) {
+                ERR("got stray packet, ignoring");
+                continue;
+            } else if (err == STREAM_ERROR) {
+                ERR("failed to get header packet");
+                goto end;
+            } else if (err == STREAM_TIMEOUT) {
+                FLOW("got stream timeout");
+                continue;
+            } else {
+                ERR("unknown err from mStreamAPI->getHeader()");
+                goto end;
             }
             if(!acquiring())
             {
+                printf("Waiting for frame, acquiring() is false, restarting streamAP\n");
                 // This means acquisition was stopped during a series
                 // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
                 delete mStreamAPI;
@@ -1358,25 +1358,25 @@ void eigerDetector::streamTask (void)
             {
                 unlock();
                 err = mStreamAPI->getFrame(&frame, 1);
+                printf("getFrame returned %d\n", err);
                 lock();
-                switch (err)
-                {
-                    case STREAM_SUCCESS:
-                        break;
-                    case STREAM_ERROR:
-                        ERR("failed to get frame packet");
-                        goto end;
-                    case STREAM_TIMEOUT:
-                        FLOW("got stream timeout");
-                        continue;
-                    default:
-                        ERR("unknown err from mStreamAPI->getFrame()");
-                        goto end;
+                if (err == STREAM_SUCCESS) {
+                    break;
+                } else if (err == STREAM_ERROR) {
+                    ERR("failed to get frame packet");
+                    goto end;
+                } else if (err == STREAM_TIMEOUT) {
+                    FLOW("got stream timeout");
+                    continue;
+                } else {
+                    ERR("unknown err from mStreamAPI->getFrame()");
+                    goto end;
                 }
                 if(!acquiring())
                 {
                     // This means acquisition was stopped during a series
                     // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
+                    printf("Waiting for frame, acquiring() is false, restarting streamAP\n");
                     delete mStreamAPI;
                     mStreamAPI = new StreamAPI(mHostname);
                     goto end;
