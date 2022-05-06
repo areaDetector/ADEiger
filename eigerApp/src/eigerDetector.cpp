@@ -995,7 +995,7 @@ void eigerDetector::controlTask (void)
             mNumImages->put(numImages);
 
         getIntegerParam(ADStatus, &adStatus);
-        if(adStatus == ADStatusAcquire || (adStatus == ADStatusAborted && success))
+        if(adStatus == ADStatusAcquire)
             setIntegerParam(ADStatus, ADStatusIdle);
         else if(adStatus == ADStatusAborted)
             setStringParam(ADStatusMessage, "Acquisition aborted");
@@ -1324,24 +1324,36 @@ void eigerDetector::streamTask (void)
             unlock();
             err = mStreamAPI->getHeader(&header, 1);
             lock();
-            if (err == 0)
-            {
+            if ( err == STREAM_SUCCESS) {
                 break;
-            }
-            if(err == STREAM_WRONG_HTYPE)
-            {
+            } else if (err == STREAM_WRONG_HTYPE) {
                 ERR("got stray packet, ignoring");
                 continue;
-            }
-
-            if(err == STREAM_ERROR)
-            {
+            } else if (err == STREAM_ERROR) {
                 ERR("failed to get header packet");
                 goto end;
-            }
-
-            if(!acquiring())
+            } else if (err == STREAM_TIMEOUT) {
+                // The following code jumps to the end of the outer loop if acquisition has been aborted
+                // Doing so will leave the ZMQ socket with stale messages, which will corrupt the next acquisition.
+                // We fix this by closing and reopening the ZMQ socket
+                // However, this code does not appear to be necessary, because the Eiger reliably sends frame.end()
+                // when acquisition is aborted.  We leave it commented out in case it proves to be needed in the future
+                /*
+                if(!acquiring())
+                {
+                    // This means acquisition was stopped during a series
+                    // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
+                    delete mStreamAPI;
+                    mStreamAPI = new StreamAPI(mHostname);
+                    goto end;
+                }
+                */
+                FLOW("got stream timeout");
+                continue;
+            } else {
+                ERR("unknown err from mStreamAPI->getHeader()");
                 goto end;
+            }
         }
 
         for(;;)
@@ -1352,18 +1364,29 @@ void eigerDetector::streamTask (void)
                 unlock();
                 err = mStreamAPI->getFrame(&frame, 1);
                 lock();
-                if (err == 0)
-                {
+                if (err == STREAM_SUCCESS) {
                     break;
-                }
-                if(err == STREAM_ERROR)
-                {
+                } else if (err == STREAM_ERROR) {
                     ERR("failed to get frame packet");
                     goto end;
-                }
-
-                if(!acquiring())
+                } else if (err == STREAM_TIMEOUT) {
+                    // See comments about about this code.
+                    /*
+                    if(!acquiring())
+                    {
+                        // This means acquisition was stopped during a series
+                        // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
+                        delete mStreamAPI;
+                        mStreamAPI = new StreamAPI(mHostname);
+                        goto end;
+                    }
+                    */
+                    FLOW("got stream timeout");
+                    continue;
+                } else {
+                    ERR("unknown err from mStreamAPI->getFrame()");
                     goto end;
+                }
             }
 
             if(frame.end)
