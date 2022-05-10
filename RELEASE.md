@@ -9,6 +9,22 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
+R3-3 (May 10, 2022)
+----
+* Fixed a problem with the Stream interface when stopping series acquisitions.
+  - The problem was introduced in R3-1 when the ZMQ socket was no longer closed
+    and re-opened for each acquisition.  
+  - When stopping an acquisition series the streamTask could exit before all messages
+    had been read from the ZMQ socket.  
+  - When the next acquisition started it read stale messages from the socket.
+    The only way to recover was to restart the IOC.
+  - Now the streamTask does not exit when it detects that acquisition has been stopped.
+    It relies on the fact that the Eiger server will always send an end frame when
+    acquisition has been aborted.
+  - This seems to work fine in testing Eiger 500K, and Eiger2 500K, 1M, and 9M.  
+  - If it proves not to be reliable there is commented out code in streamTask that
+    will close and reopen the ZMQ socket and exit the thread when acquisition is aborted.
+
 R3-2 (January 22, 2022)
 ----
 * Improved the R3-1 fix for the race condition with the Stream interface.
