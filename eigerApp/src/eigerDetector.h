@@ -141,6 +141,7 @@ public:
         TRIGGER_MODE_INTE,
         TRIGGER_MODE_EXTS,
         TRIGGER_MODE_EXTE,
+        TRIGGER_MODE_ALIGN,
         TRIGGER_MODE_EXTG
     };
 
