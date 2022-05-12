@@ -993,16 +993,15 @@ void eigerDetector::controlTask (void)
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusAcquire) {
             if (triggerMode == TRIGGER_MODE_ALIGN) {
-                // Repeat acquisition
                 mStartEvent.signal();
             } else {
                 setIntegerParam(ADStatus, ADStatusIdle);
-            }           
+                setIntegerParam(ADAcquire, 0);
+            }         
         } else if(adStatus == ADStatusAborted) {
             setStringParam(ADStatusMessage, "Acquisition aborted");
+            setIntegerParam(ADAcquire, 0);
         }
-
-        setIntegerParam(ADAcquire, 0);
         callParamCallbacks();
     }
 }
