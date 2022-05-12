@@ -185,7 +185,7 @@ record(mbbo,"$(P)$(R)TriggerMode") {
     field(THVL,"3")
     field(THST,"External Enable")
     field(FRVL,"4")
-    field(FRST,"Alignment")
+    field(FRST,"Continuous")
 }
 
 record(mbbi,"$(P)$(R)TriggerMode_RBV") {
@@ -199,7 +199,7 @@ record(mbbi,"$(P)$(R)TriggerMode_RBV") {
     field(THVL,"3")
     field(THST,"External Enable")
     field(FRVL,"4")
-    field(FRST,"Alignment")
+    field(FRST,"Continuous")
 }
 
 # Number of Triggers
