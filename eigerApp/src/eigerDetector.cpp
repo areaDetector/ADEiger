@@ -469,10 +469,10 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         // Stop
         else if (!value && adStatus == ADStatusAcquire)
         {
+            setIntegerParam(ADStatus, ADStatusAborted);
             unlock();
             mApi.abort();
             lock();
-            setIntegerParam(ADStatus, ADStatusAborted);
             mStopEvent.signal();
         }
         setIntegerParam(ADAcquire, value);
@@ -747,6 +747,8 @@ void eigerDetector::controlTask (void)
         mStartEvent.wait();
         lock();
 
+        setIntegerParam(ADStatus, ADStatusAcquire);
+
         // Clear uncaught events
         mStopEvent.tryWait();
         mTriggerEvent.tryWait();
@@ -828,7 +830,6 @@ void eigerDetector::controlTask (void)
         }
 
         // Set status parameters
-        setIntegerParam(ADStatus, ADStatusAcquire);
         setIntegerParam(ADNumImagesCounter, 0);
         setStringParam (ADStatusMessage, "Armed");
         mSequenceId->put(sequenceId);
