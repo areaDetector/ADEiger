@@ -332,11 +332,12 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
     // Map Trigger Mode ordering
     vector<string> triggerModeEnum;
-    triggerModeEnum.resize(5);
+    triggerModeEnum.resize(6);
     triggerModeEnum[TRIGGER_MODE_INTS] = "ints";
     triggerModeEnum[TRIGGER_MODE_INTE] = "inte";
     triggerModeEnum[TRIGGER_MODE_EXTS] = "exts";
     triggerModeEnum[TRIGGER_MODE_EXTE] = "exte";
+    triggerModeEnum[TRIGGER_MODE_ALIGN] = "ints";
 #ifdef HAVE_EXTG_FIRMWARE
     if (mEigerModel == Eiger2) {
         triggerModeEnum[TRIGGER_MODE_EXTG] = "extg";
@@ -496,12 +497,6 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         double resetTime;
         mHVResetTime->get(resetTime);
         mApi.hvReset((int)resetTime);
-    }
-    else if (function == mTriggerMode->getIndex()) {
-        if(value == TRIGGER_MODE_INTE || value == TRIGGER_MODE_EXTE) {
-            mNumImages->put(1);
-        }
-        status = (asynStatus) mTriggerMode->put(value);
     }
     else if ((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
@@ -729,7 +724,8 @@ void eigerDetector::controlTask (void)
     const char *functionName = "controlTask";
 
     int status = asynSuccess;
-    string compressionAlgo, triggerMode;
+    string compressionAlgo;
+    int triggerMode;
     bool fwEnable, streamEnable, manualTrigger, compression, removeFiles;
     int dataSource, adStatus;
     int sequenceId, saveFiles, numImages, numTriggers;
@@ -766,7 +762,7 @@ void eigerDetector::controlTask (void)
         mAcquirePeriod->get(acquirePeriod);
         mNumImages->get(numImages);
         mNTriggers->get(numTriggers);
-        mTriggerMode->get(triggerMode);
+        getIntegerParam(ADTriggerMode, &triggerMode);
         mManualTrigger->get(manualTrigger);
         mFWAutoRemove->get(removeFiles);
         mFWCompression->get(compression);
@@ -804,7 +800,7 @@ void eigerDetector::controlTask (void)
         }
 
         savedNumImages = numImages;
-        if(triggerMode == "inte" || triggerMode == "exte")
+        if(triggerMode == TRIGGER_MODE_INTE || triggerMode == TRIGGER_MODE_EXTE || triggerMode == TRIGGER_MODE_ALIGN)
         {
             numImages = 1;
             mNumImages->put(numImages);
@@ -875,7 +871,7 @@ void eigerDetector::controlTask (void)
         }
 
         // Trigger
-        if(triggerMode == "exts" || triggerMode == "exte")
+        if(triggerMode == TRIGGER_MODE_EXTS || triggerMode == TRIGGER_MODE_EXTE)
             setStringParam(ADStatusMessage, "Waiting for external triggers (press Stop when done)");
         else if(manualTrigger)
             setStringParam(ADStatusMessage, "Waiting for manual triggers");
@@ -883,9 +879,9 @@ void eigerDetector::controlTask (void)
             setStringParam(ADStatusMessage, "Triggering");
         callParamCallbacks();
 
-        if(triggerMode == "ints" || triggerMode == "inte")
+        if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_INTE || triggerMode == TRIGGER_MODE_ALIGN)
         {
-            if(triggerMode == "ints")
+            if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_ALIGN)
             {
                 triggerTimeout  = acquirePeriod*numImages + 10.0;
                 if (mEigerModel == Eiger2) // Should this depend on the model or the API?
@@ -911,7 +907,7 @@ void eigerDetector::controlTask (void)
                 }
 
                 // triggerExposure might have changed
-                if(triggerMode == "inte")
+                if(triggerMode == TRIGGER_MODE_EXTE)
                 {
                     mTriggerExp->get(triggerExposure);
                     triggerTimeout = triggerExposure + 1.0;
@@ -992,13 +988,19 @@ void eigerDetector::controlTask (void)
         lock();
 
         if(savedNumImages != numImages)
-            mNumImages->put(numImages);
+            mNumImages->put(savedNumImages);
 
         getIntegerParam(ADStatus, &adStatus);
-        if(adStatus == ADStatusAcquire)
-            setIntegerParam(ADStatus, ADStatusIdle);
-        else if(adStatus == ADStatusAborted)
+        if(adStatus == ADStatusAcquire) {
+            if (triggerMode == TRIGGER_MODE_ALIGN) {
+                // Repeat acquisition
+                mStartEvent.signal();
+            } else {
+                setIntegerParam(ADStatus, ADStatusIdle);
+            }           
+        } else if(adStatus == ADStatusAborted) {
             setStringParam(ADStatusMessage, "Acquisition aborted");
+        }
 
         setIntegerParam(ADAcquire, 0);
         callParamCallbacks();
