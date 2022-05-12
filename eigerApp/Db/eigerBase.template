@@ -8,10 +8,12 @@ include "NDFile.template"
 
 record(ao,"$(P)$(R)AcquireTime") {
     field(VAL, "1")
+    info(asyn:READBACK, "1")
 }
 
 record(ao,"$(P)$(R)AcquirePeriod") {
     field(VAL, "1")
+    info(asyn:READBACK, "1")
 }
 
 ########################
@@ -154,6 +156,7 @@ record(ao, "$(P)$(R)ThresholdEnergy")
     field(DESC, "Energy threshold")
     field(EGU,  "eV")
     field(PREC, "3")
+    info(asyn:READBACK, "1")
 }
 
 record(ai, "$(P)$(R)ThresholdEnergy_RBV")
