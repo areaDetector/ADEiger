@@ -186,13 +186,13 @@ record(ai, "$(P)$(R)TriggerStartDelay_RBV")
 
 # Add external gate mode to the value in eigerBase.template
 record(mbbo,"$(P)$(R)TriggerMode") {
-    field(FRVL,"4")
-    field(FRST,"External Gate")
+    field(FVVL,"5")
+    field(FVST,"External Gate")
 }
 
 record(mbbi,"$(P)$(R)TriggerMode_RBV") {
-    field(FRVL,"4")
-    field(FRST,"External Gate")
+    field(FVVL,"5")
+    field(FVST,"External Gate")
 }
 
 # External gate mode
