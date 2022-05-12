@@ -337,7 +337,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     triggerModeEnum[TRIGGER_MODE_INTE] = "inte";
     triggerModeEnum[TRIGGER_MODE_EXTS] = "exts";
     triggerModeEnum[TRIGGER_MODE_EXTE] = "exte";
-    triggerModeEnum[TRIGGER_MODE_ALIGN] = "ints";
+    triggerModeEnum[TRIGGER_MODE_CONTINUOUS] = "ints";
 #ifdef HAVE_EXTG_FIRMWARE
     if (mEigerModel == Eiger2) {
         triggerModeEnum[TRIGGER_MODE_EXTG] = "extg";
@@ -802,7 +802,7 @@ void eigerDetector::controlTask (void)
         }
 
         savedNumImages = numImages;
-        if(triggerMode == TRIGGER_MODE_INTE || triggerMode == TRIGGER_MODE_EXTE || triggerMode == TRIGGER_MODE_ALIGN)
+        if(triggerMode == TRIGGER_MODE_INTE || triggerMode == TRIGGER_MODE_EXTE)
         {
             numImages = 1;
             mNumImages->put(numImages);
@@ -880,9 +880,9 @@ void eigerDetector::controlTask (void)
             setStringParam(ADStatusMessage, "Triggering");
         callParamCallbacks();
 
-        if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_INTE || triggerMode == TRIGGER_MODE_ALIGN)
+        if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_INTE || triggerMode == TRIGGER_MODE_CONTINUOUS)
         {
-            if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_ALIGN)
+            if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_CONTINUOUS)
             {
                 triggerTimeout  = acquirePeriod*numImages + 10.0;
                 if (mEigerModel == Eiger2) // Should this depend on the model or the API?
@@ -993,7 +993,7 @@ void eigerDetector::controlTask (void)
 
         getIntegerParam(ADStatus, &adStatus);
         if(adStatus == ADStatusAcquire) {
-            if (triggerMode == TRIGGER_MODE_ALIGN) {
+            if (triggerMode == TRIGGER_MODE_CONTINUOUS) {
                 mStartEvent.signal();
             } else {
                 setIntegerParam(ADStatus, ADStatusIdle);
