@@ -101,12 +101,13 @@ this example, this PV will be accessing the parameter::
 Trigger Modes
 -------------
 
-There are five trigger modes available:
+There are six trigger modes available:
 
 * **Internal Series**: one internal trigger pulse generates N images
 * **Internal Enable**: one internal trigger pulse generates one image
 * **External Series**: one external trigger pulse generates N images
 * **External Enable**: one external trigger pulse generates one image
+* **Continuous**: same as internal series, but automatically restarts after series
 * **External Gate**: This mode is used only with new firmware on the Eiger2
     which has 2 counters per pixel.  The behavior depend on the setting
     the ExtGateMode PV.
