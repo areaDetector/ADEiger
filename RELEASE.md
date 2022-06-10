@@ -9,6 +9,20 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
+R3-4 (June 10, 2022)
+----
+* Added a new Continuous mode choice for TriggerMode.  In Continuous mode acquisition continues
+  indefinitely once it is started, until the Acquire record is set to 0 (Done).
+  If NumImages=1 and NumTriggers=1 then acquisition is rather slow, about 1 Hz,
+  because of the overhead in the detector server.  However, if NumImages or NumTriggers
+  is greater than 1 then it will collect NumImages*NumTriggers images quickly, and then have 
+  about a 1 second delay before collecting the next set.
+* Fixed a problem where the AcquireTime, AcquirePeriod, and ThresholdEnergy would not have the
+  previous values when the IOC restarted.  This is because these can be set automatically when
+  other parameters are changed, and so the readback values did not match the drive values.
+  Added the asyn:READBACK info tag to these records so the drive values update when the
+  readbacks are changed.  The correct values are now saved with autosave.
+
 R3-3 (May 10, 2022)
 ----
 * Fixed a problem with the Stream interface when stopping series acquisitions.
