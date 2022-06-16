@@ -264,8 +264,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFilePerms      = mParams.create(EigFilePermsStr,      asynParamInt32);
     mMonitorTimeout = mParams.create(EigMonitorTimeoutStr, asynParamInt32);
     mInitialize     = mParams.create(EigInitializeStr,     asynParamInt32);
-    mHVResetTime    = mParams.create(EigHVResetTimeStr,    asynParamFloat64);
-    mHVReset        = mParams.create(EigHVResetStr,        asynParamInt32);
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
     mWavelengthEpsilon = mParams.create(EigWavelengthEpsilonStr, asynParamFloat64);
     mEnergyEpsilon  = mParams.create(EigEnergyEpsilonStr,  asynParamFloat64);
@@ -301,7 +299,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mError      = mParams.create(EigErrorStr,      asynParamOctet,   SSDetStatus, "error");
     mThTemp0    = mParams.create(EigThTemp0Str,    asynParamFloat64, SSDetStatus, "board_000/th0_temp");
     mThHumid0   = mParams.create(EigThHumid0Str,   asynParamFloat64, SSDetStatus, "board_000/th0_humidity");
-    mHVState    = mParams.create(EigHVStateStr,    asynParamOctet,   SSDetStatus, "high_voltage/state");
 
     // File Writer
     mFWEnable       = mParams.create(EigFWEnableStr,       asynParamInt32, SSFWConfig,  "mode");
@@ -330,6 +327,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mAcquirePeriod     = mParams.create(ADAcquirePeriodString,     asynParamFloat64, SSDetConfig, "frame_time");
     mNumImages         = mParams.create(ADNumImagesString,         asynParamInt32,   SSDetConfig, "nimages");
     mTriggerMode       = mParams.create(ADTriggerModeString,       asynParamInt32,   SSDetConfig, "trigger_mode");
+
     // Map Trigger Mode ordering
     vector<string> triggerModeEnum;
     triggerModeEnum.resize(6);
@@ -369,7 +367,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mDCUBufFree = mParams.create(EigDCUBufFreeStr, asynParamFloat64, SSDetStatus, "builder/dcu_buffer_free");
         mFWClear = mParams.create(EigFWClearStr, asynParamInt32, SSFWCommand, "clear");
     }
-    else if (mEigerModel == Eiger2)  // Should this depend on the model or the API?
+    else if (mEigerModel == Eiger2)
     {
         mThreshold1Enable    = mParams.create(EigThreshold1EnableStr,    asynParamInt32,   SSDetConfig, "threshold/1/mode");
         mThreshold1Enable->setEnumValues(modeEnum);
@@ -380,6 +378,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mThreshold2Enable->setEnumValues(modeEnum);
         mThresholdDiffEnable = mParams.create(EigThresholdDiffEnableStr, asynParamInt32,   SSDetConfig, "threshold/difference/mode");
         mThresholdDiffEnable->setEnumValues(modeEnum);
+        // HV parameters
+        mHVState             = mParams.create(EigHVStateStr,             asynParamOctet,   SSDetStatus, "high_voltage/state");
+        mHVResetTime         = mParams.create(EigHVResetTimeStr,         asynParamFloat64);
+        mHVReset             = mParams.create(EigHVResetStr,             asynParamInt32);
 #ifdef HAVE_EXTG_FIRMWARE
         mExtGateMode         = mParams.create(EigExtGateModeStr,         asynParamInt32,   SSDetConfig, "extg_mode");
         mNumExposures        = mParams.create(ADNumExposuresString,      asynParamInt32,   SSDetConfig, "nexpi");
@@ -493,7 +495,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mTriggerEvent.signal();
     else if (function == mFilePerms->getIndex())
         status = (asynStatus) mFilePerms->put(value & 0666);
-    else if (function == mHVReset->getIndex()) {
+    else if ((mEigerModel == Eiger2) && (function == mHVReset->getIndex())) {
         double resetTime;
         mHVResetTime->get(resetTime);
         mApi.hvReset((int)resetTime);
