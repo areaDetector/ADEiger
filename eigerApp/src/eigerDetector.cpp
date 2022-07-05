@@ -500,6 +500,12 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mHVResetTime->get(resetTime);
         mApi.hvReset((int)resetTime);
     }
+    else if (function == mTriggerMode->getIndex()) {
+        if (value == TRIGGER_MODE_INTE || value == TRIGGER_MODE_EXTE) {
+            mNumImages->put(1);
+        }
+        status = (asynStatus) mTriggerMode->put(value);
+    }
     else if ((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
         if (p == mDataSource) {
