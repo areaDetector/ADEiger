@@ -9,6 +9,16 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
+R3-5 (July XXX, 2022)
+----
+* Increased the number of retries from 1 to 2 when waiting for the FileWriter interface to receive a
+  file after acquisition completes.
+  This fixed the problem for the Eiger2 16M with 1 second acquisition time.
+* Restored logic that sets NumImages=1 when selecting Internal Enable or External Enable trigger mode.
+  This logic was accidentally removed when adding support for Continuous trigger mode.
+* Fix to only create and access High Voltage parameters on Eiger2.
+  This fixes error messages when creating the detector object on Eiger detectors.
+
 R3-4 (June 10, 2022)
 ----
 * Added a new Continuous mode choice for TriggerMode.  In Continuous mode acquisition continues
