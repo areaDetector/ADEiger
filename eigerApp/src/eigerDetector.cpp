@@ -1017,7 +1017,7 @@ void eigerDetector::controlTask (void)
 
 void eigerDetector::pollTask (void)
 {
-    const size_t MAX_RETRIES = 1;
+    const size_t MAX_RETRIES = 2;
     const char *functionName = "pollTask";
     acquisition_t acquisition;
     int pendingFiles;
