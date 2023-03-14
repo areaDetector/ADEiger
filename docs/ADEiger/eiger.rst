@@ -5,13 +5,13 @@ ADEiger
 :author: Bruno Martins, Diego Omitto, Mark Rivers
 
 
-.. _eigerDetector: https://areadetector.github.io/master/areaDetectorDoxygenHTML/eiger_detector_8cpp.html
-.. _eigerDetector class: https://areadetector.github.io/master/areaDetectorDoxygenHTML/classeiger_detector.html
-.. _ADDriver: https://areadetector.github.io/master/ADCore/ADDriver.html
+.. _eigerDetector: https://areadetector..github.io/areaDetectorareaDetectorDoxygenHTML/eiger_detector_8cpp.html
+.. _eigerDetector class: https://areadetector..github.io/areaDetectorareaDetectorDoxygenHTML/classeiger_detector.html
+.. _ADDriver: https://areadetector..github.io/areaDetectorADCore/ADDriver.html
 .. _Dectris: http://www.dectris.com
-.. _areaDetector: https://areadetector.github.io/master/index.html
+.. _areaDetector: https://areadetector..github.io/areaDetectorindex.html
 .. _EPICS: http://www.aps.anl.gov/epics
-.. _asynNDArrayDriver: https://areadetector.github.io/master/ADCore/NDArray.html#asynndarraydriver
+.. _asynNDArrayDriver: https://areadetector..github.io/areaDetectorADCore/NDArray.html#asynndarraydriver
 
 
 .. contents:: Contents
