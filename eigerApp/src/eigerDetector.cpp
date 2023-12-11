@@ -1458,10 +1458,7 @@ void eigerDetector::streamTask (void)
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;
 
-            epicsTimeStamp startTime;
-            epicsTimeGetCurrent(&startTime);
-            pArray->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
-            updateTimeStamp(&pArray->epicsTS);
+            updateTimeStamps(pArray);
 
             // Update Omega angle for this frame
             ++mFrameNumber;
@@ -1586,8 +1583,6 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     size_t ndDims[2];
     NDDataType_t ndType;
 
-    epicsTimeStamp startTime;
-
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
 
     // Open h5 file from memory
@@ -1702,9 +1697,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
 
         // Put the frame number and time stamp into the buffer
         pImage->uniqueId = imageCounter;
-        epicsTimeGetCurrent(&startTime);
-        pImage->timeStamp = startTime.secPastEpoch + startTime.nsec / 1.e9;
-        updateTimeStamp(&pImage->epicsTS);
+        updateTimeStamps(pImage);
 
         // Update the omega angle for this frame
         ++mFrameNumber;
@@ -1810,11 +1803,7 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
     }
 
     pImage->uniqueId = uniqueId++;
-
-    epicsTimeStamp ts;
-    epicsTimeGetCurrent(&ts);
-    pImage->timeStamp = ts.secPastEpoch + ts.nsec / 1.e9;
-    updateTimeStamp(&pImage->epicsTS);
+    updateTimeStamps(pImage);
 
     memcpy(pImage->pData, buf+8, dataLen);
     doCallbacksGenericPointer(pImage, NDArrayData, 1);
