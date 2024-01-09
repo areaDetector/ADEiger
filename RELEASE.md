@@ -18,6 +18,7 @@ R3-5 (July XXX, 2022)
   This logic was accidentally removed when adding support for Continuous trigger mode.
 * Fix to only create and access High Voltage parameters on Eiger2.
   This fixes error messages when creating the detector object on Eiger detectors.
+* Allow 8-bit BSLZ4 data in Stream mode with Decompress=No (encoding "bs8-lz4<").
 
 R3-4 (June 10, 2022)
 ----
