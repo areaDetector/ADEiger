@@ -19,6 +19,7 @@ R3-5 (July XXX, 2022)
 * Fix to only create and access High Voltage parameters on Eiger2.
   This fixes error messages when creating the detector object on Eiger detectors.
 * Allow 8-bit BSLZ4 data in Stream mode with Decompress=No (encoding "bs8-lz4<").
+* Correctly calculate size of BSLZ4 frames without their 12-byte header
 
 R3-4 (June 10, 2022)
 ----
