@@ -1441,9 +1441,11 @@ void eigerDetector::streamTask (void)
                     pArray->codec.name = "lz4";
                 }
                 else if ((strcmp(frame.encoding, "bs32-lz4<") == 0) ||
-                         (strcmp(frame.encoding, "bs16-lz4<") == 0)) {
+                         (strcmp(frame.encoding, "bs16-lz4<") == 0) ||
+                         (strcmp(frame.encoding, "bs8-lz4<") == 0)) {
                     pArray->codec.name = "bslz4";
                     pInput += 12;
+                    frame.compressedSize -= 12;
                 }
                 else {
                     ERR_ARGS("unknown encoding %s", frame.encoding);
