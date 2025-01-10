@@ -1406,6 +1406,8 @@ void eigerDetector::streamTask (void)
                 break;
             }
 
+            FLOW_ARGS("got frame, shape=[%d,%d], type=%d, compressedSize=%d, uncompressedSize=%d", 
+                 (int)frame.shape[0], (int)frame.shape[1], frame.type, (int)frame.compressedSize, (int)frame.uncompressedSize)
             NDArray *pArray;
             size_t *dims = frame.shape;
             NDDataType_t type;
