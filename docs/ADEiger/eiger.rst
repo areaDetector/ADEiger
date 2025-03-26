@@ -21,7 +21,7 @@ Introduction
 
 This is an `EPICS`_ `areaDetector`_ driver for the Eiger and Eiger2 detectors
 from `Dectris`_. It has been tested on the Eiger 500K, 1M, 4M and 16M
-with the firmware version 1.6.4+, and Eiger2 with firmware 2020.2.
+with the firmware version 1.6.4+, and Eiger2 with firmware 2022.1.
 The driver communicates with the detector via its SIMPLON REST interface,
 so no library from Dectris is required. The images can pulled from the detector
 as HDF5 files, as a ZeroMQ stream or both.

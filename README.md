@@ -14,7 +14,7 @@ Notes:
 ------
 
 * Depends on the Eiger1 having the firmware 1.6.4 or newer.
-* Depends on the Eiger2 having the firmware 2020.2 or newer.
+* Depends on the Eiger2 having the firmware 2022.1 or newer.
 * Depends on ADCore R3-5 and ADSupport R1-7 or newer.
 * This has only been tested on Linux 64-bit machines.
 
