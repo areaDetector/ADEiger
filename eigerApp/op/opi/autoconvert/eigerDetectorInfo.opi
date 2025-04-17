@@ -253,15 +253,15 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_scrollbar>false</show_scrollbar>
-    <text>Pixel Size</text>
+    <text>Pixel Size (m)</text>
     <tooltip></tooltip>
     <transparent>true</transparent>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>100</width>
+    <width>140</width>
     <wrap_words>false</wrap_words>
-    <x>65</x>
+    <x>25</x>
     <y>80</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
@@ -333,15 +333,15 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_scrollbar>false</show_scrollbar>
-    <text>Sensor Thickness</text>
+    <text>Thickness (m)</text>
     <tooltip></tooltip>
     <transparent>true</transparent>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>160</width>
+    <width>130</width>
     <wrap_words>false</wrap_words>
-    <x>5</x>
+    <x>35</x>
     <y>130</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">

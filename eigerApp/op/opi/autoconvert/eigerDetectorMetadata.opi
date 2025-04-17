@@ -701,13 +701,13 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_scrollbar>false</show_scrollbar>
-    <text>mm</text>
+    <text>m</text>
     <tooltip></tooltip>
     <transparent>true</transparent>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>20</width>
+    <width>10</width>
     <wrap_words>false</wrap_words>
     <x>300</x>
     <y>130</y>
