@@ -9,9 +9,11 @@ LIBRARY_IOC_Darwin = eigerDetector
 USR_INCLUDES += -I$(TOP)/eigerApp/frozenSrc
 USR_INCLUDES += $(addprefix -I, $(HDF5_INCLUDE))
 USR_INCLUDES += $(addprefix -I, $(ZMQ_INCLUDE))
+USR_CFLAGS += -mf16c
 
 LIB_SRCS += eigerDetector.cpp
 LIB_SRCS += restApi.cpp streamApi.cpp eigerParam.cpp
+LIB_SRCS += stream2.c
 
 DBD += eigerDetectorSupport.dbd
 
