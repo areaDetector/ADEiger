@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2025-04-19 16:08:29 by epics-->
 <display version="2.0.0">
   <name>eigerDetector</name>
   <x>10</x>
@@ -59,7 +60,7 @@
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #16</name>
-    <file>eigerStream.bob</file>
+    <file>eiger1Stream.bob</file>
     <x>715</x>
     <y>525</y>
     <width>350</width>

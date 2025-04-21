@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2025-04-19 16:08:29 by epics-->
 <display version="2.0.0">
   <name>eiger2Detector</name>
-  <x>352</x>
-  <y>88</y>
+  <x>-9</x>
+  <y>106</y>
   <width>1425</width>
   <height>970</height>
   <background_color>
@@ -59,11 +60,11 @@
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #16</name>
-    <file>eigerStream.bob</file>
+    <file>eiger2Stream.bob</file>
     <x>715</x>
     <y>500</y>
     <width>350</width>
-    <height>155</height>
+    <height>180</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #18</name>
@@ -85,7 +86,7 @@
     <name>composite #22</name>
     <file>eigerMonitor.bob</file>
     <x>715</x>
-    <y>660</y>
+    <y>685</y>
     <width>350</width>
     <height>105</height>
   </widget>
@@ -109,7 +110,7 @@
     <name>composite #28</name>
     <file>ADBuffers.bob</file>
     <x>715</x>
-    <y>770</y>
+    <y>795</y>
     <width>350</width>
     <height>160</height>
   </widget>

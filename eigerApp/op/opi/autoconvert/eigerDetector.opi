@@ -188,7 +188,7 @@ $(pv_value)</tooltip>
       <include_parent_macros>true</include_parent_macros>
     </macros>
     <name>Linking Container</name>
-    <opi_file>eigerStream.opi</opi_file>
+    <opi_file>eiger1Stream.opi</opi_file>
     <resize_behaviour>2</resize_behaviour>
     <rules />
     <scale_options>

@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 352
-y 88
+x -9
+y 106
 w 1425
 h 970
 font "helvetica-medium-r-18.0"
@@ -155,7 +155,7 @@ release 0
 x 715
 y 500
 w 350
-h 155
+h 180
 
 beginGroup
 
@@ -168,17 +168,17 @@ release 0
 x 715
 y 500
 w 350
-h 155
+h 180
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
 botShadowColor rgb 0 0 0
 displaySource "file"
-file "eigerStream.edl"
+file "eiger2Stream.edl"
 sizeOfs 5
 numDsps 1
 displayFileName {
-  0 "eigerStream.edl"
+  0 "eiger2Stream.edl"
 }
 noScroll
 endObjectProperties
@@ -282,7 +282,7 @@ major 4
 minor 0
 release 0
 x 715
-y 660
+y 685
 w 350
 h 105
 
@@ -295,7 +295,7 @@ major 4
 minor 1
 release 0
 x 715
-y 660
+y 685
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -411,7 +411,7 @@ major 4
 minor 0
 release 0
 x 715
-y 770
+y 795
 w 350
 h 160
 
@@ -424,7 +424,7 @@ major 4
 minor 1
 release 0
 x 715
-y 770
+y 795
 w 350
 h 160
 fgColor rgb 0 0 0
