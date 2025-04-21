@@ -180,7 +180,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname, 80),
-    mStreamAPI(0),
+    mStreamAPI(0), mStream2API(0),
     mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -321,6 +321,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mStreamEnable->setEnumValues(modeEnum);
     mStreamState      = mParams.create(EigStreamStateStr,     asynParamOctet, SSStreamStatus, "state");
     mStreamDropped    = mParams.create(EigStreamDroppedStr,   asynParamInt32, SSStreamStatus, "dropped");
+    mStreamVersion    = mParams.create(EigStreamVersionStr,   asynParamInt32, SSStreamConfig, "format");
 
     // Base class parameters
     mAcquireTime       = mParams.create(ADAcquireTimeString,       asynParamFloat64, SSDetConfig, "count_time");
@@ -511,8 +512,16 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         if (p == mDataSource) {
             if (value == SOURCE_STREAM) {
                 // When switching DataSource to stream we need to create a StreamAPI object if it does not exist
-                if (!mStreamAPI) {
-                    mStreamAPI = new StreamAPI(mHostname);
+                int streamVersion;
+                mStreamVersion->get(streamVersion);
+                if (streamVersion == STREAM_VERSION_STREAM) {
+                    if (!mStreamAPI) {
+                        mStreamAPI = new StreamAPI(mHostname);
+                    }
+                 } else {
+                    if (!mStreamAPI) {
+                          mStream2API = new Stream2API(mHostname);;
+                    }
                 }
                 // It also seems to be necessary to disable and enable stream
                 mStreamEnable->put(0);
@@ -1323,7 +1332,11 @@ void eigerDetector::streamTask (void)
         mStreamEvent.wait();
         lock();
 
-        if (!mStreamAPI) {
+        int streamVersion;
+        mStreamVersion->get(streamVersion);
+        
+       if (((streamVersion == STREAM_VERSION_STREAM) && !mStreamAPI) ||
+           ((streamVersion == STREAM_VERSION_STREAM2) && !mStream2API)) {
             ERR("mStreamAPI is null, Stream API not enabled?");
             continue;
         }
@@ -1332,7 +1345,11 @@ void eigerDetector::streamTask (void)
         for(;;)
         {
             unlock();
-            err = mStreamAPI->getHeader(&header, 1);
+            if (streamVersion == STREAM_VERSION_STREAM) {
+                err = mStreamAPI->getHeader(&header, 1);
+            } else {
+                err = mStream2API->getHeader(&header, 1);
+            }
             lock();
             if ( err == STREAM_SUCCESS) {
                 break;
@@ -1372,7 +1389,11 @@ void eigerDetector::streamTask (void)
             for(;;)
             {
                 unlock();
-                err = mStreamAPI->getFrame(&frame, 1);
+                if (streamVersion == STREAM_VERSION_STREAM) {
+                    err = mStreamAPI->getFrame(&frame, 1);
+                } else {
+                    err = mStream2API->getFrame(&frame, 1);
+                }
                 lock();
                 if (err == STREAM_SUCCESS) {
                     break;
@@ -1436,7 +1457,11 @@ void eigerDetector::streamTask (void)
             mStreamDecompress->get(decompress);
 
             if (decompress) {
-                StreamAPI::uncompress(&frame, (char*)pArray->pData);
+                if (streamVersion == STREAM_VERSION_STREAM) {
+                    StreamAPI::uncompress(&frame, (char*)pArray->pData);
+                } else {
+                    Stream2API::uncompress(&frame, (char*)pArray->pData);
+                }
             } else {
                 unsigned char *pInput=(unsigned char*)frame.data;
                 if (strcmp(frame.encoding, "lz4<") == 0) {
