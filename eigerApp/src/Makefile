@@ -12,7 +12,7 @@ USR_INCLUDES += $(addprefix -I, $(ZMQ_INCLUDE))
 USR_CFLAGS += -mf16c
 
 LIB_SRCS += eigerDetector.cpp
-LIB_SRCS += restApi.cpp streamApi.cpp eigerParam.cpp
+LIB_SRCS += restApi.cpp streamApi.cpp stream2Api.cpp eigerParam.cpp
 LIB_SRCS += stream2.c
 
 DBD += eigerDetectorSupport.dbd
