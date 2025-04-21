@@ -2,6 +2,7 @@
 #define STREAM_API_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 enum stream_err
 {
@@ -46,5 +47,29 @@ public:
     static int uncompress (stream_frame_t *frame, char *data = NULL);
 
 };
+
+class Stream2API
+{
+private:
+    char *mHostname;
+    void *mCtx, *mSock;
+    uint64_t mSeries_id;
+    char* mImage_dtype;
+    uint64_t mImage_size_x;
+    uint64_t mImage_size_y;
+    uint64_t mNumber_of_images;
+
+    int poll       (int timeout);   // timeout in seconds
+
+public:
+    Stream2API      (const char *hostname);
+    ~Stream2API     (void);
+    int getHeader  (stream_header_t *header, int timeout = 0);
+    int getFrame   (stream_frame_t  *frame,  int timeout = 0);
+
+    static int uncompress (stream_frame_t *frame, char *data = NULL);
+
+};
+
 
 #endif
