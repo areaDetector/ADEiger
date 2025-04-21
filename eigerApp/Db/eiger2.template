@@ -210,7 +210,6 @@ record(mbbo,"$(P)$(R)ExtGateMode") {
 record(mbbi,"$(P)$(R)ExtGateMode_RBV") {
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EXT_GATE_MODE")
-    field(DESC, "ROI Mode")
     field(DESC, "External gate mode")
     field(ZRST, "HDR")
     field(ZRVL, "0")
@@ -237,6 +236,29 @@ record(mbbi,"$(P)$(R)CompressionAlgo_RBV") {
 ################
 # Stream Setup #
 ################
+
+# Stream version
+record(mbbo,"$(P)$(R)StreamVersion") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_VERSION")
+    field(DESC, "Stream version")
+    field(ZRST, "Stream")
+    field(ZRVL, "0")
+    field(ONST, "Stream2")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)StreamVersion_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_VERSION")
+    field(DESC, "Stream version")
+    field(ZRST, "Stream")
+    field(ZRVL, "0")
+    field(ONST, "Stream2")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
+}
 
 # Stream Header Detail Selection enums are in the opposite order in API 1.8.0 from 1.6.0
 record(mbbo,"$(P)$(R)StreamHdrDetail") {
