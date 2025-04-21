@@ -15,6 +15,7 @@ tinyCBOR_SRCS += 	cborencoder.c
 tinyCBOR_SRCS += 	cborencoder_close_container_checked.c
 tinyCBOR_SRCS += 	cborparser.c
 tinyCBOR_SRCS += 	cborpretty.c
+tinyCBOR_SRCS += 	cborparser_dup_string.c
 
 
 include $(TOP)/configure/RULES
