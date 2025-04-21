@@ -91,6 +91,7 @@ typedef enum {
 #define EigStreamDroppedStr        "STREAM_DROPPED"
 #define EigStreamStateStr          "STREAM_STATE"
 #define EigStreamDecompressStr     "STREAM_DECOMPRESS"
+#define EigStreamVersionStr        "STREAM_VERSION"
 
 // Epsilon Parameters (minimum amount of change allowed)
 #define EigWavelengthEpsilonStr    "WAVELENGTH_EPSILON"
@@ -143,6 +144,12 @@ public:
         TRIGGER_MODE_EXTE,
         TRIGGER_MODE_CONTINUOUS,
         TRIGGER_MODE_EXTG
+    };
+
+    enum stream_version
+    {
+        STREAM_VERSION_STREAM,
+        STREAM_VERSION_STREAM2
     };
 
 protected:
@@ -216,6 +223,7 @@ protected:
     EigerParam *mStreamEnable;
     EigerParam *mStreamDropped;
     EigerParam *mStreamState;
+    EigerParam *mStreamVersion;
 
     // Base class parameters
     EigerParam *mAcquireTime;
@@ -234,6 +242,7 @@ private:
     char mHostname[512];
     RestAPI mApi;
     StreamAPI *mStreamAPI;
+    Stream2API *mStream2API;
     eigerModel_t mEigerModel;
     eigerAPIVersion_t mAPIVersion;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
