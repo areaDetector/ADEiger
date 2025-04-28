@@ -26,6 +26,7 @@ typedef enum {
 #define EigFWFreeStr               "FW_FREE"
 #define EigFWStateStr              "FW_STATE"
 #define EigFWImgNumStartStr        "FW_IMG_NUM_START"
+#define EigFWHD5FormatStr          "FWHDF5_FORMAT"
 
 // Acquisition Metadata Parameters
 #define EigWavelengthStr           "WAVELENGTH"
@@ -213,6 +214,7 @@ protected:
     EigerParam *mFWState;
     EigerParam *mFWFree;
     EigerParam *mFWClear;
+    EigerParam *mFWHDF5Format;
 
     // Eiger parameters: monitor interface
     EigerParam *mMonitorEnable;

@@ -191,7 +191,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mParams(this, &mApi, pasynUserSelf)
 {
     const char *functionName = "eigerDetector";
-    strncpy(mHostname, serverHostname, sizeof(mHostname));
+    strncpy(mHostname, serverHostname, sizeof(mHostname)-1);
 
     // Get API version
     mAPIVersion = mApi.getAPIVersion();
@@ -383,6 +383,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mHVState             = mParams.create(EigHVStateStr,             asynParamOctet,   SSDetStatus, "high_voltage/state");
         mHVResetTime         = mParams.create(EigHVResetTimeStr,         asynParamFloat64);
         mHVReset             = mParams.create(EigHVResetStr,             asynParamInt32);
+        mFWHDF5Format        = mParams.create(EigFWHD5FormatStr,         asynParamInt32,   SSFWConfig,  "format");
 #ifdef HAVE_EXTG_FIRMWARE
         mExtGateMode         = mParams.create(EigExtGateModeStr,         asynParamInt32,   SSDetConfig, "extg_mode");
         mNumExposures        = mParams.create(ADNumExposuresString,      asynParamInt32,   SSDetConfig, "nexpi");
