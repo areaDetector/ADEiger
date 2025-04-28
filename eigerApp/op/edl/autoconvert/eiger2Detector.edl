@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x -9
+x 10
 y 106
 w 1425
-h 970
+h 985
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -153,7 +153,7 @@ major 4
 minor 0
 release 0
 x 715
-y 500
+y 525
 w 350
 h 180
 
@@ -166,7 +166,7 @@ major 4
 minor 1
 release 0
 x 715
-y 500
+y 525
 w 350
 h 180
 fgColor rgb 0 0 0
@@ -282,7 +282,7 @@ major 4
 minor 0
 release 0
 x 715
-y 685
+y 710
 w 350
 h 105
 
@@ -295,7 +295,7 @@ major 4
 minor 1
 release 0
 x 715
-y 685
+y 710
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -327,7 +327,7 @@ release 0
 x 715
 y 40
 w 350
-h 455
+h 480
 
 beginGroup
 
@@ -340,7 +340,7 @@ release 0
 x 715
 y 40
 w 350
-h 455
+h 480
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -411,7 +411,7 @@ major 4
 minor 0
 release 0
 x 715
-y 795
+y 820
 w 350
 h 160
 
@@ -424,7 +424,7 @@ major 4
 minor 1
 release 0
 x 715
-y 795
+y 820
 w 350
 h 160
 fgColor rgb 0 0 0
