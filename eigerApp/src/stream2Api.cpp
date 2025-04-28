@@ -124,8 +124,8 @@ int Stream2API::getFrame (stream_frame_t *frame, int timeout)
                 struct stream2_image_data *pSID = &im->data.ptr[i];
                 printf("data: \"%s\" ", pSID->channel);
                 struct stream2_multidim_array mda = pSID->data;
-                frame->shape[0] = mda.dim[0];
-                frame->shape[1] = mda.dim[1];
+                frame->shape[1] = mda.dim[0];
+                frame->shape[0] = mda.dim[1];
                 struct stream2_typed_array *pArray = &mda.array;
                 stream2_typed_array_tag dataType = (stream2_typed_array_tag)pArray->tag;
                 struct stream2_bytes *pSB = &pArray->data;
