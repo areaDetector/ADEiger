@@ -107,9 +107,9 @@ record(ai, "$(P)$(R)Temp0_RBV")
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_TEMP_0")
     field(EGU,  "C")
-    field(SCAN, "I/O Intr")
     field(VAL,  "0")
     field(PREC, "1")
+    field(SCAN, "I/O Intr")
 }
 
 record(ai, "$(P)$(R)Humid0_RBV")
@@ -117,9 +117,9 @@ record(ai, "$(P)$(R)Humid0_RBV")
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TH_HUMID_0")
     field(EGU,  "%")
-    field(SCAN, "I/O Intr")
     field(VAL,  "0")
     field(PREC, "1")
+    field(SCAN, "I/O Intr")
 }
 
 #####################
@@ -302,6 +302,7 @@ record(mbbi,"$(P)$(R)ROIMode_RBV") {
     field(ONST, "4M")
     field(ONVL, "1")
     field(ONSV, "MINOR")
+    field(SCAN, "I/O Intr")
 }
 
 # Compression algorithm selection
@@ -355,6 +356,7 @@ record(mbbi,"$(P)$(R)DataSource_RBV") {
     field(ONST, "FileWriter")
     field(TWVL, "2")
     field(TWST, "Stream")
+    field(SCAN, "I/O Intr")
 }
 
 # Flatfield correction applied
