@@ -90,6 +90,7 @@ record(bi,"$(P)$(R)Threshold1Enable_RBV") {
     field(SCAN, "I/O Intr")
     field(ZSV,  "NO_ALARM")
     field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
 }
 
 # Threshold 2 energy
@@ -134,6 +135,7 @@ record(bi,"$(P)$(R)Threshold2Enable_RBV") {
     field(SCAN, "I/O Intr")
     field(ZSV,  "NO_ALARM")
     field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
 }
 
 # Threshold difference enable
@@ -157,6 +159,7 @@ record(bi,"$(P)$(R)ThresholdDiffEnable_RBV") {
     field(SCAN, "I/O Intr")
     field(ZSV,  "NO_ALARM")
     field(OSV,  "MINOR")
+    field(SCAN, "I/O Intr")
 }
 
 #################
@@ -277,4 +280,32 @@ record(mbbi,"$(P)$(R)StreamHdrDetail_RBV") {
     field(ONVL, "1")
     field(TWST, "All")
     field(TWVL, "2")
+    field(SCAN, "I/O Intr")
+}
+
+####################
+# Filewriter Setup #
+####################
+
+# HDF5 format
+record(mbbo,"$(P)$(R)FWHDF5Format") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FWHDF5_FORMAT")
+    field(DESC, "HDF5 format")
+    field(ZRST, "Legacy")
+    field(ZRVL, "0")
+    field(ONST, "v2024.2")
+    field(ONVL, "1")
+}
+
+record(mbbi,"$(P)$(R)FWHDF5Format_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))FWHDF5_FORMAT")
+    field(DESC, "HDF5 format")
+    field(ZRST, "Legacy")
+    field(ZRVL, "0")
+    field(ONST, "v2024.2")
+    field(ONVL, "1")
+    field(SCAN, "I/O Intr")
 }
