@@ -107,6 +107,48 @@ static int readToken (struct json_token *tokens, const char *name, string & valu
     return STREAM_SUCCESS;
 }
 
+static int uncompress (char *pInput, char *dest, char *encoding, size_t uncompressedSize, NDDataType_t dataType)
+{
+    const char *functionName = "uncompress";
+
+   if (strcmp(encoding, "lz4<") == 0) {
+        int result = LZ4_decompress_fast(pInput, dest, (int)uncompressedSize);
+        if (result < 0)
+        {
+            ERR_ARGS("LZ4_decompress failed, result=%d\n", result);
+            return STREAM_ERROR; 
+        }
+    } 
+    else if ((strcmp(encoding, "bs32-lz4<") == 0) ||
+             (strcmp(encoding, "bs16-lz4<") == 0) ||
+             (strcmp(encoding, "bs8-lz4<") == 0)) {
+        pInput += 12;   // compressed sdata is 12 bytes into buffer
+        size_t elemSize;
+        switch (dataType) 
+        {
+            case NDUInt32: elemSize=4; break;
+            case NDUInt16: elemSize=2; break;
+            case NDUInt8:  elemSize=1; break;
+            default:
+                ERR_ARGS("unknown frame type=%d", dataType);
+                return STREAM_ERROR;
+        }
+        size_t numElements = uncompressedSize/elemSize;
+        int result = bshuf_decompress_lz4(pInput, dest, numElements, elemSize, 0);
+        if (result < 0)
+        {
+            ERR_ARGS("bshuf_decompress_lz4 failed, result=%d", result);
+            return STREAM_ERROR;
+        }
+    }
+    else {
+        ERR_ARGS("Unknown encoding=%s", encoding);
+        return STREAM_ERROR;
+    }
+
+    return STREAM_SUCCESS;
+}
+
 int StreamAPI::poll (int timeout)
 {
     const char *functionName = "poll";
@@ -207,122 +249,167 @@ exit:
     return err;
 }
 
-int StreamAPI::getFrame (stream_frame_t *frame, int timeout)
+int StreamAPI::waitFrame (int *end, int timeout)
 {
-    const char *functionName = "getFrame";
+    const char *functionName = "waitFrame";
     int err = STREAM_SUCCESS;
+    *end = false;
 
     if(timeout && (err = poll(timeout)))
         return err;
 
-    zmq_msg_t header, shape, timestamp;
+    zmq_msg_t header;
 
     // Get Header
     zmq_msg_init(&header);
     zmq_msg_recv(&header, mSock, 0);
 
-    if(frame)
+    struct json_token tokens[MAX_JSON_TOKENS];
+    size_t size = zmq_msg_size(&header);
+    const char *data = (const char*) zmq_msg_data(&header);
+    char htype[64] = "";
+
+    if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
     {
-        struct json_token tokens[MAX_JSON_TOKENS];
-        size_t size = zmq_msg_size(&header);
-        const char *data = (const char*) zmq_msg_data(&header);
+        ERR("failed to parse image header JSON");
+        err = STREAM_ERROR;
+        goto closeHeader;
+    }
+    err = readToken(tokens, "htype",  htype, sizeof(htype));
+    if(!strncmp(htype, "dseries_end", 11))
+    {
+        *end = true;
+    }
+    else
+    {
+        err |= readToken(tokens, "series", &mSeries);
+        err |= readToken(tokens, "frame",  &mFrame);
 
-        if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
+        if(err)
         {
-            ERR("failed to parse image header JSON");
-            err = STREAM_ERROR;
+            ERR("failed to read token from header message");
             goto closeHeader;
-        }
-
-        char htype[64] = "";
-        err = readToken(tokens, "htype",  htype, sizeof(htype));
-
-        if(!strncmp(htype, "dseries_end", 11))
-        {
-            frame->end = true;
-            goto closeHeader;
-        }
-        else
-        {
-            err |= readToken(tokens, "series", &frame->series);
-            err |= readToken(tokens, "frame",  &frame->frame);
-
-            if(err)
-            {
-                ERR("failed to read token from header message");
-                goto closeHeader;
-            }
         }
     }
+closeHeader:
+    zmq_msg_close(&header);
 
+    return err;
+}
+
+int StreamAPI::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int decompress)
+{
+    const char *functionName = "getFrame";
+    int err = STREAM_SUCCESS;
+
+    zmq_msg_t shape, timestamp;
+    char dataType[8] = "";
+    char encoding[32] = {0};
+
+ERR("entry");
     // Get Shape
     zmq_msg_init(&shape);
     zmq_msg_recv(&shape, mSock, 0);
 
-    if(frame)
+    struct json_token tokens[MAX_JSON_TOKENS];
+    size_t size = zmq_msg_size(&shape);
+    const char *data = (const char*) zmq_msg_data(&shape);
+
+    if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
     {
-        struct json_token tokens[MAX_JSON_TOKENS];
-        size_t size = zmq_msg_size(&shape);
-        const char *data = (const char*) zmq_msg_data(&shape);
+        ERR("failed to parse image shape JSON");
+        err = STREAM_ERROR;
+        goto closeShape;
+    }
 
-        if(parse_json(data, size, tokens, MAX_JSON_TOKENS) < 0)
-        {
-            ERR("failed to parse image shape JSON");
-            err = STREAM_ERROR;
-            goto closeShape;
-        }
+    size_t frameShape[2];
+    size_t compressedSize;
+    size_t uncompressedSize;
+    NDDataType_t frameType;
 
-        char dataType[8] = "";
-        err |= readToken(tokens, "shape",    frame->shape, 3);
-        err |= readToken(tokens, "type",     dataType, sizeof(dataType));
-        err |= readToken(tokens, "encoding", frame->encoding, sizeof(frame->encoding));
-        err |= readToken(tokens, "size",     &frame->compressedSize);
+    err |= readToken(tokens, "shape",    frameShape, 3);
+    err |= readToken(tokens, "type",     dataType, sizeof(dataType));
+    err |= readToken(tokens, "encoding", encoding, sizeof(encoding));
+    err |= readToken(tokens, "size",     &compressedSize);
 
-        if(err)
-        {
-            ERR("failed to read token from shape message");
-            goto closeShape;
-        }
+ERR_ARGS("encoding=%s, length=%d", encoding, (int)strlen(encoding));
+    if(err)
+    {
+        ERR("failed to read token from shape message");
+        goto closeShape;
+    }
 
-        // Calculate uncompressed size
-        frame->uncompressedSize = frame->shape[0]*frame->shape[1];
+    // Calculate uncompressed size
+    uncompressedSize = frameShape[0]*frameShape[1];
 
-        if(!strncmp(dataType, "uint32", 6))
-        {
-            frame->type = stream_frame_t::UINT32;
-            frame->uncompressedSize *= 4;
-        }
-        else if (!strncmp(dataType, "uint16", 6))
-        {
-            frame->type = stream_frame_t::UINT16;
-            frame->uncompressedSize *= 2;
-        }
-        else if (!strncmp(dataType, "uint8", 5))
-        {
-            frame->type = stream_frame_t::UINT8;
-            frame->uncompressedSize *= 1;
-        }
-        else
-        {
-            frame->type = stream_frame_t::UINT32;
-            frame->uncompressedSize *= 4;
-            ERR_ARGS("unknown dataType %s", dataType);
-            err = STREAM_ERROR;
-            goto closeShape;
-        }
+    if(!strncmp(dataType, "uint32", 6))
+    {
+        frameType = NDUInt32;
+        uncompressedSize *= 4;
+    }
+    else if (!strncmp(dataType, "uint16", 6))
+    {
+        frameType = NDUInt16;
+        uncompressedSize *= 2;
+    }
+    else if (!strncmp(dataType, "uint8", 5))
+    {
+        frameType = NDUInt8;
+        uncompressedSize *= 1;
+    }
+    else
+    {
+        frameType = NDUInt32;
+        uncompressedSize *= 4;
+        ERR_ARGS("unknown dataType %s", dataType);
+        err = STREAM_ERROR;
+        goto closeShape;
+    }
 
-        frame->data = malloc(frame->compressedSize);
-        if(!frame->data)
-        {
-            ERR("failed to allocate data");
-            err = STREAM_ERROR;
-            goto closeShape;
-        }
+    NDArray *pArray;
+    if(!(pArray = pNDArrayPool->alloc(2, frameShape, frameType, 0, NULL)))
+    {
+        ERR_ARGS("failed to allocate NDArray for frame %lu", mFrame);
+        err = STREAM_ERROR;
+        goto closeShape;
     }
 
     // Get frame data
-    zmq_recv(mSock, frame->data, frame->compressedSize, 0);
-
+    // If data is uncompressed we can copy directly into NDArray
+    if (strcmp(encoding, "<") == 0)
+    {
+        zmq_recv(mSock, pArray->pData, uncompressedSize, 0);
+    }
+    else 
+    {
+        char *temp = (char *)malloc(compressedSize);
+        zmq_recv(mSock, temp, compressedSize, 0);
+        if (decompress) 
+        {
+            uncompress(temp, (char *)pArray->pData, encoding, uncompressedSize, frameType);
+        }
+        else
+        {        
+            char *pInput = temp;        
+            if (strcmp(encoding, "lz4<") == 0) {
+                pArray->codec.name = "lz4";
+            }
+            else if ((strcmp(encoding, "bs32-lz4<") == 0) ||
+                     (strcmp(encoding, "bs16-lz4<") == 0) ||
+                     (strcmp(encoding, "bs8-lz4<") == 0)) {
+                pArray->codec.name = "bslz4";
+                pInput += 12;
+                compressedSize -= 12;
+            }
+            else {
+                ERR_ARGS("unknown encoding %s", encoding);
+            }
+            pArray->compressedSize = compressedSize;
+            memcpy(pArray->pData, pInput, compressedSize);
+        }
+        free(temp);
+    }
+    *pArrayOut = pArray;
     // Get timestamp
     zmq_msg_init(&timestamp);
     zmq_msg_recv(&timestamp, mSock, 0);
@@ -333,54 +420,6 @@ int StreamAPI::getFrame (stream_frame_t *frame, int timeout)
 closeShape:
     zmq_msg_close(&shape);
 
-closeHeader:
-    zmq_msg_close(&header);
-
     return err;
 }
 
-int StreamAPI::uncompress (stream_frame_t *frame, char *dest)
-{
-    const char *functionName = "uncompress";
-    char *pInput = (char *)frame->data;
-
-    if (strcmp(frame->encoding, "<") == 0) {
-        memcpy(dest, pInput, frame->uncompressedSize);
-    } 
-    else if (strcmp(frame->encoding, "lz4<") == 0) {
-        int result = LZ4_decompress_fast(pInput, dest, (int)frame->uncompressedSize);
-        if (result < 0)
-        {
-            ERR_ARGS("LZ4_decompress failed, result=%d\n", result);
-            return STREAM_ERROR; 
-        }
-    } 
-    else if ((strcmp(frame->encoding, "bs32-lz4<") == 0) ||
-             (strcmp(frame->encoding, "bs16-lz4<") == 0) ||
-             (strcmp(frame->encoding, "bs8-lz4<") == 0)) {
-        pInput += 12;   // compressed sdata is 12 bytes into buffer
-        size_t elemSize;
-        switch (frame->type) 
-        {
-            case stream_frame_t::UINT32: elemSize=4; break;
-            case stream_frame_t::UINT16: elemSize=2; break;
-            case stream_frame_t::UINT8:  elemSize=1; break;
-            default:
-                ERR_ARGS("unknown frame type=%d", frame->type);
-                return STREAM_ERROR;
-        }
-        size_t numElements = frame->uncompressedSize/elemSize;
-        int result = bshuf_decompress_lz4(pInput, dest, numElements, elemSize, 0);
-        if (result < 0)
-        {
-            ERR_ARGS("bshuf_decompress_lz4 failed, result=%d", result);
-            return STREAM_ERROR;
-        }
-    }
-    else {
-        ERR_ARGS("Unknown encoding=%s", frame->encoding);
-        return STREAM_ERROR;
-    }
-
-    return STREAM_SUCCESS;
-}
