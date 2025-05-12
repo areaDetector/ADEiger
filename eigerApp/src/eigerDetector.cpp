@@ -1386,14 +1386,14 @@ void eigerDetector::streamTask (void)
 
         for(;;)
         {
-            stream_frame_t frame = {};
-            for(;;)
+            int endFrames;
+             for(;;)
             {
-                unlock();
-                if (streamVersion == STREAM_VERSION_STREAM) {
-                    err = mStreamAPI->getFrame(&frame, 1);
+               unlock();
+               if (streamVersion == STREAM_VERSION_STREAM) {
+                    err = mStreamAPI->waitFrame(&endFrames);
                 } else {
-                    err = mStream2API->getFrame(&frame, 1);
+                    err = mStream2API->waitFrame(&endFrames);
                 }
                 lock();
                 if (err == STREAM_SUCCESS) {
@@ -1402,88 +1402,33 @@ void eigerDetector::streamTask (void)
                     ERR("failed to get frame packet");
                     goto end;
                 } else if (err == STREAM_TIMEOUT) {
-                    // See comments about about this code.
-                    /*
-                    if(!acquiring())
-                    {
-                        // This means acquisition was stopped during a series
-                        // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
-                        delete mStreamAPI;
-                        mStreamAPI = new StreamAPI(mHostname);
-                        goto end;
-                    }
-                    */
                     FLOW("got stream timeout");
                     continue;
                 } else {
-                    ERR("unknown err from mStreamAPI->getFrame()");
+                    ERR("unknown err from mStreamAPI->waitFrame()");
                     goto end;
                 }
             }
 
-            if(frame.end)
+            if(endFrames)
             {
                 FLOW("got end frame");
                 mStreamComplete = true;
                 break;
             }
 
-            FLOW_ARGS("got frame, shape=[%d,%d], type=%d, compressedSize=%d, uncompressedSize=%d", 
-                 (int)frame.shape[0], (int)frame.shape[1], frame.type, (int)frame.compressedSize, (int)frame.uncompressedSize)
             NDArray *pArray;
-            size_t *dims = frame.shape;
-            NDDataType_t type;
-            switch (frame.type) 
-            {
-                case stream_frame_t::UINT32:  type = NDUInt32; break;
-                case stream_frame_t::UINT16:  type = NDUInt16; break;
-                case stream_frame_t::UINT8:   type = NDUInt8; break;
-                default:
-                    ERR_ARGS("unknown frame type=%d", frame.type);
-                    free(frame.data);
-                    continue;
+            int decompress;
+            mStreamDecompress->get(decompress);
+            if (streamVersion == STREAM_VERSION_STREAM) {
+                err = mStreamAPI->getFrame(&pArray, pNDArrayPool, decompress);
+            } else {
+                err = mStream2API->getFrame(&pArray, pNDArrayPool, decompress);
             }
-
-            if(!(pArray = pNDArrayPool->alloc(2, dims, type, 0, NULL)))
-            {
-                ERR_ARGS("failed to allocate NDArray for frame %lu", frame.frame);
-                free(frame.data);
-                continue;
-            }
-
-            int imageCounter, numImagesCounter, arrayCallbacks, decompress;
+            int imageCounter, numImagesCounter, arrayCallbacks;
             getIntegerParam(NDArrayCounter, &imageCounter);
             getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-            mStreamDecompress->get(decompress);
-
-            if (decompress) {
-                if (streamVersion == STREAM_VERSION_STREAM) {
-                    StreamAPI::uncompress(&frame, (char*)pArray->pData);
-                } else {
-                    Stream2API::uncompress(&frame, (char*)pArray->pData);
-                }
-            } else {
-                unsigned char *pInput=(unsigned char*)frame.data;
-                if (strcmp(frame.encoding, "lz4<") == 0) {
-                    pArray->codec.name = "lz4";
-                }
-                else if ((strcmp(frame.encoding, "bs32-lz4<") == 0) ||
-                         (strcmp(frame.encoding, "bs16-lz4<") == 0) ||
-                         (strcmp(frame.encoding, "bs8-lz4<") == 0)) {
-                    pArray->codec.name = "bslz4";
-                    pInput += 12;
-                    frame.compressedSize -= 12;
-                }
-                else {
-                    ERR_ARGS("unknown encoding %s", frame.encoding);
-                    free(frame.data);
-                    continue;
-                }
-                pArray->compressedSize = frame.compressedSize;
-                memcpy(pArray->pData, pInput, frame.compressedSize);
-            }
-            free(frame.data);
 
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;
