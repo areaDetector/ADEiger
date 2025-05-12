@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bitshuffle/src/bitshuffle.h"
-#include "lz4/lib/lz4.h"
-#include "src/compression.h"
+#include "bitshuffle.h"
+#include "lz4.h"
+#include "compression.h"
 
 #if defined(__clang__)
 #pragma GCC diagnostic ignored "-Wtautological-constant-out-of-range-compare"
