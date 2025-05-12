@@ -15,94 +15,6 @@
 
 QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
 
-caTable {
-       font: 10pt;
-       background: cornsilk;
-       alternate-background-color: wheat;
-}
-
-caLineEdit {
-     border-radius: 1px;
-     background: lightyellow;
-     color: black;
- }
-
-caTextEntry {
-    color: rgb(127, 0, 63);
-    background-color: cornsilk;
-    selection-color: #0a214c;
-    selection-background-color: wheat;
-    border: 1px groove black;
-    border-radius: 1px;
-    padding: 1px;
-}
-
-caTextEntry:focus {
-    padding: 0px;
-    border: 2px groove darkred;
-    border-radius: 1px;
-}
-
-QPushButton {
-      border-color: #00b;
-      border-radius: 2px;
-      padding: 3px;
-      border-width: 1px;
-
-	background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
-						   stop:0   rgba(224, 239, 255, 255),
-						   stop:0.5 rgba(199, 215, 230, 255),
-						   stop:1   rgba(184, 214, 236, 255));
-}
-QPushButton:hover {
-	background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
-						stop:0   rgba(201, 226, 255, 255),
-						stop:0.5 rgba(177, 204, 230, 255),
-						stop:1   rgba(163, 205, 236, 255));
-}
-QPushButton:pressed {
-	background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
-						stop:0   rgba(174, 219, 255, 255),
-						stop:0.5 rgba(165, 199, 230, 255),
-						stop:1   rgba(134, 188, 236, 255));
-}
-
-QPushButton:disabled {
-	background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
-						stop:0   rgba(174, 219, 255, 255),
-						stop:0.5 rgba(165, 199, 230, 255),
-						stop:1   rgba(134, 188, 236, 255));
-}
-
-caChoice {
-      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                  stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                  stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
-}
-
-caChoice &gt; QPushButton {
-      text-align: left;
-      padding: 1px;
-}
-
-caSlider::groove:horizontal {
-border: 1px solid #bbb;
-background: lightgrey;
-height: 20px;
-border-radius: 4px;
-}
-
-caSlider::handle:horizontal {
-background: red;
-border: 1px solid #777;
-width: 13px;
-margin-top: -2px;
-margin-bottom: -2px;
-border-radius: 2px;
-}
-
-
-
 </string>
     </property>
     <widget class="QWidget" name="centralWidget">
@@ -193,7 +105,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADShutter.adl</string>
+                <string>ADShutter.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -217,7 +129,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADPlugins.adl</string>
+                <string>ADPlugins.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -241,7 +153,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerStream.adl</string>
+                <string>eigerStream.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -265,7 +177,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorInfo.adl</string>
+                <string>eigerDetectorInfo.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -289,7 +201,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1DetectorStatus.adl</string>
+                <string>eiger1DetectorStatus.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -313,7 +225,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerMonitor.adl</string>
+                <string>eigerMonitor.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -337,7 +249,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1FileWriter.adl</string>
+                <string>eiger1FileWriter.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -361,7 +273,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorMetadata.adl</string>
+                <string>eigerDetectorMetadata.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -385,7 +297,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADBuffers.adl</string>
+                <string>ADBuffers.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -409,7 +321,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADSetup.adl</string>
+                <string>ADSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -433,7 +345,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADAttrFile.adl</string>
+                <string>ADAttrFile.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -457,7 +369,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1AcquisitionSetup.adl</string>
+                <string>eiger1AcquisitionSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -481,7 +393,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1Trigger.adl</string>
+                <string>eiger1Trigger.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -505,7 +417,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerAcquisitionStatus.adl</string>
+                <string>eigerAcquisitionStatus.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -529,7 +441,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerReadout.adl</string>
+                <string>eigerReadout.ui</string>
             </property>
             <property name="macro">
                 <string></string>

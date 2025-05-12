@@ -1,7 +1,7 @@
 
 file {
 	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerDetectorMetadata.adl"
-	version=030117
+	version=030109
 }
 display {
 	object {
@@ -265,13 +265,13 @@ text {
 	object {
 		x=300
 		y=130
-		width=10
+		width=20
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="m"
+	textix="mm"
 }
 "text update" {
 	object {

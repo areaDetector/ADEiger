@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>352</x>
-            <y>88</y>
-            <width>1425</width>
-            <height>970</height>
+            <x>0</x>
+            <y>53</y>
+            <width>1780</width>
+            <height>950</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -26,7 +26,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                 <rect>
                     <x>0</x>
                     <y>5</y>
-                    <width>1425</width>
+                    <width>1775</width>
                     <height>25</height>
                 </rect>
             </property>
@@ -82,7 +82,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                 <rect>
                     <x>0</x>
                     <y>5</y>
-                    <width>1425</width>
+                    <width>1775</width>
                     <height>25</height>
                 </rect>
             </property>
@@ -356,20 +356,20 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                 <rect>
                     <x>360</x>
                     <y>40</y>
-                    <width>352</width>
-                    <height>332</height>
+                    <width>381</width>
+                    <height>450</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>360</x>
                     <y>40</y>
-                    <width>350</width>
-                    <height>330</height>
+                    <width>379</width>
+                    <height>448</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger2AcquisitionSetup.ui</string>
+                <string>pilatus4AcquisitionSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -378,16 +378,16 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
         <widget class="caInclude" name="caInclude_12">
             <property name="geometry">
                 <rect>
-                    <x>360</x>
-                    <y>585</y>
+                    <x>1425</x>
+                    <y>40</y>
                     <width>352</width>
                     <height>382</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>360</x>
-                    <y>585</y>
+                    <x>1425</x>
+                    <y>40</y>
                     <width>350</width>
                     <height>380</height>
                 </rect>
@@ -403,7 +403,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>375</y>
+                    <y>475</y>
                     <width>352</width>
                     <height>207</height>
                 </rect>
@@ -411,7 +411,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>375</y>
+                    <y>475</y>
                     <width>350</width>
                     <height>205</height>
                 </rect>

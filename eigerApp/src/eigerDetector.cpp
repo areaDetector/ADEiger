@@ -274,8 +274,11 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     string description;
     mDescription->fetch(description);
     mEigerModel = Eiger1;
-    if ((description.find("Eiger2") != std::string::npos) || (description.find("EIGER2") != std::string::npos))
+    if ((description.find("Eiger2") != std::string::npos) || (description.find("EIGER2") != std::string::npos))	
         mEigerModel = Eiger2;
+    else if ((description.find("Pilatus4") != std::string::npos) || (description.find("PILATUS4") != std::string::npos))
+        mEigerModel = Pilatus4;
+
 
     // Work around weird ordering
     vector<string> modeEnum;
@@ -337,7 +340,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     triggerModeEnum[TRIGGER_MODE_EXTE] = "exte";
     triggerModeEnum[TRIGGER_MODE_CONTINUOUS] = "ints";
 #ifdef HAVE_EXTG_FIRMWARE
-    if (mEigerModel == Eiger2) {
+    if (mEigerModel == Eiger2 || mEigerModel == Pilatus4) {
         triggerModeEnum[TRIGGER_MODE_EXTG] = "extg";
     }
 #endif
@@ -367,7 +370,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mDCUBufFree = mParams.create(EigDCUBufFreeStr, asynParamFloat64, SSDetStatus, "builder/dcu_buffer_free");
         mFWClear = mParams.create(EigFWClearStr, asynParamInt32, SSFWCommand, "clear");
     }
-    else if (mEigerModel == Eiger2)
+    else if (mEigerModel == Eiger2 || mEigerModel == Pilatus4)
     {
         mThreshold1Enable    = mParams.create(EigThreshold1EnableStr,    asynParamInt32,   SSDetConfig, "threshold/1/mode");
         mThreshold1Enable->setEnumValues(modeEnum);
@@ -386,6 +389,18 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mExtGateMode         = mParams.create(EigExtGateModeStr,         asynParamInt32,   SSDetConfig, "extg_mode");
         mNumExposures        = mParams.create(ADNumExposuresString,      asynParamInt32,   SSDetConfig, "nexpi");
 #endif
+    }
+
+    if (mEigerModel == Pilatus4)
+    {
+        mThreshold3          = mParams.create(EigThreshold3Str,          asynParamFloat64, SSDetConfig, "threshold/3/energy");
+        mThreshold3->setEpsilon(ENERGY_EPSILON);
+        mThreshold3Enable    = mParams.create(EigThreshold3EnableStr,    asynParamInt32,   SSDetConfig, "threshold/3/mode");
+        mThreshold3Enable->setEnumValues(modeEnum);
+        mThreshold4          = mParams.create(EigThreshold4Str,          asynParamFloat64, SSDetConfig, "threshold/4/energy");
+        mThreshold4->setEpsilon(ENERGY_EPSILON);
+        mThreshold4Enable    = mParams.create(EigThreshold4EnableStr,    asynParamInt32,   SSDetConfig, "threshold/4/mode");
+        mThreshold4Enable->setEnumValues(modeEnum);
     }
 
     // Set default parameters
@@ -495,7 +510,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         mTriggerEvent.signal();
     else if (function == mFilePerms->getIndex())
         status = (asynStatus) mFilePerms->put(value & 0666);
-    else if ((mEigerModel == Eiger2) && (function == mHVReset->getIndex())) {
+    else if ((mEigerModel == Eiger2 || mEigerModel == Pilatus4) && (function == mHVReset->getIndex())) {
         double resetTime;
         mHVResetTime->get(resetTime);
         mApi.hvReset((int)resetTime);
@@ -598,9 +613,13 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         mEnergyEpsilon->put(value);
         mPhotonEnergy->setEpsilon(value);
         mThreshold->setEpsilon(value);
-        if (mEigerModel == Eiger2)
+        if (mEigerModel == Eiger2 || mEigerModel == Pilatus4)
             mThreshold2->setEpsilon(value);
-
+        if (mEigerModel == Pilatus4)
+        {
+            mThreshold3->setEpsilon(value);
+            mThreshold4->setEpsilon(value);
+        }
     }
     else if((p = mParams.getByIndex(function)))
         status = (asynStatus) p->put(value);
@@ -893,7 +912,7 @@ void eigerDetector::controlTask (void)
             if(triggerMode == TRIGGER_MODE_INTS || triggerMode == TRIGGER_MODE_CONTINUOUS)
             {
                 triggerTimeout  = acquirePeriod*numImages + 10.0;
-                if (mEigerModel == Eiger2) // Should this depend on the model or the API?
+                if (mEigerModel == Eiger2 || mEigerModel == Pilatus4) // Should this depend on the model or the API?
                 {
                     mTriggerStartDelay->get(triggerStartDelay);
                     triggerTimeout += triggerStartDelay;
@@ -1860,7 +1879,7 @@ asynStatus eigerDetector::eigerStatus (void)
         // Read DCU buffer free percentage
         status |= mDCUBufFree->fetch();
     }
-    if (mEigerModel == Eiger2)
+    if (mEigerModel == Eiger2 || mEigerModel == Pilatus4)
     {
         status |= mHVState->fetch();
     }
