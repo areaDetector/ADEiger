@@ -74,8 +74,8 @@ static _Bool decompress_bslz4_block(char** const dst,
     {
         return 0;
     }
-    if (bitshuf_decode_block(*dst, &tmp_buf[0], &tmp_buf[block_size],
-                             block_size / elem_size, elem_size) != 0)
+//    if (bitshuf_decode_block(*dst, &tmp_buf[0], &tmp_buf[block_size],
+//                             block_size / elem_size, elem_size) != 0)
     {
         return 0;
     }
