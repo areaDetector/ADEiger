@@ -16,7 +16,7 @@ PROD_SRCS += $(PROD_NAME)_registerRecordDeviceDriver.cpp $(PROD_NAME)Main.cpp
 
 # Note that the lz4 library will be found in ADSupport via the blosc package
 # So this application must be built with WITH_BLOSC=YES and BLOSC_EXTERNAL=NO.
-PROD_LIBS += eigerDetector frozen hdf5_hl tinyCBOR
+PROD_LIBS += eigerDetector frozen hdf5_hl tinyCBOR dectrisCompression
 
 ifdef ZMQ_LIB
   zmq_DIR        += $(ZMQ_LIB)
