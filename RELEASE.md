@@ -9,6 +9,34 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
+R3-6 (June XXX, 2025)
+----
+* Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
+  - Added new StreamVersion record to select the Stream or Stream2 interface.
+  - If Stream2 is selected and more than one threshold is enabled then the
+    dimensions of NDArrays created when DataSource is Stream will be [NumX, NumY, NumThresholds].
+  - ROI plugins can be used to select individual the thresholds to send to other plugins,
+    such as statistics, PVA for viewing, etc.
+* Added new FWHDF5Format record for the FileWriter interface.
+  - This record allows selecting the "Legacy" format, or the "v2024.2" format.
+    v2024.2 supports saving multiple thresholds.
+    The data dimensions are [NumX, NumY, NumThresholds].
+* Added new SignedData record to select whether NDArrays will be signed or unsigned integers.
+  - The data sent from the Eiger server is unsigned 32-bit, 16-bit, or 8-bit integers,
+    depending on the frame rate.
+  - Bad pixels and pixel gaps are flagged with very large positive values like 2^32-1, 2^32-2, etc.
+    This allows the use of nearly the full 32-bit, 16-bit, or 8-bit range for the data values.
+    However, it is quite inconvenient for data viewing, since autoscaling will usually lead to actual data
+    values being all black.
+  - The SignedData record can be used to set the NDArray data types to signed.
+    The allows autoscaling to work well, since the flagged pixel values will now be -1 or -2.
+    It does reduce the available count range by a factor of 2.
+      - For 32-bit data this will be a problem when there are over 2.1e9 counts per pixel.
+        Since the maximum count rate is about 2e6 counts/s it is not an issue for count times less than 1000 seconds.
+      - When the exposure time is less than 0.01 seconds the Eiger switches to 16-bit mode.
+        For 16-bit data this will be a problem when there are over 32K counts per pixel.
+        Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds.
+
 R3-5 (May 14, 2025)
 ----
 * Increased the number of retries from 1 to 2 when waiting for the FileWriter interface to receive a
