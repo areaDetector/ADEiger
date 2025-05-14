@@ -1,12 +1,12 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2Detector.adl"
+	name="/home/epics/devel/areaDetector-3-14/ADEiger/eigerApp/op/adl/eiger2Detector.adl"
 	version=030117
 }
 display {
 	object {
-		x=10
-		y=106
+		x=280
+		y=99
 		width=1425
 		height=985
 	}
@@ -214,7 +214,7 @@ composite {
 composite {
 	object {
 		x=1070
-		y=835
+		y=860
 		width=350
 		height=110
 	}
@@ -256,7 +256,7 @@ composite {
 		x=1070
 		y=600
 		width=350
-		height=230
+		height=255
 	}
 	"composite name"=""
 	"composite file"="eigerReadout.adl"
