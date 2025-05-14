@@ -23,7 +23,7 @@ dbLoadRecords("$(ADEIGER)/db/eiger2.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT)
 
 # Debug
 asynSetTraceIOMask($(PORT), 0, ESCAPE)
-asynSetTraceMask("$(PORT)", 0, ERROR|FLOW)
+#asynSetTraceMask("$(PORT)", 0, ERROR|FLOW)
 
 # Create a standard arrays plugin
 NDStdArraysConfigure("Image1", 5, 0, "$(PORT)", 0, 0)
