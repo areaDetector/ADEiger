@@ -510,8 +510,10 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     }
     else if ((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
-        if (p == mDataSource) {
-            if (value == SOURCE_STREAM) {
+        if ((p == mDataSource) || (p ==mStreamVersion)) {
+            int dataSource;
+            mDataSource->get(dataSource);
+            if (dataSource == SOURCE_STREAM) {
                 // When switching DataSource to stream we need to create a StreamAPI object if it does not exist
                 int streamVersion;
                 mStreamVersion->get(streamVersion);
@@ -520,7 +522,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
                         mStreamAPI = new StreamAPI(mHostname);
                     }
                  } else {
-                    if (!mStreamAPI) {
+                    if (!mStream2API) {
                           mStream2API = new Stream2API(mHostname);;
                     }
                 }
@@ -528,12 +530,16 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
                 mStreamEnable->put(0);
                 mStreamEnable->put(1);
             } else {
-                // When switching DataSource to anything other than stream we need to delete the StreamAPI object
+                // When switching DataSource to anything other than stream we need to delete the StreamAPI or Stream2API object
                 // if it exists, so that we are no longer receiving zmq messages.
                 // This allows other clients to receive all messages from the zmq stream.
                 if (mStreamAPI) {
                     delete mStreamAPI;
                     mStreamAPI = 0;
+                }
+                if (mStream2API) {
+                    delete mStream2API;
+                    mStream2API = 0;
                 }
             }
         }
