@@ -25,6 +25,7 @@ $(P)$(R)FlatfieldApplied
 $(P)$(R)CountrateCorrApplied
 $(P)$(R)PixelMaskApplied
 $(P)$(R)AutoSummation
+$(P)$(R)SignedData
 
 ####################
 # FileWriter Setup #

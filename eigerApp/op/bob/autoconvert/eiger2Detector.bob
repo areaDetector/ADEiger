@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2025-05-14 14:17:18 by epics-->
 <display version="2.0.0">
   <name>eiger2Detector</name>
-  <x>352</x>
-  <y>88</y>
+  <x>280</x>
+  <y>99</y>
   <width>1425</width>
-  <height>970</height>
+  <height>985</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -59,11 +60,11 @@
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #16</name>
-    <file>eigerStream.bob</file>
+    <file>eiger2Stream.bob</file>
     <x>715</x>
-    <y>500</y>
+    <y>525</y>
     <width>350</width>
-    <height>155</height>
+    <height>180</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #18</name>
@@ -85,7 +86,7 @@
     <name>composite #22</name>
     <file>eigerMonitor.bob</file>
     <x>715</x>
-    <y>660</y>
+    <y>710</y>
     <width>350</width>
     <height>105</height>
   </widget>
@@ -95,7 +96,7 @@
     <x>715</x>
     <y>40</y>
     <width>350</width>
-    <height>455</height>
+    <height>480</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #26</name>
@@ -109,7 +110,7 @@
     <name>composite #28</name>
     <file>ADBuffers.bob</file>
     <x>715</x>
-    <y>770</y>
+    <y>820</y>
     <width>350</width>
     <height>160</height>
   </widget>
@@ -125,7 +126,7 @@
     <name>composite #32</name>
     <file>ADAttrFile.bob</file>
     <x>1070</x>
-    <y>835</y>
+    <y>860</y>
     <width>350</width>
     <height>110</height>
   </widget>
@@ -159,6 +160,6 @@
     <x>1070</x>
     <y>600</y>
     <width>350</width>
-    <height>230</height>
+    <height>255</height>
   </widget>
 </display>

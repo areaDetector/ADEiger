@@ -1,12 +1,12 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerDetector.adl"
-	version=030109
+	name="/home/epics/devel/areaDetector-3-14/ADEiger/eigerApp/op/adl/eigerDetector.adl"
+	version=030117
 }
 display {
 	object {
-		x=10
-		y=64
+		x=157
+		y=59
 		width=1425
 		height=935
 	}
@@ -139,7 +139,7 @@ composite {
 		height=155
 	}
 	"composite name"=""
-	"composite file"="eigerStream.adl"
+	"composite file"="eiger1Stream.adl"
 }
 composite {
 	object {
@@ -256,7 +256,7 @@ composite {
 		x=1070
 		y=600
 		width=350
-		height=230
+		height=255
 	}
 	"composite name"=""
 	"composite file"="eigerReadout.adl"
