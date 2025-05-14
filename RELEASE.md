@@ -9,7 +9,7 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
-R3-5 (July XXX, 2022)
+R3-5 (May 14, 2025)
 ----
 * Increased the number of retries from 1 to 2 when waiting for the FileWriter interface to receive a
   file after acquisition completes.
@@ -19,7 +19,11 @@ R3-5 (July XXX, 2022)
 * Fix to only create and access High Voltage parameters on Eiger2.
   This fixes error messages when creating the detector object on Eiger detectors.
 * Allow 8-bit BSLZ4 data in Stream mode with Decompress=No (encoding "bs8-lz4<").
-* Correctly calculate size of BSLZ4 frames without their 12-byte header
+* Correctly calculate size of BSLZ4 frames without their 12-byte header.
+* Use the updateTimeStamps method to set the NDArray timestamps.
+* Add units to the metadata items in OPI screens.
+* Add LICENSE file.
+* Removed obsolete documentation/ directory.
 
 R3-4 (June 10, 2022)
 ----
