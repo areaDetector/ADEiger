@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-04-19 16:08:29 by epics-->
+<!--Saved on 2025-05-14 14:17:18 by epics-->
 <display version="2.0.0">
   <name>eigerDetector</name>
-  <x>10</x>
-  <y>64</y>
+  <x>157</x>
+  <y>59</y>
   <width>1425</width>
   <height>935</height>
   <background_color>
@@ -160,6 +160,6 @@
     <x>1070</x>
     <y>600</y>
     <width>350</width>
-    <height>230</height>
+    <height>255</height>
   </widget>
 </display>

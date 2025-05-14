@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-04-26 17:50:01 by epics-->
+<!--Saved on 2025-05-14 14:17:18 by epics-->
 <display version="2.0.0">
   <name>eiger2Detector</name>
-  <x>10</x>
-  <y>106</y>
+  <x>280</x>
+  <y>99</y>
   <width>1425</width>
   <height>985</height>
   <background_color>
@@ -126,7 +126,7 @@
     <name>composite #32</name>
     <file>ADAttrFile.bob</file>
     <x>1070</x>
-    <y>835</y>
+    <y>860</y>
     <width>350</width>
     <height>110</height>
   </widget>
@@ -160,6 +160,6 @@
     <x>1070</x>
     <y>600</y>
     <width>350</width>
-    <height>230</height>
+    <height>255</height>
   </widget>
 </display>
