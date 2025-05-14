@@ -267,6 +267,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
     mWavelengthEpsilon = mParams.create(EigWavelengthEpsilonStr, asynParamFloat64);
     mEnergyEpsilon  = mParams.create(EigEnergyEpsilonStr,  asynParamFloat64);
+    mSignedData     = mParams.create(EigSignedDataStr,     asynParamInt32);
 
     // Metadata
     mDescription = mParams.create(EigDescriptionStr, asynParamOctet, SSDetConfig, "description");
@@ -1435,6 +1436,29 @@ void eigerDetector::streamTask (void)
             getIntegerParam(NDArrayCounter, &imageCounter);
             getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+            
+            // The data returned from the StreamAPIs is unsigned.
+            // Bad pixels and gaps are very large positive numbers, which makes autoscaling difficult
+            // Optionally change the data type to signed. 
+            // This improves autoscaling, but reduces the count range by 2X.
+            int signedData;
+            mSignedData->get(signedData);
+            if (signedData) {
+                int dataType = pArray->dataType;
+                switch (pArray->dataType) {
+                    case NDUInt8:
+                        pArray->dataType = NDInt8;
+                        break;
+                    case NDUInt16:
+                        pArray->dataType = NDInt16;
+                        break;
+                    case NDUInt32:
+                        pArray->dataType = NDInt32;
+                        break;
+                    default:
+                        ERR_ARGS("Unknown data type=%d", dataType);
+                }
+            }
 
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;

@@ -74,6 +74,7 @@ typedef enum {
 #define EigHVResetTimeStr          "HV_RESET_TIME"
 #define EigHVResetStr              "HV_RESET"
 #define EigHVStateStr              "HV_STATE"
+#define EigSignedDataStr           "SIGNED_DATA"
 
 // File Saving Parameters
 #define EigSaveFilesStr            "SAVE_FILES"
@@ -175,6 +176,7 @@ protected:
     EigerParam *mHVReset;
     EigerParam *mWavelengthEpsilon;
     EigerParam *mEnergyEpsilon;
+    EigerParam *mSignedData;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
