@@ -451,6 +451,24 @@ record(bi,"$(P)$(R)AutoSummation_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Set data as signed
+record(bo,"$(P)$(R)SignedData") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SIGNED_DATA")
+    field(VAL,  "0")
+    field(ZNAM, "Unsigned")
+    field(ONAM, "Signed")
+}
+
+record(bi,"$(P)$(R)SignedData_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))SIGNED_DATA")
+    field(ZNAM, "Unsigned")
+    field(ONAM, "Signed")
+    field(SCAN, "I/O Intr")
+}
+
 ######################
 # Acquisition Status #
 ######################
