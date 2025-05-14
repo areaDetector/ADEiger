@@ -306,7 +306,6 @@ int StreamAPI::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int dec
     char dataType[8] = "";
     char encoding[32] = {0};
 
-ERR("entry");
     // Get Shape
     zmq_msg_init(&shape);
     zmq_msg_recv(&shape, mSock, 0);
@@ -332,7 +331,6 @@ ERR("entry");
     err |= readToken(tokens, "encoding", encoding, sizeof(encoding));
     err |= readToken(tokens, "size",     &compressedSize);
 
-ERR_ARGS("encoding=%s, length=%d", encoding, (int)strlen(encoding));
     if(err)
     {
         ERR("failed to read token from shape message");
@@ -422,4 +420,3 @@ closeShape:
 
     return err;
 }
-
