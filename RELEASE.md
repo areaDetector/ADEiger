@@ -20,7 +20,7 @@ R3-6 (June XXX, 2025)
 * Added new FWHDF5Format record for the FileWriter interface.
   - This record allows selecting the "Legacy" format, or the "v2024.2" format.
     v2024.2 supports saving multiple thresholds.
-    The data dimensions are [NumX, NumY, NumThresholds].
+    With v2024.2 the HDF5 data dimensions are [NumImages, NumThresholds, NumY, NumX].
 * Added new SignedData record to select whether NDArrays will be signed or unsigned integers.
   - The data sent from the Eiger server is unsigned 32-bit, 16-bit, or 8-bit integers,
     depending on the exposure time.
@@ -29,7 +29,7 @@ R3-6 (June XXX, 2025)
     However, it is quite inconvenient for data viewing, since autoscaling will usually lead to actual data
     values being all black.
   - The SignedData record can be used to set the NDArray data types to signed.
-    The allows autoscaling to work well, since the flagged pixel values will now be -1 or -2.
+    This allows autoscaling to work well, since the flagged pixel values will now be -1 or -2.
     It does, however, reduce the available count range by a factor of 2.
       - For 32-bit data this will be a problem when there are over 2.1e9 counts per pixel.
         Since the maximum count rate is about 2e6 counts/s it is not an issue for count times less than 1000 seconds.
