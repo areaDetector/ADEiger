@@ -1,14 +1,14 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eigerReadout.adl"
-	version=030109
+	name="/home/epics/devel/areaDetector-3-14/ADEiger/eigerApp/op/adl/eigerReadout.adl"
+	version=030117
 }
 display {
 	object {
 		x=1308
 		y=72
 		width=350
-		height=230
+		height=255
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=230
+		height=255
 	}
 	"basic attribute" {
 		clr=14
@@ -174,7 +174,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="ROI mode"
+	textix="ROI Mode"
 	align="horiz. right"
 }
 menu {
@@ -273,7 +273,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Pixel mask"
+	textix="Pixel Mask"
 	align="horiz. right"
 }
 menu {
@@ -349,141 +349,172 @@ menu {
 	limits {
 	}
 }
-composite {
+menu {
+	object {
+		x=160
+		y=205
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCallbacks"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=160
+		y=230
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DataSource"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=206
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCallbacks_RBV"
+		clr=54
+		bclr=12
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=231
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DataSource_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
 	object {
 		x=5
+		y=205
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Array Callbacks"
+	align="horiz. right"
+}
+text {
+	object {
+		x=45
+		y=230
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Data Source"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=160
+		y=180
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CompressionAlgo"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=182
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CompressionAlgo_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=180
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Compress. Alg."
+	align="horiz. right"
+}
+menu {
+	object {
+		x=160
 		y=155
-		width=340
-		height=70
+		width=100
+		height=20
 	}
-	"composite name"=""
-	children {
-		menu {
-			object {
-				x=160
-				y=155
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)CompressionAlgo"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=180
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ArrayCallbacks"
-				clr=14
-				bclr=51
-			}
-		}
-		menu {
-			object {
-				x=160
-				y=205
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)DataSource"
-				clr=14
-				bclr=51
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=157
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)CompressionAlgo_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=181
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)ArrayCallbacks_RBV"
-				clr=54
-				bclr=12
-			}
-			clrmod="alarm"
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=206
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)DataSource_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=15
-				y=155
-				width=140
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Compress. Alg."
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=5
-				y=180
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Array Callbacks"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=45
-				y=205
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Data Source"
-			align="horiz. right"
-		}
+	control {
+		chan="$(P)$(R)SignedData"
+		clr=14
+		bclr=51
 	}
+}
+"text update" {
+	object {
+		x=265
+		y=157
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SignedData_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=45
+		y=155
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Signed Data"
+	align="horiz. right"
 }

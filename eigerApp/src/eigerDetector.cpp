@@ -59,7 +59,7 @@ using std::string;
 using std::vector;
 using std::map;
 
-static const string DRIVER_VERSION("3.5.0");
+static const string DRIVER_VERSION("3.6.0");
 
 enum data_source
 {
@@ -180,7 +180,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
                1,                /* autoConnect=1 */
                priority, stackSize),
     mApi(serverHostname, 80),
-    mStreamAPI(0),
+    mStreamAPI(0), mStream2API(0),
     mStartEvent(), mStopEvent(), mTriggerEvent(), mPollDoneEvent(),
     mPollQueue(1, sizeof(acquisition_t)),
     mDownloadQueue(DEFAULT_QUEUE_CAPACITY, sizeof(file_t *)),
@@ -191,7 +191,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mParams(this, &mApi, pasynUserSelf)
 {
     const char *functionName = "eigerDetector";
-    strncpy(mHostname, serverHostname, sizeof(mHostname));
+    strncpy(mHostname, serverHostname, sizeof(mHostname)-1);
 
     // Get API version
     mAPIVersion = mApi.getAPIVersion();
@@ -267,6 +267,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
     mWavelengthEpsilon = mParams.create(EigWavelengthEpsilonStr, asynParamFloat64);
     mEnergyEpsilon  = mParams.create(EigEnergyEpsilonStr,  asynParamFloat64);
+    mSignedData     = mParams.create(EigSignedDataStr,     asynParamInt32);
 
     // Metadata
     mDescription = mParams.create(EigDescriptionStr, asynParamOctet, SSDetConfig, "description");
@@ -321,6 +322,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mStreamEnable->setEnumValues(modeEnum);
     mStreamState      = mParams.create(EigStreamStateStr,     asynParamOctet, SSStreamStatus, "state");
     mStreamDropped    = mParams.create(EigStreamDroppedStr,   asynParamInt32, SSStreamStatus, "dropped");
+    mStreamVersion    = mParams.create(EigStreamVersionStr,   asynParamInt32, SSStreamConfig, "format");
 
     // Base class parameters
     mAcquireTime       = mParams.create(ADAcquireTimeString,       asynParamFloat64, SSDetConfig, "count_time");
@@ -382,6 +384,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         mHVState             = mParams.create(EigHVStateStr,             asynParamOctet,   SSDetStatus, "high_voltage/state");
         mHVResetTime         = mParams.create(EigHVResetTimeStr,         asynParamFloat64);
         mHVReset             = mParams.create(EigHVResetStr,             asynParamInt32);
+        mFWHDF5Format        = mParams.create(EigFWHD5FormatStr,         asynParamInt32,   SSFWConfig,  "format");
 #ifdef HAVE_EXTG_FIRMWARE
         mExtGateMode         = mParams.create(EigExtGateModeStr,         asynParamInt32,   SSDetConfig, "extg_mode");
         mNumExposures        = mParams.create(ADNumExposuresString,      asynParamInt32,   SSDetConfig, "nexpi");
@@ -508,22 +511,36 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     }
     else if ((p = mParams.getByIndex(function))) {
         status = (asynStatus) p->put(value);
-        if (p == mDataSource) {
-            if (value == SOURCE_STREAM) {
+        if ((p == mDataSource) || (p ==mStreamVersion)) {
+            int dataSource;
+            mDataSource->get(dataSource);
+            if (dataSource == SOURCE_STREAM) {
                 // When switching DataSource to stream we need to create a StreamAPI object if it does not exist
-                if (!mStreamAPI) {
-                    mStreamAPI = new StreamAPI(mHostname);
+                int streamVersion;
+                mStreamVersion->get(streamVersion);
+                if (streamVersion == STREAM_VERSION_STREAM) {
+                    if (!mStreamAPI) {
+                        mStreamAPI = new StreamAPI(mHostname);
+                    }
+                 } else {
+                    if (!mStream2API) {
+                          mStream2API = new Stream2API(mHostname);;
+                    }
                 }
                 // It also seems to be necessary to disable and enable stream
                 mStreamEnable->put(0);
                 mStreamEnable->put(1);
             } else {
-                // When switching DataSource to anything other than stream we need to delete the StreamAPI object
+                // When switching DataSource to anything other than stream we need to delete the StreamAPI or Stream2API object
                 // if it exists, so that we are no longer receiving zmq messages.
                 // This allows other clients to receive all messages from the zmq stream.
                 if (mStreamAPI) {
                     delete mStreamAPI;
                     mStreamAPI = 0;
+                }
+                if (mStream2API) {
+                    delete mStream2API;
+                    mStream2API = 0;
                 }
             }
         }
@@ -1323,7 +1340,11 @@ void eigerDetector::streamTask (void)
         mStreamEvent.wait();
         lock();
 
-        if (!mStreamAPI) {
+        int streamVersion;
+        mStreamVersion->get(streamVersion);
+        
+       if (((streamVersion == STREAM_VERSION_STREAM) && !mStreamAPI) ||
+           ((streamVersion == STREAM_VERSION_STREAM2) && !mStream2API)) {
             ERR("mStreamAPI is null, Stream API not enabled?");
             continue;
         }
@@ -1332,7 +1353,11 @@ void eigerDetector::streamTask (void)
         for(;;)
         {
             unlock();
-            err = mStreamAPI->getHeader(&header, 1);
+            if (streamVersion == STREAM_VERSION_STREAM) {
+                err = mStreamAPI->getHeader(&header, 1);
+            } else {
+                err = mStream2API->getHeader(&header, 1);
+            }
             lock();
             if ( err == STREAM_SUCCESS) {
                 break;
@@ -1368,11 +1393,15 @@ void eigerDetector::streamTask (void)
 
         for(;;)
         {
-            stream_frame_t frame = {};
-            for(;;)
+            int endFrames;
+             for(;;)
             {
-                unlock();
-                err = mStreamAPI->getFrame(&frame, 1);
+               unlock();
+               if (streamVersion == STREAM_VERSION_STREAM) {
+                    err = mStreamAPI->waitFrame(&endFrames);
+                } else {
+                    err = mStream2API->waitFrame(&endFrames);
+                }
                 lock();
                 if (err == STREAM_SUCCESS) {
                     break;
@@ -1380,84 +1409,56 @@ void eigerDetector::streamTask (void)
                     ERR("failed to get frame packet");
                     goto end;
                 } else if (err == STREAM_TIMEOUT) {
-                    // See comments about about this code.
-                    /*
-                    if(!acquiring())
-                    {
-                        // This means acquisition was stopped during a series
-                        // We need to either wait for all ZMQ data that is pending or close and re-open the socket.
-                        delete mStreamAPI;
-                        mStreamAPI = new StreamAPI(mHostname);
-                        goto end;
-                    }
-                    */
                     FLOW("got stream timeout");
                     continue;
                 } else {
-                    ERR("unknown err from mStreamAPI->getFrame()");
+                    ERR("unknown err from mStreamAPI->waitFrame()");
                     goto end;
                 }
             }
 
-            if(frame.end)
+            if(endFrames)
             {
                 FLOW("got end frame");
                 mStreamComplete = true;
                 break;
             }
 
-            FLOW_ARGS("got frame, shape=[%d,%d], type=%d, compressedSize=%d, uncompressedSize=%d", 
-                 (int)frame.shape[0], (int)frame.shape[1], frame.type, (int)frame.compressedSize, (int)frame.uncompressedSize)
             NDArray *pArray;
-            size_t *dims = frame.shape;
-            NDDataType_t type;
-            switch (frame.type) 
-            {
-                case stream_frame_t::UINT32:  type = NDUInt32; break;
-                case stream_frame_t::UINT16:  type = NDUInt16; break;
-                case stream_frame_t::UINT8:   type = NDUInt8; break;
-                default:
-                    ERR_ARGS("unknown frame type=%d", frame.type);
-                    free(frame.data);
-                    continue;
+            int decompress;
+            mStreamDecompress->get(decompress);
+            if (streamVersion == STREAM_VERSION_STREAM) {
+                err = mStreamAPI->getFrame(&pArray, pNDArrayPool, decompress);
+            } else {
+                err = mStream2API->getFrame(&pArray, pNDArrayPool, decompress);
             }
-
-            if(!(pArray = pNDArrayPool->alloc(2, dims, type, 0, NULL)))
-            {
-                ERR_ARGS("failed to allocate NDArray for frame %lu", frame.frame);
-                free(frame.data);
-                continue;
-            }
-
-            int imageCounter, numImagesCounter, arrayCallbacks, decompress;
+            int imageCounter, numImagesCounter, arrayCallbacks;
             getIntegerParam(NDArrayCounter, &imageCounter);
             getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-            mStreamDecompress->get(decompress);
-
-            if (decompress) {
-                StreamAPI::uncompress(&frame, (char*)pArray->pData);
-            } else {
-                unsigned char *pInput=(unsigned char*)frame.data;
-                if (strcmp(frame.encoding, "lz4<") == 0) {
-                    pArray->codec.name = "lz4";
+            
+            // The data returned from the StreamAPIs is unsigned.
+            // Bad pixels and gaps are very large positive numbers, which makes autoscaling difficult
+            // Optionally change the data type to signed. 
+            // This improves autoscaling, but reduces the count range by 2X.
+            int signedData;
+            mSignedData->get(signedData);
+            if (signedData) {
+                int dataType = pArray->dataType;
+                switch (pArray->dataType) {
+                    case NDUInt8:
+                        pArray->dataType = NDInt8;
+                        break;
+                    case NDUInt16:
+                        pArray->dataType = NDInt16;
+                        break;
+                    case NDUInt32:
+                        pArray->dataType = NDInt32;
+                        break;
+                    default:
+                        ERR_ARGS("Unknown data type=%d", dataType);
                 }
-                else if ((strcmp(frame.encoding, "bs32-lz4<") == 0) ||
-                         (strcmp(frame.encoding, "bs16-lz4<") == 0) ||
-                         (strcmp(frame.encoding, "bs8-lz4<") == 0)) {
-                    pArray->codec.name = "bslz4";
-                    pInput += 12;
-                    frame.compressedSize -= 12;
-                }
-                else {
-                    ERR_ARGS("unknown encoding %s", frame.encoding);
-                    free(frame.data);
-                    continue;
-                }
-                pArray->compressedSize = frame.compressedSize;
-                memcpy(pArray->pData, pInput, frame.compressedSize);
             }
-            free(frame.data);
 
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;

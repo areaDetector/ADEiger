@@ -26,6 +26,7 @@ typedef enum {
 #define EigFWFreeStr               "FW_FREE"
 #define EigFWStateStr              "FW_STATE"
 #define EigFWImgNumStartStr        "FW_IMG_NUM_START"
+#define EigFWHD5FormatStr          "FWHDF5_FORMAT"
 
 // Acquisition Metadata Parameters
 #define EigWavelengthStr           "WAVELENGTH"
@@ -73,6 +74,7 @@ typedef enum {
 #define EigHVResetTimeStr          "HV_RESET_TIME"
 #define EigHVResetStr              "HV_RESET"
 #define EigHVStateStr              "HV_STATE"
+#define EigSignedDataStr           "SIGNED_DATA"
 
 // File Saving Parameters
 #define EigSaveFilesStr            "SAVE_FILES"
@@ -91,6 +93,7 @@ typedef enum {
 #define EigStreamDroppedStr        "STREAM_DROPPED"
 #define EigStreamStateStr          "STREAM_STATE"
 #define EigStreamDecompressStr     "STREAM_DECOMPRESS"
+#define EigStreamVersionStr        "STREAM_VERSION"
 
 // Epsilon Parameters (minimum amount of change allowed)
 #define EigWavelengthEpsilonStr    "WAVELENGTH_EPSILON"
@@ -145,6 +148,12 @@ public:
         TRIGGER_MODE_EXTG
     };
 
+    enum stream_version
+    {
+        STREAM_VERSION_STREAM,
+        STREAM_VERSION_STREAM2
+    };
+
 protected:
     // Driver-only parameters
     EigerParam *mDataSource;
@@ -167,6 +176,7 @@ protected:
     EigerParam *mHVReset;
     EigerParam *mWavelengthEpsilon;
     EigerParam *mEnergyEpsilon;
+    EigerParam *mSignedData;
 
     // Eiger parameters: metadata
     EigerParam *mDescription;
@@ -206,6 +216,7 @@ protected:
     EigerParam *mFWState;
     EigerParam *mFWFree;
     EigerParam *mFWClear;
+    EigerParam *mFWHDF5Format;
 
     // Eiger parameters: monitor interface
     EigerParam *mMonitorEnable;
@@ -216,6 +227,7 @@ protected:
     EigerParam *mStreamEnable;
     EigerParam *mStreamDropped;
     EigerParam *mStreamState;
+    EigerParam *mStreamVersion;
 
     // Base class parameters
     EigerParam *mAcquireTime;
@@ -234,6 +246,7 @@ private:
     char mHostname[512];
     RestAPI mApi;
     StreamAPI *mStreamAPI;
+    Stream2API *mStream2API;
     eigerModel_t mEigerModel;
     eigerAPIVersion_t mAPIVersion;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
