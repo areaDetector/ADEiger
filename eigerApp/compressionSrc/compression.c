@@ -10,7 +10,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #else
 #define _BSD_SOURCE
-#define _DEFAULT_SOURCE
+/* #define _DEFAULT_SOURCE */
 #include <endian.h>
 #endif
 #include <limits.h>
