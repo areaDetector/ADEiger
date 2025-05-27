@@ -1,14 +1,14 @@
 
 file {
 	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2FileWriter.adl"
-	version=030109
+	version=030117
 }
 display {
 	object {
-		x=565
+		x=554
 		y=323
 		width=350
-		height=455
+		height=480
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=455
+		height=480
 	}
 	"basic attribute" {
 		clr=14
@@ -195,446 +195,294 @@ menu {
 		bclr=51
 	}
 }
+text {
+	object {
+		x=5
+		y=155
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File Name Pattern"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=180
+		y=155
+		width=160
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWNamePattern"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=180
+		y=181
+		width=160
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWNamePattern_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=255
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Local Path"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=110
+		y=255
+		width=230
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FilePath"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=110
+		y=281
+		width=230
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FilePath_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=25
+		y=205
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Current seq. id"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=180
+		y=206
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SequenceId"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=230
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Save Files Local"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=180
+		y=230
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SaveFiles"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=231
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SaveFiles_RBV"
+		clr=54
+		bclr=12
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=180
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="(e.g. testA_$id)"
+	align="horiz. right"
+}
+text {
+	object {
+		x=65
+		y=130
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images/File"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=180
+		y=130
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWNImagesPerFile"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=245
+		y=131
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWNImagesPerFile_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
 composite {
 	object {
 		x=5
-		y=105
-		width=340
-		height=345
+		y=305
+		width=215
+		height=20
 	}
 	"composite name"=""
 	children {
 		text {
 			object {
 				x=5
-				y=130
-				width=170
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="File Name Pattern"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=180
-				y=130
-				width=160
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FWNamePattern"
-				clr=14
-				bclr=51
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=180
-				y=156
-				width=160
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FWNamePattern_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=5
-				y=230
-				width=100
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Local Path"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=110
-				y=230
-				width=230
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FilePath"
-				clr=14
-				bclr=51
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=110
-				y=256
-				width=230
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FilePath_RBV"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=25
-				y=180
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Current seq. id"
-			align="horiz. right"
-		}
-		"text update" {
-			object {
-				x=180
-				y=181
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SequenceId"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=15
-				y=205
-				width=160
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Save Files Local"
-			align="horiz. right"
-		}
-		menu {
-			object {
-				x=180
-				y=205
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)SaveFiles"
-				clr=14
-				bclr=51
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=206
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)SaveFiles_RBV"
-				clr=54
-				bclr=12
-			}
-			clrmod="alarm"
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=15
-				y=155
-				width=160
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="(e.g. testA_$id)"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=65
-				y=105
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Images/File"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=180
-				y=105
-				width=60
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FWNImagesPerFile"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=245
-				y=106
-				width=60
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FWNImagesPerFile_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		composite {
-			object {
-				x=5
-				y=280
-				width=215
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=5
-						y=280
-						width=170
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Local Path Exists"
-				}
-				"text update" {
-					object {
-						x=180
-						y=280
-						width=40
-						height=20
-					}
-					monitor {
-						chan="$(P)$(R)FilePathExists_RBV"
-						clr=14
-						bclr=2
-					}
-					clrmod="alarm"
-					format="string"
-					limits {
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=5
 				y=305
-				width=324
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=5
-						y=305
-						width=170
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Create dir. depth"
-					align="horiz. right"
-				}
-				"text entry" {
-					object {
-						x=180
-						y=305
-						width=40
-						height=20
-					}
-					control {
-						chan="$(P)$(R)CreateDirectory"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=225
-						y=306
-						width=40
-						height=18
-					}
-					monitor {
-						chan="$(P)$(R)CreateDirectory_RBV"
-						clr=54
-						bclr=4
-					}
-					limits {
-					}
-				}
-				"related display" {
-					object {
-						x=270
-						y=305
-						width=59
-						height=20
-					}
-					display[0] {
-						name="createDirectoryHelp.adl"
-					}
-					clr=14
-					bclr=51
-					label="Help"
-				}
-			}
-		}
-		text {
-			object {
-				x=5
-				y=405
 				width=170
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="DCU RAM Disk Free"
-			align="horiz. right"
+			textix="Local Path Exists"
 		}
 		"text update" {
 			object {
 				x=180
-				y=406
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FWFree_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=65
-				y=430
-				width=110
+				y=305
+				width=40
 				height=20
 			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Auto Remove"
-			align="horiz. right"
-		}
-		menu {
-			object {
-				x=180
-				y=429
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FWAutoRemove"
-				clr=14
-				bclr=51
-			}
-		}
-		"text update" {
-			object {
-				x=265
-				y=430
-				width=80
-				height=18
-			}
 			monitor {
-				chan="$(P)$(R)FWAutoRemove_RBV"
-				clr=54
-				bclr=12
+				chan="$(P)$(R)FilePathExists_RBV"
+				clr=14
+				bclr=2
 			}
 			clrmod="alarm"
 			format="string"
 			limits {
 			}
 		}
+	}
+}
+composite {
+	object {
+		x=5
+		y=330
+		width=324
+		height=20
+	}
+	"composite name"=""
+	children {
 		text {
 			object {
-				x=285
-				y=405
-				width=20
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="GB"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=15
+				x=5
 				y=330
-				width=100
+				width=170
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="File Owner"
+			textix="Create dir. depth"
 			align="horiz. right"
 		}
 		"text entry" {
 			object {
-				x=120
+				x=180
 				y=330
-				width=100
+				width=40
 				height=20
 			}
 			control {
-				chan="$(P)$(R)FileOwner"
+				chan="$(P)$(R)CreateDirectory"
 				clr=14
 				bclr=51
 			}
@@ -645,111 +493,252 @@ composite {
 			object {
 				x=225
 				y=331
-				width=100
+				width=40
 				height=18
 			}
 			monitor {
-				chan="$(P)$(R)FileOwner_RBV"
+				chan="$(P)$(R)CreateDirectory_RBV"
 				clr=54
 				bclr=4
 			}
 			limits {
 			}
 		}
-		text {
+		"related display" {
 			object {
-				x=15
-				y=355
-				width=100
+				x=270
+				y=330
+				width=59
 				height=20
 			}
-			"basic attribute" {
-				clr=14
+			display[0] {
+				name="createDirectoryHelp.adl"
 			}
-			textix="File Group"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=120
-				y=355
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FileOwnerGrp"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=225
-				y=356
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FileOwnerGrp_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=15
-				y=380
-				width=100
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="File Perms."
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=120
-				y=380
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FilePerms"
-				clr=14
-				bclr=51
-			}
-			format="octal"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=225
-				y=381
-				width=100
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)FilePerms_RBV"
-				clr=54
-				bclr=4
-			}
-			format="octal"
-			limits {
-			}
+			clr=14
+			bclr=51
+			label="Help"
 		}
 	}
 }
 text {
 	object {
+		x=5
+		y=430
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="DCU RAM Disk Free"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=180
+		y=431
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWFree_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
 		x=65
-		y=80
+		y=455
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Auto Remove"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=180
+		y=454
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWAutoRemove"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=455
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWAutoRemove_RBV"
+		clr=54
+		bclr=12
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=285
+		y=430
+		width=20
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="GB"
+	align="horiz. right"
+}
+text {
+	object {
+		x=15
+		y=355
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File Owner"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=120
+		y=355
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FileOwner"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=225
+		y=356
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FileOwner_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=380
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File Group"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=120
+		y=380
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FileOwnerGrp"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=225
+		y=381
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FileOwnerGrp_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=405
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File Perms."
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=120
+		y=405
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FilePerms"
+		clr=14
+		bclr=51
+	}
+	format="octal"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=225
+		y=406
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FilePerms_RBV"
+		clr=54
+		bclr=4
+	}
+	format="octal"
+	limits {
+	}
+}
+text {
+	object {
+		x=65
+		y=105
 		width=110
 		height=20
 	}
@@ -762,7 +751,7 @@ text {
 menu {
 	object {
 		x=180
-		y=80
+		y=105
 		width=80
 		height=20
 	}
@@ -775,7 +764,7 @@ menu {
 "text update" {
 	object {
 		x=265
-		y=81
+		y=106
 		width=80
 		height=18
 	}
@@ -785,6 +774,48 @@ menu {
 		bclr=12
 	}
 	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=65
+		y=80
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="HDF5 Format"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=180
+		y=80
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FWHDF5Format"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=81
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)FWHDF5Format_RBV"
+		clr=54
+		bclr=4
+	}
 	format="string"
 	limits {
 	}

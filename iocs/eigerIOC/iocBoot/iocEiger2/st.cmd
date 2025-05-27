@@ -22,7 +22,8 @@ eigerDetectorConfig("$(PORT)", "$(EIGERIP)", 0, 0)
 dbLoadRecords("$(ADEIGER)/db/eiger2.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 
 # Debug
-#asynSetTraceMask("$(PORT)", 0, 0x11)
+asynSetTraceIOMask($(PORT), 0, ESCAPE)
+#asynSetTraceMask("$(PORT)", 0, ERROR|FLOW)
 
 # Create a standard arrays plugin
 NDStdArraysConfigure("Image1", 5, 0, "$(PORT)", 0, 0)

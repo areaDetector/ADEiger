@@ -9,7 +9,36 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
-R3-5 (July XXX, 2022)
+R3-6 (June XXX, 2025)
+----
+* Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
+  - Added new StreamVersion record to select the Stream or Stream2 interface.
+  - If Stream2 is selected and more than one threshold is enabled then the
+    dimensions of NDArrays created when DataSource is Stream will be [NumX, NumY, NumThresholds].
+  - ROI plugins can be used to select individual the thresholds to send to other plugins,
+    such as statistics, PVA for viewing, etc.
+* Added new FWHDF5Format record for the FileWriter interface.
+  - This record allows selecting the "Legacy" format, or the "v2024.2" format.
+    v2024.2 supports saving multiple thresholds.
+    With v2024.2 the HDF5 data dimensions are [NumImages, NumThresholds, NumY, NumX].
+* Added new SignedData record to select whether NDArrays will be signed or unsigned integers.
+  - The data sent from the Eiger server is unsigned 32-bit, 16-bit, or 8-bit integers,
+    depending on the exposure time.
+  - Bad pixels and pixel gaps are flagged with very large positive values, e.g. 2^32-1, 2^32-2, etc.
+    This allows the use of nearly the full integer range for the data values.
+    However, it is quite inconvenient for data viewing, since autoscaling will usually lead to actual data
+    values being all black.
+  - The SignedData record can be used to set the NDArray data types to signed.
+    This allows autoscaling to work well, since the flagged pixel values will now be -1 or -2.
+    It does, however, reduce the available count range by a factor of 2.
+      - For 32-bit data this will be a problem when there are over 2.1e9 counts per pixel.
+        Since the maximum count rate is about 2e6 counts/s it is not an issue for count times less than 1000 seconds.
+      - When the exposure time is less than 0.01 seconds the Eiger switches to 16-bit mode.
+        For 16-bit data this would be a problem when there are over 32K counts per pixel.
+        Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
+        and there should thus be no problem.
+
+R3-5 (May 14, 2025)
 ----
 * Increased the number of retries from 1 to 2 when waiting for the FileWriter interface to receive a
   file after acquisition completes.
@@ -19,7 +48,11 @@ R3-5 (July XXX, 2022)
 * Fix to only create and access High Voltage parameters on Eiger2.
   This fixes error messages when creating the detector object on Eiger detectors.
 * Allow 8-bit BSLZ4 data in Stream mode with Decompress=No (encoding "bs8-lz4<").
-* Correctly calculate size of BSLZ4 frames without their 12-byte header
+* Correctly calculate size of BSLZ4 frames without their 12-byte header.
+* Use the updateTimeStamps method to set the NDArray timestamps.
+* Add units to the metadata items in OPI screens.
+* Add LICENSE file.
+* Removed obsolete documentation/ directory.
 
 R3-4 (June 10, 2022)
 ----
