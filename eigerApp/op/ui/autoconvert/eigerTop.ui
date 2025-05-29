@@ -120,7 +120,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                 <string>----------------------------------------------;Eiger Detector Control;----------------------------------------------;----------------------------------------------;ADCore ADBase screen;----------------------------------------------</string>
             </property>
             <property name="files">
-                <string>----------------------------------------------;eigerDetector.ui ;----------------------------------------------;-------------------------------;ADBase.ui ;----------------------------------------------</string>
+                <string>----------------------------------------------;eigerDetector.adl;----------------------------------------------;-------------------------------;ADBase.adl;----------------------------------------------</string>
             </property>
             <property name="args">
                 <string>----------------------------------------------;P=13EIG1:, R=cam1:;----------------------------------------------;---------------------------;P=13EIG1:, R=cam1:;----------------------------------------------</string>
@@ -162,7 +162,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                 <string>IOC Status soft ioc;---------------------;save_restore Status;save_restore Status;save_restore Status</string>
             </property>
             <property name="files">
-                <string>ioc_stats_soft.ui ;--------------------;save_restoreStatus.ui ;save_restoreStatus.ui ;save_restoreStatus.ui </string>
+                <string>ioc_stats_soft.adl;--------------------;save_restoreStatus.adl;save_restoreStatus.adl;save_restoreStatus.adl</string>
             </property>
             <property name="args">
                 <string>ioc=3EIG1:;--------------------;P=3EIG1:;ioc=SR13ID01HU02IOC02;P=SR13ID01HU02IOC02:</string>

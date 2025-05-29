@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2025-04-17 15:44:18 by epics-->
 <display version="2.0.0">
   <name>eigerDetectorMetadata</name>
   <x>1144</x>
@@ -219,10 +220,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #50</name>
-    <text>mm</text>
+    <text>m</text>
     <x>300</x>
     <y>130</y>
-    <width>20</width>
+    <width>10</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>

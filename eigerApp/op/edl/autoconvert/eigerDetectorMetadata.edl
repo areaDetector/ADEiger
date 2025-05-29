@@ -307,14 +307,14 @@ minor 1
 release 1
 x 300
 y 130
-w 36
+w 25
 h 20
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "mm"
+  "m"
 }
 endObjectProperties
 

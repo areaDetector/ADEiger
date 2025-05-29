@@ -101,9 +101,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 65
+x 25
 y 80
-w 100
+w 140
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -111,7 +111,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Pixel Size"
+  "Pixel Size (m)"
 }
 endObjectProperties
 
@@ -141,9 +141,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 5
+x 35
 y 130
-w 160
+w 130
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -151,7 +151,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Sensor Thickness"
+  "Thickness (m)"
 }
 endObjectProperties
 
