@@ -141,7 +141,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                     <x>715</x>
                     <y>500</y>
                     <width>352</width>
-                    <height>157</height>
+                    <height>182</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -149,11 +149,11 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                     <x>715</x>
                     <y>500</y>
                     <width>350</width>
-                    <height>155</height>
+                    <height>180</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerStream.ui</string>
+                <string>eiger2Stream.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -237,7 +237,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                     <x>715</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>457</height>
+                    <height>482</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -245,7 +245,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                     <x>715</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>455</height>
+                    <height>480</height>
                 </rect>
             </property>
             <property name="filename">
@@ -429,7 +429,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                     <x>1070</x>
                     <y>600</y>
                     <width>352</width>
-                    <height>232</height>
+                    <height>257</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -437,7 +437,7 @@ QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
                     <x>1070</x>
                     <y>600</y>
                     <width>350</width>
-                    <height>230</height>
+                    <height>255</height>
                 </rect>
             </property>
             <property name="filename">

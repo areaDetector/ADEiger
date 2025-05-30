@@ -139,7 +139,7 @@ composite {
 		height=155
 	}
 	"composite name"=""
-	"composite file"="eigerStream.adl"
+	"composite file"="eiger2Stream.adl"
 }
 composite {
 	object {
