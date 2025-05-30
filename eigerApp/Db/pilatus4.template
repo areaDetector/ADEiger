@@ -1,0 +1,97 @@
+# Database for the records specific to the Pilatus4
+# Tejas Guruswamy
+# 2025-04-29
+
+#####################
+# Acquisition Setup #
+#####################
+
+# Threshold 3 enable
+record(bo,"$(P)$(R)Threshold3Enable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD3_ENABLE")
+    field(DESC, "Enable threshold 3")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+record(bi,"$(P)$(R)Threshold3Enable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD3_ENABLE")
+    field(DESC, "Enable threshold 3")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+# Threshold 3 energy
+record(ao, "$(P)$(R)Threshold3Energy")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD3")
+    field(DESC, "Energy threshold 3")
+    field(EGU,  "eV")
+    field(PREC, "3")
+}
+
+record(ai, "$(P)$(R)Threshold3Energy_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD3")
+    field(DESC, "Energy threshold 3")
+    field(EGU,  "eV")
+    field(PREC, "3")
+    field(SCAN, "I/O Intr")
+}
+
+# Threshold 4 enable
+record(bo,"$(P)$(R)Threshold4Enable") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD4_ENABLE")
+    field(DESC, "Enable threshold 4")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+record(bi,"$(P)$(R)Threshold4Enable_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD4_ENABLE")
+    field(DESC, "Enable threshold 4")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(SCAN, "I/O Intr")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MINOR")
+}
+
+# Threshold 4 energy
+record(ao, "$(P)$(R)Threshold4Energy")
+{
+    field(PINI, "YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD4")
+    field(DESC, "Energy threshold 4")
+    field(EGU,  "eV")
+    field(PREC, "3")
+}
+
+record(ai, "$(P)$(R)Threshold4Energy_RBV")
+{
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))THRESHOLD4")
+    field(DESC, "Energy threshold 4")
+    field(EGU,  "eV")
+    field(PREC, "3")
+    field(SCAN, "I/O Intr")
+}
+
+

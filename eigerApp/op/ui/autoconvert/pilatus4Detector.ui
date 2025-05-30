@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+<class>MainWindow</class>
+<widget class="QMainWindow" name="MainWindow">
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>53</y>
+            <width>1780</width>
+            <height>950</height>
+        </rect>
+    </property>
+    <property name="styleSheet">
+        <string>
+
+QWidget#centralWidget {background: rgba(187, 187, 187, 255);}
+
+</string>
+    </property>
+    <widget class="QWidget" name="centralWidget">
+        <widget class="caGraphics" name="caRectangle_0">
+            <property name="form">
+                <enum>caGraphics::Rectangle</enum>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>5</y>
+                    <width>1775</width>
+                    <height>25</height>
+                </rect>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>218</red>
+                    <green>218</green>
+                    <blue>218</blue>
+                </color>
+            </property>
+            <property name="fillstyle">
+                <enum>Filled</enum>
+            </property>
+            <property name="lineColor">
+                <color alpha="255">
+                    <red>218</red>
+                    <green>218</green>
+                    <blue>218</blue>
+                </color>
+            </property>
+            <property name="linestyle">
+                <enum>Solid</enum>
+            </property>
+        </widget>
+        <widget class="caLabel" name="caLabel_0">
+            <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>10</red>
+                    <green>0</green>
+                    <blue>184</blue>
+                </color>
+            </property>
+            <property name="background">
+                <color alpha="0">
+                    <red>10</red>
+                    <green>0</green>
+                    <blue>184</blue>
+                </color>
+            </property>
+            <property name="text">
+                <string>Eiger2 Detector Control $(P)$(R)</string>
+            </property>
+            <property name="fontScaleMode">
+                <enum>ESimpleLabel::WidthAndHeight</enum>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignHCenter|Qt::AlignVCenter</set>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>5</y>
+                    <width>1775</width>
+                    <height>25</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_0">
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>735</y>
+                    <width>354</width>
+                    <height>169</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>735</y>
+                    <width>352</width>
+                    <height>167</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>ADShutter.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_1">
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>386</y>
+                    <width>354</width>
+                    <height>84</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>386</y>
+                    <width>352</width>
+                    <height>82</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>ADPlugins.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_2">
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>500</y>
+                    <width>352</width>
+                    <height>182</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>500</y>
+                    <width>350</width>
+                    <height>180</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eiger2Stream.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_3">
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>440</y>
+                    <width>352</width>
+                    <height>157</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>440</y>
+                    <width>350</width>
+                    <height>155</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerDetectorInfo.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_4">
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>470</y>
+                    <width>352</width>
+                    <height>262</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>470</y>
+                    <width>350</width>
+                    <height>260</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eiger2DetectorStatus.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_5">
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>660</y>
+                    <width>352</width>
+                    <height>107</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>660</y>
+                    <width>350</width>
+                    <height>105</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerMonitor.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_6">
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>40</y>
+                    <width>352</width>
+                    <height>482</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>40</y>
+                    <width>350</width>
+                    <height>480</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eiger2FileWriter.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_7">
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>40</y>
+                    <width>352</width>
+                    <height>397</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>40</y>
+                    <width>350</width>
+                    <height>395</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerDetectorMetadata.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_8">
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>770</y>
+                    <width>354</width>
+                    <height>164</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>715</x>
+                    <y>770</y>
+                    <width>352</width>
+                    <height>162</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>ADBuffers.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_9">
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>41</y>
+                    <width>354</width>
+                    <height>344</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>5</x>
+                    <y>41</y>
+                    <width>352</width>
+                    <height>342</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>ADSetup.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_10">
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>835</y>
+                    <width>354</width>
+                    <height>114</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>835</y>
+                    <width>352</width>
+                    <height>112</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>ADAttrFile.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_11">
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>40</y>
+                    <width>381</width>
+                    <height>450</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>40</y>
+                    <width>379</width>
+                    <height>448</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>pilatus4AcquisitionSetup.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_12">
+            <property name="geometry">
+                <rect>
+                    <x>1425</x>
+                    <y>40</y>
+                    <width>352</width>
+                    <height>382</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>1425</x>
+                    <y>40</y>
+                    <width>350</width>
+                    <height>380</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerAcquisitionStatus.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_13">
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>475</y>
+                    <width>352</width>
+                    <height>207</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>360</x>
+                    <y>475</y>
+                    <width>350</width>
+                    <height>205</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eiger2Trigger.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="caInclude" name="caInclude_14">
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>600</y>
+                    <width>352</width>
+                    <height>257</height>
+                </rect>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>1070</x>
+                    <y>600</y>
+                    <width>350</width>
+                    <height>255</height>
+                </rect>
+            </property>
+            <property name="filename">
+                <string>eigerReadout.ui</string>
+            </property>
+            <property name="macro">
+                <string></string>
+            </property>
+        </widget>
+        <zorder>caRectangle_0</zorder>
+        <zorder>caLabel_0</zorder>
+        <zorder>caInclude_0</zorder>
+        <zorder>caInclude_1</zorder>
+        <zorder>caInclude_2</zorder>
+        <zorder>caInclude_3</zorder>
+        <zorder>caInclude_4</zorder>
+        <zorder>caInclude_5</zorder>
+        <zorder>caInclude_6</zorder>
+        <zorder>caInclude_7</zorder>
+        <zorder>caInclude_8</zorder>
+        <zorder>caInclude_9</zorder>
+        <zorder>caInclude_10</zorder>
+        <zorder>caInclude_11</zorder>
+        <zorder>caInclude_12</zorder>
+        <zorder>caInclude_13</zorder>
+        <zorder>caInclude_14</zorder>
+    </widget>
+</widget>
+</ui>

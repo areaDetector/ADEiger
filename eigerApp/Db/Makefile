@@ -14,6 +14,7 @@ include $(TOP)/configure/CONFIG
 DB += eiger1.template
 DB += eiger2.template
 DB += eigerBase.template
+DB += pilatus4.template
 
 #----------------------------------------------------
 # If <anyname>.db template is not named <anyname>*.template add
