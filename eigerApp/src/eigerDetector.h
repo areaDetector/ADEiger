@@ -10,7 +10,8 @@
 
 typedef enum {
   Eiger1,
-  Eiger2
+  Eiger2,
+  Pilatus4,
 } eigerModel_t;
 
 // areaDetector NDArray data source
@@ -54,6 +55,12 @@ typedef enum {
 #define EigCompressionAlgoStr      "COMPRESSION_ALGO"
 // ROI Mode is only available on Eiger 9M and 16M
 #define EigROIModeStr              "ROI_MODE"
+
+// Pilatus4 Parameters
+#define EigThreshold3Str           "THRESHOLD3"
+#define EigThreshold3EnableStr     "THRESHOLD3_ENABLE"
+#define EigThreshold4Str           "THRESHOLD4"
+#define EigThreshold4EnableStr     "THRESHOLD4_ENABLE"
 
 // Detector Status Parameters
 #define EigStateStr                "STATE"
@@ -194,6 +201,12 @@ protected:
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
     EigerParam *mAutoSummation;
+
+    //Pilatus4 parameters
+    EigerParam *mThreshold3;
+    EigerParam *mThreshold3Enable;
+    EigerParam *mThreshold4;
+    EigerParam *mThreshold4Enable;
 
     // Eiger parameters: status
     EigerParam *mState;
