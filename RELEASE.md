@@ -17,6 +17,7 @@ R3-6 (June XXX, 2025)
     dimensions of NDArrays created when DataSource is Stream will be [NumX, NumY, NumThresholds].
   - ROI plugins can be used to select individual the thresholds to send to other plugins,
     such as statistics, PVA for viewing, etc.
+* Added support for Pilatus4 detectors.
 * Added new FWHDF5Format record for the FileWriter interface.
   - This record allows selecting the "Legacy" format, or the "v2024.2" format.
     v2024.2 supports saving multiple thresholds.
