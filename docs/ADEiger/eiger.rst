@@ -19,7 +19,7 @@ ADEiger
 Introduction
 ------------
 
-This is an `EPICS`_ `areaDetector`_ driver for the Eiger and Eiger2 detectors
+This is an `EPICS`_ `areaDetector`_ driver for the Eiger, Eiger2, and Pilatus4 detectors
 from `Dectris`_. It has been tested on the Eiger 500K, 1M, 4M and 16M
 with the firmware version 1.6.4+, and Eiger2 with firmware 2020.2.
 The driver communicates with the detector via its SIMPLON REST interface,
@@ -56,7 +56,6 @@ used to receive images in a ZeroMQ stream.
 A few Eiger parameters are set at IOC initialization time and are
 expected to not change. Namely:
 
-* detector/config/auto_summation = true
 * filewriter/config/image_nr_start = 1
 * monitor/config/buffer_size = 1
 
@@ -108,7 +107,7 @@ There are six trigger modes available:
 * **External Series**: one external trigger pulse generates N images
 * **External Enable**: one external trigger pulse generates one image
 * **Continuous**: same as internal series, but automatically restarts after series
-* **External Gate**: This mode is used only with new firmware on the Eiger2
+* **External Gate**: This mode is used only with the Eiger2X
     which has 2 counters per pixel.  The behavior depend on the setting
     the ExtGateMode PV.
 
@@ -124,7 +123,7 @@ Triggers for **Internal Enable** mode are sent by processing the
 Trigger PV. The exposure for each individual image is given by the
 TriggerExposure PV and can change between triggers in the same
 acquisition. This mode is experimental as of firmware 1.5.0. See Known
-Issues.
+Issues.  CHECK THIS.
 
 Manual Trigger
 --------------
@@ -135,7 +134,7 @@ the driver. Instead, they are sent by processing the Trigger PV. On
 **Internal Enable** mode the trigger carries an exposure value that
 can change for each trigger, which is set by the TriggerExposure PV.
 Note that the **Internal Enable** mode is experimental as of firmware
-1.5.0, see Known Issues.
+1.5.0, see Known Issues.  CHECK THIS.
 
 Data Acquisition
 ----------------
@@ -300,7 +299,7 @@ ADBase.template and NDFile.template
       - Internal Enable
       - External Series
       - External Enable
-      - External Gate (Eiger2 with 2021 firmware only)
+      - External Gate (Eiger2X only)
   * - $(P)$(R)NumImages, $(P)$(R)NumImages_RBV
     - detector/config/nimages
     - Sets the number of images to take per trigger when on Internal Series or External
@@ -512,7 +511,7 @@ Trigger Setup
     - EPICS record type
   * - detector/config/extg_mode
     - Mode to be used when TriggerMode=External Gate.
-      Choices are "Pump & Probe" and "HDR".  Eiger2 with 2021 firmware only.
+      Choices are "Pump & Probe" and "HDR".  Eiger2X or Eiger2 with certain firmware only.
     - ExtGateMode, ExtGateMode_RBV
     - mbbo, mbbi
   * - detector/command/trigger
@@ -571,7 +570,7 @@ Readout Setup
     - AutoSummation, AutoSummation_RBV
     - bo, bi
   * - N.A.
-    - Controls whether data are signed or unsigned.
+    - Controls whether NDArrays are signed or unsigned.
     - SignedData, SignedData_RBV
     - bo, bi
   * - detector/config/compression
