@@ -38,6 +38,9 @@ R3-6 (June XXX, 2025)
         For 16-bit data this would be a problem when there are over 32K counts per pixel.
         Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
         and there should thus be no problem.
+* BEFORE RELEASE. Check the function of InternalEnable mode to see if it works now.
+  The documentation said it was flaky in firmware 1.5.0, so it probably works now and the
+  documentation should be fixed in several places.
 
 R3-5 (May 14, 2025)
 ----
