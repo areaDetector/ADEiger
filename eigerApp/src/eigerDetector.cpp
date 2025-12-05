@@ -268,6 +268,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mWavelengthEpsilon = mParams.create(EigWavelengthEpsilonStr, asynParamFloat64);
     mEnergyEpsilon  = mParams.create(EigEnergyEpsilonStr,  asynParamFloat64);
     mSignedData     = mParams.create(EigSignedDataStr,     asynParamInt32);
+    mStreamAsTsSource = mParams.create(EigStreamAsTsSourceStr, asynParamInt32);
 
     // Metadata
     mDescription = mParams.create(EigDescriptionStr, asynParamOctet, SSDetConfig, "description");
@@ -1361,7 +1362,11 @@ void eigerDetector::streamTask (void)
 
         int streamVersion;
         mStreamVersion->get(streamVersion);
-        
+
+        // Whether to set NDArray timestamps using Stream2 timestamps
+        int streamAsTsSource;
+        mStreamAsTsSource->get(streamAsTsSource);
+
        if (((streamVersion == STREAM_VERSION_STREAM) && !mStreamAPI) ||
            ((streamVersion == STREAM_VERSION_STREAM2) && !mStream2API)) {
             ERR("mStreamAPI is null, Stream API not enabled?");
@@ -1446,10 +1451,12 @@ void eigerDetector::streamTask (void)
             NDArray *pArray;
             int decompress;
             mStreamDecompress->get(decompress);
+            bool tsIsSet = false;
             if (streamVersion == STREAM_VERSION_STREAM) {
                 err = mStreamAPI->getFrame(&pArray, pNDArrayPool, decompress);
             } else {
-                err = mStream2API->getFrame(&pArray, pNDArrayPool, decompress);
+                err = mStream2API->getFrame(&pArray, pNDArrayPool, decompress, streamAsTsSource);
+                tsIsSet = streamAsTsSource;
             }
             int imageCounter, numImagesCounter, arrayCallbacks;
             getIntegerParam(NDArrayCounter, &imageCounter);
@@ -1482,7 +1489,9 @@ void eigerDetector::streamTask (void)
             // Put the frame number and timestamp into the buffer
             pArray->uniqueId = imageCounter;
 
-            updateTimeStamps(pArray);
+            // Only call updateTimeStamps if the stream2 has not set the ts itself
+            if (!tsIsSet)
+                updateTimeStamps(pArray);
 
             // Update Omega angle for this frame
             ++mFrameNumber;
@@ -2001,4 +2010,3 @@ static void eigerDetectorRegister(void)
 extern "C" {
     epicsExportRegistrar(eigerDetectorRegister);
 }
-
