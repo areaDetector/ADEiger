@@ -258,6 +258,12 @@ It does, however, reduce the available count range by a factor of 2.
     Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
     and there should thus be no problem.
 
+**Timestamps**: normally, NDArrays produced by ADEiger will be timestamped with the IOC's
+local current time. This is evidently not very precise, since there can be a large jitter between
+each frame. If precise timestamps are desired, the StreamAsTSSource record can be set to "Yes",
+in which case the NDArrays will be timestamped using the timestamps coming from the ZMQ stream frames.
+This is only available when using Stream V2. StreamAsTSSource's value will be ignored if using Stream V1.
+
 Using Monitor
 ~~~~~~~~~~~~~
 
@@ -751,6 +757,10 @@ Stream Interface
     - Indicates how many images were dropped in the last acquisition
     - StreamDropped_RBV
     - ai
+  * - N.A.
+    - Controls whether to set the frame's timestamp from the stream timestamps (Stream2 only)
+    - StreamAsTSSource, StreamAsTSSource_RBV
+    - bo, bi
 
 Monitor Interface
 ~~~~~~~~~~~~~~~~~
