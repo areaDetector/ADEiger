@@ -283,6 +283,25 @@ record(mbbi,"$(P)$(R)StreamHdrDetail_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# Whether to use timestamps from the stream for the produced NDArrays (Stream2 only)
+record(bo,"$(P)$(R)StreamAsTSSource") {
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_AS_TIMESTAMP_SOURCE")
+    field(DESC, "Stream as Timestamp Source")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi,"$(P)$(R)StreamAsTSSource_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))STREAM_AS_TIMESTAMP_SOURCE")
+    field(DESC, "Stream as Timestamp Source")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+    field(SCAN, "I/O Intr")
+}
+
 ####################
 # Filewriter Setup #
 ####################

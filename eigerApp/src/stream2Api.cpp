@@ -1,5 +1,12 @@
+#include "asynDriver.h"
+#include "epicsTime.h"
+#include "epicsTypes.h"
+#include "stream2.h"
 #include "streamApi.h"
+#include "rfc3339.h"
 
+#include <cstdlib>
+#include <ctime>
 #include <stdexcept>
 #include <stdlib.h>
 #include <stdint.h>
@@ -88,6 +95,44 @@ int Stream2API::poll (int timeout)
     return rc ? STREAM_SUCCESS : STREAM_TIMEOUT;
 }
 
+epicsTimeStamp Stream2API::extractTimeStampFromMessage(stream2_image_msg *msg) {
+    static const char *functionName = "extractTimeStampFromMessage";
+
+    // Update cache if needed (series_date does not change for
+    // the entirety of one acquisition)
+    if (mCachedTs.tsStr != mImageMsg->series_date) {
+        mCachedTs.tsStr = mImageMsg->series_date;
+        gm_tm_nano_sec parsedTs = rfc3339::parseRfc3339Timestamp(mImageMsg->series_date);
+
+        if (rfc3339::equals(parsedTs, rfc3339::ZERO))
+            ERR_ARGS("Failed to parse timestamp '%s' as an RFC3339-compliant timestamp", mImageMsg->series_date);
+
+        epicsTime ts = parsedTs;    // Convert gm_tm_nano_sec to epicsTime
+        mCachedTs.ts = ts;          // Convert epicsTime to epicsTimeStamp
+    }
+
+    static const epicsUInt64 NSEC_PER_SEC = 1000000000u;
+    epicsTimeStamp series_ts = mCachedTs.ts;
+
+    // Calculate the frame start time relative to the series start time, in ns
+    epicsUInt64 ticks = mImageMsg->start_time[0];       // Ticks of the clock
+    epicsUInt64 time_base = mImageMsg->start_time[1];   // Clock freq (e.g 50000000 for 50 MHz)
+    epicsUInt64 elapsed_ns = NSEC_PER_SEC * ticks / time_base;
+
+    epicsUInt64 frame_sec = series_ts.secPastEpoch;
+    epicsUInt64 frame_nsec = series_ts.nsec;
+    frame_nsec += elapsed_ns;
+
+    // Normalize
+    frame_sec += frame_nsec / NSEC_PER_SEC;
+    frame_nsec = frame_nsec % NSEC_PER_SEC;
+
+    return epicsTimeStamp {
+        .secPastEpoch = static_cast<epicsUInt32>(frame_sec),
+        .nsec = static_cast<epicsUInt32>(frame_nsec),
+    };
+}
+
 Stream2API::Stream2API (const char *hostname) : mHostname(epicsStrDup(hostname))
 {
     if(!(mCtx = zmq_ctx_new()))
@@ -169,7 +214,7 @@ int Stream2API::waitFrame (int *end, int timeout)
     return err;
 }
 
-int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int decompress)
+int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int decompress, bool extractTimeStamp)
 {
     const char *functionName = "getFrame";
     int err = STREAM_SUCCESS;
@@ -259,6 +304,12 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int de
                         }
                         pArray->compressedSize = compressedSize;
                         memcpy(pArray->pData, pInput, compressedSize);
+
+                        if (extractTimeStamp) {
+                            epicsTimeStamp ts = extractTimeStampFromMessage(mImageMsg);
+                            pArray->epicsTS = ts;
+                            pArray->timeStamp = ts.secPastEpoch + ts.nsec/1.e9;
+                        }
                     }
                 }
                 *pArrayOut = pArray;
@@ -272,4 +323,3 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int de
     zmq_msg_close(&mMsg);
     return err;
 }
-

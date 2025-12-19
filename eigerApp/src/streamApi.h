@@ -50,15 +50,20 @@ private:
     uint64_t mImage_size_x;
     uint64_t mImage_size_y;
     uint64_t mNumber_of_images;
+    struct {
+        std::string tsStr;
+        epicsTimeStamp ts;
+    } mCachedTs;
 
-    int poll       (int timeout);   // timeout in seconds
+    epicsTimeStamp extractTimeStampFromMessage(stream2_image_msg *message);
+    int poll (int timeout);   // timeout in seconds
 
 public:
     Stream2API     (const char *hostname);
     ~Stream2API    (void);
     int getHeader  (stream_header_t *header, int timeout = 0);
     int waitFrame  (int *end, int timeout = 0);
-    int getFrame   (NDArray **pArray, NDArrayPool *pNDArrayPool, int decompress);
+    int getFrame   (NDArray **pArray, NDArrayPool *pNDArrayPool, int decompress, bool extractTimeStamp);
 };
 
 

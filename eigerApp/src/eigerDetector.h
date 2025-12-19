@@ -101,6 +101,7 @@ typedef enum {
 #define EigStreamStateStr          "STREAM_STATE"
 #define EigStreamDecompressStr     "STREAM_DECOMPRESS"
 #define EigStreamVersionStr        "STREAM_VERSION"
+#define EigStreamAsTsSourceStr     "STREAM_AS_TIMESTAMP_SOURCE"
 
 // Epsilon Parameters (minimum amount of change allowed)
 #define EigWavelengthEpsilonStr    "WAVELENGTH_EPSILON"
@@ -241,6 +242,7 @@ protected:
     EigerParam *mStreamDropped;
     EigerParam *mStreamState;
     EigerParam *mStreamVersion;
+    EigerParam *mStreamAsTsSource;
 
     // Base class parameters
     EigerParam *mAcquireTime;
