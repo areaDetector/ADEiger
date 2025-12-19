@@ -14,7 +14,7 @@
     <color red="0" green="0" blue="0" />
   </foreground_color>
   <grid_space>5</grid_space>
-  <height>985</height>
+  <height>1010</height>
   <macros>
     <include_parent_macros>true</include_parent_macros>
   </macros>
@@ -183,7 +183,7 @@ $(pv_value)</tooltip>
       <color red="0" green="0" blue="0" />
     </foreground_color>
     <group_name></group_name>
-    <height>180</height>
+    <height>205</height>
     <macros>
       <include_parent_macros>true</include_parent_macros>
     </macros>
@@ -319,7 +319,7 @@ $(pv_value)</tooltip>
     <widget_type>Linking Container</widget_type>
     <width>350</width>
     <x>715</x>
-    <y>710</y>
+    <y>735</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.linkingContainer" version="1.0.0">
     <actions hook="false" hook_all="false" />
@@ -436,7 +436,7 @@ $(pv_value)</tooltip>
     <widget_type>Linking Container</widget_type>
     <width>350</width>
     <x>715</x>
-    <y>820</y>
+    <y>845</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.linkingContainer" version="1.0.0">
     <actions hook="false" hook_all="false" />

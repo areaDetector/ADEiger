@@ -6,7 +6,7 @@ release 1
 x 1276
 y 227
 w 350
-h 180
+h 205
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -69,7 +69,7 @@ release 0
 x 0
 y 0
 w 350
-h 180
+h 205
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -81,7 +81,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 95
+x 120
 y 55
 w 50
 h 20
@@ -101,7 +101,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 150
+x 175
 y 56
 w 120
 h 18
@@ -119,81 +119,13 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 150
-y 156
-w 60
-h 18
-controlPv "$(P)$(R)StreamDropped_RBV"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 1
-x 15
-y 105
-w 130
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Header Detail"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 235
-y 106
-w 80
-h 18
-controlPv "$(P)$(R)StreamHdrDetail_RBV"
-format "string"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 45
+x 70
 y 130
 w 100
 h 20
@@ -213,7 +145,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 235
+x 260
 y 131
 w 80
 h 18
@@ -238,27 +170,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 5
-y 155
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Dropped Frames"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 85
+x 110
 y 30
 w 60
 h 20
@@ -278,7 +190,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 235
+x 260
 y 31
 w 80
 h 18
@@ -303,7 +215,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 75
+x 100
 y 80
 w 70
 h 20
@@ -323,7 +235,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 235
+x 260
 y 81
 w 80
 h 18
@@ -341,24 +253,136 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Menu Button)
-object activeMenuButtonClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 0
+minor 7
 release 0
-x 150
+x 175
+y 181
+w 60
+h 18
+controlPv "$(P)$(R)StreamDropped_RBV"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 40
 y 105
-w 80
+w 130
 h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
 fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-inconsistentColor rgb 17920 17920 17920
-topShadowColor rgb 55808 55808 55808
-botShadowColor rgb 17920 17920 17920
-controlPv "$(P)$(R)StreamHdrDetail"
-indicatorPv "$(P)$(R)StreamHdrDetail"
-font "helvetica-medium-r-12.0"
+bgColor index 3
+useDisplayBg
+value {
+  "Header Detail"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 260
+y 106
+w 80
+h 18
+controlPv "$(P)$(R)StreamHdrDetail_RBV"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 260
+y 156
+w 80
+h 18
+controlPv "$(P)$(R)StreamAsTSSource_RBV"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 155
+w 160
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Timestamp source"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 30
+y 180
+w 140
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Dropped Frames"
+}
 endObjectProperties
 
 # (Menu Button)
@@ -367,7 +391,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 150
+x 175
 y 130
 w 80
 h 20
@@ -387,7 +411,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 150
+x 175
 y 30
 w 80
 h 20
@@ -407,7 +431,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 150
+x 175
 y 80
 w 80
 h 20
@@ -418,6 +442,46 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 controlPv "$(P)$(R)StreamVersion"
 indicatorPv "$(P)$(R)StreamVersion"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 175
+y 105
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)StreamHdrDetail"
+indicatorPv "$(P)$(R)StreamHdrDetail"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 175
+y 155
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)StreamAsTSSource"
+indicatorPv "$(P)$(R)StreamAsTSSource"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 

@@ -6,7 +6,7 @@ release 1
 x 280
 y 99
 w 1425
-h 985
+h 1010
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -155,7 +155,7 @@ release 0
 x 715
 y 525
 w 350
-h 180
+h 205
 
 beginGroup
 
@@ -168,7 +168,7 @@ release 0
 x 715
 y 525
 w 350
-h 180
+h 205
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280
@@ -282,7 +282,7 @@ major 4
 minor 0
 release 0
 x 715
-y 710
+y 735
 w 350
 h 105
 
@@ -295,7 +295,7 @@ major 4
 minor 1
 release 0
 x 715
-y 710
+y 735
 w 350
 h 105
 fgColor rgb 0 0 0
@@ -411,7 +411,7 @@ major 4
 minor 0
 release 0
 x 715
-y 820
+y 845
 w 350
 h 160
 
@@ -424,7 +424,7 @@ major 4
 minor 1
 release 0
 x 715
-y 820
+y 845
 w 350
 h 160
 fgColor rgb 0 0 0

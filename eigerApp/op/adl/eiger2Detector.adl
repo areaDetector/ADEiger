@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector-3-14/ADEiger/eigerApp/op/adl/eiger2Detector.adl"
+	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2Detector.adl"
 	version=030117
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=280
 		y=99
 		width=1425
-		height=985
+		height=1010
 	}
 	clr=14
 	bclr=4
@@ -136,7 +136,7 @@ composite {
 		x=715
 		y=525
 		width=350
-		height=180
+		height=205
 	}
 	"composite name"=""
 	"composite file"="eiger2Stream.adl"
@@ -164,7 +164,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=710
+		y=735
 		width=350
 		height=105
 	}
@@ -194,7 +194,7 @@ composite {
 composite {
 	object {
 		x=715
-		y=820
+		y=845
 		width=350
 		height=160
 	}

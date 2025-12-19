@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2Stream.adl"
+	name="/home/epics/devel/areaDetector-3-14/ADEiger/eigerApp/op/adl/eiger2Stream.adl"
 	version=030117
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=1276
 		y=227
 		width=350
-		height=180
+		height=205
 	}
 	clr=14
 	bclr=4
@@ -116,7 +116,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=180
+		height=205
 	}
 	"basic attribute" {
 		clr=14
@@ -125,7 +125,7 @@ rectangle {
 }
 text {
 	object {
-		x=95
+		x=120
 		y=55
 		width=50
 		height=20
@@ -138,7 +138,7 @@ text {
 }
 "text update" {
 	object {
-		x=150
+		x=175
 		y=56
 		width=120
 		height=18
@@ -152,66 +152,9 @@ text {
 	limits {
 	}
 }
-"text update" {
-	object {
-		x=150
-		y=156
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)StreamDropped_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
 text {
 	object {
-		x=15
-		y=105
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Header Detail"
-	align="horiz. right"
-}
-menu {
-	object {
-		x=150
-		y=105
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StreamHdrDetail"
-		clr=14
-		bclr=51
-	}
-}
-"text update" {
-	object {
-		x=235
-		y=106
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)StreamHdrDetail_RBV"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=45
+		x=70
 		y=130
 		width=100
 		height=20
@@ -224,7 +167,7 @@ text {
 }
 menu {
 	object {
-		x=150
+		x=175
 		y=130
 		width=80
 		height=20
@@ -237,7 +180,7 @@ menu {
 }
 "text update" {
 	object {
-		x=235
+		x=260
 		y=131
 		width=80
 		height=18
@@ -254,20 +197,7 @@ menu {
 }
 text {
 	object {
-		x=5
-		y=155
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Dropped Frames"
-	align="horiz. right"
-}
-text {
-	object {
-		x=85
+		x=110
 		y=30
 		width=60
 		height=20
@@ -280,7 +210,7 @@ text {
 }
 menu {
 	object {
-		x=150
+		x=175
 		y=30
 		width=80
 		height=20
@@ -293,7 +223,7 @@ menu {
 }
 "text update" {
 	object {
-		x=235
+		x=260
 		y=31
 		width=80
 		height=18
@@ -310,7 +240,7 @@ menu {
 }
 text {
 	object {
-		x=75
+		x=100
 		y=80
 		width=70
 		height=20
@@ -323,7 +253,7 @@ text {
 }
 menu {
 	object {
-		x=150
+		x=175
 		y=80
 		width=80
 		height=20
@@ -336,7 +266,7 @@ menu {
 }
 "text update" {
 	object {
-		x=235
+		x=260
 		y=81
 		width=80
 		height=18
@@ -349,4 +279,116 @@ menu {
 	format="string"
 	limits {
 	}
+}
+"text update" {
+	object {
+		x=175
+		y=181
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)StreamDropped_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=40
+		y=105
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Header Detail"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=175
+		y=105
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamHdrDetail"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=260
+		y=106
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)StreamHdrDetail_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+menu {
+	object {
+		x=175
+		y=155
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamAsTSSource"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=260
+		y=156
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)StreamAsTSSource_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=10
+		y=155
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Timestamp source"
+	align="horiz. right"
+}
+text {
+	object {
+		x=30
+		y=180
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dropped Frames"
+	align="horiz. right"
 }

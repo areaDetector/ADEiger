@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-05-14 14:17:18 by epics-->
+<!--Saved on 2025-12-19 11:21:05 by epics-->
 <display version="2.0.0">
   <name>eiger2Detector</name>
   <x>280</x>
   <y>99</y>
   <width>1425</width>
-  <height>985</height>
+  <height>1010</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -64,7 +64,7 @@
     <x>715</x>
     <y>525</y>
     <width>350</width>
-    <height>180</height>
+    <height>205</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #18</name>
@@ -86,7 +86,7 @@
     <name>composite #22</name>
     <file>eigerMonitor.bob</file>
     <x>715</x>
-    <y>710</y>
+    <y>735</y>
     <width>350</width>
     <height>105</height>
   </widget>
@@ -110,7 +110,7 @@
     <name>composite #28</name>
     <file>ADBuffers.bob</file>
     <x>715</x>
-    <y>820</y>
+    <y>845</y>
     <width>350</width>
     <height>160</height>
   </widget>
