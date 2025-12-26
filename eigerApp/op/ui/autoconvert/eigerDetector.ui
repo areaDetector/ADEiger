@@ -4,8 +4,8 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>10</x>
-            <y>64</y>
+            <x>157</x>
+            <y>59</y>
             <width>1425</width>
             <height>935</height>
         </rect>
@@ -84,6 +84,16 @@ caChoice &gt; QPushButton {
       text-align: left;
       padding: 1px;
 }
+
+/* when font specified, no font sizing is done any more,  font: 10pt; is not bad. You could Enable this when you converted from .adl files
+caRelatedDisplay  &gt; QPushButton {
+font: 10pt;
+}
+
+caShellCommand  &gt; QPushButton {
+font: 10pt;
+}
+*/
 
 caSlider::groove:horizontal {
 border: 1px solid #bbb;
@@ -193,7 +203,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADShutter.adl</string>
+                <string>ADShutter.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -217,7 +227,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADPlugins.adl</string>
+                <string>ADPlugins.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -241,7 +251,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerStream.adl</string>
+                <string>eiger1Stream.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -265,7 +275,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorInfo.adl</string>
+                <string>eigerDetectorInfo.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -289,7 +299,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1DetectorStatus.adl</string>
+                <string>eiger1DetectorStatus.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -313,7 +323,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerMonitor.adl</string>
+                <string>eigerMonitor.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -337,7 +347,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1FileWriter.adl</string>
+                <string>eiger1FileWriter.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -361,7 +371,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorMetadata.adl</string>
+                <string>eigerDetectorMetadata.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -385,7 +395,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADBuffers.adl</string>
+                <string>ADBuffers.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -409,7 +419,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADSetup.adl</string>
+                <string>ADSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -433,7 +443,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADAttrFile.adl</string>
+                <string>ADAttrFile.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -457,7 +467,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1AcquisitionSetup.adl</string>
+                <string>eiger1AcquisitionSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -481,7 +491,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger1Trigger.adl</string>
+                <string>eiger1Trigger.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -505,7 +515,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerAcquisitionStatus.adl</string>
+                <string>eigerAcquisitionStatus.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -517,7 +527,7 @@ border-radius: 2px;
                     <x>1070</x>
                     <y>600</y>
                     <width>352</width>
-                    <height>232</height>
+                    <height>257</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -525,11 +535,11 @@ border-radius: 2px;
                     <x>1070</x>
                     <y>600</y>
                     <width>350</width>
-                    <height>230</height>
+                    <height>255</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerReadout.adl</string>
+                <string>eigerReadout.ui</string>
             </property>
             <property name="macro">
                 <string></string>

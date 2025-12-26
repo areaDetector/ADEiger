@@ -85,6 +85,16 @@ caChoice &gt; QPushButton {
       padding: 1px;
 }
 
+/* when font specified, no font sizing is done any more,  font: 10pt; is not bad. You could Enable this when you converted from .adl files
+caRelatedDisplay  &gt; QPushButton {
+font: 10pt;
+}
+
+caShellCommand  &gt; QPushButton {
+font: 10pt;
+}
+*/
+
 caSlider::groove:horizontal {
 border: 1px solid #bbb;
 background: lightgrey;
@@ -267,7 +277,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Pixel Size</string>
+                <string>Pixel Size (m)</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -277,9 +287,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>65</x>
+                    <x>25</x>
                     <y>80</y>
-                    <width>100</width>
+                    <width>140</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -339,7 +349,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Sensor Thickness</string>
+                <string>Thickness (m)</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -349,9 +359,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>5</x>
+                    <x>35</x>
                     <y>130</y>
-                    <width>160</width>
+                    <width>130</width>
                     <height>20</height>
                 </rect>
             </property>

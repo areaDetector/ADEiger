@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>352</x>
-            <y>88</y>
+            <x>280</x>
+            <y>99</y>
             <width>1425</width>
-            <height>970</height>
+            <height>1010</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -84,6 +84,16 @@ caChoice &gt; QPushButton {
       text-align: left;
       padding: 1px;
 }
+
+/* when font specified, no font sizing is done any more,  font: 10pt; is not bad. You could Enable this when you converted from .adl files
+caRelatedDisplay  &gt; QPushButton {
+font: 10pt;
+}
+
+caShellCommand  &gt; QPushButton {
+font: 10pt;
+}
+*/
 
 caSlider::groove:horizontal {
 border: 1px solid #bbb;
@@ -193,7 +203,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADShutter.adl</string>
+                <string>ADShutter.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -217,7 +227,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADPlugins.adl</string>
+                <string>ADPlugins.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -227,21 +237,21 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>500</y>
+                    <y>525</y>
                     <width>352</width>
-                    <height>157</height>
+                    <height>207</height>
                 </rect>
             </property>
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>500</y>
+                    <y>525</y>
                     <width>350</width>
-                    <height>155</height>
+                    <height>205</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerStream.adl</string>
+                <string>eiger2Stream.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -265,7 +275,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorInfo.adl</string>
+                <string>eigerDetectorInfo.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -289,7 +299,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger2DetectorStatus.adl</string>
+                <string>eiger2DetectorStatus.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -299,7 +309,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>660</y>
+                    <y>735</y>
                     <width>352</width>
                     <height>107</height>
                 </rect>
@@ -307,13 +317,13 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>660</y>
+                    <y>735</y>
                     <width>350</width>
                     <height>105</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerMonitor.adl</string>
+                <string>eigerMonitor.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -325,7 +335,7 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>352</width>
-                    <height>457</height>
+                    <height>482</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -333,11 +343,11 @@ border-radius: 2px;
                     <x>715</x>
                     <y>40</y>
                     <width>350</width>
-                    <height>455</height>
+                    <height>480</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger2FileWriter.adl</string>
+                <string>eiger2FileWriter.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -361,7 +371,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerDetectorMetadata.adl</string>
+                <string>eigerDetectorMetadata.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -371,7 +381,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>770</y>
+                    <y>845</y>
                     <width>354</width>
                     <height>164</height>
                 </rect>
@@ -379,13 +389,13 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>715</x>
-                    <y>770</y>
+                    <y>845</y>
                     <width>352</width>
                     <height>162</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>ADBuffers.adl</string>
+                <string>ADBuffers.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -409,7 +419,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>ADSetup.adl</string>
+                <string>ADSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -419,7 +429,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>1070</x>
-                    <y>835</y>
+                    <y>860</y>
                     <width>354</width>
                     <height>114</height>
                 </rect>
@@ -427,13 +437,13 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>1070</x>
-                    <y>835</y>
+                    <y>860</y>
                     <width>352</width>
                     <height>112</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>ADAttrFile.adl</string>
+                <string>ADAttrFile.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -457,7 +467,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger2AcquisitionSetup.adl</string>
+                <string>eiger2AcquisitionSetup.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -481,7 +491,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerAcquisitionStatus.adl</string>
+                <string>eigerAcquisitionStatus.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -505,7 +515,7 @@ border-radius: 2px;
                 </rect>
             </property>
             <property name="filename">
-                <string>eiger2Trigger.adl</string>
+                <string>eiger2Trigger.ui</string>
             </property>
             <property name="macro">
                 <string></string>
@@ -517,7 +527,7 @@ border-radius: 2px;
                     <x>1070</x>
                     <y>600</y>
                     <width>352</width>
-                    <height>232</height>
+                    <height>257</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -525,11 +535,11 @@ border-radius: 2px;
                     <x>1070</x>
                     <y>600</y>
                     <width>350</width>
-                    <height>230</height>
+                    <height>255</height>
                 </rect>
             </property>
             <property name="filename">
-                <string>eigerReadout.adl</string>
+                <string>eigerReadout.ui</string>
             </property>
             <property name="macro">
                 <string></string>
