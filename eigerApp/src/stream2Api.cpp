@@ -185,10 +185,14 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
     mImage_size_x = sm->image_size_x;
     mImage_size_y = sm->image_size_y;
     mNumber_of_images = sm->number_of_images;
+    mThresholdEnergy.clear();
+    for (int i=0; i<(int)sm->threshold_energy.len; i++) {
+        mThresholdEnergy.push_back(sm->threshold_energy.ptr[i]);
+    }
     return STREAM_SUCCESS;
 }
 
-int Stream2API::waitFrame (int *end, int timeout)
+int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
 {
     //const char *functionName = "waitFrame";
     int err = STREAM_SUCCESS;
@@ -206,6 +210,8 @@ int Stream2API::waitFrame (int *end, int timeout)
         return err;
     }
     mImageMsg = (stream2_image_msg *)s2msg;
+    mNumThresholds = (int)mImageMsg->data.len;
+    *numThresholds = mNumThresholds;
 
     if (mImageMsg->type == STREAM2_MSG_END)
     {
@@ -214,7 +220,7 @@ int Stream2API::waitFrame (int *end, int timeout)
     return err;
 }
 
-int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int decompress, bool extractTimeStamp)
+int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int thresh, int decompress, bool extractTimeStamp)
 {
     const char *functionName = "getFrame";
     int err = STREAM_SUCCESS;
@@ -224,102 +230,96 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int de
     NDArray *pArray;
     char encoding[32];
     NDDataType_t dataType;
-    int numThresholds = mImageMsg->data.len;
 
     switch (mImageMsg->type) {
-       case STREAM2_MSG_IMAGE:
-            for (int i = 0; i < numThresholds; i++) {
-                struct stream2_image_data *pSID = &mImageMsg->data.ptr[i];
-                struct stream2_multidim_array mda = pSID->data;
-                dims[0] = mda.dim[1];
-                dims[1] = mda.dim[0];
-                numDims = 2;
-                if (numThresholds > 1) {
-                    dims[2] = numThresholds;
-                    numDims = 3;
-                }
-                struct stream2_typed_array *pS2Array = &mda.array;
-                stream2_typed_array_tag s2DataType = (stream2_typed_array_tag)pS2Array->tag;
-                struct stream2_bytes *pSB = &pS2Array->data;
-                compressedSize = pSB->len;
-                uncompressedSize = pSB->len;
-                struct stream2_compression *pCompression = &pSB->compression;
-                if (pCompression->algorithm != NULL) {
-                    uncompressedSize = pCompression->orig_size;
-                    strcpy(encoding, pCompression->algorithm);
-                }
-                switch (s2DataType) {
-                    case STREAM2_TYPED_ARRAY_UINT8:
-                        dataType = NDUInt8;
-                        break;
-                    case STREAM2_TYPED_ARRAY_UINT16_LITTLE_ENDIAN:
-                        dataType = NDUInt16;
-                        break;
-                    case STREAM2_TYPED_ARRAY_UINT32_LITTLE_ENDIAN:
-                        dataType = NDUInt32;
-                        break;
-                    default:
-                        ERR_ARGS("unknown dataType %d", s2DataType);
-                        err = STREAM_ERROR;
-                        goto error;
-                }
-                
-                // On first threshold we create the NDArray
-                if (i == 0) {
-                    if(!(pArray = pNDArrayPool->alloc(numDims, dims, dataType, 0, NULL)))
-                    {
-                        ERR("failed to allocate NDArray for frame");
-                        err = STREAM_ERROR;
-                        goto error;
-                    }
-                }
-                // Get frame data
-                // If data is uncompressed we can copy directly into NDArray
-                if (pCompression->algorithm == NULL)
-                {
-                    memcpy((char *)pArray->pData + (i*uncompressedSize), pSB->ptr, uncompressedSize);
-                }
-                else 
-                {
-                    if (decompress) 
-                    {
-                        uncompress(pSB->ptr, (char *)pArray->pData + (i*uncompressedSize), encoding, 
-                                   compressedSize, uncompressedSize, dataType);
-                    }
-                    else
-                    {        
-                        const unsigned char *pInput = pSB->ptr;
-                        if (strcmp(encoding, "lz4") == 0) 
-                        {
-                            pArray->codec.name = "lz4";
-                        }
-                        else if (strcmp(encoding, "bslz4") == 0) 
-                        {
-                            pArray->codec.name = "bslz4";
-                            pInput += 12;
-                            compressedSize -= 12;
-                        }
-                        else {
-                            ERR_ARGS("unknown encoding %s", encoding);
-                        }
-                        pArray->compressedSize = compressedSize;
-                        memcpy(pArray->pData, pInput, compressedSize);
-
-                        if (extractTimeStamp) {
-                            epicsTimeStamp ts = extractTimeStampFromMessage(mImageMsg);
-                            pArray->epicsTS = ts;
-                            pArray->timeStamp = ts.secPastEpoch + ts.nsec/1.e9;
-                        }
-                    }
-                }
-                *pArrayOut = pArray;
+       case STREAM2_MSG_IMAGE: {
+            struct stream2_image_data *pSID = &mImageMsg->data.ptr[thresh];
+            struct stream2_multidim_array mda = pSID->data;
+            dims[0] = mda.dim[1];
+            dims[1] = mda.dim[0];
+            numDims = 2;
+            struct stream2_typed_array *pS2Array = &mda.array;
+            stream2_typed_array_tag s2DataType = (stream2_typed_array_tag)pS2Array->tag;
+            struct stream2_bytes *pSB = &pS2Array->data;
+            compressedSize = pSB->len;
+            uncompressedSize = pSB->len;
+            struct stream2_compression *pCompression = &pSB->compression;
+            if (pCompression->algorithm != NULL) {
+                uncompressedSize = pCompression->orig_size;
+                strcpy(encoding, pCompression->algorithm);
             }
+            switch (s2DataType) {
+                case STREAM2_TYPED_ARRAY_UINT8:
+                    dataType = NDUInt8;
+                    break;
+                case STREAM2_TYPED_ARRAY_UINT16_LITTLE_ENDIAN:
+                    dataType = NDUInt16;
+                    break;
+                case STREAM2_TYPED_ARRAY_UINT32_LITTLE_ENDIAN:
+                    dataType = NDUInt32;
+                    break;
+                default:
+                    ERR_ARGS("unknown dataType %d", s2DataType);
+                    err = STREAM_ERROR;
+                    goto error;
+            }
+            
+            if(!(pArray = pNDArrayPool->alloc(numDims, dims, dataType, 0, NULL)))
+            {
+                ERR("failed to allocate NDArray for frame");
+                err = STREAM_ERROR;
+                goto error;
+            }
+
+            // Get frame data
+            // If data is uncompressed we can copy directly into NDArray
+            if (pCompression->algorithm == NULL)
+            {
+                memcpy((char *)pArray->pData, pSB->ptr, uncompressedSize);
+            }
+            else 
+            {
+                if (decompress) 
+                {
+                    uncompress(pSB->ptr, (char *)pArray->pData, encoding, compressedSize, uncompressedSize, dataType);
+                }
+                else
+                {        
+                    const unsigned char *pInput = pSB->ptr;
+                    if (strcmp(encoding, "lz4") == 0) 
+                    {
+                        pArray->codec.name = "lz4";
+                    }
+                    else if (strcmp(encoding, "bslz4") == 0) 
+                    {
+                        pArray->codec.name = "bslz4";
+                        pInput += 12;
+                        compressedSize -= 12;
+                    }
+                    else {
+                        ERR_ARGS("unknown encoding %s", encoding);
+                    }
+                    pArray->compressedSize = compressedSize;
+                    memcpy(pArray->pData, pInput, compressedSize);
+
+                    if (extractTimeStamp) {
+                        epicsTimeStamp ts = extractTimeStampFromMessage(mImageMsg);
+                        pArray->epicsTS = ts;
+                        pArray->timeStamp = ts.secPastEpoch + ts.nsec/1.e9;
+                    }
+                }
+            }
+            pArray->pAttributeList->add("ThresholdName", "Threshold name", NDAttrString, mThresholdEnergy[thresh].channel);
+            pArray->pAttributeList->add("ThresholdEnergy", "Threshold energy (eV)", NDAttrFloat64, (void *)&(mThresholdEnergy[thresh].energy));
+            *pArrayOut = pArray;
             break;
+        }
         default:
-            ERR_ARGS("unknown unexpected message types %d", mImageMsg->type);
-            break;
+        ERR_ARGS("unexpected message type %d", mImageMsg->type);
     }
     error:
-    zmq_msg_close(&mMsg);
+    if (thresh == mNumThresholds-1) {
+        zmq_msg_close(&mMsg);
+    }
     return err;
 }

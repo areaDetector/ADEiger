@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <vector>
 #include <NDArray.h>
 #include <zmq.h>
 #include <stream2.h>
@@ -50,6 +51,8 @@ private:
     uint64_t mImage_size_x;
     uint64_t mImage_size_y;
     uint64_t mNumber_of_images;
+    int mNumThresholds;
+    std::vector<stream2_threshold_energy> mThresholdEnergy;
     struct {
         std::string tsStr;
         epicsTimeStamp ts;
@@ -62,8 +65,8 @@ public:
     Stream2API     (const char *hostname);
     ~Stream2API    (void);
     int getHeader  (stream_header_t *header, int timeout = 0);
-    int waitFrame  (int *end, int timeout = 0);
-    int getFrame   (NDArray **pArray, NDArrayPool *pNDArrayPool, int decompress, bool extractTimeStamp);
+    int waitFrame  (int *end, int *numThresholds, int timeout = 0);
+    int getFrame   (NDArray **pArray, NDArrayPool *pNDArrayPool, int thresh, int decompress, bool extractTimeStamp);
 };
 
 
