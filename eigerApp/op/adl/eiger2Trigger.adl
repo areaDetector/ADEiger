@@ -1,14 +1,14 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2Trigger.adl"
-	version=030109
+	name="/home/epics/support/areaDetector-3-13/ADEiger/eigerApp/op/adl/eiger2Trigger.adl"
+	version=030117
 }
 display {
 	object {
-		x=1027
-		y=344
+		x=853
+		y=336
 		width=350
-		height=205
+		height=180
 	}
 	clr=14
 	bclr=4
@@ -92,7 +92,7 @@ rectangle {
 		x=0
 		y=0
 		width=350
-		height=205
+		height=180
 	}
 	"basic attribute" {
 		clr=14
@@ -209,94 +209,6 @@ menu {
 }
 text {
 	object {
-		x=30
-		y=130
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Manual Trig."
-	align="horiz. right"
-}
-menu {
-	object {
-		x=155
-		y=130
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ManualTrigger"
-		clr=14
-		bclr=51
-	}
-}
-"text update" {
-	object {
-		x=260
-		y=131
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)ManualTrigger_RBV"
-		clr=54
-		bclr=12
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=10
-		y=105
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Trig. Exposure"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=155
-		y=105
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)TriggerExposure"
-		clr=14
-		bclr=51
-	}
-	format="exponential"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=260
-		y=106
-		width=80
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)TriggerExposure_RBV"
-		clr=54
-		bclr=4
-	}
-	format="exponential"
-	limits {
-	}
-}
-text {
-	object {
 		x=10
 		y=55
 		width=140
@@ -340,85 +252,139 @@ text {
 	limits {
 	}
 }
-"message button" {
-	object {
-		x=155
-		y=155
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)Trigger"
-		clr=14
-		bclr=16
-	}
-	label="Trigger"
-	press_msg="0"
-}
 composite {
 	object {
-		x=50
-		y=180
-		width=290
-		height=20
+		x=10
+		y=105
+		width=330
+		height=70
 	}
 	"composite name"=""
 	children {
 		text {
 			object {
-				x=50
-				y=180
-				width=100
+				x=30
+				y=105
+				width=120
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="# Triggers"
+			textix="Manual Trig."
 			align="horiz. right"
 		}
-		"text update" {
-			object {
-				x=260
-				y=181
-				width=80
-				height=18
-			}
-			monitor {
-				chan="$(P)$(R)NumTriggers_RBV"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text entry" {
+		menu {
 			object {
 				x=155
-				y=180
+				y=105
 				width=100
 				height=20
 			}
 			control {
-				chan="$(P)$(R)NumTriggers"
+				chan="$(P)$(R)ManualTrigger"
 				clr=14
 				bclr=51
 			}
+		}
+		"text update" {
+			object {
+				x=260
+				y=106
+				width=80
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)ManualTrigger_RBV"
+				clr=54
+				bclr=12
+			}
+			clrmod="alarm"
+			format="string"
 			limits {
 			}
 		}
+		"message button" {
+			object {
+				x=155
+				y=130
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)Trigger"
+				clr=14
+				bclr=16
+			}
+			label="Trigger"
+			press_msg="0"
+		}
+		composite {
+			object {
+				x=50
+				y=155
+				width=290
+				height=20
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=50
+						y=155
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="# Triggers"
+					align="horiz. right"
+				}
+				"text update" {
+					object {
+						x=260
+						y=156
+						width=80
+						height=18
+					}
+					monitor {
+						chan="$(P)$(R)NumTriggers_RBV"
+						clr=54
+						bclr=4
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=155
+						y=155
+						width=100
+						height=20
+					}
+					control {
+						chan="$(P)$(R)NumTriggers"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+			}
+		}
+		text {
+			object {
+				x=10
+				y=130
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Software Trig."
+			align="horiz. right"
+		}
 	}
-}
-text {
-	object {
-		x=10
-		y=155
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Software Trig."
-	align="horiz. right"
 }

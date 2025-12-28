@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/areaDetector/ADEiger/eigerApp/op/adl/eiger2Detector.adl"
+	name="/home/epics/support/areaDetector/ADEiger/eigerApp/op/adl/eiger2Detector.adl"
 	version=030117
 }
 display {
@@ -234,7 +234,7 @@ composite {
 composite {
 	object {
 		x=360
-		y=585
+		y=560
 		width=350
 		height=380
 	}
@@ -246,7 +246,7 @@ composite {
 		x=360
 		y=375
 		width=350
-		height=205
+		height=180
 	}
 	"composite name"=""
 	"composite file"="eiger2Trigger.adl"

@@ -38,9 +38,15 @@ R3-6 (June XXX, 2025)
         For 16-bit data this would be a problem when there are over 32K counts per pixel.
         Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
         and there should thus be no problem.
-* BEFORE RELEASE. Check the function of InternalEnable mode to see if it works now.
-  The documentation said it was flaky in firmware 1.5.0, so it probably works now and the
-  documentation should be fixed in several places.
+* Fixed issues with Internal Enable trigger mode.
+  - This mode was broken completely starting with R3-4 in June 2022.  
+    It was always sending 0 as the TriggerExposure value due to a bug introduced in the driver.
+  - The TriggerExposure value was only used in Internal Enable mode.
+    This is confusing, since AcquireTime is used for all other modes.
+  - The TriggerExposure record was eliminated, and AcquireTime is now used in Internal Enable mode.
+    This breaks backwards compatibility, but since Internal Enable mode has not worked at all
+    for 3.5 years, it is likely to have a small impact.
+    eigerBase.template, the OPI screens, and the Sphinx documentation have been modified to remove this record.
 
 R3-5 (May 14, 2025)
 ----
