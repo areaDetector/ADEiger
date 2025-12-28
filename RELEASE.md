@@ -39,7 +39,7 @@ R3-6 (January XXX, 2026)
         Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
         and there should thus be no problem.
 * Fixed issues with Internal Enable trigger mode.
-  - This mode was broken completely starting with R3-4 in June 2022.  
+  - This mode was broken completely starting with R3-4 in June 2022.
     It was always sending 0 as the TriggerExposure value due to a bug introduced in the driver.
   - The TriggerExposure value was only used in Internal Enable mode.
     This is confusing, since AcquireTime is used for all other modes.
