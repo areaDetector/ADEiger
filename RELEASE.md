@@ -44,9 +44,9 @@ R3-6 (January XXX, 2026)
   - The TriggerExposure value was only used in Internal Enable mode.
     This is confusing, since AcquireTime is used for all other modes.
   - The TriggerExposure record was eliminated, and AcquireTime is now used in Internal Enable mode.
-    This breaks backwards compatibility, but since Internal Enable mode has not worked at all
-    for 3.5 years, it is likely to have a small impact.
-    eigerBase.template, the OPI screens, and the Sphinx documentation have been modified to remove this record.
+    - This breaks backwards compatibility, but since Internal Enable mode has not worked at all
+      for 3.5 years, it is likely to have a small impact.
+    - eigerBase.template, the OPI screens, and the Sphinx documentation have been modified to remove this record.
 
 R3-5 (May 14, 2025)
 ----
