@@ -12,7 +12,6 @@ $(P)$(R)ThresholdEnergy
 #################
 $(P)$(R)NumTriggers
 $(P)$(R)ManualTrigger
-$(P)$(R)TriggerExposure
 
 #################
 # Readout Setup #

@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1027
-y 344
+x 853
+y 336
 w 350
-h 205
+h 180
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 205
+h 180
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -169,124 +169,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 30
-y 130
-w 120
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Manual Trig."
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 260
-y 131
-w 80
-h 18
-controlPv "$(P)$(R)ManualTrigger_RBV"
-format "string"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 0 65535 0
-fgAlarm
-bgColor rgb 17920 17920 17920
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 10
-y 105
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Trig. Exposure"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 155
-y 105
-w 100
-h 20
-controlPv "$(P)$(R)TriggerExposure"
-format "exponential"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 260
-y 106
-w 80
-h 18
-controlPv "$(P)$(R)TriggerExposure_RBV"
-format "exponential"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 10
+x 40
 y 55
-w 140
+w 110
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -348,18 +233,50 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Group)
-object activeGroupClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
-x 50
-y 180
-w 290
+minor 1
+release 1
+x 30
+y 105
+w 120
 h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Manual Trig."
+}
+endObjectProperties
 
-beginGroup
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 260
+y 106
+w 80
+h 18
+controlPv "$(P)$(R)ManualTrigger_RBV"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 17920 17920 17920
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
 
 # (Static Text)
 object activeXTextClass
@@ -368,7 +285,7 @@ major 4
 minor 1
 release 1
 x 50
-y 180
+y 155
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -388,7 +305,7 @@ major 4
 minor 7
 release 0
 x 260
-y 181
+y 156
 w 80
 h 18
 controlPv "$(P)$(R)NumTriggers_RBV"
@@ -412,7 +329,7 @@ major 4
 minor 7
 release 0
 x 155
-y 180
+y 155
 w 100
 h 20
 controlPv "$(P)$(R)NumTriggers"
@@ -431,11 +348,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -443,7 +355,7 @@ major 4
 minor 1
 release 1
 x 10
-y 155
+y 130
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -503,7 +415,7 @@ major 4
 minor 0
 release 0
 x 155
-y 130
+y 105
 w 100
 h 20
 fgColor rgb 0 0 0
@@ -523,7 +435,7 @@ major 4
 minor 0
 release 0
 x 155
-y 155
+y 130
 w 100
 h 20
 fgColor rgb 0 0 0
@@ -540,21 +452,4 @@ offLabel "Trigger"
 useEnumNumeric
 font "helvetica-medium-r-12.0"
 endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 50
-y 180
-w 290
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
 

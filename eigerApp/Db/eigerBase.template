@@ -243,27 +243,6 @@ record(bi,"$(P)$(R)ManualTrigger_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-# Exposure for triggers on INTE mode
-record(ao, "$(P)$(R)TriggerExposure")
-{
-    field(PINI, "YES")
-    field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
-    field(DESC, "Trigger Exposure for INTE mode")
-    field(EGU,  "s")
-    field(PREC, "3")
-}
-
-record(ai, "$(P)$(R)TriggerExposure_RBV")
-{
-    field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRIGGER_EXPOSURE")
-    field(DESC, "Trigger Exposure for INTE mode")
-    field(EGU,  "s")
-    field(PREC, "3")
-    field(SCAN, "I/O Intr")
-}
-
 # Trigger the detector
 record(ao, "$(P)$(R)Trigger") {
     field(DTYP, "asynInt32")
