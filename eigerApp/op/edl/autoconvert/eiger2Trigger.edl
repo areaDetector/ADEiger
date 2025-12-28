@@ -169,9 +169,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 10
+x 40
 y 55
-w 140
+w 110
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -233,19 +233,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 105
-w 330
-h 70
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -290,19 +277,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 50
-y 155
-w 290
-h 20
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -374,11 +348,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -398,11 +367,6 @@ value {
   "Software Trig."
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Menu Button)
 object activeMenuButtonClass
@@ -443,18 +407,6 @@ controlPv "$(P)$(R)ExtGateMode"
 indicatorPv "$(P)$(R)ExtGateMode"
 font "helvetica-medium-r-12.0"
 endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 105
-w 330
-h 70
-
-beginGroup
 
 # (Menu Button)
 object activeMenuButtonClass
@@ -500,26 +452,4 @@ offLabel "Trigger"
 useEnumNumeric
 font "helvetica-medium-r-12.0"
 endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 50
-y 155
-w 290
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
 
