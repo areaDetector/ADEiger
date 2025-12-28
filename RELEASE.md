@@ -9,7 +9,7 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
-R3-6 (June XXX, 2025)
+R3-6 (January XXX, 2026)
 ----
 * Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
   - Added new StreamVersion record to select the Stream or Stream2 interface.
