@@ -6,7 +6,8 @@ include $(TOP)/configure/CONFIG
 
 INC += rfc3339.h
 
-TESTPROD_HOST += rfc3339Test
+TESTPROD_HOST_Linux += rfc3339Test
+TESTPROD_HOST_Darwin += rfc3339Test
 rfc3339Test_SRCS += rfc3339Test.cpp
 testHarness_SRCS += rfc3339Test.cpp
 TESTS += rfc3339Test

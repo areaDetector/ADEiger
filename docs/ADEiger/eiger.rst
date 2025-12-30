@@ -234,11 +234,19 @@ NDArrays. Otherwise a third-party client can listen on that socket for
 data. The format of the packets is specified in the Eiger SIMPLON API
 documentation.
 
-The NDArrays received by the Stream1 API are 2-dimensional, [NX, NY].
-If only a single threshold is enabled then the NDArrays received by the
-Stream2 API are also 2-dimensional.
-If more than one threshold is enabled then the NDArrays are 3-dimensional,
-[NX, NY, NThreshholds].
+If StreamVersion=Stream2 and if more than one threshold is enabled then the driver
+generates one NDArray for each threshold in successive order for the enabled thresholds.
+The driver sends the NDArrays for all thresholds on asyn address 0. 
+It sends only the NDArrays for threshold N on address N (N=1 to number of enabled thresholds).
+Plugins can thus use asyn address 0 to receive NDArrays for all thresholds, address 1
+to receive only the first enabled threshold, etc.
+
+Stream2 adds 2 new NDAttributes for each NDArray.  These attributes identify which threshold that NDArray contains.
+
+- ThresholdName is an NDAttrString attribute containing the name of the threshold as reported by the Stream2 interface. 
+  These are "threshold_1", "threshold_2", etc.
+- ThresholdEnergy is an NDAttrFloat64 attribute containing the energy of the threshold as reported by the Stream2 interface
+  in units of eV.
 
 The data sent from the Eiger server is unsigned 32-bit, 16-bit, or 8-bit integers,
 depending on the exposure time.
