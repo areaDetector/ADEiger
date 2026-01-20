@@ -14,10 +14,21 @@ R3-6 (January XXX, 2026)
 * Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
   - Added new StreamVersion record to select the Stream or Stream2 interface.
   - If Stream2 is selected and more than one threshold is enabled then the
-    dimensions of NDArrays created when DataSource is Stream will be [NumX, NumY, NumThresholds].
-  - ROI plugins can be used to select individual the thresholds to send to other plugins,
-    such as statistics, PVA for viewing, etc.
-* Added support for Pilatus4 detectors.
+    driver creates one NDArray for each threshold.
+  - The driver sends the NDArrays for all thresholds on asyn address 0. It sends
+    only the NDArray for threshold N on address N (N=1 to number of enabled thresholds).
+  - Plugins can thus use asyn address 0 to receive NDArrays for all thresholds, address 1
+    to receive only the first enabled threshold, etc.
+  - Previously NDArray callbacks for the Monitor interface used asyn address=1.
+    This conflicts with the use of address 1 for the first threshold.
+    The monitor callbacks were changed to use address=10.
+    This breaks backwards compatibility, but is easy to adjust.
+  - Stream2 adds 2 new NDAttributes for each NDArray.  These attributes identify which threshold that NDArray contains.
+    - ThresholdName is an NDAttrString attribute containing the name of the threshold as reported by the Stream2 interface. 
+      These are "threshold_1", "threshold_2", etc.
+    - ThresholdEnergy is an NDAttrFloat64 attribute containing the energy of the threshold as reported by the Stream2 interface
+      in units of eV.
+* Added support for Pilatus4 detectors.  Thanks to Tejus Guruswamy for this.
 * Added new FWHDF5Format record for the FileWriter interface.
   - This record allows selecting the "Legacy" format, or the "v2024.2" format.
     v2024.2 supports saving multiple thresholds.
@@ -38,6 +49,9 @@ R3-6 (January XXX, 2026)
         For 16-bit data this would be a problem when there are over 32K counts per pixel.
         Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
         and there should thus be no problem.
+* Added new StreamAsTSSource record. If this is set to Yes, and if the data is coming from the Stream2
+  interface, then the NDArray timeStamp and epicsTS fields are taken from the timestamp information
+  sent by the detector over the Stream2 interface. Thanks to Bruno Martins for this.
 * Fixed issues with Internal Enable trigger mode.
   - This mode was broken completely starting with R3-4 in June 2022.
     It was always sending 0 as the TriggerExposure value due to a bug introduced in the driver.

@@ -41,6 +41,15 @@
 #define ENERGY_EPSILON          0.05
 #define WAVELENGTH_EPSILON      0.0005
 
+// Maximum number of thresholds Pilatus4 has 4
+#define MAX_THRESHOLDS          4  
+
+// asyn address for NDArray callbacks on the Monitor interface
+#define MONITOR_ASYN_ADDRESS    10
+
+// Maximum asyn address
+#define MAX_ASYN_ADDRESS        (MONITOR_ASYN_ADDRESS+1)
+
 // Error message formatters
 #define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
     driverName, functionName, msg)
@@ -173,7 +182,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         int maxBuffers, size_t maxMemory, int priority,
         int stackSize)
 
-    : ADDriver(portName, 2, 0, maxBuffers, maxMemory,
+    : ADDriver(portName, MAX_ASYN_ADDRESS, 0, maxBuffers, maxMemory,
                0, 0,             /* No interfaces beyond ADDriver.cpp */
                ASYN_CANBLOCK |   /* ASYN_CANBLOCK=1 */
                ASYN_MULTIDEVICE, /* ASYN_MULTIDEVICE=1 */
@@ -1373,6 +1382,7 @@ void eigerDetector::streamTask (void)
         }
         int err;
         stream_header_t header = {};
+        int numThresholds = 1;
         for(;;)
         {
             unlock();
@@ -1423,7 +1433,7 @@ void eigerDetector::streamTask (void)
                if (streamVersion == STREAM_VERSION_STREAM) {
                     err = mStreamAPI->waitFrame(&endFrames);
                 } else {
-                    err = mStream2API->waitFrame(&endFrames);
+                    err = mStream2API->waitFrame(&endFrames, &numThresholds);
                 }
                 lock();
                 if (err == STREAM_SUCCESS) {
@@ -1447,66 +1457,69 @@ void eigerDetector::streamTask (void)
                 break;
             }
 
-            NDArray *pArray;
-            int decompress;
-            mStreamDecompress->get(decompress);
-            bool tsIsSet = false;
-            if (streamVersion == STREAM_VERSION_STREAM) {
-                err = mStreamAPI->getFrame(&pArray, pNDArrayPool, decompress);
-            } else {
-                err = mStream2API->getFrame(&pArray, pNDArrayPool, decompress, streamAsTsSource);
-                tsIsSet = streamAsTsSource;
-            }
-            int imageCounter, numImagesCounter, arrayCallbacks;
-            getIntegerParam(NDArrayCounter, &imageCounter);
-            getIntegerParam(ADNumImagesCounter, &numImagesCounter);
-            getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-            
-            // The data returned from the StreamAPIs is unsigned.
-            // Bad pixels and gaps are very large positive numbers, which makes autoscaling difficult
-            // Optionally change the data type to signed. 
-            // This improves autoscaling, but reduces the count range by 2X.
-            int signedData;
-            mSignedData->get(signedData);
-            if (signedData) {
-                int dataType = pArray->dataType;
-                switch (pArray->dataType) {
-                    case NDUInt8:
-                        pArray->dataType = NDInt8;
-                        break;
-                    case NDUInt16:
-                        pArray->dataType = NDInt16;
-                        break;
-                    case NDUInt32:
-                        pArray->dataType = NDInt32;
-                        break;
-                    default:
-                        ERR_ARGS("Unknown data type=%d", dataType);
+            for (int thresh=0; thresh<numThresholds; thresh++) {
+                NDArray *pArray;
+                int decompress;
+                mStreamDecompress->get(decompress);
+                bool tsIsSet = false;
+                if (streamVersion == STREAM_VERSION_STREAM) {
+                    err = mStreamAPI->getFrame(&pArray, pNDArrayPool, decompress);
+                } else {
+                    err = mStream2API->getFrame(&pArray, pNDArrayPool, thresh, decompress, streamAsTsSource);
+                    tsIsSet = streamAsTsSource;
                 }
+                int imageCounter, numImagesCounter, arrayCallbacks;
+                getIntegerParam(NDArrayCounter, &imageCounter);
+                getIntegerParam(ADNumImagesCounter, &numImagesCounter);
+                getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+                
+                // The data returned from the StreamAPIs is unsigned.
+                // Bad pixels and gaps are very large positive numbers, which makes autoscaling difficult
+                // Optionally change the data type to signed. 
+                // This improves autoscaling, but reduces the count range by 2X.
+                int signedData;
+                mSignedData->get(signedData);
+                if (signedData) {
+                    int dataType = pArray->dataType;
+                    switch (pArray->dataType) {
+                        case NDUInt8:
+                            pArray->dataType = NDInt8;
+                            break;
+                        case NDUInt16:
+                            pArray->dataType = NDInt16;
+                            break;
+                        case NDUInt32:
+                            pArray->dataType = NDInt32;
+                            break;
+                        default:
+                            ERR_ARGS("Unknown data type=%d", dataType);
+                    }
+                }
+    
+                // Put the frame number and timestamp into the buffer
+                pArray->uniqueId = imageCounter;
+    
+                // Only call updateTimeStamps if the stream2 has not set the ts itself
+                if (!tsIsSet)
+                    updateTimeStamps(pArray);
+    
+                // Update Omega angle for this frame
+                ++mFrameNumber;
+    
+                // Get any attributes that have been defined for this driver
+                this->getAttributes(pArray->pAttributeList);
+    
+                // Call the NDArray callback
+                if (arrayCallbacks) {
+                    doCallbacksGenericPointer(pArray, NDArrayData, 0);
+                    doCallbacksGenericPointer(pArray, NDArrayData, thresh+1);
+                }
+                setIntegerParam(NDArrayCounter, ++imageCounter);
+                setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
+    
+                callParamCallbacks();
+                pArray->release();
             }
-
-            // Put the frame number and timestamp into the buffer
-            pArray->uniqueId = imageCounter;
-
-            // Only call updateTimeStamps if the stream2 has not set the ts itself
-            if (!tsIsSet)
-                updateTimeStamps(pArray);
-
-            // Update Omega angle for this frame
-            ++mFrameNumber;
-
-            // Get any attributes that have been defined for this driver
-            this->getAttributes(pArray->pAttributeList);
-
-            // Call the NDArray callback
-            if (arrayCallbacks)
-                doCallbacksGenericPointer(pArray, NDArrayData, 0);
-
-            setIntegerParam(NDArrayCounter, ++imageCounter);
-            setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
-
-            callParamCallbacks();
-            pArray->release();
         }
 
 end:
@@ -1838,7 +1851,7 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
     updateTimeStamps(pImage);
 
     memcpy(pImage->pData, buf+8, dataLen);
-    doCallbacksGenericPointer(pImage, NDArrayData, 1);
+    doCallbacksGenericPointer(pImage, NDArrayData, MONITOR_ASYN_ADDRESS);
     pImage->release();
 
     return asynSuccess;
