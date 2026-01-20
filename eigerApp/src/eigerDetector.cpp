@@ -1828,6 +1828,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
                         driverName, functionName);
 
                 doCallbacksGenericPointer(pImage, NDArrayData, 0);
+                if (nDims == 4) doCallbacksGenericPointer(pImage, NDArrayData, offset[1]+1);
             }
 
             setIntegerParam(NDArrayCounter, ++imageCounter);
