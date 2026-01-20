@@ -44,6 +44,12 @@
 // Maximum number of thresholds Pilatus4 has 4
 #define MAX_THRESHOLDS          4  
 
+// asyn address for NDArray callbacks on the Monitor interface
+#define MONITOR_ASYN_ADDRESS    10
+
+// Maximum asyn address
+#define MAX_ASYN_ADDRESS        (MONITOR_ASYN_ADDRESS+1)
+
 // Error message formatters
 #define ERR(msg) asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s: %s\n", \
     driverName, functionName, msg)
@@ -176,7 +182,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
         int maxBuffers, size_t maxMemory, int priority,
         int stackSize)
 
-    : ADDriver(portName, MAX_THRESHOLDS+1, 0, maxBuffers, maxMemory,
+    : ADDriver(portName, MAX_ASYN_ADDRESS, 0, maxBuffers, maxMemory,
                0, 0,             /* No interfaces beyond ADDriver.cpp */
                ASYN_CANBLOCK |   /* ASYN_CANBLOCK=1 */
                ASYN_MULTIDEVICE, /* ASYN_MULTIDEVICE=1 */
@@ -1845,7 +1851,7 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
     updateTimeStamps(pImage);
 
     memcpy(pImage->pData, buf+8, dataLen);
-    doCallbacksGenericPointer(pImage, NDArrayData, 1);
+    doCallbacksGenericPointer(pImage, NDArrayData, MONITOR_ASYN_ADDRESS);
     pImage->release();
 
     return asynSuccess;
