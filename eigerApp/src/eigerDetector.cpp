@@ -42,7 +42,7 @@
 #define WAVELENGTH_EPSILON      0.0005
 
 // Maximum number of thresholds Pilatus4 has 4
-#define MAX_THRESHOLDS          4  
+#define MAX_THRESHOLDS          4
 
 // asyn address for NDArray callbacks on the Monitor interface
 #define MONITOR_ASYN_ADDRESS    10
@@ -284,7 +284,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     string description;
     mDescription->fetch(description);
     mEigerModel = Eiger1;
-    if ((description.find("Eiger2") != std::string::npos) || (description.find("EIGER2") != std::string::npos))	
+    if ((description.find("Eiger2") != std::string::npos) || (description.find("EIGER2") != std::string::npos))
         mEigerModel = Eiger2;
     else if ((description.find("Pilatus4") != std::string::npos) || (description.find("PILATUS4") != std::string::npos))
         mEigerModel = Pilatus4;
@@ -294,7 +294,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     vector<string> modeEnum;
     modeEnum.reserve(2);
     modeEnum.push_back("disabled");
-    modeEnum.push_back("enabled");    
+    modeEnum.push_back("enabled");
 
     // Acquisition
     mWavelength       = mParams.create(EigWavelengthStr,      asynParamFloat64, SSDetConfig, "wavelength");
@@ -830,7 +830,7 @@ void eigerDetector::controlTask (void)
             err = "FileWriter API is disabled";
         else if(dataSource == SOURCE_STREAM && !streamEnable)
             err = "Stream API is disabled";
-        // If the files are encoded with bxlz4 then HDF5_PLUGIN_PATH must be set to find the decompression libraries
+        // If the files are encoded with bslz4 then HDF5_PLUGIN_PATH must be set to find the decompression libraries
         // This is typically in ADSupport/lib/linux-x86_64 or ADSupport/bin/windows-x64.
 
 
@@ -897,13 +897,13 @@ void eigerDetector::controlTask (void)
         if(dataSource == SOURCE_FILEWRITER || (fwEnable && saveFiles))
         {
             acquisition_t acq;
-            
+
             string acq_pattern_temp;
             mFWNamePattern->get(acq_pattern_temp);
             strncpy(acq.pattern, acq_pattern_temp.c_str(), sizeof(acq.pattern));
             // Add null terminator to end of pattern string in case buffer is not large enough
             acq.pattern[MAX_BUF_SIZE - 1] = '\0';
-            
+
             acq.sequenceId  = sequenceId;
             acq.nDataFiles  = ceil(((double)(numImages*numTriggers))/((double)numImagesPerFile));
             acq.saveFiles   = saveFiles;
@@ -1051,7 +1051,7 @@ void eigerDetector::controlTask (void)
             } else {
                 setIntegerParam(ADStatus, ADStatusIdle);
                 setIntegerParam(ADAcquire, 0);
-            }         
+            }
         } else if(adStatus == ADStatusAborted) {
             setStringParam(ADStatusMessage, "Acquisition aborted");
             setIntegerParam(ADAcquire, 0);
@@ -1472,10 +1472,10 @@ void eigerDetector::streamTask (void)
                 getIntegerParam(NDArrayCounter, &imageCounter);
                 getIntegerParam(ADNumImagesCounter, &numImagesCounter);
                 getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-                
+
                 // The data returned from the StreamAPIs is unsigned.
                 // Bad pixels and gaps are very large positive numbers, which makes autoscaling difficult
-                // Optionally change the data type to signed. 
+                // Optionally change the data type to signed.
                 // This improves autoscaling, but reduces the count range by 2X.
                 int signedData;
                 mSignedData->get(signedData);
@@ -1495,20 +1495,20 @@ void eigerDetector::streamTask (void)
                             ERR_ARGS("Unknown data type=%d", dataType);
                     }
                 }
-    
+
                 // Put the frame number and timestamp into the buffer
                 pArray->uniqueId = imageCounter;
-    
+
                 // Only call updateTimeStamps if the stream2 has not set the ts itself
                 if (!tsIsSet)
                     updateTimeStamps(pArray);
-    
+
                 // Update Omega angle for this frame
                 ++mFrameNumber;
-    
+
                 // Get any attributes that have been defined for this driver
                 this->getAttributes(pArray->pAttributeList);
-    
+
                 // Call the NDArray callback
                 if (arrayCallbacks) {
                     doCallbacksGenericPointer(pArray, NDArrayData, 0);
@@ -1516,7 +1516,7 @@ void eigerDetector::streamTask (void)
                 }
                 setIntegerParam(NDArrayCounter, ++imageCounter);
                 setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
-    
+
                 callParamCallbacks();
                 pArray->release();
             }
@@ -1621,11 +1621,17 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
 
     int imageCounter, numImagesCounter, arrayCallbacks;
     hid_t fId, dId, dSpace, dType, mSpace;
-    hsize_t dims[3], count[3], offset[3] = {0,0,0};
+    int nDims;
     herr_t err;
-    size_t nImages, width, height;
-
+    size_t nImages=0, nThresh=0, width=0, height=0;
+    #define MAX_HDF5_DIMS 4
+    hsize_t dims[MAX_HDF5_DIMS], count[MAX_HDF5_DIMS], offset[MAX_HDF5_DIMS] = {0};
     size_t ndDims[2];
+    int activeThresholds[MAX_THRESHOLDS];
+    double thresholdEnergy[MAX_THRESHOLDS];
+    int nextThreshold = 0;
+    bool threshEnable;
+
     NDDataType_t ndType;
 
     unsigned flags = H5LT_FILE_IMAGE_DONT_COPY | H5LT_FILE_IMAGE_DONT_RELEASE;
@@ -1652,7 +1658,21 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         }
     }
 
-    // Get dataset dimensions (assume 3 dimensions)
+    // Get dataset number of dimensions
+    err = H5LTget_dataset_ndims(dId, ".", &nDims);
+    if(err)
+    {
+        ERR("couldn't read dataset ndims");
+        goto closeDataset;
+    }
+
+    if ((nDims < 3) || (nDims > 4))
+    {
+        ERR("number of dimensions must be 3 or 4");
+        goto closeDataset;
+    }
+
+    // Get dataset dimensions
     err = H5LTget_dataset_info(dId, ".", dims, NULL, NULL);
     if(err)
     {
@@ -1660,16 +1680,27 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
         goto closeDataset;
     }
 
-    nImages = dims[0];
-    height  = dims[1];
-    width   = dims[2];
-
+    if (nDims == 3) {
+      nImages  = dims[0];
+      nThresh  = 1;
+      height   = dims[1];
+      width    = dims[2];
+      count[0] = 1;
+      count[1] = height;
+      count[2] = width;
+    }
+    else if (nDims == 4) {
+      nImages = dims[0];
+      nThresh = dims[1];
+      height  = dims[2];
+      width   = dims[3];
+      count[0] = 1;
+      count[1] = 1;
+      count[2] = height;
+      count[3] = width;
+    }
     ndDims[0] = width;
     ndDims[1] = height;
-
-    count[0] = 1;
-    count[1] = height;
-    count[2] = width;
 
     // Get dataset type
     dType = H5Dget_type(dId);
@@ -1701,71 +1732,110 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     }
 
     // Create memspace
-    mSpace = H5Screate_simple(3, count, NULL);
+    mSpace = H5Screate_simple(nDims, count, NULL);
     if(mSpace < 0)
     {
         ERR("failed to create memSpace");
         goto closeMemSpace;
     }
 
+    // Determine active thresholds and energies so we can create attributes like Stream2 interface does
+    if (mEigerModel == Eiger1) {
+        activeThresholds[nextThreshold] = 1;
+        mThreshold->get(thresholdEnergy[nextThreshold]);
+    }
+    else if ((mEigerModel == Eiger2) || (mEigerModel == Pilatus4)) {
+        mThreshold1Enable->get(threshEnable);
+        if (threshEnable) {
+            activeThresholds[nextThreshold] = 1;
+            mThreshold->get(thresholdEnergy[nextThreshold++]);
+        }
+        mThreshold2Enable->get(threshEnable);
+        if (threshEnable) {
+            activeThresholds[nextThreshold] = 2;
+            mThreshold2->get(thresholdEnergy[nextThreshold++]);
+        }
+    }
+    else if (mEigerModel == Pilatus4) {
+        mThreshold3Enable->get(threshEnable);
+        if (threshEnable) {
+            activeThresholds[nextThreshold] = 3;
+            mThreshold3->get(thresholdEnergy[nextThreshold++]);
+        }
+        mThreshold4Enable->get(threshEnable);
+        if (threshEnable) {
+            activeThresholds[nextThreshold] = 4;
+            mThreshold4->get(thresholdEnergy[nextThreshold++]);
+        }
+    }
     getIntegerParam(NDArrayCounter, &imageCounter);
     getIntegerParam(ADNumImagesCounter, &numImagesCounter);
     for(offset[0] = 0; offset[0] < nImages; ++offset[0])
     {
-        NDArray *pImage;
+        for(offset[1] = 0; offset[1] < nThresh; ++offset[1])
+            {
+            NDArray *pImage;
 
-        pImage = pNDArrayPool->alloc(2, ndDims, ndType, 0, NULL);
-        if(!pImage)
-        {
-            ERR("couldn't allocate NDArray");
-            break;
-        }
+            pImage = pNDArrayPool->alloc(2, ndDims, ndType, 0, NULL);
+            if(!pImage)
+            {
+                ERR("couldn't allocate NDArray");
+                break;
+            }
 
-        // Select the hyperslab
-        err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL,
-                count, NULL);
-        if(err < 0)
-        {
-            ERR("couldn't select hyperslab");
+            // Select the hyperslab
+            err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL,
+                    count, NULL);
+            if(err < 0)
+            {
+                ERR("couldn't select hyperslab");
+                pImage->release();
+                break;
+            }
+
+            // and finally read the image
+            err = H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData);
+            if(err < 0)
+            {
+                ERR("couldn't read image");
+                pImage->release();
+                break;
+            }
+
+            // Put the frame number and time stamp into the buffer
+            pImage->uniqueId = imageCounter;
+            updateTimeStamps(pImage);
+
+            // Update the omega angle for this frame
+            ++mFrameNumber;
+
+            // Get any attributes that have been defined for this driver
+            this->getAttributes(pImage->pAttributeList);
+
+            // Add new attributes with the threshold information
+            char thresholdName[256];
+            snprintf(thresholdName, 255, "%s%d", "threshold_", activeThresholds[offset[1]]);
+
+            pImage->pAttributeList->add("ThresholdName", "Threshold name", NDAttrString, thresholdName);
+            pImage->pAttributeList->add("ThresholdEnergy", "Threshold energy (eV)", NDAttrFloat64, (void *)&thresholdEnergy[offset[1]]);
+
+            // Call the NDArray callback
+            getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+            if (arrayCallbacks)
+            {
+                asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                        "%s:%s: calling NDArray callback\n",
+                        driverName, functionName);
+
+                doCallbacksGenericPointer(pImage, NDArrayData, 0);
+            }
+
+            setIntegerParam(NDArrayCounter, ++imageCounter);
+            setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
+            callParamCallbacks();
+
             pImage->release();
-            break;
         }
-
-        // and finally read the image
-        err = H5Dread(dId, dType, mSpace, dSpace, H5P_DEFAULT, pImage->pData);
-        if(err < 0)
-        {
-            ERR("couldn't read image");
-            pImage->release();
-            break;
-        }
-
-        // Put the frame number and time stamp into the buffer
-        pImage->uniqueId = imageCounter;
-        updateTimeStamps(pImage);
-
-        // Update the omega angle for this frame
-        ++mFrameNumber;
-
-        // Get any attributes that have been defined for this driver
-        this->getAttributes(pImage->pAttributeList);
-
-        // Call the NDArray callback
-        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-        if (arrayCallbacks)
-        {
-            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                    "%s:%s: calling NDArray callback\n",
-                    driverName, functionName);
-
-            doCallbacksGenericPointer(pImage, NDArrayData, 0);
-        }
-
-        setIntegerParam(NDArrayCounter, ++imageCounter);
-        setIntegerParam(ADNumImagesCounter, ++numImagesCounter);
-        callParamCallbacks();
-
-        pImage->release();
     }
 
 closeMemSpace:
