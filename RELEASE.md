@@ -48,9 +48,15 @@ R3-6 (January XXX, 2026)
 * Added new StreamAsTSSource record. If this is set to Yes, and if the data is coming from the Stream2
   interface, then the NDArray timeStamp and epicsTS fields are taken from the timestamp information
   sent by the detector over the Stream2 interface. Thanks to Bruno Martins for this.
-* BEFORE RELEASE. Check the function of InternalEnable mode to see if it works now.
-  The documentation said it was flaky in firmware 1.5.0, so it probably works now and the
-  documentation should be fixed in several places.
+* Fixed issues with Internal Enable trigger mode.
+  - This mode was broken completely starting with R3-4 in June 2022.
+    It was always sending 0 as the TriggerExposure value due to a bug introduced in the driver.
+  - The TriggerExposure value was only used in Internal Enable mode.
+    This is confusing, since AcquireTime is used for all other modes.
+  - The TriggerExposure record was eliminated, and AcquireTime is now used in Internal Enable mode.
+    - This breaks backwards compatibility, but since Internal Enable mode has not worked at all
+      for 3.5 years, it is likely to have a small impact.
+    - eigerBase.template, the OPI screens, and the Sphinx documentation have been modified to remove this record.
 
 R3-5 (May 14, 2025)
 ----

@@ -47,7 +47,6 @@ typedef enum {
 #define EigThreshold2EnableStr     "THRESHOLD2_ENABLE"
 #define EigThresholdDiffEnableStr  "THRESHOLD_DIFF_ENABLE"
 #define EigTriggerStr              "TRIGGER"
-#define EigTriggerExpStr           "TRIGGER_EXPOSURE"
 #define EigNTriggersStr            "NUM_TRIGGERS"
 #define EigManualTriggerStr        "MANUAL_TRIGGER"
 #define EigTriggerStartDelayStr    "TRIGGER_START_DELAY"
@@ -167,7 +166,6 @@ protected:
     EigerParam *mDataSource;
     EigerParam *mFWAutoRemove;
     EigerParam *mTrigger;
-    EigerParam *mTriggerExp;
     EigerParam *mManualTrigger;
     EigerParam *mTriggerStartDelay;
     EigerParam *mArmed;

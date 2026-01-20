@@ -6,7 +6,7 @@ release 1
 x 1151
 y 186
 w 350
-h 155
+h 130
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -33,7 +33,7 @@ release 0
 x 0
 y 0
 w 350
-h 155
+h 130
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -125,78 +125,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 10
-y 55
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Trig. Exposure"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 155
-y 55
-w 100
-h 20
-controlPv "$(P)$(R)TriggerExposure"
-format "exponential"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 260
-y 56
-w 80
-h 18
-controlPv "$(P)$(R)TriggerExposure_RBV"
-format "exponential"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
 x 30
-y 80
+y 55
 w 120
 h 20
 font "helvetica-medium-r-14.0"
@@ -216,7 +146,7 @@ major 4
 minor 7
 release 0
 x 260
-y 81
+y 56
 w 80
 h 18
 controlPv "$(P)$(R)ManualTrigger_RBV"
@@ -241,7 +171,7 @@ major 4
 minor 1
 release 1
 x 50
-y 130
+y 105
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -261,7 +191,7 @@ major 4
 minor 7
 release 0
 x 260
-y 131
+y 106
 w 80
 h 18
 controlPv "$(P)$(R)NumTriggers_RBV"
@@ -285,7 +215,7 @@ major 4
 minor 7
 release 0
 x 155
-y 130
+y 105
 w 100
 h 20
 controlPv "$(P)$(R)NumTriggers"
@@ -311,7 +241,7 @@ major 4
 minor 1
 release 1
 x 10
-y 105
+y 80
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -351,7 +281,7 @@ major 4
 minor 0
 release 0
 x 155
-y 80
+y 55
 w 100
 h 20
 fgColor rgb 0 0 0
@@ -371,7 +301,7 @@ major 4
 minor 0
 release 0
 x 155
-y 105
+y 80
 w 100
 h 20
 fgColor rgb 0 0 0

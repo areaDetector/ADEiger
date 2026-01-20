@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-12-19 11:21:05 by epics-->
+<!--Saved on 2025-12-28 12:32:36 by epics-->
 <display version="2.0.0">
   <name>eiger2Detector</name>
   <x>280</x>
@@ -142,7 +142,7 @@
     <name>composite #36</name>
     <file>eigerAcquisitionStatus.bob</file>
     <x>360</x>
-    <y>585</y>
+    <y>560</y>
     <width>350</width>
     <height>380</height>
   </widget>
@@ -152,7 +152,7 @@
     <x>360</x>
     <y>375</y>
     <width>350</width>
-    <height>205</height>
+    <height>180</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #40</name>
