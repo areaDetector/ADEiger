@@ -19,6 +19,10 @@ R3-6 (January XXX, 2026)
     only the NDArray for threshold N on address N (N=1 to number of enabled thresholds).
   - Plugins can thus use asyn address 0 to receive NDArrays for all thresholds, address 1
     to receive only the first enabled threshold, etc.
+  - Previously NDArray callbacks for the Monitor interface used asyn address=1.
+    This conflicts with the use of address 1 for the first threshold.
+    The monitor callbacks were changed to use address=10.
+    This breaks backwards compatibility, but is easy to adjust.
   - Stream2 adds 2 new NDAttributes for each NDArray.  These attributes identify which threshold that NDArray contains.
     - ThresholdName is an NDAttrString attribute containing the name of the threshold as reported by the Stream2 interface. 
       These are "threshold_1", "threshold_2", etc.

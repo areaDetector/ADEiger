@@ -273,7 +273,7 @@ The Monitor module is activated when MonitorEnable is set to Yes. Data
 will be available whenever the monitor module buffer is full (has one
 image available). This driver waits MonitorTimeout ms for data to be
 available. There is a rate-limit of 10Hz. Once downloaded, the TIFF
-image is parsed into areaDetector's NDArray on NDArrayAddr 1
+image is parsed into areaDetector's NDArray on NDArrayAddr 10
 (therefore, an independent NDArray stream).
 
 Crystallography Parameters
