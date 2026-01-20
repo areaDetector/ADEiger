@@ -7,7 +7,7 @@
             <x>157</x>
             <y>59</y>
             <width>1425</width>
-            <height>935</height>
+            <height>910</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -381,7 +381,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>770</y>
+                    <y>745</y>
                     <width>354</width>
                     <height>164</height>
                 </rect>
@@ -389,7 +389,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>770</y>
+                    <y>745</y>
                     <width>352</width>
                     <height>162</height>
                 </rect>
@@ -479,7 +479,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>225</y>
                     <width>352</width>
-                    <height>157</height>
+                    <height>132</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -487,7 +487,7 @@ border-radius: 2px;
                     <x>360</x>
                     <y>225</y>
                     <width>350</width>
-                    <height>155</height>
+                    <height>130</height>
                 </rect>
             </property>
             <property name="filename">
@@ -501,7 +501,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>385</y>
+                    <y>360</y>
                     <width>352</width>
                     <height>382</height>
                 </rect>
@@ -509,7 +509,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>360</x>
-                    <y>385</y>
+                    <y>360</y>
                     <width>350</width>
                     <height>380</height>
                 </rect>

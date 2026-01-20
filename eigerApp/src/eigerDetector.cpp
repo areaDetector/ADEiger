@@ -253,7 +253,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
 
     mFWAutoRemove   = mParams.create(EigFWAutoRemoveStr,   asynParamInt32);
     mTrigger        = mParams.create(EigTriggerStr,        asynParamInt32);
-    mTriggerExp     = mParams.create(EigTriggerExpStr,     asynParamFloat64);
     mManualTrigger  = mParams.create(EigManualTriggerStr,  asynParamInt32);
     mArmed          = mParams.create(EigArmedStr,          asynParamInt32);
     mSequenceId     = mParams.create(EigSequenceIdStr,     asynParamInt32);
@@ -775,7 +774,7 @@ void eigerDetector::controlTask (void)
     int dataSource, adStatus;
     int sequenceId, saveFiles, numImages, numTriggers;
     int numImagesPerFile;
-    double acquirePeriod, triggerStartDelay, triggerTimeout = 0.0, triggerExposure = 0.0;
+    double acquireTime, acquirePeriod, triggerStartDelay, triggerTimeout = 0.0;
     int savedNumImages, filePerms;
 
     lock();
@@ -807,6 +806,7 @@ void eigerDetector::controlTask (void)
         mSaveFiles->get(saveFiles);
         mFWNImgsPerFile->get(numImagesPerFile);
         mAcquirePeriod->get(acquirePeriod);
+        mAcquireTime->get(acquireTime);
         mNumImages->get(numImages);
         mNTriggers->get(numTriggers);
         getIntegerParam(ADTriggerMode, &triggerMode);
@@ -935,7 +935,6 @@ void eigerDetector::controlTask (void)
                     mTriggerStartDelay->get(triggerStartDelay);
                     triggerTimeout += triggerStartDelay;
                 }
-                triggerExposure = 0.0;
             }
 
             getIntegerParam(ADStatus, &adStatus);
@@ -952,20 +951,20 @@ void eigerDetector::controlTask (void)
                     lock();
                 }
 
-                // triggerExposure might have changed
-                if(triggerMode == TRIGGER_MODE_EXTE)
+                // acquireTime might have changed
+                if(triggerMode == TRIGGER_MODE_INTE)
                 {
-                    mTriggerExp->get(triggerExposure);
-                    triggerTimeout = triggerExposure + 1.0;
+                    mAcquireTime->get(acquireTime);
+                    triggerTimeout = acquireTime + 1.0;
                 }
 
                 if(doTrigger)
                 {
                     FLOW_ARGS("sending trigger %d/%d. timeout=%.6f, exposure=%.6f",
-                            triggers+1, numTriggers, triggerTimeout, triggerExposure);
+                            triggers+1, numTriggers, triggerTimeout, acquireTime);
                     setShutter(1);
                     unlock();
-                    status = mApi.trigger(triggerTimeout, triggerExposure);
+                    status = mApi.trigger(triggerTimeout, acquireTime);
                     lock();
                     setShutter(0);
                     ++triggers;
