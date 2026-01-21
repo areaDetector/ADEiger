@@ -1622,6 +1622,7 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     int imageCounter, numImagesCounter, arrayCallbacks;
     hid_t fId, dId, dSpace, dType, mSpace;
     int nDims;
+    int i, j;
     herr_t err;
     size_t nImages=0, nThresh=0, width=0, height=0;
     #define MAX_HDF5_DIMS 4
@@ -1770,10 +1771,10 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     }
     getIntegerParam(NDArrayCounter, &imageCounter);
     getIntegerParam(ADNumImagesCounter, &numImagesCounter);
-    for(offset[0] = 0; offset[0] < nImages; ++offset[0])
+    for(i=0; i < (int)nImages; i++)
     {
-        for(offset[1] = 0; offset[1] < nThresh; ++offset[1])
-            {
+        for(j=0; j < (int)nThresh; j++)
+        {
             NDArray *pImage;
 
             pImage = pNDArrayPool->alloc(2, ndDims, ndType, 0, NULL);
@@ -1784,6 +1785,8 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
             }
 
             // Select the hyperslab
+            offset[0] = i;
+            if (nDims == 4) offset[1] = j;
             err = H5Sselect_hyperslab(dSpace, H5S_SELECT_SET, offset, NULL,
                     count, NULL);
             if(err < 0)
