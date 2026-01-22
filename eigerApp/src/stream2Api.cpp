@@ -227,6 +227,7 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
     size_t compressedSize, uncompressedSize;
     size_t dims[3];
     int numDims;
+    int thresholdNumber;
     NDArray *pArray;
     char encoding[32];
     NDDataType_t dataType;
@@ -309,7 +310,8 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
                     }
                 }
             }
-            pArray->pAttributeList->add("ThresholdName", "Threshold name", NDAttrString, mThresholdEnergy[thresh].channel);
+            sscanf(mThresholdEnergy[thresh].channel, "threshold_%d", &thresholdNumber);
+            pArray->pAttributeList->add("ThresholdNumber", "Threshold number", NDAttrInt32, &thresholdNumber);
             pArray->pAttributeList->add("ThresholdEnergy", "Threshold energy (eV)", NDAttrFloat64, (void *)&(mThresholdEnergy[thresh].energy));
             *pArrayOut = pArray;
             break;
