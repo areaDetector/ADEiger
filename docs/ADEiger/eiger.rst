@@ -209,7 +209,7 @@ The Stream module is activated when StreamEnable is set to Yes.
 
 There are 2 versions of the Stream API
   - V1 is the original version
- 
+
     - Data is available on the detector's tcp port 9999 as a ZMQ_PUSH socket.
     - The data format is JSON + binary.
     - Only a single threshold is supported.
@@ -220,6 +220,9 @@ There are 2 versions of the Stream API
     - The data format is CBOR.
     - Multiple thresholds are supported.
 
+The Eiger2 and Pilatus4 models support both V1 and V2.
+Older Eiger and Pilatus models only support V1.
+
 The StreamVersion record is used to select the Stream1 or Stream2 API.
 
 If DataSource is set to Stream, the driver opens a
@@ -228,23 +231,34 @@ NDArrays. Otherwise a third-party client can listen on that socket for
 data. The format of the packets is specified in the Eiger SIMPLON API
 documentation.
 
-If StreamVersion=Stream2 and if more than one threshold is enabled then the driver
-generates one NDArray for each threshold in successive order for the enabled thresholds.
-The driver sends the NDArrays for all thresholds on asyn address 0. 
-It sends only the NDArrays for threshold N on address N (N=1 to number of enabled thresholds).
-Plugins can thus use asyn address 0 to receive NDArrays for all thresholds, address 1
+Multiple Thresholds
+~~~~~~~~~~~~~~~~~~~
+
+The driver will read data for multiple thresholds if the following are true:
+
+- More than one threshold is enabled
+- DataSource=Stream and StreamVersion=Stream2 OR DataSource=FileWriter and FWHDF5Format=v2024.2
+
+If the above are true then:
+
+- The driver generates one NDArray for each threshold in successive order for the enabled thresholds.
+- It sends the NDArrays for all thresholds on asyn address 0.
+- It sends only the NDArrays for threshold N on address N (N=1 to number of enabled thresholds).
+- Plugins can thus use asyn address 0 to receive NDArrays for all thresholds, address 1
 to receive only the first enabled threshold, etc.
 
-Stream2 adds 2 new NDAttributes for each NDArray.  These attributes identify which threshold that NDArray contains.
+When multiple thresholds are being read the driver adds 2 new NDAttributes for each NDArray.
+These attributes identify which threshold that NDArray contains.
 
-- ThresholdName is an NDAttrString attribute containing the name of the threshold as reported by the Stream2 interface. 
-  These are "threshold_1", "threshold_2", etc.
-- ThresholdEnergy is an NDAttrFloat64 attribute containing the energy of the threshold as reported by the Stream2 interface
-  in units of eV.
+- ThresholdNumber is an NDAttrAint32 attribute containing the threshold number (1, 2, ...)
+- ThresholdEnergy is an NDAttrFloat64 attribute containing the energy of that threshold in units of eV.
+
+Signed and unsigned data
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 The data sent from the Eiger server is unsigned 32-bit, 16-bit, or 8-bit integers,
 depending on the exposure time.
-Bad pixels and pixel gaps are flagged with very large positive values, e.g. 2^32-1, 2^32-2, etc.
+Bad pixels and pixel gaps are flagged with very large positive values, se.g. 2^32-1, 2^32-2, etc.
 This allows the use of nearly the full integer range for the data values.
 However, it is quite inconvenient for data viewing, since autoscaling will usually lead to actual data
 values being all black.
@@ -260,11 +274,16 @@ It does, however, reduce the available count range by a factor of 2.
     Since the maximum count rate is about 2e6 counts/s there should never be more than 20K counts in 0.01 seconds,
     and there should thus be no problem.
 
-**Timestamps**: normally, NDArrays produced by ADEiger will be timestamped with the IOC's
-local current time. This is evidently not very precise, since there can be a large jitter between
-each frame. If precise timestamps are desired, the StreamAsTSSource record can be set to "Yes",
-in which case the NDArrays will be timestamped using the timestamps coming from the ZMQ stream frames.
-This is only available when using Stream V2. StreamAsTSSource's value will be ignored if using Stream V1.
+Timestamps
+~~~~~~~~~~
+
+Normally, NDArrays produced by ADEiger will be timestamped with the IOC's
+local current time. This is not very accurate because it depends on the delays
+in delivering the frames to the ADEiger driver. If precise timestamps are desired,
+the StreamAsTSSource record can be set to "Yes", in which case the NDArrays will be timestamped
+using the timestamps coming from the ZMQ stream frames.
+This is only available when DataSource=Stream and StreamVersion=Stream2.
+StreamAsTSSource's value will be ignored for DataSource=FileWriter or StreamVersion=Stream.
 
 Using Monitor
 ~~~~~~~~~~~~~
@@ -422,6 +441,10 @@ Detector Status
     - Description
     - EPICS record name
     - EPICS record type
+  * - N.A.
+    - Restarts the detector DAQ.  The Initialize record must be processed after doing this.
+    - Restart
+    - busy
   * - N.A.
     - Initializes the detector DCU.  This command takes many seconds.
     - Initialize
