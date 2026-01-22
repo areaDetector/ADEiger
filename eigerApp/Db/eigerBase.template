@@ -80,6 +80,13 @@ record(ai, "$(P)$(R)YPixelSize_RBV")
 # Detector Status #
 ###################
 
+record(busy, "$(P)$(R)Restart") {
+   field(DTYP, "asynInt32")
+   field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))RESTART")
+   field(ZNAM, "Done")
+   field(ONAM, "Restart")
+}
+
 record(busy, "$(P)$(R)Initialize") {
    field(DTYP, "asynInt32")
    field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))INITIALIZE")

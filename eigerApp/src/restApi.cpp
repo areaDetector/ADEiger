@@ -289,6 +289,11 @@ RestAPI::RestAPI (std::string const & hostname, int port, size_t numSockets) :
     mSysStr[SSSysCommand] = "/system/api/" + api + "/command/";
 }
 
+int RestAPI::restart (void)
+{
+    return put(SSSysCommand, "restart", "", NULL, DEFAULT_TIMEOUT_INIT);
+}
+
 int RestAPI::initialize (void)
 {
     return put(SSCommand, "initialize", "", NULL, DEFAULT_TIMEOUT_INIT);

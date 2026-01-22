@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2026-01-22 13:56:24 by epics-->
 <display version="2.0.0">
   <name>eiger1DetectorStatus</name>
   <x>10</x>
   <y>31</y>
   <width>350</width>
-  <height>230</height>
+  <height>255</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -29,7 +30,7 @@
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #9</name>
     <width>350</width>
-    <height>230</height>
+    <height>255</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -335,23 +336,11 @@
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #69</name>
-    <text>Read Status Rate</text>
-    <x>5</x>
-    <y>205</y>
-    <width>160</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #72</name>
+    <name>menu #69</name>
     <pv_name>$(P)$(R)ReadStatus.SCAN</pv_name>
     <x>170</x>
-    <y>205</y>
+    <y>230</y>
     <width>120</width>
     <height>20</height>
     <background_color>
@@ -361,7 +350,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="action_button" version="3.0.0">
-    <name>message button #75</name>
+    <name>message button #72</name>
     <actions>
       <action type="write_pv">
         <pv_name>$(P)$(R)Initialize</pv_name>
@@ -372,7 +361,7 @@
     <pv_name>$(P)$(R)Initialize</pv_name>
     <text>Initialize</text>
     <x>170</x>
-    <y>180</y>
+    <y>205</y>
     <width>120</width>
     <height>20</height>
     <background_color>
@@ -381,14 +370,64 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #78</name>
+    <name>text #75</name>
     <text>Initialize</text>
     <x>65</x>
-    <y>180</y>
+    <y>205</y>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
     </font>
     <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #78</name>
+    <text>Read Status Rate</text>
+    <x>5</x>
+    <y>230</y>
+    <width>160</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #81</name>
+    <x>55</x>
+    <y>180</y>
+    <width>235</width>
+    <height>20</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #84</name>
+      <text>Restart DAQ</text>
+      <width>110</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="action_button" version="3.0.0">
+      <name>message button #87</name>
+      <actions>
+        <action type="write_pv">
+          <pv_name>$(P)$(R)Restart</pv_name>
+          <value>1</value>
+          <description>Write</description>
+        </action>
+      </actions>
+      <pv_name>$(P)$(R)Restart</pv_name>
+      <text>Restart DAQ</text>
+      <x>115</x>
+      <width>120</width>
+      <height>20</height>
+      <background_color>
+        <color red="253" green="0" blue="0">
+        </color>
+      </background_color>
+    </widget>
   </widget>
 </display>

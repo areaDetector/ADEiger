@@ -64,6 +64,7 @@ typedef enum {
 // Detector Status Parameters
 #define EigStateStr                "STATE"
 #define EigErrorStr                "ERROR"
+#define EigRestartStr              "RESTART"
 #define EigInitializeStr           "INITIALIZE"
 #define EigThTemp0Str              "TH_TEMP_0"
 #define EigThHumid0Str             "TH_HUMID_0"
@@ -131,6 +132,7 @@ public:
     void reapTask     (void);
     void monitorTask  (void);
     void streamTask   (void);
+    void restartTask();
     void initializeTask();
 
     enum roi_mode
@@ -177,6 +179,7 @@ protected:
     EigerParam *mFilePerms;
     EigerParam *mMonitorTimeout;
     EigerParam *mStreamDecompress;
+    EigerParam *mRestart;
     EigerParam *mInitialize;
     EigerParam *mHVResetTime;
     EigerParam *mHVReset;
@@ -263,7 +266,7 @@ private:
     eigerModel_t mEigerModel;
     eigerAPIVersion_t mAPIVersion;
     epicsEvent mStartEvent, mStopEvent, mTriggerEvent, mStreamEvent, mStreamDoneEvent,
-            mPollDoneEvent, mInitializeEvent;
+            mPollDoneEvent, mRestartEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
     bool mPollStop, mPollComplete, mStreamComplete;

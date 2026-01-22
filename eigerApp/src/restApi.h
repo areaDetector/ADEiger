@@ -68,6 +68,7 @@ public:
     int get (sys_t sys, std::string const & param, std::string & value, int timeout = DEFAULT_TIMEOUT);
     int put (sys_t sys, std::string const & param, std::string const & value = "", std::string * reply = NULL, int timeout = DEFAULT_TIMEOUT);
 
+    int restart    (void);
     int initialize (void);
     int arm        (int *sequenceId);
     int trigger    (int timeout, double exposure = 0.0);

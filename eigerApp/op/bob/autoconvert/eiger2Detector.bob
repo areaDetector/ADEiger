@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-12-28 12:32:36 by epics-->
+<!--Saved on 2026-01-22 13:56:24 by epics-->
 <display version="2.0.0">
   <name>eiger2Detector</name>
   <x>280</x>
@@ -46,7 +46,7 @@
     <name>composite #12</name>
     <file>ADShutter.bob</file>
     <x>5</x>
-    <y>735</y>
+    <y>760</y>
     <width>350</width>
     <height>165</height>
   </widget>
@@ -80,7 +80,7 @@
     <x>5</x>
     <y>470</y>
     <width>350</width>
-    <height>260</height>
+    <height>285</height>
   </widget>
   <widget type="embedded" version="2.0.0">
     <name>composite #22</name>

@@ -189,7 +189,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>5</x>
-                    <y>705</y>
+                    <y>730</y>
                     <width>354</width>
                     <height>169</height>
                 </rect>
@@ -197,7 +197,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>5</x>
-                    <y>705</y>
+                    <y>730</y>
                     <width>352</width>
                     <height>167</height>
                 </rect>
@@ -287,7 +287,7 @@ border-radius: 2px;
                     <x>5</x>
                     <y>470</y>
                     <width>352</width>
-                    <height>232</height>
+                    <height>257</height>
                 </rect>
             </property>
             <property name="geometry">
@@ -295,7 +295,7 @@ border-radius: 2px;
                     <x>5</x>
                     <y>470</y>
                     <width>350</width>
-                    <height>230</height>
+                    <height>255</height>
                 </rect>
             </property>
             <property name="filename">

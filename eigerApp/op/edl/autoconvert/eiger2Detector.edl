@@ -67,7 +67,7 @@ major 4
 minor 0
 release 0
 x 5
-y 735
+y 760
 w 350
 h 165
 
@@ -80,7 +80,7 @@ major 4
 minor 1
 release 0
 x 5
-y 735
+y 760
 w 350
 h 165
 fgColor rgb 0 0 0
@@ -241,7 +241,7 @@ release 0
 x 5
 y 470
 w 350
-h 260
+h 285
 
 beginGroup
 
@@ -254,7 +254,7 @@ release 0
 x 5
 y 470
 w 350
-h 260
+h 285
 fgColor rgb 0 0 0
 bgColor rgb 65280 65280 65280
 topShadowColor rgb 65280 65280 65280

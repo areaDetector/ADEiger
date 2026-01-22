@@ -155,6 +155,11 @@ static void streamTaskC (void *drvPvt)
     ((eigerDetector *)drvPvt)->streamTask();
 }
 
+static void restartTaskC (void *drvPvt)
+{
+    ((eigerDetector *)drvPvt)->restartTask();
+}
+
 static void initializeTaskC (void *drvPvt)
 {
     ((eigerDetector *)drvPvt)->initializeTask();
@@ -271,6 +276,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFileOwnerGroup = mParams.create(EigFileOwnerGroupStr, asynParamOctet);
     mFilePerms      = mParams.create(EigFilePermsStr,      asynParamInt32);
     mMonitorTimeout = mParams.create(EigMonitorTimeoutStr, asynParamInt32);
+    mRestart        = mParams.create(EigRestartStr,        asynParamInt32);
     mInitialize     = mParams.create(EigInitializeStr,     asynParamInt32);
     mStreamDecompress = mParams.create(EigStreamDecompressStr, asynParamInt32);
     mWavelengthEpsilon = mParams.create(EigWavelengthEpsilonStr, asynParamFloat64);
@@ -459,6 +465,10 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)streamTaskC, this) == NULL);
 
+    status |= (epicsThreadCreate("eigerRestartTask", epicsThreadPriorityHigh,
+            epicsThreadGetStackSize(epicsThreadStackMedium),
+            (EPICSTHREADFUNC)restartTaskC, this) == NULL);
+
     status |= (epicsThreadCreate("eigerInitializeTask", epicsThreadPriorityHigh,
             epicsThreadGetStackSize(epicsThreadStackMedium),
             (EPICSTHREADFUNC)initializeTaskC, this) == NULL);
@@ -513,6 +523,11 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
     }
     else if (function == ADReadStatus)
         status = eigerStatus();
+    else if (function == mRestart->getIndex() && value == 1)
+    {
+        setIntegerParam(mRestart->getIndex(), 1);
+        mRestartEvent.signal();
+    }
     else if (function == mInitialize->getIndex() && value == 1)
     {
         setIntegerParam(mInitialize->getIndex(), 1);
@@ -1552,6 +1567,32 @@ void eigerDetector::initializeTask()
 
         // Clear events
         mInitializeEvent.tryWait();
+    }
+}
+
+void eigerDetector::restartTask()
+{
+    const char *functionName = "restartTask";
+    for(;;)
+    {
+        mRestartEvent.wait();
+
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_WARNING,
+                  "%s:%s: Sending restart command\n",
+                  driverName, functionName);
+
+        int status = mApi.restart();
+
+        lock();
+        setIntegerParam(mRestart->getIndex(), 0);
+        unlock();
+
+        if (status) {
+            ERR("Failed to restart");
+        }
+
+        // Clear events
+        mRestartEvent.tryWait();
     }
 }
 
