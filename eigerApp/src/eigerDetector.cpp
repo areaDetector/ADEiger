@@ -1753,12 +1753,18 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
     }
 
     // Parse dataset type
+    // The data returned in the HDF5 file is unsigned.
+    // Bad pixels and gaps are very large positive numbers, which makes autoscaling difficult
+    // Optionally change the data type to signed.
+    // This improves autoscaling, but reduces the count range by 2X.
+    int signedData;
+    mSignedData->get(signedData);
     if(H5Tequal(dType, H5T_NATIVE_UINT32) > 0)
-        ndType = NDUInt32;
+        ndType = signedData ? NDInt32 : NDUInt32;
     else if(H5Tequal(dType, H5T_NATIVE_UINT16) > 0)
-        ndType = NDUInt16;
+        ndType = signedData ? NDInt16 : NDUInt16;
     else if(H5Tequal(dType, H5T_NATIVE_UINT8) > 0)
-        ndType = NDUInt8;
+        ndType = signedData ? NDInt8 : NDUInt8;
     else
     {
         ERR("invalid data type");
@@ -1856,12 +1862,9 @@ asynStatus eigerDetector::parseH5File (char *buf, size_t bufLen)
             // Get any attributes that have been defined for this driver
             this->getAttributes(pImage->pAttributeList);
 
-            // Add new attributes with the threshold information
-            char thresholdName[256];
-            snprintf(thresholdName, 255, "%s%d", "threshold_", activeThresholds[offset[1]]);
-
-            pImage->pAttributeList->add("ThresholdName", "Threshold name", NDAttrString, thresholdName);
-            pImage->pAttributeList->add("ThresholdEnergy", "Threshold energy (eV)", NDAttrFloat64, (void *)&thresholdEnergy[offset[1]]);
+            // Add threshold attributes
+            pImage->pAttributeList->add("ThresholdNumber", "Threshold number", NDAttrInt32, &activeThresholds[j]);
+            pImage->pAttributeList->add("ThresholdEnergy", "Threshold energy (eV)", NDAttrFloat64, (void *)&thresholdEnergy[j]);
 
             // Call the NDArray callback
             getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
