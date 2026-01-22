@@ -11,10 +11,14 @@ Release Notes
 =============
 R3-6 (January XXX, 2026)
 ----
-* Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
+* Added support for reading multiple thresholds.
+  This is only for Eiger2 and Pilatus4 detectors, not older Pilatus or Eiger models.
+  - Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
   - Added new StreamVersion record to select the Stream or Stream2 interface.
-  - If Stream2 is selected and more than one threshold is enabled then the
-    driver creates one NDArray for each threshold.
+  - Added support for the v2024.2 format in the FileWriter interface, which also supports multiple thresholds.
+  - Added new FWHDF5Format record for the FileWriter interface to select the Legacy of v2024.2 format.
+  - If DataSource=Stream with Stream2 or DataSource=FileWriter v2024.2 and if 
+    more than one threshold is enabled then the driver creates one NDArray for each threshold.
   - The driver sends the NDArrays for all thresholds on asyn address 0. It sends
     only the NDArray for threshold N on address N (N=1 to number of enabled thresholds).
   - Plugins can thus use asyn address 0 to receive NDArrays for all thresholds, address 1
@@ -23,16 +27,11 @@ R3-6 (January XXX, 2026)
     This conflicts with the use of address 1 for the first threshold.
     The monitor callbacks were changed to use address=10.
     This breaks backwards compatibility, but is easy to adjust.
-  - Stream2 adds 2 new NDAttributes for each NDArray.  These attributes identify which threshold that NDArray contains.
-    - ThresholdName is an NDAttrString attribute containing the name of the threshold as reported by the Stream2 interface. 
-      These are "threshold_1", "threshold_2", etc.
-    - ThresholdEnergy is an NDAttrFloat64 attribute containing the energy of the threshold as reported by the Stream2 interface
-      in units of eV.
+  - When using Stream2 or FileWriter the driver now adds 2 new NDAttributes for each NDArray.
+    These attributes identify which threshold that NDArray contains.
+    - ThresholdNumber is an NDAttrInt32 attribute containing the threshold number (1, 2, ...). 
+    - ThresholdEnergy is an NDAttrFloat64 attribute containing the energy of the threshold in units of eV.
 * Added support for Pilatus4 detectors.  Thanks to Tejus Guruswamy for this.
-* Added new FWHDF5Format record for the FileWriter interface.
-  - This record allows selecting the "Legacy" format, or the "v2024.2" format.
-    v2024.2 supports saving multiple thresholds.
-    With v2024.2 the HDF5 data dimensions are [NumImages, NumThresholds, NumY, NumX].
 * Added new SignedData record to select whether NDArrays will be signed or unsigned integers.
   - The data sent from the Eiger server is unsigned 32-bit, 16-bit, or 8-bit integers,
     depending on the exposure time.
@@ -51,7 +50,10 @@ R3-6 (January XXX, 2026)
         and there should thus be no problem.
 * Added new StreamAsTSSource record. If this is set to Yes, and if the data is coming from the Stream2
   interface, then the NDArray timeStamp and epicsTS fields are taken from the timestamp information
-  sent by the detector over the Stream2 interface. Thanks to Bruno Martins for this.
+  sent by the detector over the Stream2 interface. These are much more accurate than the EPICS timestamps.
+  Thanks to Bruno Martins for this.
+* Added a new Restart record.  Processing this record will restart the DAQ on the Eiger server.
+  After doing this is it necessary to process the Initialize record.
 * Fixed issues with Internal Enable trigger mode.
   - This mode was broken completely starting with R3-4 in June 2022.
     It was always sending 0 as the TriggerExposure value due to a bug introduced in the driver.
