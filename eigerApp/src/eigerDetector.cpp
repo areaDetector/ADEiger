@@ -725,14 +725,14 @@ asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
         if(!strlen(value))
         {
             mFsGid = getgid();
-	    struct group* pgroup = getgrgid(mFsGid);
+            struct group* pgroup = getgrgid(mFsGid);
 
-	    if (pgroup) {
-		mFileOwnerGroup->put(pgroup->gr_name);
-	    } else {
+            if (pgroup) {
+                mFileOwnerGroup->put(pgroup->gr_name);
+            } else {
                 ERR("couldn't find gid");
                 status = asynError;
-	    }
+            }
         }
         else
         {
