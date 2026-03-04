@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="no" ?>
+<!-- Attributes -->
+<Attributes
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://epics.aps.anl.gov/areaDetector/attributes ../attributes.xsd"
+    >
+    <Attribute name="DetectorDescription"       type="PARAM"    source="DESCRIPTION"        datatype="STRING"   description="Detector Description"/>
+    <Attribute name="DetectorSerialNumber"      type="PARAM"    source="SERIAL_NUMBER"      datatype="STRING"   description="Detector Serial Number"/>
+    <Attribute name="DetectorSoftwareVersion"   type="PARAM"    source="SW_VERSION"         datatype="STRING"   description="Detector Software Version"/>
+    <Attribute name="DetectorDistance"          type="PARAM"    source="DET_DIST"           datatype="DOUBLE"   description="Detector Distance"/>
+    <Attribute name="CountrateCutoff"           type="PARAM"    source="COUNT_CUTOFF"       datatype="INT"      description="Countrate Correction Cutoff"/>
+    <Attribute name="SensorThickness"           type="PARAM"    source="SENSOR_THICKNESS"   datatype="DOUBLE"   description="Detector Sensor Thickness"/>
+    <Attribute name="SensorMaterial"            type="PARAM"    source="SENSOR_MATERIAL"    datatype="STRING"   description="Detector Sensor Material"/>
+    <Attribute name="BeamCenterX"               type="PARAM"    source="BEAM_CENTER_X"      datatype="DOUBLE"   description="Beam Center X"/>
+    <Attribute name="BeamCenterY"               type="PARAM"    source="BEAM_CENTER_Y"      datatype="DOUBLE"   description="Beam Center Y"/>
+    <Attribute name="XPixelSize"                type="PARAM"    source="X_PIXEL_SIZE"       datatype="DOUBLE"   description="X Pixel Size"/>
+    <Attribute name="YPixelSize"                type="PARAM"    source="Y_PIXEL_SIZE"       datatype="DOUBLE"   description="Y Pixel Size"/>
+    <Attribute name="Wavelength"                type="PARAM"    source="WAVELENGTH"         datatype="DOUBLE"   description="Wavelength"/>
+    <Attribute name="CountTime"                 type="PARAM"    source="ACQ_TIME"           datatype="DOUBLE"   description="Count Time"/>
+    <Attribute name="FrameTime"                 type="PARAM"    source="ACQ_PERIOD"         datatype="DOUBLE"   description="Frame Time"/>
+    <Attribute name="PixelMaskApplied"          type="PARAM"    source="PIXEL_MASK_APPLIED" datatype="INT"      description="Pixel Mask Applied to Data"/>
+    <Attribute name="OmegaStart"                type="PARAM"    source="OMEGA"              datatype="DOUBLE"   description="Frame's Omega Angle"/>
+    <Attribute name="OmegaIncrement"            type="PARAM"    source="OMEGA_INCR"         datatype="DOUBLE"   description="Frame's Omega Angle Increment"/>
+    
+</Attributes>
+    
+    
