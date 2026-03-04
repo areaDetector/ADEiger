@@ -2,6 +2,8 @@
 # Tejas Guruswamy
 # 2025-04-29
 
+include "eiger2.template"
+
 #####################
 # Acquisition Setup #
 #####################
