@@ -14,11 +14,11 @@ epicsEnvSet("YSIZE",  "1065")
 epicsEnvSet("NCHANS", "2048")
 epicsEnvSet("CBUFFS", "500")
 # This is an Pilatus4 2M
-epicsEnvSet("EIGERIP", "10.54.160.111")
+epicsEnvSet("PILATUS_IP", "10.54.160.111")
 epicsEnvSet("EPICS_DB_INCLUDE_PATH", "$(ADCORE)/db:$(ADEIGER)/db")
 epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "5000000")
 
-eigerDetectorConfig("$(PORT)", "$(EIGERIP)", 0, 0)
+eigerDetectorConfig("$(PORT)", "$(PILATUS_IP)", 0, 0)
 dbLoadRecords("$(ADEIGER)/db/eiger2.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 
 # Debug
