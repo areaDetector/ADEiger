@@ -302,13 +302,12 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
                     }
                     pArray->compressedSize = compressedSize;
                     memcpy(pArray->pData, pInput, compressedSize);
-
-                    if (extractTimeStamp) {
-                        epicsTimeStamp ts = extractTimeStampFromMessage(mImageMsg);
-                        pArray->epicsTS = ts;
-                        pArray->timeStamp = ts.secPastEpoch + ts.nsec/1.e9;
-                    }
                 }
+            }
+            if (extractTimeStamp) {
+                epicsTimeStamp ts = extractTimeStampFromMessage(mImageMsg);
+                pArray->epicsTS = ts;
+                pArray->timeStamp = ts.secPastEpoch + ts.nsec/1.e9;
             }
             sscanf(mThresholdEnergy[thresh].channel, "threshold_%d", &thresholdNumber);
             pArray->pAttributeList->add("ThresholdNumber", "Threshold number", NDAttrInt32, &thresholdNumber);
