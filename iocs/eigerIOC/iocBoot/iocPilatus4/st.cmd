@@ -19,7 +19,7 @@ epicsEnvSet("EPICS_DB_INCLUDE_PATH", "$(ADCORE)/db:$(ADEIGER)/db")
 epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "5000000")
 
 eigerDetectorConfig("$(PORT)", "$(PILATUS_IP)", 0, 0)
-dbLoadRecords("$(ADEIGER)/db/eiger2.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
+dbLoadRecords("$(ADEIGER)/db/pilatus4.template", "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 
 # Debug
 asynSetTraceIOMask($(PORT), 0, ESCAPE)
