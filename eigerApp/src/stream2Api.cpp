@@ -47,7 +47,7 @@ static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
     }
     if (strcmp(encoding, "lz4") == 0) {
 //        ERR("calling LZ4_decompress_fast");
-//        size_t result = LZ4_decompress_fast((const char *)pInput+16, dest, (int)uncompressedSize);
+//        size_t result = LZ4_decompress_fast((const char *)pInput, dest, (int)uncompressedSize);
         size_t result = compression_decompress_buffer(COMPRESSION_LZ4,
                                                       dest,
                                                       uncompressedSize,
