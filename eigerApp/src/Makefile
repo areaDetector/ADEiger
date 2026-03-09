@@ -31,6 +31,11 @@ else
   LIB_SYS_LIBS  += hdf5_hl
 endif
 
+PROD += test_lz4
+test_lz4_SRCS += test_lz4.cpp
+test_lz4_LIBS += dectrisCompression
+test_lz4_SYS_LIBS += lz4
+
 include $(ADCORE)/ADApp/commonLibraryMakefile
 
 #=============================
