@@ -1932,16 +1932,17 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
 
     tag_t *tags = (tag_t*)(buf + offset + 2);
 
-    size_t width = 0, height = 0, depth = 0, dataLen = 0;
+    size_t width = 0, height = 0, depth = 0, dataLen = 0, stripOffset = 0;
 
     for(size_t i = 0; i < numEntries; ++i)
     {
         switch(tags[i].id)
         {
-        case 256: width   = tags[i].offset; break;
-        case 257: height  = tags[i].offset; break;
-        case 258: depth   = tags[i].offset; break;
-        case 279: dataLen = tags[i].offset; break;
+        case 256: width       = tags[i].offset; break;
+        case 257: height      = tags[i].offset; break;
+        case 258: depth       = tags[i].offset; break;
+        case 273: stripOffset = tags[i].offset; break;
+        case 279: dataLen     = tags[i].offset; break;
         }
     }
 
@@ -1975,7 +1976,9 @@ asynStatus eigerDetector::parseTiffFile (char *buf, size_t len)
     pImage->uniqueId = uniqueId++;
     updateTimeStamps(pImage);
 
-    memcpy(pImage->pData, buf+8, dataLen);
+    if(!stripOffset) { ERR("missing StripOffsets tag"); return asynError; }
+    if(stripOffset + dataLen > len) { ERR("pixel data out of range"); return asynError; }
+    memcpy(pImage->pData, buf + stripOffset, dataLen);
     doCallbacksGenericPointer(pImage, NDArrayData, MONITOR_ASYN_ADDRESS);
     pImage->release();
 
