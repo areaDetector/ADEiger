@@ -705,7 +705,14 @@ asynStatus eigerDetector::writeOctet (asynUser *pasynUser, const char *value,
         if(!strlen(value))
         {
             mFsUid = getuid();
-            mFileOwner->put(getpwuid(mFsUid)->pw_name);
+            struct passwd *pwd = getpwuid(mFsUid);
+
+            if (pwd) {
+                mFileOwner->put(pwd->pw_name);
+            } else {
+                ERR("couldn't find uid");
+                status = asynError;
+            }
         }
         else
         {
