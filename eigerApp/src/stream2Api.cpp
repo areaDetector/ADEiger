@@ -13,7 +13,7 @@
 #include <epicsStdio.h>
 #include <epicsString.h>
 #include <string.h>
-#include <lz4.h>
+#include <lz4hdf5.h>
 #include <bitshuffle.h>
 #include <compression.h>
 
@@ -36,6 +36,7 @@ static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
     orig_size = be64toh(orig_size);
     uint32_t block_size = *(uint32_t *)(pInput + 8);
     block_size = be32toh(block_size);
+    int result;
     switch (dataType) 
     {
         case NDUInt32: elemSize=4; break;
@@ -46,17 +47,11 @@ static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
             return STREAM_ERROR;
     }
     if (strcmp(encoding, "lz4") == 0) {
-//        ERR("calling LZ4_decompress_fast");
-//        size_t result = LZ4_decompress_fast((const char *)pInput, dest, (int)uncompressedSize);
-        size_t result = compression_decompress_buffer(COMPRESSION_LZ4,
-                                                      dest,
-                                                      uncompressedSize,
-                                                      (const char *)pInput,
-                                                      compressedSize,
-                                                      elemSize);        
-        if (result < 0)
+        result = decompress_lz4hdf5((const char *)pInput, dest, uncompressedSize);
+
+        if (result <= 0)
         {
-            ERR_ARGS("LZ4_decompress failed, result=%lu\n", result);
+            ERR_ARGS("decompress_lz4hdf5 failed, result=%d\n", result);
             return STREAM_ERROR; 
         }
     } 
@@ -289,7 +284,7 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
                     const unsigned char *pInput = pSB->ptr;
                     if (strcmp(encoding, "lz4") == 0) 
                     {
-                        pArray->codec.name = "lz4";
+                        pArray->codec.name = "lz4hdf5";
                     }
                     else if (strcmp(encoding, "bslz4") == 0) 
                     {

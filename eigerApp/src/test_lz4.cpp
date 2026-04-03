@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <lz4.h>
+#include <lz4hdf5.h>
 #include <compression.h>
 
 int main(int argc, char *argv[]) 
@@ -29,8 +30,8 @@ int main(int argc, char *argv[])
 
   compressedSize = fread(compressedBuff, 1, MAX_COMPRESSED_SIZE, fp);
   fclose(fp);
-  decompressedSize = LZ4_decompress_safe(compressedBuff, (char *)decompressedBuff, compressedSize, MAX_DECOMPRESSED_SIZE);
-  printf("Stream2_lz4_data decompressed with lz4_decompress_safe, compressedSize=%d, decompressedSize=%d\n", (int)compressedSize, (int)decompressedSize);
+  decompressedSize = decompress_lz4hdf5(compressedBuff, (char *)decompressedBuff, MAX_DECOMPRESSED_SIZE);
+  printf("Stream2_lz4_data decompressed with decompress_lz4hdf5, compressedSize=%d, decompressedSize=%d\n", (int)compressedSize, (int)decompressedSize);
 
   // Decompress with the Dectris routine
   decompressedSize = compression_decompress_buffer(COMPRESSION_LZ4, decompressedBuff, MAX_DECOMPRESSED_SIZE, compressedBuff, compressedSize, 4);
