@@ -1,7 +1,9 @@
 TOP = ..
 include $(TOP)/configure/CONFIG
 
-DIRS := $(DIRS) testLZ4
+ifeq ($(BUILD_TEST_LZ4), YES)
+  DIRS := $(DIRS) testLZ4
+endif
 DIRS := $(DIRS) frozenSrc
 DIRS := $(DIRS) tinyCBORSrc
 DIRS := $(DIRS) compressionSrc
