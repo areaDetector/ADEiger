@@ -1,6 +1,7 @@
 TOP = ..
 include $(TOP)/configure/CONFIG
 
+DIRS := $(DIRS) testLZ4
 DIRS := $(DIRS) frozenSrc
 DIRS := $(DIRS) tinyCBORSrc
 DIRS := $(DIRS) compressionSrc
