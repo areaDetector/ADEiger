@@ -15,7 +15,6 @@
 #include <string.h>
 #include <lz4hdf5.h>
 #include <bitshuffle.h>
-#include <compression.h>
 
 #define ZMQ_PORT        31001
 
