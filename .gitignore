@@ -17,4 +17,5 @@ O.*/
 .project
 .settings
 .clangd
+.iocsh_history
 .zed/
