@@ -31,10 +31,7 @@ static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
 {
     const char *functionName = "uncompress";
     size_t elemSize;
-    uint64_t orig_size = *(uint64_t *)pInput;
-    orig_size = be64toh(orig_size);
-    uint32_t block_size = *(uint32_t *)(pInput + 8);
-    block_size = be32toh(block_size);
+    size_t blockSize;
     int result;
     switch (dataType) 
     {
@@ -46,7 +43,7 @@ static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
             return STREAM_ERROR;
     }
     if (strcmp(encoding, "lz4") == 0) {
-        result = decompress_lz4hdf5((const char *)pInput, dest, uncompressedSize);
+        result = decompress_lz4hdf5((const char *)pInput, dest, uncompressedSize, &blockSize);
 
         if (result <= 0)
         {
