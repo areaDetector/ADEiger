@@ -209,14 +209,20 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
         fprintf(stderr, "error: error %i parsing message\n", err);
         return err;
     }
-    mImageMsg = (stream2_image_msg *)s2msg;
-    mNumThresholds = (int)mImageMsg->data.len;
-    *numThresholds = mNumThresholds;
 
-    if (mImageMsg->type == STREAM2_MSG_END)
-    {
-        *end = true;
+    switch (s2msg->type) {
+        case STREAM2_MSG_IMAGE:
+            mImageMsg = (stream2_image_msg *)s2msg;
+            mNumThresholds = (int)mImageMsg->data.len;
+            *numThresholds = mNumThresholds;
+            break;
+        case STREAM2_MSG_END:
+            *end = true;
+            break;
+        default:
+            err = STREAM_ERROR;
     }
+
     return err;
 }
 
