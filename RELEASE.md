@@ -9,14 +9,19 @@ https://github.com/areaDetector/ADEiger/tags
 
 Release Notes
 =============
-R3-6 (January XXX, 2026)
+R3-6 (April XXX, 2026)
 ----
+* Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
+   - Added new StreamVersion record to select the Stream or Stream2 interface.
+   - LZ4 compression on the Stream2 interface uses block-mode compression, which is
+     different from the LZ4 compression on the Stream interface. A new codec called
+     "lz4hdf5" was addeded to ADSupport R1-11 to support this compression.
+     Support for lz4hdf5 compression was added to NDPluginCodec in ADCore R3-15, and to the 
+     ImageJ NTNDArrayViewer plugin in ADViewers R1-8.
+* Added support for the v2024.2 format in the FileWriter interface, which also supports multiple thresholds.
+  - Added new FWHDF5Format record for the FileWriter interface to select the Legacy of v2024.2 format.
 * Added support for reading multiple thresholds.
   This is only for Eiger2 and Pilatus4 detectors, not older Pilatus or Eiger models.
-  - Added support for the Stream2 interface.  Stream2 supports multiple thresholds.
-  - Added new StreamVersion record to select the Stream or Stream2 interface.
-  - Added support for the v2024.2 format in the FileWriter interface, which also supports multiple thresholds.
-  - Added new FWHDF5Format record for the FileWriter interface to select the Legacy of v2024.2 format.
   - If DataSource=Stream with Stream2 or DataSource=FileWriter v2024.2 and if 
     more than one threshold is enabled then the driver creates one NDArray for each threshold.
   - The driver sends the NDArrays for all thresholds on asyn address 0. It sends
