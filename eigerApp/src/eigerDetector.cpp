@@ -1011,26 +1011,25 @@ void eigerDetector::controlTask (void)
                 getIntegerParam(ADStatus, &adStatus);
             }
         }
-        else // TMExternalSeries or TMExternalEnable
+
+        // Wait for detector to stop acquiring.
+        // Essential for TMExternalSeries or TMExternalEnable,
+        // which have to wait for external action.
+        FLOW("waiting for detector state");
+        string state;
+        for(;;)
         {
-            // The Eiger does not indicate when acquisition is complete.
-            // Wait either until the NumImagesCounter is the expected value or
-            // until there is a manual stop event.
-            int expectedImages = numImages * numTriggers;
-            int numImagesCounter;
-            for(;;)
-            {
-                getIntegerParam(ADNumImagesCounter, &numImagesCounter);
-                if (numImagesCounter >= expectedImages) break;
-                if (mStopEvent.tryWait()) break;
-                unlock();
-                epicsThreadSleep(0.1);
-                lock();
-            }
+            mState->fetch(state);
+            callParamCallbacks();
+            // We must exit this loop without the lock
+            unlock();
+            if (state != "configure" && state != "ready" && state != "acquire") break;
+            if (mStopEvent.wait(0.1)) break;
+            // If we haven't exited yet, grab the lock so we can update the param library
+            lock();
         }
 
         // All triggers issued, disarm the detector
-        unlock();
         status = mApi.disarm();
         lock();
 
