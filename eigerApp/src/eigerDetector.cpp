@@ -1195,8 +1195,6 @@ void eigerDetector::downloadTask (void)
 
         FLOW_ARGS("file=%s", file->name);
 
-        file->refCount = file->parse + file->save;
-
         // Download the file
         if(mApi.getFile(file->name, &file->data, &file->len))
         {
