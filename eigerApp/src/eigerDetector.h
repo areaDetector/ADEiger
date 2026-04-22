@@ -269,7 +269,11 @@ private:
             mPollDoneEvent, mRestartEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
-    bool mPollStop, mPollComplete, mStreamComplete;
+    bool mPollStop;
+    // Access to this variable is synchronized by mPollQueue and mPollDoneEvent
+    bool mPollComplete;
+    // Access to this variable is synchronized by mStreamEvent and mStreamDoneEvent
+    bool mStreamComplete;
     unsigned int mFrameNumber;
     uid_t mFsUid, mFsGid;
     EigerParamSet mParams;
