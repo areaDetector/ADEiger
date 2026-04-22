@@ -1045,11 +1045,17 @@ void eigerDetector::controlTask (void)
         {
             // Wait FileWriter to go out of the "acquire" state
             FLOW("waiting for FileWriter");
-            string fwAcquire;
-            do
+
+            for(;;)
             {
-                mFWState->get(fwAcquire);
-            }while(fwAcquire == "acquire");
+                string fwAcquire;
+                lock();
+                mFWState->fetch(fwAcquire);
+                callParamCallbacks();
+                unlock();
+                if (fwAcquire != "acquire") break;
+                epicsThreadSleep(0.1);
+            }
             epicsThreadSleep(0.5);
 
             // Request polling task to stop
