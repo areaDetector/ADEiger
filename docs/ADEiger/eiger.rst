@@ -726,7 +726,7 @@ FileWriter Interface
   * - filewriter/config/clear
     - Writing to this PV clears *all* files on the detector server disk.
     - FWClear
-    - ao
+    - bo
 
 Stream Interface
 ~~~~~~~~~~~~~~~~

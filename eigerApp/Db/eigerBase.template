@@ -599,10 +599,12 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
 }
 
 # FileWriter clear all files
-record(ao, "$(P)$(R)FWClear") {
+record(bo, "$(P)$(R)FWClear") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
     field(DESC, "Clear files in the detector")
+    field(ZNAM, "Clear")
+    field(ONAM, "Clear")
 }
 
 # FileWriter free buffer space
