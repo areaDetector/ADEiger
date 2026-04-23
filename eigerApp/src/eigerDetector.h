@@ -1,6 +1,7 @@
 #ifndef EIGER_DETECTOR_H
 #define EIGER_DETECTOR_H
 
+#include <atomic>
 #include <map>
 #include <vector>
 
@@ -269,7 +270,7 @@ private:
             mPollDoneEvent, mRestartEvent, mInitializeEvent;
     epicsMessageQueue mPollQueue, mDownloadQueue, mParseQueue, mSaveQueue,
             mReapQueue;
-    bool mPollStop;
+    std::atomic<bool> mPollStop;
     // Access to this variable is synchronized by mPollQueue and mPollDoneEvent
     bool mPollComplete;
     // Access to this variable is synchronized by mStreamEvent and mStreamDoneEvent
