@@ -598,6 +598,13 @@ record(bi,"$(P)$(R)FWAutoRemove_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+# FileWriter clear all files
+record(ao, "$(P)$(R)FWClear") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
+    field(DESC, "Clear files in the detector")
+}
+
 # FileWriter free buffer space
 record(ai, "$(P)$(R)FWFree_RBV")
 {

@@ -52,14 +52,3 @@ record(ai, "$(P)$(R)DCUBufferFree_RBV")
     field(VAL,  "0")
     field(PREC, "1")
 }
-
-####################
-# FileWriter Setup #
-####################
-
-# FileWriter clear all files
-record(ao, "$(P)$(R)FWClear") {
-    field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CLEAR")
-    field(DESC, "Clear files in the detector")
-}
