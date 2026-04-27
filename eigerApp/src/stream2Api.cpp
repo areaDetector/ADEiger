@@ -15,6 +15,8 @@
 #include <string.h>
 #include <lz4hdf5.h>
 #include <bitshuffle.h>
+#include "NDCodec.h"
+
 
 #define ZMQ_PORT        31001
 
@@ -286,11 +288,11 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
                     const unsigned char *pInput = pSB->ptr;
                     if (strcmp(encoding, "lz4") == 0) 
                     {
-                        pArray->codec.name = "lz4hdf5";
+                        pArray->codec.name = NDCodecName[NDCODEC_LZ4HDF5];
                     }
                     else if (strcmp(encoding, "bslz4") == 0) 
                     {
-                        pArray->codec.name = "bslz4";
+                        pArray->codec.name = NDCodecName[NDCODEC_BSLZ4];
                         pInput += 12;
                         compressedSize -= 12;
                     }
