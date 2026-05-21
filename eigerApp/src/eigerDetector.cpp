@@ -1002,7 +1002,7 @@ void eigerDetector::controlTask (void)
                             triggers+1, numTriggers, triggerTimeout, acquireTime);
                     setShutter(1);
                     unlock();
-                    status = mApi.trigger(triggerTimeout, acquireTime);
+                    status = mApi.trigger(triggerTimeout, triggerMode == TRIGGER_MODE_INTE ? acquireTime : 0);
                     lock();
                     setShutter(0);
                     ++triggers;
