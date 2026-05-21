@@ -9,6 +9,8 @@
 #include <string.h>
 #include <lz4.h>
 #include <bitshuffle.h>
+#include "NDCodec.h"
+
 
 #define ZMQ_PORT        9999
 #define MAX_JSON_TOKENS 512
@@ -387,15 +389,15 @@ int StreamAPI::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int dec
             uncompress(temp, (char *)pArray->pData, encoding, uncompressedSize, frameType);
         }
         else
-        {        
-            char *pInput = temp;        
+        {
+            char *pInput = temp;
             if (strcmp(encoding, "lz4<") == 0) {
-                pArray->codec.name = "lz4";
+                pArray->codec.name = NDCodecName[NDCODEC_LZ4];
             }
             else if ((strcmp(encoding, "bs32-lz4<") == 0) ||
                      (strcmp(encoding, "bs16-lz4<") == 0) ||
                      (strcmp(encoding, "bs8-lz4<") == 0)) {
-                pArray->codec.name = "bslz4";
+                pArray->codec.name = NDCodecName[NDCODEC_BSLZ4];
                 pInput += 12;
                 compressedSize -= 12;
             }
