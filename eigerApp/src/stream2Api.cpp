@@ -199,11 +199,12 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
     if(timeout && (err = poll(timeout)))
         return err;
 
+    zmq_msg_t msg;
     // Get message
-    zmq_msg_init(&mMsg);
-    zmq_msg_recv(&mMsg, mSock, 0);
+    zmq_msg_init(&msg);
+    zmq_msg_recv(&msg, mSock, 0);
     struct stream2_msg *s2msg;
-    if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&mMsg), zmq_msg_size(&mMsg), &s2msg))) {
+    if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&msg), zmq_msg_size(&msg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
         goto done;
     }
@@ -221,7 +222,7 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
             err = STREAM_ERROR;
     }
     done:
-    zmq_msg_close(&mMsg);
+    zmq_msg_close(&msg);
     return err;
 }
 
