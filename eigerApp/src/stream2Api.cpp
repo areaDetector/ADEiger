@@ -124,7 +124,8 @@ epicsTimeStamp Stream2API::extractTimeStampFromMessage(stream2_image_msg *msg) {
     };
 }
 
-Stream2API::Stream2API (const char *hostname) : mHostname(epicsStrDup(hostname))
+Stream2API::Stream2API (const char *hostname)
+    : mHostname(epicsStrDup(hostname)), mImage_dtype(NULL), mImageMsg(NULL), mNumThresholds(0)
 {
     if(!(mCtx = zmq_ctx_new()))
         throw std::runtime_error("unable to create zmq context");
@@ -143,6 +144,14 @@ Stream2API::Stream2API (const char *hostname) : mHostname(epicsStrDup(hostname))
 
 Stream2API::~Stream2API (void)
 {
+    if (mImage_dtype) {
+        free(mImage_dtype);
+        mImage_dtype = NULL;
+    }
+    for (size_t i = 0; i < mThresholdEnergy.size(); i++) {
+        free(mThresholdEnergy[i].channel);
+        mThresholdEnergy[i].channel = NULL;
+    }
     zmq_close(mSock);
     zmq_ctx_destroy(mCtx);
     free(mHostname);
@@ -163,23 +172,34 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
     struct stream2_msg *s2msg;
     if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&msg), zmq_msg_size(&msg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
+        zmq_msg_close(&msg);
         return err;
     }
     stream2_start_msg* sm = (stream2_start_msg *)s2msg;
 
     if (sm->type != STREAM2_MSG_START) {
         ERR_ARGS("unexpected message type, should be STREAM2_MSG_START (%d), actual=%d", STREAM2_MSG_START, sm->type);
+        stream2_free_msg(s2msg);
+        zmq_msg_close(&msg);
         return STREAM_ERROR;
     }
     mSeries_id = sm->series_id;
-    mImage_dtype = sm->image_dtype;
+    if (mImage_dtype) free(mImage_dtype);
+    mImage_dtype = epicsStrDup(sm->image_dtype);
     mImage_size_x = sm->image_size_x;
     mImage_size_y = sm->image_size_y;
     mNumber_of_images = sm->number_of_images;
+    for (size_t i = 0; i < mThresholdEnergy.size(); i++) {
+        free(mThresholdEnergy[i].channel);
+    }
     mThresholdEnergy.clear();
     for (int i=0; i<(int)sm->threshold_energy.len; i++) {
-        mThresholdEnergy.push_back(sm->threshold_energy.ptr[i]);
+        stream2_threshold_energy threshold = sm->threshold_energy.ptr[i];
+        threshold.channel = epicsStrDup(sm->threshold_energy.ptr[i].channel);
+        mThresholdEnergy.push_back(threshold);
     }
+    stream2_free_msg(s2msg);
+    zmq_msg_close(&msg);
     return STREAM_SUCCESS;
 }
 
@@ -198,6 +218,7 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
     struct stream2_msg *s2msg;
     if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&mMsg), zmq_msg_size(&mMsg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
+        zmq_msg_close(&mMsg);
         return err;
     }
 
@@ -209,9 +230,13 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
             break;
         case STREAM2_MSG_END:
             *end = true;
+            stream2_free_msg(s2msg);
+            zmq_msg_close(&mMsg);
             break;
         default:
             err = STREAM_ERROR;
+            stream2_free_msg(s2msg);
+            zmq_msg_close(&mMsg);
     }
 
     return err;
@@ -317,6 +342,8 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
     }
     error:
     if (thresh == mNumThresholds-1) {
+        stream2_free_msg((stream2_msg *)mImageMsg);
+        mImageMsg = NULL;
         zmq_msg_close(&mMsg);
     }
     return err;
