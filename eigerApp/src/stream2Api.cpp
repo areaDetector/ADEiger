@@ -162,16 +162,18 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
     // Get message
     zmq_msg_init(&msg);
     zmq_msg_recv(&msg, mSock, 0);
-    struct stream2_msg *s2msg;
+    struct stream2_msg *s2msg=0;
+    stream2_start_msg* sm; 
     if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&msg), zmq_msg_size(&msg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
-        return err;
+        goto done;
     }
-    stream2_start_msg* sm = (stream2_start_msg *)s2msg;
+    sm = (stream2_start_msg *)s2msg;
 
     if (sm->type != STREAM2_MSG_START) {
         ERR_ARGS("unexpected message type, should be STREAM2_MSG_START (%d), actual=%d", STREAM2_MSG_START, sm->type);
-        return STREAM_ERROR;
+        err = STREAM_ERROR;
+        goto done;
     }
     mSeries_id = sm->series_id;
     mImage_dtype = sm->image_dtype;
@@ -182,7 +184,10 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
     for (int i=0; i<(int)sm->threshold_energy.len; i++) {
         mThresholdEnergy.push_back(sm->threshold_energy.ptr[i]);
     }
-    return STREAM_SUCCESS;
+    done:
+    zmq_msg_close(&msg);
+    if (s2msg) stream2_free_msg(s2msg);
+    return err;
 }
 
 int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
@@ -200,7 +205,7 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
     struct stream2_msg *s2msg;
     if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&mMsg), zmq_msg_size(&mMsg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
-        return err;
+        goto done;
     }
 
     switch (s2msg->type) {
@@ -215,7 +220,8 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
         default:
             err = STREAM_ERROR;
     }
-
+    done:
+    zmq_msg_close(&mMsg);
     return err;
 }
 
@@ -319,7 +325,7 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
     }
     error:
     if (thresh == mNumThresholds-1) {
-        zmq_msg_close(&mMsg);
+      if (mImageMsg) stream2_free_msg((stream2_msg *)mImageMsg);
     }
     return err;
 }
