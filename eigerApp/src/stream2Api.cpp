@@ -126,7 +126,8 @@ epicsTimeStamp Stream2API::extractTimeStampFromMessage(stream2_image_msg *msg) {
     };
 }
 
-Stream2API::Stream2API (const char *hostname) : mHostname(epicsStrDup(hostname))
+Stream2API::Stream2API (const char *hostname) 
+    : mHostname(epicsStrDup(hostname)), mImage_dtype(NULL), mImageMsg(NULL), mNumThresholds(0)
 {
     if(!(mCtx = zmq_ctx_new()))
         throw std::runtime_error("unable to create zmq context");
@@ -145,6 +146,14 @@ Stream2API::Stream2API (const char *hostname) : mHostname(epicsStrDup(hostname))
 
 Stream2API::~Stream2API (void)
 {
+    if (mImage_dtype) {
+        free(mImage_dtype);
+        mImage_dtype = NULL;
+    }
+    for (size_t i = 0; i < mThresholdEnergy.size(); i++) {
+        free(mThresholdEnergy[i].channel);
+        mThresholdEnergy[i].channel = NULL;
+    }
     zmq_close(mSock);
     zmq_ctx_destroy(mCtx);
     free(mHostname);
@@ -176,13 +185,19 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
         goto done;
     }
     mSeries_id = sm->series_id;
-    mImage_dtype = sm->image_dtype;
+    if (mImage_dtype) free(mImage_dtype);
+    mImage_dtype = epicsStrDup(sm->image_dtype);
     mImage_size_x = sm->image_size_x;
     mImage_size_y = sm->image_size_y;
     mNumber_of_images = sm->number_of_images;
+    for (size_t i = 0; i < mThresholdEnergy.size(); i++) {
+        free(mThresholdEnergy[i].channel);
+    }
     mThresholdEnergy.clear();
     for (int i=0; i<(int)sm->threshold_energy.len; i++) {
-        mThresholdEnergy.push_back(sm->threshold_energy.ptr[i]);
+        stream2_threshold_energy threshold = sm->threshold_energy.ptr[i];
+        threshold.channel = epicsStrDup(sm->threshold_energy.ptr[i].channel);
+        mThresholdEnergy.push_back(threshold);
     }
     done:
     zmq_msg_close(&msg);
@@ -217,9 +232,11 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
             break;
         case STREAM2_MSG_END:
             *end = true;
+            stream2_free_msg(s2msg);
             break;
         default:
             err = STREAM_ERROR;
+            stream2_free_msg(s2msg);
     }
     done:
     zmq_msg_close(&msg);
@@ -326,7 +343,8 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
     }
     error:
     if (thresh == mNumThresholds-1) {
-      if (mImageMsg) stream2_free_msg((stream2_msg *)mImageMsg);
+        if (mImageMsg) stream2_free_msg((stream2_msg *)mImageMsg);
+        mImageMsg = NULL;
     }
     return err;
 }
