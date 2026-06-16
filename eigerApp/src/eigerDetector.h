@@ -147,7 +147,7 @@ public:
         COMP_ALGO_LZ4,
         COMP_ALGO_BSLZ4
     };
-    
+
     enum trigger_mode
     {
         TRIGGER_MODE_INTS,
