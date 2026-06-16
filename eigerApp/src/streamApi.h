@@ -46,6 +46,7 @@ private:
     void *mCtx, *mSock;
     uint64_t mSeries_id;
     char* mImage_dtype;
+    zmq_msg_t mMsg;
     stream2_image_msg *mImageMsg;
     uint64_t mImage_size_x;
     uint64_t mImage_size_y;
