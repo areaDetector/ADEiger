@@ -28,14 +28,14 @@
 
 using std::string;
 
-static int uncompress (const unsigned char *pInput, char *dest, char *encoding, 
+static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
                        size_t compressedSize, size_t uncompressedSize, NDDataType_t dataType)
 {
     const char *functionName = "uncompress";
     size_t elemSize;
     size_t blockSize;
     int result;
-    switch (dataType) 
+    switch (dataType)
     {
         case NDUInt32: elemSize=4; break;
         case NDUInt16: elemSize=2; break;
@@ -50,9 +50,9 @@ static int uncompress (const unsigned char *pInput, char *dest, char *encoding,
         if (result <= 0)
         {
             ERR_ARGS("decompress_lz4hdf5 failed, result=%d\n", result);
-            return STREAM_ERROR; 
+            return STREAM_ERROR;
         }
-    } 
+    }
     else if (strcmp(encoding, "bslz4") == 0)  {
         pInput += 12;   // compressed sdata is 12 bytes into buffer
 
@@ -126,7 +126,7 @@ epicsTimeStamp Stream2API::extractTimeStampFromMessage(stream2_image_msg *msg) {
     };
 }
 
-Stream2API::Stream2API (const char *hostname) 
+Stream2API::Stream2API (const char *hostname)
     : mHostname(epicsStrDup(hostname)), mImage_dtype(NULL), mImageMsg(NULL), mNumThresholds(0)
 {
     if(!(mCtx = zmq_ctx_new()))
@@ -167,13 +167,12 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
     if(timeout && (err = poll(timeout)))
         return err;
 
-    zmq_msg_t msg;
     // Get message
-    zmq_msg_init(&msg);
-    zmq_msg_recv(&msg, mSock, 0);
+    zmq_msg_init(&mMsg);
+    zmq_msg_recv(&mMsg, mSock, 0);
     struct stream2_msg *s2msg=0;
-    stream2_start_msg* sm; 
-    if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&msg), zmq_msg_size(&msg), &s2msg))) {
+    stream2_start_msg* sm;
+    if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&mMsg), zmq_msg_size(&mMsg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
         goto done;
     }
@@ -200,8 +199,8 @@ int Stream2API::getHeader (stream_header_t *header, int timeout)
         mThresholdEnergy.push_back(threshold);
     }
     done:
-    zmq_msg_close(&msg);
     if (s2msg) stream2_free_msg(s2msg);
+    zmq_msg_close(&mMsg);
     return err;
 }
 
@@ -214,12 +213,11 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
     if(timeout && (err = poll(timeout)))
         return err;
 
-    zmq_msg_t msg;
     // Get message
-    zmq_msg_init(&msg);
-    zmq_msg_recv(&msg, mSock, 0);
-    struct stream2_msg *s2msg;
-    if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&msg), zmq_msg_size(&msg), &s2msg))) {
+    zmq_msg_init(&mMsg);
+    zmq_msg_recv(&mMsg, mSock, 0);
+    struct stream2_msg *s2msg=0;
+    if ((err = stream2_parse_msg((const uint8_t *)zmq_msg_data(&mMsg), zmq_msg_size(&mMsg), &s2msg))) {
         fprintf(stderr, "error: error %i parsing message\n", err);
         goto done;
     }
@@ -233,13 +231,14 @@ int Stream2API::waitFrame (int *end, int *numThresholds, int timeout)
         case STREAM2_MSG_END:
             *end = true;
             stream2_free_msg(s2msg);
+            zmq_msg_close(&mMsg);
             break;
         default:
             err = STREAM_ERROR;
             stream2_free_msg(s2msg);
+            zmq_msg_close(&mMsg);
     }
     done:
-    zmq_msg_close(&msg);
     return err;
 }
 
@@ -287,7 +286,7 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
                     err = STREAM_ERROR;
                     goto error;
             }
-            
+
             if(!(pArray = pNDArrayPool->alloc(numDims, dims, dataType, 0, NULL)))
             {
                 ERR("failed to allocate NDArray for frame");
@@ -301,20 +300,20 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
             {
                 memcpy((char *)pArray->pData, pSB->ptr, uncompressedSize);
             }
-            else 
+            else
             {
-                if (decompress) 
+                if (decompress)
                 {
                     uncompress(pSB->ptr, (char *)pArray->pData, encoding, compressedSize, uncompressedSize, dataType);
                 }
                 else
-                {        
+                {
                     const unsigned char *pInput = pSB->ptr;
-                    if (strcmp(encoding, "lz4") == 0) 
+                    if (strcmp(encoding, "lz4") == 0)
                     {
                         pArray->codec.name = NDCodecName[NDCODEC_LZ4HDF5];
                     }
-                    else if (strcmp(encoding, "bslz4") == 0) 
+                    else if (strcmp(encoding, "bslz4") == 0)
                     {
                         pArray->codec.name = NDCodecName[NDCODEC_BSLZ4];
                         pInput += 12;
@@ -344,7 +343,8 @@ int Stream2API::getFrame (NDArray **pArrayOut, NDArrayPool *pNDArrayPool, int th
     error:
     if (thresh == mNumThresholds-1) {
         if (mImageMsg) stream2_free_msg((stream2_msg *)mImageMsg);
-        mImageMsg = NULL;
+        mImageMsg = 0;
+        zmq_msg_close(&mMsg);
     }
     return err;
 }
