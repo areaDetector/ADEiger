@@ -1013,16 +1013,21 @@ void eigerDetector::controlTask (void)
         }
 
         // Wait for detector to stop acquiring.
-        // Essential for TMExternalSeries or TMExternalEnable,
-        // which have to wait for external action.
-        FLOW("waiting for detector state");
+        // Essential for TMExternalSeries or TMExternalEnable, which have to wait for external action.
+        // We have found that in ExternalGate mode the detector does not set state=Idle at the end,
+        // so we need to wait either until the NumImagesCounter is the expected value or until there is a manual stop event.
+        FLOW("waiting for detector state or numImages = expectedImages");
         string state;
+        int expectedImages = numImages * numTriggers;
+        int numImagesCounter;
         for(;;)
         {
             mState->fetch(state);
             callParamCallbacks();
+            getIntegerParam(ADNumImagesCounter, &numImagesCounter);
             // We must exit this loop without the lock
             unlock();
+            if (numImagesCounter >= expectedImages) break;
             if (state != "configure" && state != "ready" && state != "acquire") break;
             if (mStopEvent.wait(0.1)) break;
             // If we haven't exited yet, grab the lock so we can update the param library
