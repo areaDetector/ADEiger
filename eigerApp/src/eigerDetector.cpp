@@ -328,6 +328,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mFWImgNumStart  = mParams.create(EigFWImgNumStartStr,  asynParamInt32, SSFWConfig,  "image_nr_start");
     mFWState        = mParams.create(EigFWStateStr,        asynParamOctet, SSFWStatus,  "state");
     mFWFree         = mParams.create(EigFWFreeStr,       asynParamFloat64, SSFWStatus,  "buffer_free");
+    mFWClear        = mParams.create(EigFWClearStr,        asynParamInt32, SSFWCommand, "clear");
 
     // Monitor API Parameters
     mMonitorEnable  = mParams.create(EigMonitorEnableStr,  asynParamInt32, SSMonConfig, "mode");
@@ -385,7 +386,6 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
             mParams.getByIndex(i)->setEnumValues(linkEnum);
         }
         mDCUBufFree = mParams.create(EigDCUBufFreeStr, asynParamFloat64, SSDetStatus, "builder/dcu_buffer_free");
-        mFWClear = mParams.create(EigFWClearStr, asynParamInt32, SSFWCommand, "clear");
     }
     else if (mEigerModel == Eiger2 || mEigerModel == Pilatus4)
     {
@@ -516,7 +516,7 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         }
         setIntegerParam(ADAcquire, value);
     }
-    else if (mAPIVersion == API_1_6_0 && function == mFWClear->getIndex())
+    else if (function == mFWClear->getIndex())
     {
         status = (asynStatus) mFWClear->put(1);
         mFWFree->fetch();

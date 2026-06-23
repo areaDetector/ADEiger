@@ -187,8 +187,7 @@ can be given with the command::
     sudo setcap cap_setuid,cap_setgid+ep eigerDetectorApp
 
 All files on the detector disk can be deleted at once by processing
-the FWClear PV.  This is only available with the Eiger1 and Simplon API version
-1.6.0.
+the FWClear PV.
 
 If the last data file of a series won't be full (e.g.
 series_1_data_000002.h5 with 20 images) then it will only appear on
@@ -725,9 +724,9 @@ FileWriter Interface
     - FWAutoRemove, FWAutoRemove_RBV
     - bo, bi
   * - filewriter/config/clear
-    - Writing to this PV clears *all* files on the detector server disk. Eiger1 only.
+    - Writing to this PV clears *all* files on the detector server disk.
     - FWClear
-    - ao
+    - bo
 
 Stream Interface
 ~~~~~~~~~~~~~~~~
