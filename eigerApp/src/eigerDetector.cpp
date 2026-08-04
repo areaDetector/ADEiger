@@ -313,6 +313,7 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mCompressionAlgo  = mParams.create(EigCompressionAlgoStr, asynParamInt32,   SSDetConfig, "compression");
     mROIMode          = mParams.create(EigROIModeStr,         asynParamInt32,   SSDetConfig, "roi_mode");
     mAutoSummation    = mParams.create(EigAutoSummationStr,   asynParamInt32,   SSDetConfig, "auto_summation");
+    mBitDepthImage    = mParams.create(EigBitDepthImageStr,   asynParamInt32,   SSDetConfig, "bit_depth_image");
 
     // Detector Status Parameters
     mError      = mParams.create(EigErrorStr,      asynParamOctet,   SSDetStatus, "error");
@@ -592,17 +593,15 @@ asynStatus eigerDetector::writeInt32 (asynUser *pasynUser, epicsInt32 value)
         ERR_ARGS("error status=%d function=%d, value=%d", status, function, value);
         return status;
     }
+    else {
+        // Any setting change may cause the detector to change bit_depth_image
+        updateNDDataType();
+        callParamCallbacks();
 
-    callParamCallbacks();
-
-    if (status)
-        asynPrint(pasynUser, ASYN_TRACE_ERROR,
-              "%s:%s: error, status=%d function=%d, value=%d\n",
-              driverName, functionName, status, function, value);
-    else
         asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
               "%s:%s: function=%d, value=%d\n",
               driverName, functionName, function, value);
+    }
 
     return status;
 }
@@ -678,6 +677,9 @@ asynStatus eigerDetector::writeFloat64 (asynUser *pasynUser, epicsFloat64 value)
         asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
               "%s:%s: function=%d, value=%f\n",
               driverName, functionName, function, value);
+
+        // Any setting change may cause the detector to change bit_depth_image
+        updateNDDataType();
 
         callParamCallbacks();
     }
@@ -1618,6 +1620,28 @@ void eigerDetector::restartTask()
     }
 }
 
+asynStatus eigerDetector::updateNDDataType (void)
+{
+    const char *functionName = "updateNDDataType";
+    int bitDepth = 0, signedData = 0;
+
+    mBitDepthImage->fetch(bitDepth);
+    mSignedData->get(signedData);
+
+    NDDataType_t ndType;
+    switch(bitDepth)
+    {
+    case 8:  ndType = signedData ? NDInt8  : NDUInt8;  break;
+    case 16: ndType = signedData ? NDInt16 : NDUInt16; break;
+    case 32: ndType = signedData ? NDInt32 : NDUInt32; break;
+    default:
+        ERR_ARGS("unexpected bit_depth_image=%d", bitDepth);
+        return asynError;
+    }
+
+    return setIntegerParam(NDDataType, ndType);
+}
+
 asynStatus eigerDetector::initParams (void)
 {
     int status = asynSuccess;
@@ -1653,7 +1677,7 @@ asynStatus eigerDetector::initParams (void)
 
     // Set some default values
     status |= setIntegerParam(NDArraySize, 0);
-    status |= setIntegerParam(NDDataType,  NDUInt32);
+    status |= updateNDDataType();
     status |= setIntegerParam(ADImageMode, ADImageMultiple);
 
     mArmed->put(false);
