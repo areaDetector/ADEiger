@@ -33,6 +33,7 @@ typedef enum {
 // Acquisition Metadata Parameters
 #define EigWavelengthStr           "WAVELENGTH"
 #define EigAutoSummationStr        "AUTO_SUMMATION"
+#define EigBitDepthImageStr        "BIT_DEPTH_IMG"
 
 // Detector Metadata Parameters
 #define EigDescriptionStr          "DESCRIPTION"
@@ -204,6 +205,7 @@ protected:
     EigerParam *mCompressionAlgo;
     EigerParam *mROIMode;
     EigerParam *mAutoSummation;
+    EigerParam *mBitDepthImage;
 
     //Pilatus4 parameters
     EigerParam *mThreshold3;
@@ -283,6 +285,9 @@ private:
 
     // Read all parameters from detector and set some default values
     asynStatus initParams (void);
+
+    // Sets NDDataType from the detector's bit_depth_image and the SignedData setting
+    asynStatus updateNDDataType (void);
 
     // File parsers
     asynStatus parseH5File   (char *buf, size_t len);

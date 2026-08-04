@@ -463,7 +463,7 @@ record(bi,"$(P)$(R)SignedData_RBV") {
 record(longin, "$(P)$(R)BitDepthImage_RBV")
 {
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))EIG_DCI_bit_depth_image")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))BIT_DEPTH_IMG")
     field(DESC, "Image Bit Depth")
     field(SCAN, "I/O Intr")
 }
@@ -1172,10 +1172,6 @@ record(ai, "$(P)$(R)EnergyEps_RBV")
 # Set DISA for PVs in ADBase that do not apply to Eiger
 
 record(mbbo, "$(P)$(R)DataType")
-{
-    field(DISA, "1")
-}
-record(mbbi, "$(P)$(R)DataType_RBV")
 {
     field(DISA, "1")
 }
