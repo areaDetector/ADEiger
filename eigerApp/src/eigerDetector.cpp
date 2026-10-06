@@ -13,6 +13,7 @@
 #include <epicsThread.h>
 #include <epicsMessageQueue.h>
 #include <iocsh.h>
+#include <errno.h>
 #include <string.h>
 #include <math.h>
 #include <sys/fsuid.h>
@@ -91,6 +92,7 @@ typedef struct
     char name[MAX_BUF_SIZE];
     char *data;
     size_t len;
+    size_t index;
     bool save, parse, remove;
     size_t refCount;
     uid_t uid, gid;
@@ -272,6 +274,8 @@ eigerDetector::eigerDetector (const char *portName, const char *serverHostname,
     mSequenceId     = mParams.create(EigSequenceIdStr,     asynParamInt32);
     mPendingFiles   = mParams.create(EigPendingFilesStr,   asynParamInt32);
     mSaveFiles      = mParams.create(EigSaveFilesStr,      asynParamInt32);
+    mLastSavedFile  = mParams.create(EigLastSavedFileStr,  asynParamOctet);
+    mNumFilesSaved  = mParams.create(EigNumFilesSavedStr,  asynParamInt32);
     mFileOwner      = mParams.create(EigFileOwnerStr,      asynParamOctet);
     mFileOwnerGroup = mParams.create(EigFileOwnerGroupStr, asynParamOctet);
     mFilePerms      = mParams.create(EigFilePermsStr,      asynParamInt32);
@@ -914,6 +918,8 @@ void eigerDetector::controlTask (void)
 
         // Set status parameters
         setIntegerParam(ADNumImagesCounter, 0);
+        mLastSavedFile->put("");
+        mNumFilesSaved->put(0);
         setStringParam (ADStatusMessage, "Armed");
         mSequenceId->put(sequenceId);
         mArmed->put(true);
@@ -1120,6 +1126,7 @@ void eigerDetector::pollTask (void)
         {
             bool isMaster = i == 0;
 
+            files[i].index    = i;
             files[i].save     = acquisition.saveFiles;
             files[i].parse    = isMaster ? false : acquisition.parseFiles;
             files[i].refCount = files[i].save + files[i].parse;
@@ -1140,6 +1147,7 @@ void eigerDetector::pollTask (void)
         // While acquiring, wait and download every file on the list
         lock();
         mPendingFiles->put(0);
+        callParamCallbacks();
         unlock();
 
         i = 0;
@@ -1157,6 +1165,7 @@ void eigerDetector::pollTask (void)
                     lock();
                     mPendingFiles->get(pendingFiles);
                     mPendingFiles->put(pendingFiles+1);
+                    callParamCallbacks();
                     unlock();
 
                     mDownloadQueue.send(&curFile, sizeof(curFile));
@@ -1209,6 +1218,8 @@ void eigerDetector::downloadTask (void)
         if(mApi.getFile(file->name, &file->data, &file->len))
         {
             ERR_ARGS("underlying getFile(%s) failed", file->name);
+            file->remove = false;
+            file->refCount = 1; // Neither save nor parse received the file.
             mReapQueue.send(&file, sizeof(file));
         }
         else
@@ -1321,7 +1332,24 @@ void eigerDetector::saveTask (void)
             }
             total_written += written;
         }
-        close(fd);
+        if(close(fd) < 0)
+        {
+            ERR_ARGS("[file=%s] failed to close local file (%s): %s",
+                     file->name, fullFileName, strerror(errno));
+            file->remove = false;
+        }
+        else if(total_written == file->len)
+        {
+            int numFilesSaved;
+            lock();
+            mLastSavedFile->put(fullFileName);
+            mNumFilesSaved->get(numFilesSaved);
+            // A skipped file must not certify later files.
+            if(file->index == (size_t)numFilesSaved)
+                mNumFilesSaved->put(numFilesSaved+1);
+            callParamCallbacks();
+            unlock();
+        }
 
 reap:
         mReapQueue.send(&file, sizeof(file));
@@ -1357,6 +1385,7 @@ void eigerDetector::reapTask (void)
             lock();
             mPendingFiles->get(pendingFiles);
             mPendingFiles->put(pendingFiles-1);
+            callParamCallbacks();
             unlock();
         }
     }
@@ -1659,6 +1688,8 @@ asynStatus eigerDetector::initParams (void)
     mArmed->put(false);
     mSequenceId->put(0);
     mPendingFiles->put(0);
+    mLastSavedFile->put("");
+    mNumFilesSaved->put(0);
     mMonitorEnable->put(false);
     mMonitorTimeout->put(500);
     mFileOwner->put("");

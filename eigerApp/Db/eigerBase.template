@@ -639,6 +639,31 @@ record(bi,"$(P)$(R)SaveFiles_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+record(longin, "$(P)$(R)NumFilesPending_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))PENDING_FILES")
+    field(DESC, "Files pending download/save/parse")
+    field(SCAN, "I/O Intr")
+}
+
+record(waveform, "$(P)$(R)LastSavedFile_RBV") {
+    field(DTYP, "asynOctetRead")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))LAST_SAVED_FILE")
+    field(FTVL, "CHAR")
+    field(NELM, "512")
+    field(DESC, "Last successfully saved local file")
+    field(SCAN, "I/O Intr")
+    info(Q:form, "String")
+}
+
+record(longin, "$(P)$(R)NumFilesSaved_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))NUM_FILES_SAVED")
+    field(DESC, "Consecutive files saved in sequence")
+    field(EGU,  "files")
+    field(SCAN, "I/O Intr")
+}
+
 # Saved files owner
 record(stringout, "$(P)$(R)FileOwner") {
     field(PINI, "YES")

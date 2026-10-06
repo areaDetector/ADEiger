@@ -86,6 +86,8 @@ typedef enum {
 
 // File Saving Parameters
 #define EigSaveFilesStr            "SAVE_FILES"
+#define EigLastSavedFileStr        "LAST_SAVED_FILE"
+#define EigNumFilesSavedStr        "NUM_FILES_SAVED"
 #define EigFileOwnerStr            "FILE_OWNER"
 #define EigFileOwnerGroupStr       "FILE_OWNER_GROUP"
 #define EigFilePermsStr            "FILE_PERMISSIONS"
@@ -175,6 +177,8 @@ protected:
     EigerParam *mSequenceId;
     EigerParam *mPendingFiles;
     EigerParam *mSaveFiles;
+    EigerParam *mLastSavedFile;
+    EigerParam *mNumFilesSaved;
     EigerParam *mFileOwner;
     EigerParam *mFileOwnerGroup;
     EigerParam *mFilePerms;

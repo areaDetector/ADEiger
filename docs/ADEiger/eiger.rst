@@ -178,6 +178,21 @@ polls the detector at a nominal rate of 10Hz. While a file is being
 processed the next file available is downloaded in parallel. All files
 will remain on the detector disk unless FWAutoRemove is set to Yes.
 
+``NumFilesPending_RBV`` counts outstanding download/save/parse work. Zero does
+not prove save success or acquisition completion.
+
+``LastSavedFile_RBV`` reports the last file successfully written and closed.
+``NumFilesSaved_RBV`` counts consecutive completed files: 1 certifies the
+master, 2 also certifies data file 1, and so on. A failed download or save
+prevents the count advancing past that file, even if later saves succeed.
+Each successful arm clears the saved path and resets the count, including
+re-arms in continuous mode. Failed arming leaves the previous values
+unchanged.
+
+Image counters and ``FullFileName_RBV`` are not save-completion signals:
+``FullFileName_RBV`` still updates before writing. The new readbacks provide
+latest values, not a per-file event log or an atomic path/count pair.
+
 When saving files to disk (SaveFiles = Yes) it is possible to set the
 file's owner, its group and its access permissions with FileOwner,
 FileOwnerGrp and FilePerms PVs. To be able to set arbitrary owners the
@@ -701,6 +716,19 @@ FileWriter Interface
     - Controls whether acquired files should be saved locally to disk
     - SaveFiles, SaveFiles_RBV
     - bo, bi
+  * - N.A.
+    - Outstanding download/save/parse work.
+    - NumFilesPending_RBV
+    - longin
+  * - N.A.
+    - IOC-local path of the last successfully saved file in the current sequence.
+    - LastSavedFile_RBV
+    - waveform
+  * - N.A.
+    - Consecutive completed files: master first, then data files. Does not
+      advance past a failed download or save.
+    - NumFilesSaved_RBV
+    - longin
   * - N.A.
     - Controls the owner of the file saved to disk. Requires the IOC to have the CAP_SETUID
       capability.
